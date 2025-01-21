@@ -1096,3 +1096,63 @@ theorem corollary_2_8_b
   intro V
   rewrite [s1]
   simp
+
+
+def simplify_aux :
+  Formula_ → Formula_
+  | not_ false_ => true_
+  | not_ true_ => false_
+  | not_ (not_ phi) => phi
+  | and_ _ false_ | and_ false_ _ => false_
+  | and_ phi true_ | and_ true_ phi => phi
+  | or_ phi false_ | or_ false_ phi => phi
+  | or_ _ true_ | or_ true_ _ => true_
+  | imp_ false_ _ | imp_ _ true_ => true_
+  | imp_ true_ phi => phi
+  | imp_ phi false_ => not_ phi
+  | iff_ phi true_ | iff_ true_ phi => phi
+  | iff_ phi false_ | iff_ false_ phi => not_ phi
+  | phi => phi
+
+
+def simplify :
+  Formula_ → Formula_
+  | not_ phi => simplify_aux (not_ (simplify phi))
+  | and_ phi psi => simplify_aux (and_ (simplify phi) (simplify psi))
+  | or_ phi psi => simplify_aux (or_ (simplify phi) (simplify psi))
+  | imp_ phi psi => simplify_aux (imp_ (simplify phi) (simplify psi))
+  | iff_ phi psi => simplify_aux (iff_ (simplify phi) (simplify psi))
+  | phi => phi
+
+
+def Formula_.is_literal :
+  Formula_ → Prop
+  | atom_ _ => True
+  | not_ (atom_ _) => True
+  | _ => False
+
+def Formula_.is_negative_literal :
+  Formula_ → Prop
+  | not_ (atom_ _) => True
+  | _ => False
+
+def Formula_.is_positive_literal :
+  Formula_ → Prop
+  | atom_ _ => True
+  | _ => False
+
+def negate_literal :
+  Formula_ → Formula_
+  | atom_ X => not_ (atom_ X)
+  | not_ (atom_ X) => atom_ X
+  | phi => phi
+
+def Formula_.is_nnf :
+  Formula_ → Prop
+  | false_ => True
+  | true_ => True
+  | atom_ _ => True
+  | not_ (atom_ _) => True
+  | and_ phi psi => phi.is_nnf ∧ psi.is_nnf
+  | or_ phi psi => phi.is_nnf ∧ psi.is_nnf
+  | _ => False
