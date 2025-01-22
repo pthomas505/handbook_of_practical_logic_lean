@@ -757,7 +757,7 @@ inductive is_repl_of_formula_in_formula
     is_repl_of_formula_in_formula U V (exists_ x_u P_u) (exists_ x_v P_v)
 
 
-example
+lemma is_repl_of_formula_in_formula_fun_imp_is_repl_of_formula_in_formula
   (U V : Formula_)
   (F F' : Formula_)
   (h1 : is_repl_of_formula_in_formula_fun U V F F') :
@@ -864,7 +864,7 @@ example
       · rfl
 
 
-example
+lemma is_repl_of_formula_in_formula_imp_is_repl_of_formula_in_formula_fun
   (U V : Formula_)
   (F F' : Formula_)
   (h1 : is_repl_of_formula_in_formula U V F F') :
@@ -888,6 +888,16 @@ example
   all_goals
     simp only [is_repl_of_formula_in_formula_fun]
     tauto
+
+
+lemma is_repl_of_formula_in_formula_fun_iff_is_repl_of_formula_in_formula
+  (U V : Formula_)
+  (F F' : Formula_) :
+  is_repl_of_formula_in_formula_fun U V F F' ↔ is_repl_of_formula_in_formula U V F F' :=
+  by
+  constructor
+  · apply is_repl_of_formula_in_formula_fun_imp_is_repl_of_formula_in_formula
+  · apply is_repl_of_formula_in_formula_imp_is_repl_of_formula_in_formula_fun
 
 
 example
@@ -1158,6 +1168,19 @@ lemma simplify_aux_is_logically_equivalent
         tauto
 
 
+lemma simplify_aux_is_logically_equivalent_alt
+  (V : PropValuation)
+  (F : Formula_) :
+  eval V F ↔ eval V (simplify_aux F) :=
+  by
+  obtain s1 := simplify_aux_is_logically_equivalent F
+  unfold are_logically_equivalent at s1
+  unfold is_tautology at s1
+  unfold satisfies at s1
+  unfold eval at s1
+  apply s1
+
+
 def simplify :
   Formula_ → Formula_
   | not_ phi => simplify_aux (not_ (simplify phi))
@@ -1166,6 +1189,33 @@ def simplify :
   | imp_ phi psi => simplify_aux (imp_ (simplify phi) (simplify psi))
   | iff_ phi psi => simplify_aux (iff_ (simplify phi) (simplify psi))
   | phi => phi
+
+
+example
+  (V : PropValuation)
+  (F : Formula_) :
+  eval V F ↔ eval V (simplify F) :=
+  by
+  induction F
+  case false_ | true_ | atom_ X | forall_ x phi ih | exists_ x phi ih =>
+    rfl
+  case not_ phi ih =>
+    simp only [simplify]
+    rewrite [← simplify_aux_is_logically_equivalent_alt]
+    simp only [eval]
+    rewrite [ih]
+    rfl
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    simp only [simplify]
+    rewrite [← simplify_aux_is_logically_equivalent_alt]
+    simp only [eval]
+    rewrite [phi_ih]
+    rewrite [psi_ih]
+    rfl
 
 
 def Formula_.is_literal :
