@@ -1115,6 +1115,49 @@ def simplify_aux :
   | phi => phi
 
 
+lemma simplify_aux_is_logically_equivalent
+  (F : Formula_) :
+  are_logically_equivalent F (simplify_aux F) :=
+  by
+  cases F
+  case false_ | true_ | atom_ X | forall_ x phi | exists_ x phi =>
+    simp only [simplify_aux]
+    unfold are_logically_equivalent
+    unfold is_tautology
+    intro V
+    unfold satisfies
+    unfold eval
+    rfl
+  case not_ phi =>
+    cases phi
+    all_goals
+      simp only [simplify_aux]
+      unfold are_logically_equivalent
+      unfold is_tautology
+      intro V
+      unfold satisfies
+      simp only [eval]
+    all_goals
+      tauto
+  case
+      and_ phi psi
+    | or_ phi psi
+    | imp_ phi psi
+    | iff_ phi psi =>
+    cases phi
+    all_goals
+      cases psi
+      all_goals
+        simp only [simplify_aux]
+        unfold are_logically_equivalent
+        unfold is_tautology
+        intro V
+        unfold satisfies
+        simp only [eval]
+      all_goals
+        tauto
+
+
 def simplify :
   Formula_ → Formula_
   | not_ phi => simplify_aux (not_ (simplify phi))
