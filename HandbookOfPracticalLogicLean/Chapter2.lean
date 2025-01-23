@@ -1126,28 +1126,19 @@ def simplify_aux :
 
 
 lemma simplify_aux_is_logically_equivalent
+  (V : PropValuation)
   (F : Formula_) :
-  are_logically_equivalent F (simplify_aux F) :=
+  eval V F ↔ eval V (simplify_aux F) :=
   by
   cases F
   case false_ | true_ | atom_ X | forall_ x phi | exists_ x phi =>
     simp only [simplify_aux]
-    unfold are_logically_equivalent
-    unfold is_tautology
-    intro V
-    unfold satisfies
-    unfold eval
-    rfl
   case not_ phi =>
     cases phi
     all_goals
       simp only [simplify_aux]
-      unfold are_logically_equivalent
-      unfold is_tautology
-      intro V
-      unfold satisfies
-      simp only [eval]
     all_goals
+      simp only [eval]
       tauto
   case
       and_ phi psi
@@ -1159,26 +1150,10 @@ lemma simplify_aux_is_logically_equivalent
       cases psi
       all_goals
         simp only [simplify_aux]
-        unfold are_logically_equivalent
-        unfold is_tautology
-        intro V
-        unfold satisfies
+      all_goals
         simp only [eval]
       all_goals
         tauto
-
-
-lemma simplify_aux_is_logically_equivalent_alt
-  (V : PropValuation)
-  (F : Formula_) :
-  eval V F ↔ eval V (simplify_aux F) :=
-  by
-  obtain s1 := simplify_aux_is_logically_equivalent F
-  unfold are_logically_equivalent at s1
-  unfold is_tautology at s1
-  unfold satisfies at s1
-  unfold eval at s1
-  apply s1
 
 
 def simplify :
@@ -1191,7 +1166,7 @@ def simplify :
   | phi => phi
 
 
-example
+lemma simplify_is_logically_equivalent
   (V : PropValuation)
   (F : Formula_) :
   eval V F ↔ eval V (simplify F) :=
@@ -1201,7 +1176,7 @@ example
     rfl
   case not_ phi ih =>
     simp only [simplify]
-    rewrite [← simplify_aux_is_logically_equivalent_alt]
+    rewrite [← simplify_aux_is_logically_equivalent]
     simp only [eval]
     rewrite [ih]
     rfl
@@ -1211,11 +1186,23 @@ example
     | imp_ phi psi phi_ih psi_ih
     | iff_ phi psi phi_ih psi_ih =>
     simp only [simplify]
-    rewrite [← simplify_aux_is_logically_equivalent_alt]
+    rewrite [← simplify_aux_is_logically_equivalent]
     simp only [eval]
     rewrite [phi_ih]
     rewrite [psi_ih]
     rfl
+
+
+example
+  (F : Formula_) :
+  are_logically_equivalent F (simplify F) :=
+  by
+  unfold are_logically_equivalent
+  unfold is_tautology
+  intro V
+  unfold satisfies
+  unfold eval
+  apply simplify_is_logically_equivalent
 
 
 def Formula_.is_literal :
