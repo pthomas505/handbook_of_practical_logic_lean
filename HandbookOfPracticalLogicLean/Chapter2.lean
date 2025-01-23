@@ -1236,3 +1236,30 @@ def Formula_.is_nnf :
   | and_ phi psi => phi.is_nnf ∧ psi.is_nnf
   | or_ phi psi => phi.is_nnf ∧ psi.is_nnf
   | _ => False
+
+
+mutual
+def to_nnf :
+  Formula_ → Formula_
+  | not_ phi => to_nnf_neg phi
+  | and_ phi psi => and_ (to_nnf phi) (to_nnf psi)
+  | or_ phi psi => or_ (to_nnf phi) (to_nnf psi)
+  | imp_ phi psi => or_ (to_nnf_neg phi) (to_nnf psi)
+  | iff_ phi psi => or_ (and_ (to_nnf phi) (to_nnf psi)) (and_ (to_nnf_neg phi) (to_nnf_neg psi))
+  | phi => phi
+
+def to_nnf_neg :
+  Formula_ → Formula_
+  | not_ phi => to_nnf phi
+  | and_ phi psi => or_ (to_nnf_neg phi) (to_nnf_neg psi)
+  | or_ phi psi => and_ (to_nnf_neg phi) (to_nnf_neg psi)
+  | imp_ phi psi => and_ (to_nnf phi) (to_nnf_neg psi)
+  | iff_ phi psi => or_ (and_ (to_nnf phi) (to_nnf_neg psi)) (and_ (to_nnf_neg phi) (to_nnf psi))
+  | phi => not_ phi
+end
+
+#eval to_nnf false_
+#eval to_nnf (not_ false_)
+#eval to_nnf (not_ (not_ false_))
+#eval to_nnf (not_ (not_ (not_ false_)))
+#eval to_nnf (not_ (not_ (not_ (not_ false_))))
