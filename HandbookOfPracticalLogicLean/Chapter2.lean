@@ -1263,3 +1263,75 @@ end
 #eval to_nnf (not_ (not_ false_))
 #eval to_nnf (not_ (not_ (not_ false_)))
 #eval to_nnf (not_ (not_ (not_ (not_ false_))))
+
+
+theorem eval_to_nnf_neg_iff_not_eval_to_nnf
+  (V : PropValuation)
+  (F : Formula_) :
+  eval V (to_nnf_neg F) ↔ ¬ eval V (to_nnf F) :=
+  by
+  induction F
+  case false_ | true_ | atom_ X | forall_ x phi ih | exists_ x phi ih =>
+    simp only [to_nnf]
+    simp only [to_nnf_neg]
+    simp only [eval]
+  case not_ phi ih =>
+    simp only [to_nnf]
+    simp only [to_nnf_neg]
+    rewrite [ih]
+    tauto
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    simp only [to_nnf]
+    simp only [to_nnf_neg]
+    simp only [eval]
+    rewrite [phi_ih]
+    rewrite [psi_ih]
+    tauto
+
+
+example
+  (V : PropValuation)
+  (F : Formula_) :
+  eval V F ↔ eval V (to_nnf F) :=
+  by
+  induction F
+  case false_ | true_ | atom_ X | forall_ x phi ih | exists_ x phi ih =>
+    unfold to_nnf
+    rfl
+  case not_ phi ih =>
+    simp only [to_nnf]
+    simp only [eval]
+    rewrite [ih]
+    rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf V phi]
+    rfl
+  case and_ phi psi phi_ih psi_ih =>
+    simp only [to_nnf]
+    simp only [eval]
+    rewrite [phi_ih]
+    rewrite [psi_ih]
+    rfl
+  case or_ phi psi phi_ih psi_ih =>
+    simp only [to_nnf]
+    simp only [eval]
+    rewrite [phi_ih]
+    rewrite [psi_ih]
+    rfl
+  case imp_ phi psi phi_ih psi_ih =>
+    simp only [to_nnf]
+    simp only [eval]
+    rewrite [phi_ih]
+    rewrite [psi_ih]
+    rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf V phi]
+    tauto
+  case iff_ phi psi phi_ih psi_ih =>
+    simp only [to_nnf]
+    simp only [eval]
+    rewrite [phi_ih]
+    rewrite [psi_ih]
+    rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf V phi]
+    rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf V psi]
+    tauto
