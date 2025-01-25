@@ -1250,6 +1250,8 @@ def to_nnf :
 
 def to_nnf_neg :
   Formula_ → Formula_
+  | false_ => true_
+  | true_ => false_
   | not_ phi => to_nnf phi
   | and_ phi psi => or_ (to_nnf_neg phi) (to_nnf_neg psi)
   | or_ phi psi => and_ (to_nnf_neg phi) (to_nnf_neg psi)
@@ -1271,7 +1273,12 @@ theorem eval_to_nnf_neg_iff_not_eval_to_nnf
   eval V (to_nnf_neg F) ↔ ¬ eval V (to_nnf F) :=
   by
   induction F
-  case false_ | true_ | atom_ X | forall_ x phi ih | exists_ x phi ih =>
+  case false_ | true_ =>
+    simp only [to_nnf]
+    simp only [to_nnf_neg]
+    simp only [eval]
+    tauto
+  case atom_ X | forall_ x phi ih | exists_ x phi ih =>
     simp only [to_nnf]
     simp only [to_nnf_neg]
     simp only [eval]
@@ -1335,3 +1342,73 @@ example
     rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf V phi]
     rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf V psi]
     tauto
+
+
+lemma to_nnf_neg_is_nnf_iff_to_nnf_is_nnf
+  (F : Formula_) :
+  (to_nnf_neg F).is_nnf ↔ (to_nnf F).is_nnf :=
+  by
+  induction F
+  case true_ | false_ | atom_ X | forall_ x phi ih | exists_ x phi ih =>
+    simp only [to_nnf]
+    simp only [to_nnf_neg]
+    simp only [is_nnf]
+  case not_ phi ih =>
+    simp only [to_nnf]
+    simp only [to_nnf_neg]
+    rewrite [ih]
+    rfl
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    simp only [is_nnf]
+    rewrite [phi_ih]
+    rewrite [psi_ih]
+    rfl
+
+
+example
+  (F : Formula_)
+  (h1 : F.is_prop) :
+  (to_nnf F).is_nnf :=
+  by
+  induction F
+  case false_ | true_ | atom_ X =>
+    unfold to_nnf
+    unfold is_nnf
+    exact trivial
+  case not_ phi ih =>
+    simp only [is_prop] at h1
+
+    simp only [to_nnf]
+    rewrite [to_nnf_neg_is_nnf_iff_to_nnf_is_nnf]
+    apply ih
+    exact h1
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih =>
+    simp only [is_prop] at h1
+
+    simp only [to_nnf]
+    simp only [is_nnf]
+    tauto
+  case imp_ phi psi phi_ih psi_ih =>
+    simp only [is_prop] at h1
+
+    simp only [to_nnf]
+    simp only [is_nnf]
+    rewrite [to_nnf_neg_is_nnf_iff_to_nnf_is_nnf]
+    tauto
+  case iff_ phi psi phi_ih psi_ih =>
+    simp only [is_prop] at h1
+
+    simp only [to_nnf]
+    simp only [is_nnf]
+    simp only [to_nnf_neg_is_nnf_iff_to_nnf_is_nnf]
+    tauto
+  case
+      forall_ x phi ih
+    | exists_ x phi ih =>
+    simp only [is_prop] at h1
