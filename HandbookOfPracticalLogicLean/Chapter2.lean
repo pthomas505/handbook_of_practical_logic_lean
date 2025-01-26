@@ -1467,3 +1467,263 @@ example
       forall_ x phi ih
     | exists_ x phi ih =>
     simp only [is_prop] at h1
+
+
+-------------------------------------------------------------------------------
+
+
+mutual
+def to_nnf :
+  Formula_ → Formula_
+  | not_ phi => to_nnf_neg phi
+  | and_ phi psi => and_ (to_nnf phi) (to_nnf psi)
+  | or_ phi psi => or_ (to_nnf phi) (to_nnf psi)
+  | imp_ phi psi => or_ (to_nnf_neg phi) (to_nnf psi)
+  | iff_ phi psi => or_ (and_ (to_nnf phi) (to_nnf psi)) (and_ (to_nnf_neg phi) (to_nnf_neg psi))
+  | phi => phi
+
+def to_nnf_neg :
+  Formula_ → Formula_
+  | not_ phi => to_nnf phi
+  | and_ phi psi => or_ (to_nnf_neg phi) (to_nnf_neg psi)
+  | or_ phi psi => and_ (to_nnf_neg phi) (to_nnf_neg psi)
+  | imp_ phi psi => and_ (to_nnf phi) (to_nnf_neg psi)
+  | iff_ phi psi => or_ (and_ (to_nnf phi) (to_nnf_neg psi)) (and_ (to_nnf_neg phi) (to_nnf psi))
+  | phi => not_ phi
+end
+
+#eval to_nnf false_
+#eval to_nnf (not_ false_)
+#eval to_nnf (not_ (not_ false_))
+#eval to_nnf (not_ (not_ (not_ false_)))
+#eval to_nnf (not_ (not_ (not_ (not_ false_))))
+
+
+theorem eval_to_nnf_neg_iff_not_eval_to_nnf
+  (V : PropValuation)
+  (F : Formula_) :
+  eval V (to_nnf_neg F) ↔ ¬ eval V (to_nnf F) :=
+  by
+  induction F
+  case false_ | true_ =>
+    simp only [to_nnf]
+    simp only [to_nnf_neg]
+    simp only [eval]
+  case atom_ X | forall_ x phi ih | exists_ x phi ih =>
+    simp only [to_nnf]
+    simp only [to_nnf_neg]
+    simp only [eval]
+  case not_ phi ih =>
+    simp only [to_nnf]
+    simp only [to_nnf_neg]
+    rewrite [ih]
+    tauto
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    simp only [to_nnf]
+    simp only [to_nnf_neg]
+    simp only [eval]
+    rewrite [phi_ih]
+    rewrite [psi_ih]
+    tauto
+
+
+example
+  (V : PropValuation)
+  (F : Formula_) :
+  eval V F ↔ eval V (to_nnf F) :=
+  by
+  induction F
+  case false_ | true_ | atom_ X | forall_ x phi ih | exists_ x phi ih =>
+    unfold to_nnf
+    rfl
+  case not_ phi ih =>
+    simp only [to_nnf]
+    simp only [eval]
+    rewrite [ih]
+    rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf V phi]
+    rfl
+  case and_ phi psi phi_ih psi_ih =>
+    simp only [to_nnf]
+    simp only [eval]
+    rewrite [phi_ih]
+    rewrite [psi_ih]
+    rfl
+  case or_ phi psi phi_ih psi_ih =>
+    simp only [to_nnf]
+    simp only [eval]
+    rewrite [phi_ih]
+    rewrite [psi_ih]
+    rfl
+  case imp_ phi psi phi_ih psi_ih =>
+    simp only [to_nnf]
+    simp only [eval]
+    rewrite [phi_ih]
+    rewrite [psi_ih]
+    rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf V phi]
+    tauto
+  case iff_ phi psi phi_ih psi_ih =>
+    simp only [to_nnf]
+    simp only [eval]
+    rewrite [phi_ih]
+    rewrite [psi_ih]
+    rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf V phi]
+    rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf V psi]
+    tauto
+
+
+lemma to_nnf_neg_is_nnf_iff_to_nnf_is_nnf
+  (F : Formula_)
+  (h1 : ¬ is_subformula false_ F)
+  (h2 : ¬ is_subformula true_ F) :
+  (to_nnf_neg F).is_nnf ↔ (to_nnf F).is_nnf :=
+  by
+  induction F
+  case false_ =>
+    simp only [is_subformula] at h1
+    contradiction
+  case true_ =>
+    simp only [is_subformula] at h2
+    contradiction
+  case atom_ X | forall_ x phi ih | exists_ x phi ih =>
+    simp only [to_nnf]
+    simp only [to_nnf_neg]
+    simp only [is_nnf]
+  case not_ phi ih =>
+    simp only [is_subformula] at h1
+    simp at h1
+
+    simp only [is_subformula] at h2
+    simp at h2
+
+    simp only [to_nnf]
+    simp only [to_nnf_neg]
+    rewrite [ih h1 h2]
+    rfl
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    simp only [is_subformula] at h1
+    simp at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
+    simp only [is_subformula] at h2
+    simp at h2
+    obtain ⟨h2_left, h2_right⟩ := h2
+
+    simp only [is_nnf]
+    rewrite [phi_ih h1_left h2_left]
+    rewrite [psi_ih h1_right h2_right]
+    · rfl
+
+
+example
+  (F : Formula_)
+  (h1 : F.is_prop)
+  (h2 : ¬ is_proper_subformula false_ F)
+  (h3 : ¬ is_proper_subformula true_ F) :
+  (to_nnf F).is_nnf :=
+  by
+  induction F
+  case false_ | true_ | atom_ X =>
+    unfold to_nnf
+    unfold is_nnf
+    exact trivial
+  case not_ phi ih =>
+    simp only [is_prop] at h1
+
+    simp only [is_proper_subformula] at h2
+    simp only [is_subformula] at h2
+    simp at h2
+
+    simp only [is_proper_subformula] at h3
+    simp only [is_subformula] at h3
+    simp at h3
+
+    simp only [to_nnf]
+    rewrite [to_nnf_neg_is_nnf_iff_to_nnf_is_nnf]
+    apply ih h1
+    · simp only [is_proper_subformula]
+      simp
+      tauto
+    · simp only [is_proper_subformula]
+      simp
+      tauto
+    · exact h2
+    · exact h3
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih =>
+    simp only [is_prop] at h1
+
+    simp only [is_proper_subformula] at h2
+    simp only [is_subformula] at h2
+    simp at h2
+
+    simp only [is_proper_subformula] at h3
+    simp only [is_subformula] at h3
+    simp at h3
+
+    simp only [is_proper_subformula] at phi_ih
+    simp at phi_ih
+
+    simp only [is_proper_subformula] at psi_ih
+    simp at psi_ih
+
+    simp only [to_nnf]
+    simp only [is_nnf]
+    tauto
+  case imp_ phi psi phi_ih psi_ih =>
+    simp only [is_prop] at h1
+
+    simp only [is_proper_subformula] at h2
+    simp only [is_subformula] at h2
+    simp at h2
+
+    simp only [is_proper_subformula] at h3
+    simp only [is_subformula] at h3
+    simp at h3
+
+    simp only [is_proper_subformula] at phi_ih
+    simp at phi_ih
+
+    simp only [is_proper_subformula] at psi_ih
+    simp at psi_ih
+
+    simp only [to_nnf]
+    simp only [is_nnf]
+    rewrite [to_nnf_neg_is_nnf_iff_to_nnf_is_nnf]
+    all_goals
+      tauto
+  case iff_ phi psi phi_ih psi_ih =>
+    simp only [is_prop] at h1
+
+    simp only [is_proper_subformula] at h2
+    simp only [is_subformula] at h2
+    simp at h2
+
+    simp only [is_proper_subformula] at h3
+    simp only [is_subformula] at h3
+    simp at h3
+
+    simp only [is_proper_subformula] at phi_ih
+    simp at phi_ih
+
+    simp only [is_proper_subformula] at psi_ih
+    simp at psi_ih
+
+    simp only [to_nnf]
+    simp only [is_nnf]
+    rewrite [to_nnf_neg_is_nnf_iff_to_nnf_is_nnf]
+    rewrite [to_nnf_neg_is_nnf_iff_to_nnf_is_nnf]
+    all_goals
+      tauto
+  case
+      forall_ x phi ih
+    | exists_ x phi ih =>
+    simp only [is_prop] at h1
