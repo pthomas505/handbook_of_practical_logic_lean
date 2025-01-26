@@ -1167,15 +1167,22 @@ def simplify_aux :
   | not_ false_ => true_
   | not_ true_ => false_
   | not_ (not_ phi) => phi
-  | and_ _ false_ | and_ false_ _ => false_
-  | and_ phi true_ | and_ true_ phi => phi
-  | or_ phi false_ | or_ false_ phi => phi
-  | or_ _ true_ | or_ true_ _ => true_
-  | imp_ false_ _ | imp_ _ true_ => true_
+  | and_ _ false_ => false_
+  | and_ false_ _ => false_
+  | and_ phi true_ => phi
+  | and_ true_ phi => phi
+  | or_ phi false_ => phi
+  | or_ false_ phi => phi
+  | or_ _ true_ => true_
+  | or_ true_ _ => true_
+  | imp_ false_ _ => true_
+  | imp_ _ true_ => true_
   | imp_ true_ phi => phi
   | imp_ phi false_ => not_ phi
-  | iff_ phi true_ | iff_ true_ phi => phi
-  | iff_ phi false_ | iff_ false_ phi => not_ phi
+  | iff_ phi true_ => phi
+  | iff_ true_ phi => phi
+  | iff_ phi false_ => not_ phi
+  | iff_ false_ phi => not_ phi
   | phi => phi
 
 
