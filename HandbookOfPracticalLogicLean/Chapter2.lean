@@ -266,10 +266,9 @@ lemma is_prop_imp_eval_opt_eq_some_eval
     unfold is_prop at h1
 
     simp only [eval_opt]
-    simp
     rewrite [ih h1]
-    simp
     simp only [eval]
+    simp
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih
@@ -279,11 +278,10 @@ lemma is_prop_imp_eval_opt_eq_some_eval
     obtain ⟨h1_left, h1_right⟩ := h1
 
     simp only [eval_opt]
-    simp
     rewrite [phi_ih h1_left]
     rewrite [psi_ih h1_right]
-    simp
     simp only [eval]
+    simp
   case
       forall_ x phi ih
     | exists_ x phi ih =>
