@@ -1699,3 +1699,6 @@ example
       forall_ x phi ih
     | exists_ x phi ih =>
     simp only [is_prop] at h1
+
+
+-------------------------------------------------------------------------------
