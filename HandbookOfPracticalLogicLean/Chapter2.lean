@@ -855,11 +855,13 @@ lemma is_repl_of_formula_in_formula_fun_imp_is_repl_of_formula_in_formula
   all_goals
     unfold is_repl_of_formula_in_formula_fun at h1
     cases h1
-    · simp_all only [reduceCtorEq]
-    · simp_all only
+    case _ h1 =>
+      cases h1
+    case _ h1 =>
+      obtain ⟨h1_left, h1_right⟩ := h1
       apply is_repl_of_formula_in_formula.diff_
-      · rfl
-      · rfl
+      · exact h1_left
+      · exact h1_right
 
 
 lemma is_repl_of_formula_in_formula_imp_is_repl_of_formula_in_formula_fun
