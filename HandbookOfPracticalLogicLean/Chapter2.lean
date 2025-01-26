@@ -1596,32 +1596,21 @@ lemma to_nnf_neg_is_nnf_iff_to_nnf_is_nnf_v2
     simp only [is_nnf]
   case not_ phi ih =>
     simp only [is_subformula] at h1
-    simp at h1
-
     simp only [is_subformula] at h2
-    simp at h2
 
     simp only [to_nnf_v2]
     simp only [to_nnf_neg_v2]
-    rewrite [ih h1 h2]
-    rfl
+    tauto
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih
     | imp_ phi psi phi_ih psi_ih
     | iff_ phi psi phi_ih psi_ih =>
     simp only [is_subformula] at h1
-    simp at h1
-    obtain ⟨h1_left, h1_right⟩ := h1
-
     simp only [is_subformula] at h2
-    simp at h2
-    obtain ⟨h2_left, h2_right⟩ := h2
 
     simp only [is_nnf]
-    rewrite [phi_ih h1_left h2_left]
-    rewrite [psi_ih h1_right h2_right]
-    · rfl
+    tauto
 
 
 example
