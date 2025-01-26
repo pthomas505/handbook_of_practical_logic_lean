@@ -829,7 +829,6 @@ lemma is_repl_of_formula_in_formula_fun_imp_is_repl_of_formula_in_formula
   case
       forall_.forall_ x phi ih x' phi'
     | exists_.exists_ x phi ih x' phi' =>
-
     unfold is_repl_of_formula_in_formula_fun at h1
     cases h1
     case inl h1 =>
