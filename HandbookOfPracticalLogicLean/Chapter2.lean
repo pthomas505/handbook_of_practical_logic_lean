@@ -1630,23 +1630,19 @@ example
 
     simp only [is_proper_subformula] at h2
     simp only [is_subformula] at h2
-    simp at h2
 
     simp only [is_proper_subformula] at h3
     simp only [is_subformula] at h3
-    simp at h3
 
     simp only [to_nnf_v2]
     rewrite [to_nnf_neg_is_nnf_iff_to_nnf_is_nnf_v2]
     apply ih h1
     · simp only [is_proper_subformula]
-      simp
       tauto
     · simp only [is_proper_subformula]
-      simp
       tauto
-    · exact h2
-    · exact h3
+    · tauto
+    · tauto
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih =>
@@ -1654,17 +1650,12 @@ example
 
     simp only [is_proper_subformula] at h2
     simp only [is_subformula] at h2
-    simp at h2
 
     simp only [is_proper_subformula] at h3
     simp only [is_subformula] at h3
-    simp at h3
 
     simp only [is_proper_subformula] at phi_ih
-    simp at phi_ih
-
     simp only [is_proper_subformula] at psi_ih
-    simp at psi_ih
 
     simp only [to_nnf_v2]
     simp only [is_nnf]
@@ -1674,17 +1665,12 @@ example
 
     simp only [is_proper_subformula] at h2
     simp only [is_subformula] at h2
-    simp at h2
 
     simp only [is_proper_subformula] at h3
     simp only [is_subformula] at h3
-    simp at h3
 
     simp only [is_proper_subformula] at phi_ih
-    simp at phi_ih
-
     simp only [is_proper_subformula] at psi_ih
-    simp at psi_ih
 
     simp only [to_nnf_v2]
     simp only [is_nnf]
@@ -1696,17 +1682,12 @@ example
 
     simp only [is_proper_subformula] at h2
     simp only [is_subformula] at h2
-    simp at h2
 
     simp only [is_proper_subformula] at h3
     simp only [is_subformula] at h3
-    simp at h3
 
     simp only [is_proper_subformula] at phi_ih
-    simp at phi_ih
-
     simp only [is_proper_subformula] at psi_ih
-    simp at psi_ih
 
     simp only [to_nnf_v2]
     simp only [is_nnf]
