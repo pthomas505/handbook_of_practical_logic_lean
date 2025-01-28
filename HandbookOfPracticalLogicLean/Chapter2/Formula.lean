@@ -1,7 +1,5 @@
 import Lean
-import Batteries.Tactic.Lint.Frontend
 import Mathlib.Util.CompileInductive
-import Mathlib.Tactic
 
 
 set_option autoImplicit false
@@ -44,19 +42,40 @@ instance : ToString Formula_ :=
 
 open Lean Elab Meta
 
+/--
+  The syntax category of formulas.
+-/
 declare_syntax_cat formula
 
 
+/-- false -/
 syntax "F." : formula
+
+/-- true -/
 syntax "T." : formula
+
+/-- atom -/
 syntax ident : formula
+
+/-- not -/
 syntax "~" formula : formula
+
+/-- and -/
 syntax "(" formula "/\\" formula ")" : formula
+
+/-- or -/
 syntax "(" formula "\\/" formula ")" : formula
+
+/-- imp -/
 syntax "(" formula "->" formula ")" : formula
+
+/-- iff -/
 syntax "(" formula "<->" formula ")" : formula
 
 
+/--
+  The elaboration of formulas.
+-/
 partial def elabFormula : Syntax → MetaM Expr
   | `(formula| F.) => mkAppM ``Formula_.false_ #[]
 
@@ -93,6 +112,9 @@ partial def elabFormula : Syntax → MetaM Expr
   | _ => throwUnsupportedSyntax
 
 
+/--
+  The elaboration of formulas.
+-/
 elab "(Formula_|" p:formula ")" : term => elabFormula p
 
 
@@ -113,3 +135,6 @@ elab "(Formula_|" p:formula ")" : term => elabFormula p
 #eval (Formula_| (P \/ Q) ).toString
 #eval (Formula_| (P -> Q) ).toString
 #eval (Formula_| (P <-> Q) ).toString
+
+
+#lint

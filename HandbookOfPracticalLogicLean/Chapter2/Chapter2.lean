@@ -2,9 +2,6 @@ import MathlibExtraLean.FunctionUpdateITE
 
 import HandbookOfPracticalLogicLean.Chapter2.Formula
 
-import Lean
-import Batteries.Tactic.Lint.Frontend
-import Mathlib.Util.CompileInductive
 import Mathlib.Tactic
 
 
