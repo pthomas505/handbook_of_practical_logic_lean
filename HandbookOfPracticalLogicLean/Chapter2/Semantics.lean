@@ -15,7 +15,7 @@ open Formula_
 /--
   The assignment of a truth value to each atom.
 -/
-def PropValuation : Type := String → Prop
+def Valuation : Type := String → Prop
   deriving Inhabited
 
 
@@ -23,7 +23,7 @@ def PropValuation : Type := String → Prop
   `eval V F` := True if and only if the formula `F` evaluates to `True` given the valuation `V`.
 -/
 def eval
-  (V : PropValuation) :
+  (V : Valuation) :
   Formula_ → Prop
   | false_ => False
   | true_ => True
@@ -35,7 +35,7 @@ def eval
   | iff_ phi psi => eval V phi ↔ eval V psi
 
 instance
-  (V : PropValuation)
+  (V : Valuation)
   [DecidablePred V]
   (F : Formula_) :
   Decidable (eval V F) :=
@@ -47,7 +47,7 @@ instance
 
 
 def satisfies
-  (V : PropValuation)
+  (V : Valuation)
   (F : Formula_) :
   Prop :=
   eval V F
@@ -56,25 +56,25 @@ def satisfies
 def Formula_.is_tautology
   (F : Formula_) :
   Prop :=
-  ∀ (V : PropValuation), satisfies V F
+  ∀ (V : Valuation), satisfies V F
 
 
 def Formula_.is_satisfiable
   (F : Formula_) :
   Prop :=
-  ∃ (V : PropValuation), satisfies V F
+  ∃ (V : Valuation), satisfies V F
 
 
 def Formula_.is_unsatisfiable
   (F : Formula_) :
   Prop :=
-  ¬ ∃ (V : PropValuation), satisfies V F
+  ¬ ∃ (V : Valuation), satisfies V F
 
 
 def set_is_satisfiable
   (Γ : Set Formula_) :
   Prop :=
-  ∃ (V : PropValuation), ∀ (F : Formula_), F ∈ Γ → satisfies V F
+  ∃ (V : Valuation), ∀ (F : Formula_), F ∈ Γ → satisfies V F
 
 
 /--
@@ -140,7 +140,7 @@ example
 
 example
   (P Q : Formula_) :
-  are_logically_equivalent P Q ↔ ∀ (V : PropValuation), eval V P ↔ eval V Q :=
+  are_logically_equivalent P Q ↔ ∀ (V : Valuation), eval V P ↔ eval V Q :=
   by
   unfold are_logically_equivalent
   unfold is_tautology

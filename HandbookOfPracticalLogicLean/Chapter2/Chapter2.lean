@@ -28,7 +28,7 @@ def atom_occurs_in
 
 
 theorem theorem_2_2
-  (V V' : PropValuation)
+  (V V' : Valuation)
   (F : Formula_)
   (h1 : ∀ (A : String), atom_occurs_in A F → (V A ↔ V' A)) :
   eval V F ↔ eval V' F :=
@@ -84,7 +84,7 @@ def replace_atom_one_rec
 
 
 theorem theorem_2_3_one
-  (V : PropValuation)
+  (V : Valuation)
   (A : String)
   (P : Formula_)
   (F : Formula_) :
@@ -134,7 +134,7 @@ theorem corollary_2_4_one
 
 
 theorem theorem_2_5_one
-  (V : PropValuation)
+  (V : Valuation)
   (P Q : Formula_)
   (X : String)
   (R : Formula_)
@@ -147,7 +147,7 @@ theorem theorem_2_5_one
 
 
 theorem corollary_2_6_one
-  (V : PropValuation)
+  (V : Valuation)
   (P Q : Formula_)
   (X : String)
   (R : Formula_)
@@ -177,7 +177,7 @@ def replace_atom_all_rec
 
 
 theorem theorem_2_3_all
-  (V : PropValuation)
+  (V : Valuation)
   (τ : String → Formula_)
   (F : Formula_) :
   eval V (replace_atom_all_rec τ F) ↔ eval (eval V ∘ τ) F :=
@@ -221,7 +221,7 @@ theorem corollary_2_4_all
 
 
 theorem theorem_2_5_all
-  (V : PropValuation)
+  (V : Valuation)
   (τ1 τ2 : String → Formula_)
   (F : Formula_)
   (h1 : ∀ (X : String), eval V (τ1 X) ↔ eval V (τ2 X)) :
@@ -236,7 +236,7 @@ theorem theorem_2_5_all
 
 
 theorem corollary_2_6_all
-  (V : PropValuation)
+  (V : Valuation)
   (τ1 τ2 : String → Formula_)
   (F : Formula_)
   (h1 : ∀ (X : String), are_logically_equivalent (τ1 X) (τ2 X)) :
@@ -465,7 +465,7 @@ lemma is_repl_of_formula_in_formula_fun_iff_is_repl_of_formula_in_formula
 
 
 example
-  (V : PropValuation)
+  (V : Valuation)
   (R S : Formula_)
   (P_R P_S : Formula_)
   (h1 : is_repl_of_formula_in_formula R S P_R P_S)
@@ -548,7 +548,7 @@ example
 
 
 theorem theorem_2_7
-  (V : PropValuation)
+  (V : Valuation)
   (F : Formula_)
   (h1 : has_dual F) :
   eval V (dual F) ↔ Not (eval (Not ∘ V) F) :=
@@ -843,7 +843,7 @@ example
 
 
 lemma simplify_aux_is_logically_equivalent
-  (V : PropValuation)
+  (V : Valuation)
   (F : Formula_) :
   eval V F ↔ eval V (simplify_aux F) :=
   by
@@ -884,7 +884,7 @@ def simplify :
 
 
 lemma simplify_is_logically_equivalent
-  (V : PropValuation)
+  (V : Valuation)
   (F : Formula_) :
   eval V F ↔ eval V (simplify F) :=
   by
@@ -988,7 +988,7 @@ end
 
 
 theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v1
-  (V : PropValuation)
+  (V : Valuation)
   (F : Formula_) :
   eval V (to_nnf_neg_v1 F) ↔ ¬ eval V (to_nnf_v1 F) :=
   by
@@ -1021,7 +1021,7 @@ theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v1
 
 
 example
-  (V : PropValuation)
+  (V : Valuation)
   (F : Formula_) :
   eval V F ↔ eval V (to_nnf_v1 F) :=
   by
@@ -1151,7 +1151,7 @@ end
 
 
 theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v2
-  (V : PropValuation)
+  (V : Valuation)
   (F : Formula_) :
   eval V (to_nnf_neg_v2 F) ↔ ¬ eval V (to_nnf_v2 F) :=
   by
@@ -1183,7 +1183,7 @@ theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v2
 
 
 example
-  (V : PropValuation)
+  (V : Valuation)
   (F : Formula_) :
   eval V F ↔ eval V (to_nnf_v2 F) :=
   by
