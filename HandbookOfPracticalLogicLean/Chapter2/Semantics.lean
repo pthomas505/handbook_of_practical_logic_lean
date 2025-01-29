@@ -43,20 +43,47 @@ def satisfies
   Prop :=
   eval V F
 
+
 def Formula_.is_tautology
   (F : Formula_) :
   Prop :=
   ∀ (V : PropValuation), satisfies V F
+
 
 def Formula_.is_satisfiable
   (F : Formula_) :
   Prop :=
   ∃ (V : PropValuation), satisfies V F
 
+
 def Formula_.is_unsatisfiable
   (F : Formula_) :
   Prop :=
   ¬ ∃ (V : PropValuation), satisfies V F
+
+
+def set_is_satisfiable
+  (Γ : Set Formula_) :
+  Prop :=
+  ∃ (V : PropValuation), ∀ (F : Formula_), F ∈ Γ → satisfies V F
+
+
+/--
+  `is_logical_consequence P Q` := True if and only if `Q` is a logical consequence of `P`.
+-/
+def is_logical_consequence
+  (P Q : Formula_) :
+  Prop :=
+  (P.imp_ Q).is_tautology
+
+
+/--
+  `are_logically_equivalent P Q` := True if and only if `P` and `Q` are logically equivalent.
+-/
+def are_logically_equivalent
+  (P Q : Formula_) :
+  Prop :=
+  (P.iff_ Q).is_tautology
 
 
 example
@@ -69,12 +96,6 @@ example
   unfold is_satisfiable
   apply Exists.intro default
   apply h1
-
-
-def set_is_satisfiable
-  (Γ : Set Formula_) :
-  Prop :=
-  ∃ (V : PropValuation), ∀ (F : Formula_), F ∈ Γ → satisfies V F
 
 
 example
@@ -108,31 +129,11 @@ example
   exact not_not
 
 
-/--
-  `is_logical_consequence P Q` := True if and only if `Q` is a logical consequence of `P`.
--/
-def is_logical_consequence
-  (P Q : Formula_) :
-  Prop :=
-  (P.imp_ Q).is_tautology
-
-
-/--
-  `are_logically_equivalent P Q` := True if and only if `P` and `Q` are logically equivalent.
--/
-def are_logically_equivalent
-  (P Q : Formula_) :
-  Prop :=
-  (P.iff_ Q).is_tautology
-
-
 example
-  (P Q : Formula_)
-  (h1 : are_logically_equivalent P Q) :
-  ∀ (V : PropValuation), eval V P ↔ eval V Q :=
+  (P Q : Formula_) :
+  are_logically_equivalent P Q ↔ ∀ (V : PropValuation), eval V P ↔ eval V Q :=
   by
-  unfold are_logically_equivalent at h1
-  unfold is_tautology at h1
-  unfold satisfies at h1
-  unfold eval at h1
-  exact h1
+  unfold are_logically_equivalent
+  unfold is_tautology
+  unfold satisfies
+  simp only [eval]
