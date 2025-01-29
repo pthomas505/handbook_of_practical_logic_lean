@@ -6,13 +6,22 @@ import Mathlib.Tactic
 set_option autoImplicit false
 
 
+namespace Prop_
+
+
 open Formula_
 
 
+/--
+  The assignment of a truth value to each atom.
+-/
 def PropValuation : Type := String → Prop
   deriving Inhabited
 
 
+/--
+  `eval V F` := True if and only if the formula `F` evaluates to `True` given the valuation `V`.
+-/
 def eval
   (V : PropValuation) :
   Formula_ → Prop
