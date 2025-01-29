@@ -13,7 +13,7 @@ open Formula_
 
 
 /--
-  The assignment of a truth value to each atom.
+  A mapping from the set of atoms to the set of truth values `{False, True}`.
 -/
 def Valuation : Type := String → Prop
   deriving Inhabited
