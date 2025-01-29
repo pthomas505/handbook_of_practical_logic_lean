@@ -1,5 +1,3 @@
-import MathlibExtraLean.FunctionUpdateITE
-
 import HandbookOfPracticalLogicLean.Chapter2.Semantics
 import HandbookOfPracticalLogicLean.Chapter2.SubFormula
 
@@ -13,13 +11,6 @@ namespace Prop_
 
 
 open Formula_
-
-
-
-
-
-
-
 
 
 def Formula_.is_literal :

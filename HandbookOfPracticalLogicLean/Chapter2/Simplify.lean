@@ -13,7 +13,6 @@ namespace Prop_
 open Formula_
 
 
-
 def simplify_aux :
   Formula_ → Formula_
   | not_ false_ => true_
@@ -215,7 +214,6 @@ example
   unfold satisfies
   unfold eval
   apply simplify_is_logically_equivalent
-
 
 
 example
