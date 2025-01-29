@@ -52,46 +52,6 @@ instance
     infer_instance
 
 
-theorem theorem_2_2
-  (V V' : PropValuation)
-  (F : Formula_)
-  (h1 : ∀ (A : String), atom_occurs_in A F → (V A ↔ V' A)) :
-  eval V F ↔ eval V' F :=
-  by
-  induction F
-  all_goals
-    unfold eval
-  case false_ | true_ =>
-    rfl
-  case atom_ X =>
-    apply h1
-    unfold atom_occurs_in
-    rfl
-  case not_ phi ih =>
-    congr! 1
-    apply ih
-    intro X a1
-    apply h1
-    unfold atom_occurs_in
-    exact a1
-  case
-      and_ phi psi phi_ih psi_ih
-    | or_ phi psi phi_ih psi_ih
-    | imp_ phi psi phi_ih psi_ih
-    | iff_ phi psi phi_ih psi_ih =>
-    congr! 1
-    · apply phi_ih
-      intro X a1
-      apply h1
-      unfold atom_occurs_in
-      left
-      exact a1
-    · apply psi_ih
-      intro X a1
-      apply h1
-      unfold atom_occurs_in
-      right
-      exact a1
 
 
 def satisfies
@@ -193,6 +153,48 @@ example
   unfold satisfies at h1
   unfold eval at h1
   exact h1
+
+
+theorem theorem_2_2
+  (V V' : PropValuation)
+  (F : Formula_)
+  (h1 : ∀ (A : String), atom_occurs_in A F → (V A ↔ V' A)) :
+  eval V F ↔ eval V' F :=
+  by
+  induction F
+  all_goals
+    unfold eval
+  case false_ | true_ =>
+    rfl
+  case atom_ X =>
+    apply h1
+    unfold atom_occurs_in
+    rfl
+  case not_ phi ih =>
+    congr! 1
+    apply ih
+    intro X a1
+    apply h1
+    unfold atom_occurs_in
+    exact a1
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    congr! 1
+    · apply phi_ih
+      intro X a1
+      apply h1
+      unfold atom_occurs_in
+      left
+      exact a1
+    · apply psi_ih
+      intro X a1
+      apply h1
+      unfold atom_occurs_in
+      right
+      exact a1
 
 
 def replace_atom_one_rec
