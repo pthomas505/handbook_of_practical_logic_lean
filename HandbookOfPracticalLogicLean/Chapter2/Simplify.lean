@@ -37,6 +37,33 @@ def simplify_aux :
   | phi => phi
 
 
+def simplify_aux_not :
+  Formula_ → Formula_
+  | not_ false_ => true_
+  | not_ true_ => false_
+  | not_ (not_ phi) => phi
+  | phi => phi
+
+
+example :
+  simplify_aux_not (not_ false_) = true_ :=
+  by
+  simp only [simplify_aux_not]
+
+
+example :
+  simplify_aux_not (not_ true_) = false_ :=
+  by
+  simp only [simplify_aux_not]
+
+
+example
+  (F : Formula_) :
+  simplify_aux_not (not_ (not_ F)) = F :=
+  by
+  simp only [simplify_aux_not]
+
+
 def simplify_aux_and :
   Formula_ → Formula_
   | and_ _ false_ => false_
@@ -73,15 +100,15 @@ example
 
 example
   (F : Formula_) :
-  simplify_aux_and (and_ true_ F) = F :=
+  simplify_aux_and (and_ F true_) = F :=
   by
   unfold simplify_aux_and
   split
   case _ phi psi h1 =>
     cases h1
-    rfl
   case _ phi psi h1 h2 =>
     cases h2
+    rfl
   case _ phi psi h1 h2 =>
     cases h2
     rfl
@@ -93,15 +120,15 @@ example
 
 example
   (F : Formula_) :
-  simplify_aux_and (and_ F true_) = F :=
+  simplify_aux_and (and_ true_ F) = F :=
   by
   unfold simplify_aux_and
   split
   case _ phi psi h1 =>
     cases h1
+    rfl
   case _ phi psi h1 h2 =>
     cases h2
-    rfl
   case _ phi psi h1 h2 =>
     cases h2
     rfl
