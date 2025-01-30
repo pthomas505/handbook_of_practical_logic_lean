@@ -37,6 +37,9 @@ def simplify_aux :
   | phi => phi
 
 
+-------------------------------------------------------------------------------
+
+
 def simplify_aux_not :
   Formula_ → Formula_
   | not_ false_ => true_
@@ -63,6 +66,7 @@ example
   by
   simp only [simplify_aux_not]
 
+-------------------------------------------------------------------------------
 
 def simplify_aux_and :
   Formula_ → Formula_
@@ -162,6 +166,7 @@ example
     contradiction
   · tauto
 
+-------------------------------------------------------------------------------
 
 def simplify_aux_or :
   Formula_ → Formula_
@@ -258,6 +263,18 @@ example
     cases ih_3
     contradiction
   · tauto
+
+-------------------------------------------------------------------------------
+
+def simplify_aux_imp :
+  Formula_ → Formula_
+  | imp_ false_ _ => true_
+  | imp_ _ true_ => true_
+  | imp_ true_ phi => phi
+  | imp_ phi false_ => not_ phi
+  | phi => phi
+
+-------------------------------------------------------------------------------
 
 
 lemma simplify_aux_is_logically_equivalent
