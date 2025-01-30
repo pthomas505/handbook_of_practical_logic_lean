@@ -276,6 +276,15 @@ def simplify_aux_imp :
 
 -------------------------------------------------------------------------------
 
+def simplify_aux_iff :
+  Formula_ → Formula_
+  | iff_ phi true_ => phi
+  | iff_ true_ phi => phi
+  | iff_ phi false_ => not_ phi
+  | iff_ false_ phi => not_ phi
+  | phi => phi
+
+-------------------------------------------------------------------------------
 
 lemma simplify_aux_is_logically_equivalent
   (V : Valuation)
