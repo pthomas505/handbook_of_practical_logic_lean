@@ -86,15 +86,15 @@ example
   by
   unfold simplify_aux_and
   split
-  case _ phi psi h1 =>
+  case _ phi psi ih_1 =>
     rfl
-  case _ phi psi h1 h2 =>
+  case _ phi psi ih_1 ih_2 =>
     rfl
-  case _ phi psi h1 h2 =>
-    cases h2
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
     rfl
-  case _ phi psi h1 h2 h3 =>
-    cases h3
+  case _ phi psi ih_1 ih_2 ih_3 =>
+    cases ih_3
   · tauto
 
 
@@ -104,16 +104,16 @@ example
   by
   unfold simplify_aux_and
   split
-  case _ phi psi h1 =>
-    cases h1
-  case _ phi psi h1 h2 =>
-    cases h2
+  case _ phi psi ih_1 =>
+    cases ih_1
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
     rfl
-  case _ phi psi h1 h2 =>
-    cases h2
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
     rfl
-  case _ phi psi h1 h2 h3 =>
-    cases h3
+  case _ phi psi ih_1 ih_2 ih_3 =>
+    cases ih_3
     rfl
   · tauto
 
@@ -124,16 +124,16 @@ example
   by
   unfold simplify_aux_and
   split
-  case _ phi psi h1 =>
-    cases h1
+  case _ phi psi ih_1 =>
+    cases ih_1
     rfl
-  case _ phi psi h1 h2 =>
-    cases h2
-  case _ phi psi h1 h2 =>
-    cases h2
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
     rfl
-  case _ phi psi h1 h2 h3 =>
-    cases h3
+  case _ phi psi ih_1 ih_2 ih_3 =>
+    cases ih_3
     rfl
   · tauto
 
@@ -147,6 +147,103 @@ example
   simplify_aux_and (and_ P Q) = and_ P Q :=
   by
   unfold simplify_aux_and
+  split
+  case _ phi psi ih_1 =>
+    cases ih_1
+    contradiction
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
+    contradiction
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
+    contradiction
+  case _ phi psi ih_1 ih_2 ih_3 =>
+    cases ih_3
+    contradiction
+  · tauto
+
+
+def simplify_aux_or :
+  Formula_ → Formula_
+  | or_ phi false_ => phi
+  | or_ false_ phi => phi
+  | or_ _ true_ => true_
+  | or_ true_ _ => true_
+  | phi => phi
+
+
+example
+  (F : Formula_) :
+  simplify_aux_or (or_ F false_) = F :=
+  by
+  simp only [simplify_aux_or]
+
+
+example
+  (F : Formula_) :
+  simplify_aux_or (or_ false_ F) = F :=
+  by
+  unfold simplify_aux_or
+  split
+  case _ phi psi ih_1 =>
+    cases ih_1
+    rfl
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
+    rfl
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
+    rfl
+  case _ phi psi ih_1 ih_2 ih_3 =>
+    cases ih_3
+  · tauto
+
+
+example
+  (F : Formula_) :
+  simplify_aux_or (or_ F true_) = true_ :=
+  by
+  unfold simplify_aux_or
+  split
+  case _ phi psi ih_1 =>
+    cases ih_1
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
+    rfl
+  case _ phi psi ih_1 ih_2 =>
+    rfl
+  case _ phi psi ih_1 ih_2 ih_3 =>
+    rfl
+  · tauto
+
+
+example
+  (F : Formula_) :
+  simplify_aux_or (or_ true_ F) = true_ :=
+  by
+  unfold simplify_aux_or
+  split
+  case _ phi psi ih_1 =>
+    cases ih_1
+    rfl
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
+  case _ phi psi ih_1 ih_2 =>
+    rfl
+  case _ phi psi ih_1 ih_2 ih_3 =>
+    rfl
+  · tauto
+
+
+example
+  (P Q : Formula_)
+  (h1 : ¬ P = false_)
+  (h2 : ¬ P = true_)
+  (h3 : ¬ Q = false_)
+  (h4 : ¬ Q = true_) :
+  simplify_aux_or (or_ P Q) = or_ P Q :=
+  by
+  unfold simplify_aux_or
   split
   case _ phi psi ih_1 =>
     cases ih_1
