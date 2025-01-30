@@ -274,6 +274,101 @@ def simplify_aux_imp :
   | imp_ phi false_ => not_ phi
   | phi => phi
 
+
+example
+  (F : Formula_) :
+  simplify_aux_imp (imp_ false_ F) = true_ :=
+  by
+  simp only [simplify_aux_imp]
+
+
+example
+  (F : Formula_) :
+  simplify_aux_imp (imp_ F true_) = true_ :=
+  by
+  unfold simplify_aux_imp
+  split
+  case _ phi psi ih_1 =>
+    rfl
+  case _ phi psi ih_1 ih_2 =>
+    rfl
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
+    rfl
+  case _ phi psi ih_1 ih_2 ih_3 =>
+    cases ih_3
+  · tauto
+
+
+example
+  (F : Formula_) :
+  simplify_aux_imp (imp_ true_ F) = F :=
+  by
+  unfold simplify_aux_imp
+  split
+  case _ phi psi ih_1 =>
+    cases ih_1
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
+    rfl
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
+    rfl
+  case _ phi psi ih_1 ih_2 ih_3 =>
+    cases ih_3
+    exfalso
+    apply ih_2
+    rfl
+  · tauto
+
+
+example
+  (F : Formula_)
+  (h1 : ¬ F = false_)
+  (h2 : ¬ F = true_) :
+  simplify_aux_imp (imp_ F false_) = not_ F :=
+  by
+  unfold simplify_aux_imp
+  split
+  case _ phi psi ih_1 =>
+    cases ih_1
+    contradiction
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
+    contradiction
+  case _ phi psi ih_1 ih_2 ih_3 =>
+    cases ih_3
+    rfl
+  · tauto
+
+
+example
+  (P Q : Formula_)
+  (h1 : ¬ P = false_)
+  (h2 : ¬ P = true_)
+  (h3 : ¬ Q = false_)
+  (h4 : ¬ Q = true_) :
+  simplify_aux_imp (imp_ P Q) = imp_ P Q :=
+  by
+  unfold simplify_aux_imp
+  split
+  case _ phi psi ih_1 =>
+    cases ih_1
+    contradiction
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
+    contradiction
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
+    contradiction
+  case _ phi psi ih_1 ih_2 ih_3 =>
+    cases ih_3
+    contradiction
+  · tauto
+
+
 -------------------------------------------------------------------------------
 
 def simplify_aux_iff :
