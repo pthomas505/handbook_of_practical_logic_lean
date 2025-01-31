@@ -14,9 +14,16 @@ namespace Prop_
 open Formula_
 
 
+/--
+  `replace_atom_one_rec A F P` :=
+
+  `A → F` in `P` for each occurrence of the atom `A` in the formula `P`
+
+  The result of simultaneously replacing each occurrence of the atom `A` in the formula `P` by an occurrence of the formula `F`.
+-/
 def replace_atom_one_rec
   (A : String)
-  (F : Formula_ ):
+  (F : Formula_ ) :
   Formula_ → Formula_
   | false_ => false_
   | true_ => true_
@@ -108,6 +115,9 @@ theorem corollary_2_6_one
   apply h1
 
 
+/--
+  `replace_atom_all_rec τ F` := The simultaneous replacement of each occurrence of any atom `A` in the formula `F` by `τ A`.
+-/
 def replace_atom_all_rec
   (τ : String → Formula_) :
   Formula_ → Formula_
@@ -438,3 +448,6 @@ example
     rewrite [ih_3]
     rewrite [ih_4]
     rfl
+
+
+#lint
