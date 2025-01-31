@@ -27,6 +27,9 @@ def Formula_.atom_set :
   | iff_ phi psi => phi.atom_set ∪ psi.atom_set
 
 
+/--
+  `atom_occurs_in A F` := True if and only if there is an occurrence of the atom `A` in the formula `F`.
+-/
 def atom_occurs_in
   (A : String) :
   Formula_ → Prop
