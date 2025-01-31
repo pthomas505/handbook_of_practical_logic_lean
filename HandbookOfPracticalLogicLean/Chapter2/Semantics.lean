@@ -46,6 +46,9 @@ instance
     infer_instance
 
 
+/--
+  `satisfies V F` := True if and only if the valuation `V` satisfies the formula `F`.
+-/
 def satisfies
   (V : Valuation)
   (F : Formula_) :
@@ -53,18 +56,27 @@ def satisfies
   eval V F
 
 
+/--
+  `Formula_.is_tautology F` := True if and only if the formula `F` is a tautology.
+-/
 def Formula_.is_tautology
   (F : Formula_) :
   Prop :=
   ∀ (V : Valuation), satisfies V F
 
 
+/--
+  `Formula_.is_satisfiable F` := True if and only if the formula `F` is satisfiable.
+-/
 def Formula_.is_satisfiable
   (F : Formula_) :
   Prop :=
   ∃ (V : Valuation), satisfies V F
 
 
+/--
+  `Formula_.is_unsatisfiable F` := True if and only if the formula `F` is not satisfiable.
+-/
 def Formula_.is_unsatisfiable
   (F : Formula_) :
   Prop :=
