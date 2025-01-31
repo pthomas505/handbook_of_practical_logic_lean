@@ -12,6 +12,9 @@ namespace Prop_
 open Formula_
 
 
+/--
+  `Formula_.has_dual F` := True if and only if there exists a dual of the formula `F`.
+-/
 def Formula_.has_dual :
   Formula_ → Prop
   | false_ => True
@@ -32,6 +35,9 @@ instance
     infer_instance
 
 
+/--
+  `Formula_.dual F` := The simultaneous exchange of `and_` for `or_`, `or_` for `and_`, `false_` for `true_` and `true_` for `false_` in the formula `F`.
+-/
 def Formula_.dual :
   Formula_ → Formula_
   | false_ => true_
@@ -174,3 +180,6 @@ theorem corollary_2_8_b
   intro V
   rewrite [s1]
   simp
+
+
+#lint

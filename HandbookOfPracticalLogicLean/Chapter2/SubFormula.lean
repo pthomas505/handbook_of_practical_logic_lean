@@ -76,3 +76,6 @@ instance
   by
   unfold is_proper_subformula
   infer_instance
+
+
+#lint
