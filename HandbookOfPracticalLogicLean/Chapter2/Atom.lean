@@ -109,3 +109,6 @@ theorem theorem_2_2
       unfold atom_occurs_in
       right
       exact a1
+
+
+#lint
