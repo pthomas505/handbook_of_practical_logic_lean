@@ -45,6 +45,20 @@ def Formula_.is_negative_literal :
   | not_ (atom_ _) => True
   | _ => False
 
+instance
+  (F : Formula_) :
+  Decidable (Formula_.is_negative_literal F) :=
+  by
+  induction F
+  case not_ phi ih =>
+    unfold is_negative_literal
+    split
+    all_goals
+      infer_instance
+  all_goals
+    simp only [is_negative_literal]
+    infer_instance
+
 
 /--
   `Formula_.is_positive_literal F` := True if and only if the formula `F` is a positive literal.
@@ -53,6 +67,15 @@ def Formula_.is_positive_literal :
   Formula_ → Prop
   | atom_ _ => True
   | _ => False
+
+instance
+  (F : Formula_) :
+  Decidable (Formula_.is_positive_literal F) :=
+  by
+  induction F
+  all_goals
+    simp only [is_positive_literal]
+    infer_instance
 
 
 /--
@@ -77,6 +100,20 @@ def Formula_.is_nnf :
   | and_ phi psi => phi.is_nnf ∧ psi.is_nnf
   | or_ phi psi => phi.is_nnf ∧ psi.is_nnf
   | _ => False
+
+instance
+  (F : Formula_) :
+  Decidable (Formula_.is_nnf F) :=
+  by
+  induction F
+  any_goals
+    simp only [is_nnf]
+    infer_instance
+  case not_ phi ih =>
+    cases phi
+    all_goals
+      simp only [is_nnf]
+      infer_instance
 
 
 -------------------------------------------------------------------------------
