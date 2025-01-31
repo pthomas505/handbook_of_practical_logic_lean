@@ -37,6 +37,16 @@ def simplify_aux :
   | phi => phi
 
 
+def simplify :
+  Formula_ → Formula_
+  | not_ phi => simplify_aux (not_ (simplify phi))
+  | and_ phi psi => simplify_aux (and_ (simplify phi) (simplify psi))
+  | or_ phi psi => simplify_aux (or_ (simplify phi) (simplify psi))
+  | imp_ phi psi => simplify_aux (imp_ (simplify phi) (simplify psi))
+  | iff_ phi psi => simplify_aux (iff_ (simplify phi) (simplify psi))
+  | phi => phi
+
+
 -------------------------------------------------------------------------------
 
 
@@ -519,16 +529,6 @@ lemma simplify_aux_is_logically_equivalent
         simp only [eval]
       all_goals
         tauto
-
-
-def simplify :
-  Formula_ → Formula_
-  | not_ phi => simplify_aux (not_ (simplify phi))
-  | and_ phi psi => simplify_aux (and_ (simplify phi) (simplify psi))
-  | or_ phi psi => simplify_aux (or_ (simplify phi) (simplify psi))
-  | imp_ phi psi => simplify_aux (imp_ (simplify phi) (simplify psi))
-  | iff_ phi psi => simplify_aux (iff_ (simplify phi) (simplify psi))
-  | phi => phi
 
 
 lemma simplify_is_logically_equivalent
