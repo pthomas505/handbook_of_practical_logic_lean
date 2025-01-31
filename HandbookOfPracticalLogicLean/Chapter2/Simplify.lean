@@ -21,19 +21,19 @@ def simplify_aux :
   | and_ _ false_ => false_
   | and_ false_ _ => false_
   | and_ phi true_ => phi
-  | and_ true_ phi => phi
+  | and_ true_ psi => psi
   | or_ phi false_ => phi
-  | or_ false_ phi => phi
+  | or_ false_ psi => psi
   | or_ _ true_ => true_
   | or_ true_ _ => true_
   | imp_ false_ _ => true_
   | imp_ _ true_ => true_
-  | imp_ true_ phi => phi
+  | imp_ true_ psi => psi
   | imp_ phi false_ => not_ phi
   | iff_ phi true_ => phi
-  | iff_ true_ phi => phi
+  | iff_ true_ psi => psi
   | iff_ phi false_ => not_ phi
-  | iff_ false_ phi => not_ phi
+  | iff_ false_ psi => not_ psi
   | phi => phi
 
 
@@ -166,6 +166,32 @@ example
     contradiction
   · tauto
 
+
+lemma simplify_aux_and_cases
+  (P Q : Formula_) :
+  simplify_aux (and_ P Q) = P ∨
+  simplify_aux (and_ P Q) = Q ∨
+  simplify_aux (and_ P Q) = and_ P Q :=
+  by
+  unfold simplify_aux
+  split
+  any_goals
+    contradiction
+  any_goals
+    tauto
+  case _ phi psi ih_1 =>
+    cases ih_1
+    tauto
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
+    tauto
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
+    tauto
+  case _ phi psi ih_1 ih_2 ih_3 =>
+    cases ih_3
+    tauto
+
 -------------------------------------------------------------------------------
 
 def simplify_aux_or :
@@ -263,6 +289,32 @@ example
     cases ih_3
     contradiction
   · tauto
+
+
+lemma simplify_aux_or_cases
+  (P Q : Formula_) :
+  simplify_aux (or_ P Q) = P ∨
+  simplify_aux (or_ P Q) = Q ∨
+  simplify_aux (or_ P Q) = or_ P Q :=
+  by
+  unfold simplify_aux
+  split
+  any_goals
+    contradiction
+  any_goals
+    tauto
+  case _ phi psi ih_1 =>
+    cases ih_1
+    tauto
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
+    tauto
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
+    tauto
+  case _ phi psi ih_1 ih_2 ih_3 =>
+    cases ih_3
+    tauto
 
 -------------------------------------------------------------------------------
 
@@ -369,6 +421,26 @@ example
   · tauto
 
 
+lemma simplify_aux_imp_cases
+  (P Q : Formula_) :
+  simplify_aux (imp_ P Q) = true_ ∨
+  simplify_aux (imp_ P Q) = Q ∨
+  simplify_aux (imp_ P Q) = not_ P ∨
+  simplify_aux (imp_ P Q) = imp_ P Q :=
+  by
+  unfold simplify_aux
+  split
+  any_goals
+    contradiction
+  any_goals
+    tauto
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
+    tauto
+  case _ phi psi ih_1 ih_2 ih_3 =>
+    cases ih_3
+    tauto
+
 -------------------------------------------------------------------------------
 
 def simplify_aux_iff :
@@ -378,6 +450,33 @@ def simplify_aux_iff :
   | iff_ phi false_ => not_ phi
   | iff_ false_ phi => not_ phi
   | phi => phi
+
+
+lemma simplify_aux_iff_cases
+  (P Q : Formula_) :
+  simplify_aux (iff_ P Q) = P ∨
+  simplify_aux (iff_ P Q) = Q ∨
+  simplify_aux (iff_ P Q) = not_ P ∨
+  simplify_aux (iff_ P Q) = not_ Q ∨
+  simplify_aux (iff_ P Q) = iff_ P Q :=
+  by
+  unfold simplify_aux
+  split
+  any_goals
+    contradiction
+  case _ phi psi ih_1 =>
+    cases ih_1
+    tauto
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
+    tauto
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
+    tauto
+  case _ phi psi ih_1 ih_2 ih_3 =>
+    cases ih_3
+    tauto
+  · tauto
 
 -------------------------------------------------------------------------------
 
@@ -459,175 +558,3 @@ example
   unfold satisfies
   unfold eval
   apply simplify_is_logically_equivalent
-
-
-example
-  (F : Formula_) :
-  ¬ is_proper_subformula false_ (simplify F) ∧
-  ¬ is_proper_subformula true_ (simplify F) :=
-  by
-  induction F
-  case and_ phi psi phi_ih psi_ih =>
-    simp only [simplify]
-    simp only [is_proper_subformula] at phi_ih
-
-    have s1 : simplify phi = true_ ∨ ¬ is_subformula true_ (simplify phi) :=
-    by
-      tauto
-
-    have s2 : simplify phi = false_ ∨ ¬ is_subformula false_ (simplify phi) :=
-    by
-      tauto
-
-    clear phi_ih
-
-    simp only [is_proper_subformula] at psi_ih
-
-    have s3 : simplify psi = true_ ∨ ¬ is_subformula true_ (simplify psi) :=
-    by
-      tauto
-
-    have s4 : simplify psi = false_ ∨ ¬ is_subformula false_ (simplify psi) :=
-    by
-      tauto
-
-    clear psi_ih
-
-    constructor
-    · cases s1
-      case _ s1 =>
-        cases s2
-        case _ s2 =>
-          rewrite [s1] at s2
-          contradiction
-        case _ s2 =>
-          rewrite [s1]
-          cases s3
-          case _ s3 =>
-            rewrite [s3]
-            simp only [simplify_aux]
-            simp only [is_proper_subformula]
-            simp only [is_subformula]
-            tauto
-          case _ s3 =>
-            cases s4
-            case _ s4 =>
-              rewrite [s4]
-              simp only [simplify_aux]
-              simp only [is_proper_subformula]
-              simp only [is_subformula]
-              tauto
-            case _ s4 =>
-              have s5 : ¬ simplify psi = true_ :=
-              by
-                apply not_is_subformula_imp_not_equal
-                exact s3
-
-              have s6 : ¬ simplify psi = false_ :=
-              by
-                apply not_is_subformula_imp_not_equal
-                exact s4
-
-              simp only [simplify_aux]
-              simp only [is_proper_subformula]
-              tauto
-      case _ s1 =>
-        cases s2
-        case _ s2 =>
-          rewrite [s2]
-          cases s3
-          case _ s3 =>
-            rewrite [s3]
-            simp only [simplify_aux]
-            simp only [is_proper_subformula]
-            tauto
-          case _ s3 =>
-            cases s4
-            case _ s4 =>
-              rewrite [s4]
-              simp only [simplify_aux]
-              simp only [is_proper_subformula]
-              tauto
-            case _ s4 =>
-              have s5 : ¬ simplify psi = true_ :=
-              by
-                apply not_is_subformula_imp_not_equal
-                exact s3
-
-              have s6 : ¬ simplify psi = false_ :=
-              by
-                apply not_is_subformula_imp_not_equal
-                exact s4
-
-              simp only [simplify_aux]
-              simp only [is_proper_subformula]
-              tauto
-        case _ s2 =>
-          cases s3
-          case _ s3 =>
-            rewrite [s3]
-            cases s4
-            case _ s4 =>
-              rewrite [s3] at s4
-              contradiction
-            case _ s4 =>
-              have s5 : ¬ simplify phi = true_ :=
-              by
-                apply not_is_subformula_imp_not_equal
-                exact s1
-
-              have s6 : ¬ simplify phi = false_ :=
-              by
-                apply not_is_subformula_imp_not_equal
-                exact s2
-
-              simp only [simplify_aux]
-              simp only [is_proper_subformula]
-              tauto
-          case _ s3 =>
-            cases s4
-            case _ s4 =>
-              rewrite [s4]
-
-              have s5 : ¬ simplify phi = true_ :=
-              by
-                apply not_is_subformula_imp_not_equal
-                exact s1
-
-              have s6 : ¬ simplify phi = false_ :=
-              by
-                apply not_is_subformula_imp_not_equal
-                exact s2
-
-              simp only [simplify_aux]
-              simp only [is_proper_subformula]
-              tauto
-            case _ s4 =>
-              have s5 : ¬ simplify phi = true_ :=
-              by
-                apply not_is_subformula_imp_not_equal
-                exact s1
-
-              have s6 : ¬ simplify phi = false_ :=
-              by
-                apply not_is_subformula_imp_not_equal
-                exact s2
-
-              have s7 : ¬ simplify psi = true_ :=
-              by
-                apply not_is_subformula_imp_not_equal
-                exact s3
-
-              have s8 : ¬ simplify psi = false_ :=
-              by
-                apply not_is_subformula_imp_not_equal
-                exact s4
-
-              simp only [simplify_aux]
-              simp_all only [and_.injEq, and_false, implies_true, false_and]
-              simp only [is_proper_subformula]
-              simp only [is_subformula]
-              tauto
-    · sorry
-  all_goals
-    sorry
