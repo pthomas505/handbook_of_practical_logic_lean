@@ -36,7 +36,7 @@ instance
 
 
 /--
-  `Formula_.dual F` := The simultaneous exchange of `and_` for `or_`, `or_` for `and_`, `false_` for `true_` and `true_` for `false_` in the formula `F`.
+  `Formula_.dual F` := The result of simultaneously exchanging `true_` for `false_`, `false_` for `true_`, `or_` for `and_`, and `and_` for `or_`,  in the formula `F`.
 -/
 def Formula_.dual :
   Formula_ → Formula_

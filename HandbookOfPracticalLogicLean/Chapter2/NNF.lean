@@ -13,6 +13,9 @@ namespace Prop_
 open Formula_
 
 
+/--
+  `Formula_.is_literal F` := True if and only if the formula `F` is an atomic formula or the negation of an atomic formula.
+-/
 def Formula_.is_literal :
   Formula_ → Prop
   | atom_ _ => True
@@ -20,18 +23,27 @@ def Formula_.is_literal :
   | _ => False
 
 
+/--
+  `Formula_.is_negative_literal F` := True if and only if the formula `F` is a negative literal.
+-/
 def Formula_.is_negative_literal :
   Formula_ → Prop
   | not_ (atom_ _) => True
   | _ => False
 
 
+/--
+  `Formula_.is_positive_literal F` := True if and only if the formula `F` is a positive literal.
+-/
 def Formula_.is_positive_literal :
   Formula_ → Prop
   | atom_ _ => True
   | _ => False
 
 
+/--
+  `negate_literal F` := The result of negating the formula `F` if `F` is a literal.
+-/
 def negate_literal :
   Formula_ → Formula_
   | atom_ X => not_ (atom_ X)
@@ -39,6 +51,9 @@ def negate_literal :
   | phi => phi
 
 
+/--
+  `Formula_.is_nnf F` := True if and only if the formula `F` is in negation normal form.
+-/
 def Formula_.is_nnf :
   Formula_ → Prop
   | false_ => True
@@ -54,6 +69,9 @@ def Formula_.is_nnf :
 
 
 mutual
+/--
+  `to_nnf_v1 F` := The result of translating the formula `F` to a logically equivalent formula in negation normal form.
+-/
 def to_nnf_v1 :
   Formula_ → Formula_
   | not_ phi => to_nnf_neg_v1 phi
@@ -63,6 +81,9 @@ def to_nnf_v1 :
   | iff_ phi psi => or_ (and_ (to_nnf_v1 phi) (to_nnf_v1 psi)) (and_ (to_nnf_neg_v1 phi) (to_nnf_neg_v1 psi))
   | phi => phi
 
+/--
+  `to_nnf_neg_v1 F` := The result of translating the formula `not_ F` to a logically equivalent formula in negation normal form.
+-/
 def to_nnf_neg_v1 :
   Formula_ → Formula_
   | false_ => true_
@@ -219,6 +240,9 @@ example
 
 
 mutual
+/--
+  `to_nnf_v2 F` := The result of translating the formula `F` to a logically equivalent formula in negation normal form.
+-/
 def to_nnf_v2 :
   Formula_ → Formula_
   | not_ phi => to_nnf_neg_v2 phi
@@ -228,6 +252,9 @@ def to_nnf_v2 :
   | iff_ phi psi => or_ (and_ (to_nnf_v2 phi) (to_nnf_v2 psi)) (and_ (to_nnf_neg_v2 phi) (to_nnf_neg_v2 psi))
   | phi => phi
 
+/--
+  `to_nnf_neg_v2 F` := The result of translating the formula `not_ F` to a logically equivalent formula in negation normal form.
+-/
 def to_nnf_neg_v2 :
   Formula_ → Formula_
   | not_ phi => to_nnf_v2 phi
@@ -433,3 +460,6 @@ example
 
 
 -------------------------------------------------------------------------------
+
+
+#lint
