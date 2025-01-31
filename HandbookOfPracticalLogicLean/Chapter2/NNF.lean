@@ -19,21 +19,25 @@ def Formula_.is_literal :
   | not_ (atom_ _) => True
   | _ => False
 
+
 def Formula_.is_negative_literal :
   Formula_ → Prop
   | not_ (atom_ _) => True
   | _ => False
+
 
 def Formula_.is_positive_literal :
   Formula_ → Prop
   | atom_ _ => True
   | _ => False
 
+
 def negate_literal :
   Formula_ → Formula_
   | atom_ X => not_ (atom_ X)
   | not_ (atom_ X) => atom_ X
   | phi => phi
+
 
 def Formula_.is_nnf :
   Formula_ → Prop

@@ -12,6 +12,9 @@ namespace Prop_
 open Formula_
 
 
+/--
+  `Formula_.atom_set F` := The set of all of the atoms that have an occurrence in the formula `F`.
+-/
 def Formula_.atom_set :
   Formula_ → Finset String
   | false_ => ∅
