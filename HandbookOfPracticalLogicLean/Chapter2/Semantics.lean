@@ -83,6 +83,9 @@ def Formula_.is_unsatisfiable
   ¬ ∃ (V : Valuation), satisfies V F
 
 
+/--
+  `set_is_satisfiable Γ` := True if and only if there exists a valuation that simultaneously satisfies every formula in the set of formulas `Γ`.
+-/
 def set_is_satisfiable
   (Γ : Set Formula_) :
   Prop :=
@@ -158,3 +161,6 @@ example
   unfold is_tautology
   unfold satisfies
   simp only [eval]
+
+
+#lint
