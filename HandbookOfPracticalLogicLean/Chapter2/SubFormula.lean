@@ -12,6 +12,9 @@ namespace Prop_
 open Formula_
 
 
+/--
+  `is_subformula F F'` := True if and only if `F` is a subformula of the formula `F'`.
+-/
 def is_subformula
   (F : Formula_) :
   Formula_ → Prop
@@ -59,6 +62,9 @@ lemma not_is_subformula_imp_not_equal
     tauto
 
 
+/--
+  `is_proper_subformula F F'` := True if and only if `F` is a proper subformula of the formula `F'`.
+-/
 def is_proper_subformula
   (F F' : Formula_) :
   Prop :=
