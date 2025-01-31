@@ -66,7 +66,9 @@ example
   by
   simp only [simplify_aux_not]
 
+
 -------------------------------------------------------------------------------
+
 
 def simplify_aux_and :
   Formula_ → Formula_
@@ -192,7 +194,9 @@ lemma simplify_aux_and_cases
     cases ih_3
     tauto
 
+
 -------------------------------------------------------------------------------
+
 
 def simplify_aux_or :
   Formula_ → Formula_
@@ -316,7 +320,9 @@ lemma simplify_aux_or_cases
     cases ih_3
     tauto
 
+
 -------------------------------------------------------------------------------
+
 
 def simplify_aux_imp :
   Formula_ → Formula_
@@ -441,7 +447,9 @@ lemma simplify_aux_imp_cases
     cases ih_3
     tauto
 
+
 -------------------------------------------------------------------------------
+
 
 def simplify_aux_iff :
   Formula_ → Formula_
@@ -478,7 +486,9 @@ lemma simplify_aux_iff_cases
     tauto
   · tauto
 
+
 -------------------------------------------------------------------------------
+
 
 lemma simplify_aux_is_logically_equivalent
   (V : Valuation)
