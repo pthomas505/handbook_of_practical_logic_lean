@@ -22,6 +22,20 @@ def Formula_.is_literal :
   | not_ (atom_ _) => True
   | _ => False
 
+instance
+  (F : Formula_) :
+  Decidable (Formula_.is_literal F) :=
+  by
+  induction F
+  case not_ phi ih =>
+    unfold is_literal
+    split
+    all_goals
+      infer_instance
+  all_goals
+    simp only [is_literal]
+    infer_instance
+
 
 /--
   `Formula_.is_negative_literal F` := True if and only if the formula `F` is a negative literal.
