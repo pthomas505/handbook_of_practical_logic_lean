@@ -61,7 +61,7 @@ instance
   (F : Formula_) :
   Decidable (satisfies V F) :=
   by
-  simp only [satisfies]
+  unfold satisfies
   infer_instance
 
 
