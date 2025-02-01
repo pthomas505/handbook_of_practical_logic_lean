@@ -55,6 +55,15 @@ def satisfies
   Prop :=
   eval V F
 
+instance
+  (V : Valuation)
+  [DecidablePred V]
+  (F : Formula_) :
+  Decidable (satisfies V F) :=
+  by
+  simp only [satisfies]
+  infer_instance
+
 
 /--
   `Formula_.is_tautology F` := True if and only if the formula `F` is a tautology.
