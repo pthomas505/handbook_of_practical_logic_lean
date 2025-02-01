@@ -42,6 +42,16 @@ def atom_occurs_in
   | imp_ phi psi => atom_occurs_in A phi ∨ atom_occurs_in A psi
   | iff_ phi psi => atom_occurs_in A phi ∨ atom_occurs_in A psi
 
+instance
+  (A : String)
+  (F : Formula_) :
+  Decidable (atom_occurs_in A F) :=
+  by
+  induction F
+  all_goals
+    simp only [atom_occurs_in]
+    infer_instance
+
 
 example
   (A : String)
