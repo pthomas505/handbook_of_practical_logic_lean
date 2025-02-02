@@ -522,8 +522,8 @@ def Formula_.is_pos_nnf :
   | true_ => True
   | atom_ _ => True
   | not_ (atom_ _) => False
-  | and_ phi psi => phi.is_nnf ∧ psi.is_nnf
-  | or_ phi psi => phi.is_nnf ∧ psi.is_nnf
+  | and_ phi psi => phi.is_pos_nnf ∧ psi.is_pos_nnf
+  | or_ phi psi => phi.is_pos_nnf ∧ psi.is_pos_nnf
   | _ => False
 
 instance
@@ -559,9 +559,65 @@ example
     simp only [is_pos_nnf] at h1
 
     simp only [is_nnf]
-    exact h1
+    tauto
   all_goals
     simp only [is_pos_nnf] at h1
+
+
+-------------------------------------------------------------------------------
+
+
+/--
+  `Formula_.is_neg_nnf F` := True if and only if the formula `F` is in negation normal form and every atom in `F` occurs negated.
+-/
+def Formula_.is_neg_nnf :
+  Formula_ → Prop
+  | false_ => True
+  | true_ => True
+  | atom_ _ => False
+  | not_ (atom_ _) => True
+  | and_ phi psi => phi.is_neg_nnf ∧ psi.is_neg_nnf
+  | or_ phi psi => phi.is_neg_nnf ∧ psi.is_neg_nnf
+  | _ => False
+
+instance
+  (F : Formula_) :
+  Decidable (Formula_.is_neg_nnf F) :=
+  by
+  induction F
+  case not_ phi ih =>
+    cases phi
+    all_goals
+      simp only [is_neg_nnf]
+      infer_instance
+  all_goals
+    simp only [is_neg_nnf]
+    infer_instance
+
+
+example
+  (F : Formula_)
+  (h1 : F.is_neg_nnf) :
+  F.is_nnf :=
+  by
+  induction F
+  case false_ | true_ | atom_ X =>
+    simp only [is_nnf]
+  case not_ phi ih =>
+    cases phi
+    case atom_ X =>
+      simp only [is_nnf]
+    all_goals
+      simp only [is_neg_nnf] at h1
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih =>
+    simp only [is_neg_nnf] at h1
+
+    simp only [is_nnf]
+    tauto
+  all_goals
+    simp only [is_neg_nnf] at h1
 
 
 #lint
