@@ -624,6 +624,9 @@ example
 -------------------------------------------------------------------------------
 
 
+/--
+  `is_pos_literal_in A F` := True if and only if there is an occurrence of the atom `A` as a positive literal in the formula `F`.
+-/
 def is_pos_literal_in
   (A : String) :
   Formula_ → Prop
@@ -638,6 +641,9 @@ def is_pos_literal_in
   | iff_ phi psi => is_pos_literal_in A phi ∨ is_pos_literal_in A psi
 
 
+/--
+  `is_neg_literal_in A F` := True if and only if there is an occurrence of the atom `A` as a negative literal in the formula `F`.
+-/
 def is_neg_literal_in
   (A : String) :
   Formula_ → Prop
