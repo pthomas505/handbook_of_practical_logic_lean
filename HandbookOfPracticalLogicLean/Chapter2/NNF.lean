@@ -1,3 +1,4 @@
+import HandbookOfPracticalLogicLean.Chapter2.Replace
 import HandbookOfPracticalLogicLean.Chapter2.Semantics
 import HandbookOfPracticalLogicLean.Chapter2.SubFormula
 
@@ -618,6 +619,92 @@ example
     tauto
   all_goals
     simp only [is_neg_nnf] at h1
+
+
+-------------------------------------------------------------------------------
+
+
+def is_pos_literal_in
+  (A : String) :
+  Formula_ → Prop
+  | false_ => False
+  | true_ => False
+  | atom_ X => A = X
+  | not_ (atom_ _) => False
+  | not_ phi => is_pos_literal_in A phi
+  | and_ phi psi => is_pos_literal_in A phi ∨ is_pos_literal_in A psi
+  | or_ phi psi => is_pos_literal_in A phi ∨ is_pos_literal_in A psi
+  | imp_ phi psi => is_pos_literal_in A phi ∨ is_pos_literal_in A psi
+  | iff_ phi psi => is_pos_literal_in A phi ∨ is_pos_literal_in A psi
+
+
+def is_neg_literal_in
+  (A : String) :
+  Formula_ → Prop
+  | false_ => False
+  | true_ => False
+  | atom_ _ => False
+  | not_ (atom_ X) => A = X
+  | not_ phi => is_neg_literal_in A phi
+  | and_ phi psi => is_neg_literal_in A phi ∨ is_neg_literal_in A psi
+  | or_ phi psi => is_neg_literal_in A phi ∨ is_neg_literal_in A psi
+  | imp_ phi psi => is_neg_literal_in A phi ∨ is_neg_literal_in A psi
+  | iff_ phi psi => is_neg_literal_in A phi ∨ is_neg_literal_in A psi
+
+
+example
+  (A A' : String)
+  (F : Formula_)
+  (h1 : F.is_nnf)
+  (h2 : ¬ is_neg_literal_in A F) :
+  ∀ (V : Valuation), eval V (((atom_ A).imp_ (atom_ A')).imp_ (F.imp_ (replace_atom_one_rec A (atom_ A') F))) :=
+  by
+  intro V
+  induction F
+  case false_ | true_ =>
+    unfold replace_atom_one_rec
+    simp only [eval]
+    tauto
+  case atom_ X =>
+    unfold replace_atom_one_rec
+    simp only [eval]
+    intro a1 a2
+    split_ifs
+    case pos c1 =>
+      rewrite [c1] at a1
+      unfold eval
+      tauto
+    case neg c1 =>
+      unfold eval
+      exact a2
+  case not_ phi ih =>
+    cases phi
+    case atom_ X =>
+      simp only [is_neg_literal_in] at h2
+      simp only [replace_atom_one_rec]
+      split_ifs
+      simp only [eval]
+      tauto
+    all_goals
+      simp only [is_nnf] at h1
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih =>
+    simp only [is_nnf] at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
+    simp only [is_neg_literal_in] at h2
+    simp at h2
+    obtain ⟨h2_left, h2_right⟩ := h2
+
+    simp only [eval] at phi_ih
+    simp only [eval] at psi_ih
+
+    simp only [replace_atom_one_rec]
+    simp only [eval]
+    tauto
+  all_goals
+    simp only [is_nnf] at h1
 
 
 #lint
