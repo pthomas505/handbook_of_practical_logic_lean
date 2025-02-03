@@ -707,4 +707,57 @@ example
     simp only [is_nnf] at h1
 
 
+example
+  (A A' : String)
+  (F : Formula_)
+  (h1 : F.is_nnf)
+  (h2 : ¬ is_pos_literal_in A F) :
+  ∀ (V : Valuation), eval V (((atom_ A).imp_ (atom_ A')).imp_ ((replace_atom_one_rec A (atom_ A') F).imp_ F)) :=
+  by
+  intro V
+  induction F
+  case false_ | true_ =>
+    unfold replace_atom_one_rec
+    simp only [eval]
+    tauto
+  case atom_ X =>
+    simp only [is_pos_literal_in] at h2
+    unfold replace_atom_one_rec
+    split_ifs
+    simp only [eval]
+    tauto
+  case not_ phi ih =>
+    cases phi
+    case atom_ X =>
+      simp only [replace_atom_one_rec]
+      split_ifs
+      case pos c1 =>
+        simp only [eval]
+        rewrite [c1]
+        tauto
+      case neg c1 =>
+        simp only [eval]
+        tauto
+    all_goals
+      simp only [is_nnf] at h1
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih =>
+    simp only [is_nnf] at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
+    simp only [is_pos_literal_in] at h2
+    simp at h2
+    obtain ⟨h2_left, h2_right⟩ := h2
+
+    simp only [eval] at phi_ih
+    simp only [eval] at psi_ih
+
+    simp only [replace_atom_one_rec]
+    simp only [eval]
+    tauto
+  all_goals
+    simp only [is_nnf] at h1
+
+
 #lint
