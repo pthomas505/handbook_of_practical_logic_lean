@@ -12,52 +12,6 @@ namespace Prop_
 open Formula_
 
 
-def Formula_.is_conj_rec_v1 :
-  Formula_ → Prop
-  | false_ => True
-  | true_ => True
-  | atom_ _ => True
-  | not_ (atom_ _) => True
-  | and_ phi psi => phi.is_conj_rec_v1 ∧ psi.is_conj_rec_v1
-  | _ => False
-
-
-def Formula_.is_conj_rec_v2 :
-  Formula_ → Prop
-  | false_ => True
-  | true_ => True
-  | atom_ _ => True
-  | not_ (atom_ _) => True
-  | and_ (false_) psi => psi.is_conj_rec_v2
-  | and_ (true_) psi => psi.is_conj_rec_v2
-  | and_ (atom_ _) psi => psi.is_conj_rec_v2
-  | and_ (not_ (atom_ _)) psi => psi.is_conj_rec_v2
-  | _ => False
-
-
-lemma is_conj_rec_imp_is_nnf
-  (F : Formula_)
-  (h1 : F.is_conj_rec_v1) :
-  F.is_nnf :=
-  by
-  induction F
-  case false_ | true_ | atom_ X =>
-    simp only [is_nnf]
-  case not_ phi ih =>
-    cases phi
-    case atom_ X =>
-      simp only [is_nnf]
-    all_goals
-      simp only [is_conj_rec_v1] at h1
-  case and_ phi psi phi_ih psi_ih =>
-    simp only [is_conj_rec_v1] at h1
-
-    simp only [is_nnf]
-    tauto
-  all_goals
-    simp only [is_conj_rec_v1] at h1
-
-
 inductive is_constant_ind : Formula_ → Prop
 | rule_1 :
   is_constant_ind false_
@@ -111,6 +65,93 @@ inductive is_dnf_ind : Formula_ → Prop
   (F : Formula_) :
   is_conj_ind F →
   is_dnf_ind F
+
+
+-------------------------------------------------------------------------------
+
+
+def Formula_.is_conj_rec_v1 :
+  Formula_ → Prop
+  | false_ => True
+  | true_ => True
+  | atom_ _ => True
+  | not_ (atom_ _) => True
+  | and_ phi psi => phi.is_conj_rec_v1 ∧ psi.is_conj_rec_v1
+  | _ => False
+
+
+lemma is_conj_rec_v1_imp_is_nnf
+  (F : Formula_)
+  (h1 : F.is_conj_rec_v1) :
+  F.is_nnf :=
+  by
+  induction F
+  case false_ | true_ | atom_ X =>
+    simp only [is_nnf]
+  case not_ phi ih =>
+    cases phi
+    case atom_ X =>
+      simp only [is_nnf]
+    all_goals
+      simp only [is_conj_rec_v1] at h1
+  case and_ phi psi phi_ih psi_ih =>
+    simp only [is_conj_rec_v1] at h1
+
+    simp only [is_nnf]
+    tauto
+  all_goals
+    simp only [is_conj_rec_v1] at h1
+
+
+-------------------------------------------------------------------------------
+
+
+def Formula_.is_conj_rec_v2 :
+  Formula_ → Prop
+  | false_ => True
+  | true_ => True
+  | atom_ _ => True
+  | not_ (atom_ _) => True
+  | and_ (false_) psi => psi.is_conj_rec_v2
+  | and_ (true_) psi => psi.is_conj_rec_v2
+  | and_ (atom_ _) psi => psi.is_conj_rec_v2
+  | and_ (not_ (atom_ _)) psi => psi.is_conj_rec_v2
+  | _ => False
+
+
+example
+  (F : Formula_)
+  (h1 : is_conj_rec_v2 F) :
+  is_conj_rec_v1 F :=
+  by
+  induction F
+  case false_ | true_ | atom_ X =>
+    simp only [is_conj_rec_v1]
+  case not_ phi ih =>
+    cases phi
+    case atom_ X =>
+      simp only [is_conj_rec_v1]
+    all_goals
+      simp only [is_conj_rec_v2] at h1
+  case and_ phi psi phi_ih psi_ih =>
+    cases phi
+    case false_ | true_ | atom_ X =>
+      simp only [is_conj_rec_v2] at h1
+
+      simp only [is_conj_rec_v1]
+      tauto
+    case not_ phi =>
+      cases phi
+      case atom_ X =>
+        simp only [is_conj_rec_v1]
+        simp only [is_conj_rec_v2] at h1
+        tauto
+      all_goals
+        simp only [is_conj_rec_v2] at h1
+    all_goals
+      simp only [is_conj_rec_v2] at h1
+  all_goals
+    simp only [is_conj_rec_v2] at h1
 
 
 example
@@ -206,38 +247,3 @@ example
       simp only [is_conj_rec_v2]
     case rule_2 X =>
       simp only [is_conj_rec_v2]
-
-
-example
-  (F : Formula_)
-  (h1 : is_conj_rec_v2 F) :
-  is_conj_rec_v1 F :=
-  by
-  induction F
-  case false_ | true_ | atom_ X =>
-    simp only [is_conj_rec_v1]
-  case not_ phi ih =>
-    cases phi
-    case atom_ X =>
-      simp only [is_conj_rec_v1]
-    all_goals
-      simp only [is_conj_rec_v2] at h1
-  case and_ phi psi phi_ih psi_ih =>
-    cases phi
-    case false_ | true_ | atom_ X =>
-      simp only [is_conj_rec_v2] at h1
-
-      simp only [is_conj_rec_v1]
-      tauto
-    case not_ phi =>
-      cases phi
-      case atom_ X =>
-        simp only [is_conj_rec_v1]
-        simp only [is_conj_rec_v2] at h1
-        tauto
-      all_goals
-        simp only [is_conj_rec_v2] at h1
-    all_goals
-      simp only [is_conj_rec_v2] at h1
-  all_goals
-    simp only [is_conj_rec_v2] at h1
