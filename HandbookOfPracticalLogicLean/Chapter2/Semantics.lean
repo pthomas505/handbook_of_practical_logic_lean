@@ -1,3 +1,5 @@
+import MathlibExtraLean.FunctionUpdateITE
+
 import HandbookOfPracticalLogicLean.Chapter2.Formula
 
 import Mathlib.Tactic
@@ -172,4 +174,104 @@ example
   simp only [eval]
 
 
-#lint
+namespace Option_
+
+
+def Valuation : Type := String → Option Prop
+  deriving Inhabited
+
+
+def eval
+  (V : Valuation) :
+  Formula_ → Option Prop
+  | false_ => some False
+  | true_ => some True
+  | atom_ X => V X
+  | not_ phi => do
+    let val_phi ← eval V phi
+    ¬ val_phi
+  | and_ phi psi => do
+    let val_phi ← eval V phi
+    let val_psi ← eval V psi
+    val_phi ∧ val_psi
+  | or_ phi psi => do
+    let val_phi ← eval V phi
+    let val_psi ← eval V psi
+    val_phi ∨ val_psi
+  | imp_ phi psi => do
+    let val_phi ← eval V phi
+    let val_psi ← eval V psi
+    val_phi → val_psi
+  | iff_ phi psi => do
+    let val_phi ← eval V phi
+    let val_psi ← eval V psi
+    val_phi ↔ val_psi
+
+
+def gen_valuation :
+  List (String × Prop) → Valuation
+  | [] => fun _ => Option.none
+  | hd :: tl => Function.updateITE (gen_valuation tl) hd.fst (Option.some hd.snd)
+
+end Option_
+
+--#eval (eval (gen_valuation [("P", True)]) (atom_ "P"))
+
+
+namespace Bool_
+
+
+def b_not : Bool → Bool
+| false => true
+| true => false
+
+def b_and : Bool → Bool → Bool
+| false, false => false
+| false, true => false
+| true, false => false
+| true, true => true
+
+def b_or : Bool → Bool → Bool
+| false, false => false
+| false, true => true
+| true, false => true
+| true, true => true
+
+def b_imp : Bool → Bool → Bool
+| false, false => true
+| false, true => true
+| true, false => false
+| true, true => true
+
+def b_iff : Bool → Bool → Bool
+| false, false => true
+| false, true => false
+| true, false => false
+| true, true => true
+
+
+def Valuation : Type := String → Bool
+  deriving Inhabited
+
+
+def eval
+  (V : Valuation) :
+  Formula_ → Bool
+  | false_ => false
+  | true_ => true
+  | atom_ X => V X
+  | not_ phi => b_not (eval V phi)
+  | and_ phi psi => b_and (eval V phi) (eval V psi)
+  | or_ phi psi => b_or (eval V phi) (eval V psi)
+  | imp_ phi psi => b_imp (eval V phi) (eval V psi)
+  | iff_ phi psi => b_iff (eval V phi) (eval V psi)
+
+
+/-
+def gen_valuation :
+  List (String × Bool) → Valuation
+  | [] => fun _ => Option.none
+  | hd :: tl => Function.updateITE (gen_valuation tl) hd.fst (Option.some hd.snd)
+-/
+
+--#lint
