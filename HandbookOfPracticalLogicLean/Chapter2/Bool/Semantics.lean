@@ -261,10 +261,16 @@ theorem theorem_2_2
 namespace Option_
 
 
+/--
+  A partial function from the set of atoms to the set of truth values `{false, true}`.
+-/
 def Valuation : Type := String → Option Bool
   deriving Inhabited
 
 
+/--
+  `eval V F` := The evaluation of a formula `F` given the valuation `V` as a partial function.
+-/
 def eval
   (V : Valuation) :
   Formula_ → Option Bool
@@ -292,6 +298,9 @@ def eval
     b_iff val_phi val_psi
 
 
+/--
+  `gen_valuation` := The generation of a valuation function from a list of pairs of atoms and truth values.
+-/
 def gen_valuation :
   List (String × Bool) → Valuation
   | [] => fun _ => Option.none
