@@ -505,7 +505,7 @@ lemma simplify_aux_iff_cases
 lemma simplify_aux_is_logically_equivalent
   (V : Valuation)
   (F : Formula_) :
-  eval V F ↔ eval V (simplify_aux F) :=
+  eval V F = eval V (simplify_aux F) :=
   by
   cases F
   case false_ | true_ | atom_ X =>
@@ -516,7 +516,11 @@ lemma simplify_aux_is_logically_equivalent
       simp only [simplify_aux]
     all_goals
       simp only [eval]
-      tauto
+      simp only [b_not]
+    case not_ phi =>
+      cases eval V phi
+      all_goals
+        simp only
   case
       and_ phi psi
     | or_ phi psi
