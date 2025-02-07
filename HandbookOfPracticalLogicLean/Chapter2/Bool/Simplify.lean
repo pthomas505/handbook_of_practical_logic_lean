@@ -540,7 +540,7 @@ lemma simplify_aux_is_logically_equivalent
 lemma simplify_is_logically_equivalent
   (V : Valuation)
   (F : Formula_) :
-  eval V F ↔ eval V (simplify F) :=
+  eval V F = eval V (simplify F) :=
   by
   induction F
   case false_ | true_ | atom_ X =>
@@ -568,9 +568,6 @@ example
   (F : Formula_) :
   are_logically_equivalent F (simplify F) :=
   by
-  unfold are_logically_equivalent
-  unfold is_tautology
+  simp only [are_logically_equivalent_iff_eval_eq_all_val]
   intro V
-  unfold satisfies
-  unfold eval
   apply simplify_is_logically_equivalent
