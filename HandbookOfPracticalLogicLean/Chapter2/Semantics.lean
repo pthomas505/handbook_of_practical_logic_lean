@@ -216,6 +216,9 @@ theorem theorem_2_2
       exact a1
 
 
+-------------------------------------------------------------------------------
+
+
 namespace Option_
 
 
@@ -255,9 +258,62 @@ def gen_valuation :
   | [] => fun _ => Option.none
   | hd :: tl => Function.updateITE (gen_valuation tl) hd.fst (Option.some hd.snd)
 
+
 end Option_
 
---#eval (eval (gen_valuation [("P", True)]) (atom_ "P"))
+
+example
+  (V_opt : Option_.Valuation)
+  (V : Valuation)
+  (F : Formula_)
+  (h1 : ∀ (A : String), atom_occurs_in A F → V_opt A = Option.some (V A)) :
+  Option_.eval V_opt F = Option.some (eval V F) :=
+  by
+  induction F
+  case false_ | true_ =>
+    unfold Option_.eval
+    unfold eval
+    rfl
+  case atom_ X =>
+    unfold Option_.eval
+    unfold eval
+    apply h1
+    unfold atom_occurs_in
+    rfl
+  case not_ phi ih =>
+    unfold atom_occurs_in at h1
+
+    unfold Option_.eval
+    unfold eval
+    rewrite [ih h1]
+    simp
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    unfold atom_occurs_in at h1
+
+    have s1 : (∀ (A : String), atom_occurs_in A phi → V_opt A = some (V A)) :=
+    by
+      intro A a1
+      apply h1
+      tauto
+
+    have s2 : (∀ (A : String), atom_occurs_in A psi → V_opt A = some (V A)) :=
+    by
+      intro A a1
+      apply h1
+      tauto
+
+    unfold Option_.eval
+    unfold eval
+    rewrite [phi_ih s1]
+    rewrite [psi_ih s2]
+    simp
+
+
+-------------------------------------------------------------------------------
 
 
 namespace Bool_
@@ -309,80 +365,15 @@ def eval
   | iff_ phi psi => b_iff (eval V phi) (eval V psi)
 
 
-/-
-def gen_valuation :
-  List (String × Bool) → Valuation
-  | [] => fun _ => Option.none
-  | hd :: tl => Function.updateITE (gen_valuation tl) hd.fst (Option.some hd.snd)
--/
-
 end Bool_
 
 
 example
-  (V_opt : Prop_.Option_.Valuation)
-  (V : Prop_.Valuation)
+  (V_bool : Bool_.Valuation)
+  (V : Valuation)
   (F : Formula_)
-  (h1 : ∀ (A : String), atom_occurs_in A F → V_opt A = Option.some (V A)) :
-  Prop_.Option_.eval V_opt F = Option.some (Prop_.eval V F) :=
-  by
-  induction F
-  case false_ | true_ =>
-    unfold Option_.eval
-    unfold eval
-    rfl
-  case atom_ X =>
-    unfold Option_.eval
-    unfold eval
-    apply h1
-    unfold atom_occurs_in
-    rfl
-  case not_ phi ih =>
-    unfold atom_occurs_in at h1
-
-    unfold Option_.eval
-    unfold eval
-    rewrite [ih h1]
-    simp
-  case
-      and_ phi psi phi_ih psi_ih
-    | or_ phi psi phi_ih psi_ih
-    | imp_ phi psi phi_ih psi_ih
-    | iff_ phi psi phi_ih psi_ih =>
-    unfold atom_occurs_in at h1
-
-    have s1 : (∀ (A : String), atom_occurs_in A phi → V_opt A = some (V A)) :=
-    by
-      intro A a1
-      apply h1
-      tauto
-
-    have s2 : (∀ (A : String), atom_occurs_in A psi → V_opt A = some (V A)) :=
-    by
-      intro A a1
-      apply h1
-      tauto
-
-    unfold Option_.eval
-    unfold eval
-    rewrite [phi_ih s1]
-    rewrite [psi_ih s2]
-    simp
-
-
-def option_bool_to_option_prop :
-  Option Bool → Option Prop
-  | some false => some False
-  | some true => some True
-  | none => none
-
-
-example
-  (V_bool : Prop_.Bool_.Valuation)
-  (V_prop : Prop_.Valuation)
-  (F : Formula_)
-  (h1 : ∀ (A : String), atom_occurs_in A F → ((V_bool A = true) ↔ V_prop A)) :
-  (Prop_.Bool_.eval V_bool F = true) ↔ Prop_.eval V_prop F :=
+  (h1 : ∀ (A : String), atom_occurs_in A F → ((V_bool A = true) ↔ V A)) :
+  (Bool_.eval V_bool F = true) ↔ eval V F :=
   by
   induction F
   case false_ | true_ =>
@@ -415,7 +406,7 @@ example
     | iff_ phi psi phi_ih psi_ih =>
     unfold atom_occurs_in at h1
 
-    have s1 : (∀ (A : String), atom_occurs_in A phi → (V_bool A = true ↔ V_prop A)) :=
+    have s1 : (∀ (A : String), atom_occurs_in A phi → (V_bool A = true ↔ V A)) :=
     by
       intro A a1
       apply h1
@@ -423,7 +414,7 @@ example
 
     specialize phi_ih s1
 
-    have s2 : (∀ (A : String), atom_occurs_in A psi → (V_bool A = true ↔ V_prop A)) :=
+    have s2 : (∀ (A : String), atom_occurs_in A psi → (V_bool A = true ↔ V A)) :=
     by
       intro A a1
       apply h1
