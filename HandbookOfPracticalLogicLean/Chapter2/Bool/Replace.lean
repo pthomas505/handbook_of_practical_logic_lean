@@ -1,6 +1,6 @@
 import MathlibExtraLean.FunctionUpdateITE
 
-import HandbookOfPracticalLogicLean.Chapter2.Semantics
+import HandbookOfPracticalLogicLean.Chapter2.Bool.Semantics
 
 import Mathlib.Tactic
 

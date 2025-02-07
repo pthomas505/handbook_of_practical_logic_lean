@@ -1,6 +1,6 @@
 import MathlibExtraLean.FunctionUpdateITE
 
-import HandbookOfPracticalLogicLean.Chapter2.NNF
+import HandbookOfPracticalLogicLean.Chapter2.Bool.NNF
 
 import Mathlib.Tactic
 
