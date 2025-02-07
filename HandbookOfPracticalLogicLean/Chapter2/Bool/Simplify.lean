@@ -533,7 +533,6 @@ lemma simplify_aux_is_logically_equivalent
         simp only [simplify_aux]
       all_goals
         simp only [eval]
-      all_goals
         simp only [b_not, b_and, b_or, b_imp, b_iff]
       all_goals
         split
