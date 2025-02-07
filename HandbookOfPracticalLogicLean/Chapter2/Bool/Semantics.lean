@@ -195,19 +195,18 @@ example
 
 example
   (P Q : Formula_) :
-  are_logically_equivalent P Q ↔ ∀ (V : Valuation), (eval V P = true) ↔ (eval V Q = true) :=
+  are_logically_equivalent P Q ↔ ∀ (V : Valuation), eval V P = eval V Q :=
   by
   unfold are_logically_equivalent
   unfold is_tautology
   unfold satisfies
   simp only [eval]
-  congr!
+  congr! 1
   case _ V =>
     cases eval V P
     · cases eval V Q
       · simp only [b_iff]
       · simp only [b_iff]
-        tauto
     · cases eval V Q
       · simp only [b_iff]
         tauto
