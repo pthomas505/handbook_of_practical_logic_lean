@@ -82,8 +82,8 @@ example
 theorem theorem_2_2
   (V V' : Valuation)
   (F : Formula_)
-  (h1 : ∀ (A : String), atom_occurs_in A F → (V A ↔ V' A)) :
-  eval V F ↔ eval V' F :=
+  (h1 : ∀ (A : String), atom_occurs_in A F → (V A = V' A)) :
+  eval V F = eval V' F :=
   by
   induction F
   all_goals
@@ -125,11 +125,11 @@ theorem theorem_2_2
 
 
 example
-  (V_opt : Prop_.Option_.Valuation)
-  (V : Prop_.Valuation)
+  (V_opt : Option_.Valuation)
+  (V : Valuation)
   (F : Formula_)
   (h1 : ∀ (A : String), atom_occurs_in A F → V_opt A = Option.some (V A)) :
-  Prop_.Option_.eval V_opt F = Option.some (Prop_.eval V F) :=
+  Option_.eval V_opt F = Option.some (eval V F) :=
   by
   induction F
   case false_ | true_ =>
@@ -173,91 +173,6 @@ example
     rewrite [phi_ih s1]
     rewrite [psi_ih s2]
     simp
-
-
-def option_bool_to_option_prop :
-  Option Bool → Option Prop
-  | some false => some False
-  | some true => some True
-  | none => none
-
-
-example
-  (V_bool : Prop_.Bool_.Valuation)
-  (V_prop : Prop_.Valuation)
-  (F : Formula_)
-  (h1 : ∀ (A : String), atom_occurs_in A F → ((V_bool A = true) ↔ V_prop A)) :
-  (Prop_.Bool_.eval V_bool F = true) ↔ Prop_.eval V_prop F :=
-  by
-  induction F
-  case false_ | true_ =>
-    unfold Bool_.eval
-    unfold eval
-    tauto
-  case atom_ X =>
-    unfold Bool_.eval
-    unfold eval
-    apply h1
-    unfold atom_occurs_in
-    rfl
-  case not_ phi ih =>
-    unfold atom_occurs_in at h1
-
-    unfold Bool_.eval
-    unfold eval
-    rewrite [← ih h1]
-    cases c1 : Bool_.eval V_bool phi
-    case false =>
-      simp only [Bool_.b_not]
-      tauto
-    case true =>
-      simp only [Bool_.b_not]
-      tauto
-  case
-      and_ phi psi phi_ih psi_ih
-    | or_ phi psi phi_ih psi_ih
-    | imp_ phi psi phi_ih psi_ih
-    | iff_ phi psi phi_ih psi_ih =>
-    unfold atom_occurs_in at h1
-
-    have s1 : (∀ (A : String), atom_occurs_in A phi → (V_bool A = true ↔ V_prop A)) :=
-    by
-      intro A a1
-      apply h1
-      tauto
-
-    specialize phi_ih s1
-
-    have s2 : (∀ (A : String), atom_occurs_in A psi → (V_bool A = true ↔ V_prop A)) :=
-    by
-      intro A a1
-      apply h1
-      tauto
-
-    specialize psi_ih s2
-
-    unfold Bool_.eval
-    unfold eval
-    rewrite [← phi_ih]
-    rewrite [← psi_ih]
-
-    cases c1 : Bool_.eval V_bool phi
-    case false =>
-      cases c2 : Bool_.eval V_bool psi
-      case false =>
-        first | simp only [Bool_.b_and] | simp only [Bool_.b_or] | simp only [Bool_.b_imp]
-        tauto
-      case true =>
-        first | simp only [Bool_.b_and]
-        tauto
-    case true =>
-      cases c2 : Bool_.eval V_bool psi
-      case false =>
-        first | simp only [Bool_.b_and]
-        tauto
-      case true =>
-        first | simp only [Bool_.b_and]
-        tauto
 
 
 --#lint
