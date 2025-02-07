@@ -21,28 +21,43 @@ def Valuation : Type := String → Bool
   deriving Inhabited
 
 
+/--
+  The truth table definition of boolean `not`.
+-/
 def b_not : Bool → Bool
 | false => true
 | true => false
 
+/--
+  The truth table definition of boolean `and`.
+-/
 def b_and : Bool → Bool → Bool
 | false, false => false
 | false, true => false
 | true, false => false
 | true, true => true
 
+/--
+  The truth table definition of boolean `or`.
+-/
 def b_or : Bool → Bool → Bool
 | false, false => false
 | false, true => true
 | true, false => true
 | true, true => true
 
+/--
+  The truth table definition of boolean `imp`.
+-/
 def b_imp : Bool → Bool → Bool
 | false, false => true
 | false, true => true
 | true, false => false
 | true, true => true
 
+/--
+  The truth table definition of boolean `iff`.
+-/
 def b_iff : Bool → Bool → Bool
 | false, false => true
 | false, true => false
@@ -372,4 +387,4 @@ example
     simp
 
 
---#lint
+#lint
