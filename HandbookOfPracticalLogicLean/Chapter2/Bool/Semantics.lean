@@ -208,7 +208,7 @@ example
   exact not_not
 
 
-example
+lemma are_logically_equivalent_iff_eval_eq_all_val
   (P Q : Formula_) :
   are_logically_equivalent P Q ↔ ∀ (V : Valuation), eval V P = eval V Q :=
   by

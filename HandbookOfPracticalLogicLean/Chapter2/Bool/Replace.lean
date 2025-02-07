@@ -40,7 +40,7 @@ theorem theorem_2_3_one
   (A : String)
   (P : Formula_)
   (F : Formula_) :
-  eval V (replace_atom_one_rec A P F) ↔ eval (Function.updateITE' V A (eval V P)) F :=
+  eval V (replace_atom_one_rec A P F) = eval (Function.updateITE' V A (eval V P)) F :=
   by
   induction F
   case false_ | true_ =>
@@ -90,8 +90,8 @@ theorem theorem_2_5_one
   (P Q : Formula_)
   (X : String)
   (R : Formula_)
-  (h1 : eval V P ↔ eval V Q) :
-  eval V (replace_atom_one_rec X P R) ↔ eval V (replace_atom_one_rec X Q R) :=
+  (h1 : eval V P = eval V Q) :
+  eval V (replace_atom_one_rec X P R) = eval V (replace_atom_one_rec X Q R) :=
   by
   simp only [theorem_2_3_one]
   rewrite [h1]
@@ -104,12 +104,9 @@ theorem corollary_2_6_one
   (X : String)
   (R : Formula_)
   (h1 : are_logically_equivalent P Q) :
-  eval V (replace_atom_one_rec X P R) ↔ eval V (replace_atom_one_rec X Q R) :=
+  eval V (replace_atom_one_rec X P R) = eval V (replace_atom_one_rec X Q R) :=
   by
-  unfold are_logically_equivalent at h1
-  unfold is_tautology at h1
-  unfold satisfies at h1
-  unfold eval at h1
+  simp only [are_logically_equivalent_iff_eval_eq_all_val] at h1
 
   apply theorem_2_5_one
   apply h1
@@ -135,7 +132,7 @@ theorem theorem_2_3_all
   (V : Valuation)
   (τ : String → Formula_)
   (F : Formula_) :
-  eval V (replace_atom_all_rec τ F) ↔ eval (eval V ∘ τ) F :=
+  eval V (replace_atom_all_rec τ F) = eval (eval V ∘ τ) F :=
   by
   induction F
   case false_ | true_ =>
@@ -179,14 +176,13 @@ theorem theorem_2_5_all
   (V : Valuation)
   (τ1 τ2 : String → Formula_)
   (F : Formula_)
-  (h1 : ∀ (X : String), eval V (τ1 X) ↔ eval V (τ2 X)) :
-  eval V (replace_atom_all_rec τ1 F) ↔ eval V (replace_atom_all_rec τ2 F) :=
+  (h1 : ∀ (X : String), eval V (τ1 X) = eval V (τ2 X)) :
+  eval V (replace_atom_all_rec τ1 F) = eval V (replace_atom_all_rec τ2 F) :=
   by
     simp only [theorem_2_3_all]
     congr! 1
     funext X
     simp only [Function.comp_apply]
-    ext
     apply h1
 
 
@@ -195,12 +191,9 @@ theorem corollary_2_6_all
   (τ1 τ2 : String → Formula_)
   (F : Formula_)
   (h1 : ∀ (X : String), are_logically_equivalent (τ1 X) (τ2 X)) :
-  eval V (replace_atom_all_rec τ1 F) ↔ eval V (replace_atom_all_rec τ2 F) :=
+  eval V (replace_atom_all_rec τ1 F) = eval V (replace_atom_all_rec τ2 F) :=
   by
-  unfold are_logically_equivalent at h1
-  unfold is_tautology at h1
-  unfold satisfies at h1
-  unfold eval at h1
+  simp only [are_logically_equivalent_iff_eval_eq_all_val] at h1
 
   apply theorem_2_5_all
   intro X
@@ -424,8 +417,8 @@ example
   (R S : Formula_)
   (P_R P_S : Formula_)
   (h1 : is_repl_of_formula_in_formula R S P_R P_S)
-  (h2 : eval V R ↔ eval V S) :
-  eval V P_R ↔ eval V P_S :=
+  (h2 : eval V R = eval V S) :
+  eval V P_R = eval V P_S :=
   by
   induction h1
   case same_ P_u P_v ih =>
