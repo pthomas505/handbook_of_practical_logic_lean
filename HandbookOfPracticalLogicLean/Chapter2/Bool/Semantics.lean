@@ -195,7 +195,7 @@ example
 
 example
   (P Q : Formula_) :
-  are_logically_equivalent P Q ↔ ∀ (V : Valuation), eval V P ↔ eval V Q :=
+  are_logically_equivalent P Q ↔ ∀ (V : Valuation), (eval V P = true) ↔ (eval V Q = true) :=
   by
   unfold are_logically_equivalent
   unfold is_tautology
@@ -299,11 +299,15 @@ def gen_valuation :
   | hd :: tl => Function.updateITE (gen_valuation tl) hd.fst (Option.some hd.snd)
 
 
-#eval (eval (gen_valuation [("P", True)]) (atom_ "P"))
-#eval (eval (gen_valuation [("P", False)]) (atom_ "P"))
-#eval (eval (gen_valuation [("P", True)]) (not_ (atom_ "P")))
-#eval (eval (gen_valuation [("P", False)]) (not_ (atom_ "P")))
-#eval (eval (gen_valuation [("P", True)]) (atom_ "Q"))
+#eval (eval (gen_valuation [("P", true)]) (atom_ "P"))
+#eval (eval (gen_valuation [("P", false)]) (atom_ "P"))
+#eval (eval (gen_valuation [("P", true)]) (not_ (atom_ "P")))
+#eval (eval (gen_valuation [("P", false)]) (not_ (atom_ "P")))
+#eval (eval (gen_valuation [("P", false), ("Q", false)]) (and_ (atom_ "P") (atom_ "Q")))
+#eval (eval (gen_valuation [("P", false), ("Q", true)]) (and_ (atom_ "P") (atom_ "Q")))
+#eval (eval (gen_valuation [("P", true), ("Q", false)]) (and_ (atom_ "P") (atom_ "Q")))
+#eval (eval (gen_valuation [("P", true), ("Q", true)]) (and_ (atom_ "P") (atom_ "Q")))
+#eval (eval (gen_valuation [("P", true)]) (atom_ "Q"))
 
 
 end Option_
