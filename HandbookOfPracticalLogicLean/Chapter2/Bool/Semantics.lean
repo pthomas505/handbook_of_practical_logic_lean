@@ -1,6 +1,6 @@
 import MathlibExtraLean.FunctionUpdateITE
 
-import HandbookOfPracticalLogicLean.Chapter2.Bool.Formula
+import HandbookOfPracticalLogicLean.Chapter2.Bool.Atom
 
 import Mathlib.Tactic
 
@@ -214,6 +214,51 @@ example
       · simp only [b_iff]
 
 
+theorem theorem_2_2
+  (V V' : Valuation)
+  (F : Formula_)
+  (h1 : ∀ (A : String), atom_occurs_in A F → (V A = V' A)) :
+  eval V F = eval V' F :=
+  by
+  induction F
+  all_goals
+    unfold eval
+  case false_ | true_ =>
+    rfl
+  case atom_ X =>
+    apply h1
+    unfold atom_occurs_in
+    rfl
+  case not_ phi ih =>
+    congr! 1
+    apply ih
+    intro X a1
+    apply h1
+    unfold atom_occurs_in
+    exact a1
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    congr! 1
+    · apply phi_ih
+      intro X a1
+      apply h1
+      unfold atom_occurs_in
+      left
+      exact a1
+    · apply psi_ih
+      intro X a1
+      apply h1
+      unfold atom_occurs_in
+      right
+      exact a1
+
+
+-------------------------------------------------------------------------------
+
+
 namespace Option_
 
 
@@ -259,6 +304,60 @@ def gen_valuation :
 #eval (eval (gen_valuation [("P", True)]) (not_ (atom_ "P")))
 #eval (eval (gen_valuation [("P", False)]) (not_ (atom_ "P")))
 #eval (eval (gen_valuation [("P", True)]) (atom_ "Q"))
+
+
+end Option_
+
+
+example
+  (V_opt : Option_.Valuation)
+  (V : Valuation)
+  (F : Formula_)
+  (h1 : ∀ (A : String), atom_occurs_in A F → V_opt A = Option.some (V A)) :
+  Option_.eval V_opt F = Option.some (eval V F) :=
+  by
+  induction F
+  case false_ | true_ =>
+    unfold Option_.eval
+    unfold eval
+    rfl
+  case atom_ X =>
+    unfold Option_.eval
+    unfold eval
+    apply h1
+    unfold atom_occurs_in
+    rfl
+  case not_ phi ih =>
+    unfold atom_occurs_in at h1
+
+    unfold Option_.eval
+    unfold eval
+    rewrite [ih h1]
+    simp
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    unfold atom_occurs_in at h1
+
+    have s1 : (∀ (A : String), atom_occurs_in A phi → V_opt A = some (V A)) :=
+    by
+      intro A a1
+      apply h1
+      tauto
+
+    have s2 : (∀ (A : String), atom_occurs_in A psi → V_opt A = some (V A)) :=
+    by
+      intro A a1
+      apply h1
+      tauto
+
+    unfold Option_.eval
+    unfold eval
+    rewrite [phi_ih s1]
+    rewrite [psi_ih s2]
+    simp
 
 
 --#lint
