@@ -117,10 +117,11 @@ lemma bool_iff_prop_iff
       tauto
 
 
-macro "bool_eq_to_prop" : tactic => `(tactic|(
-  rewrite [Bool.eq_iff_iff]
+macro "simp_all_bool" : tactic => `(tactic|(
+  rewrite [Bool.eq_iff_iff] at *
   simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff] at *
 ))
+
 
 /--
   A function from the set of atoms to the set of truth values `{false, true}`.

@@ -174,7 +174,7 @@ theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v1
     simp only [to_nnf_v1]
     simp only [to_nnf_neg_v1]
     rewrite [ih]
-    bool_eq_to_prop
+    simp_all_bool
     tauto
   case
       and_ phi psi phi_ih psi_ih
@@ -186,7 +186,7 @@ theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v1
     simp only [eval]
     rewrite [phi_ih]
     rewrite [psi_ih]
-    bool_eq_to_prop
+    simp_all_bool
     tauto
 
 
@@ -223,7 +223,7 @@ example
     rewrite [phi_ih]
     rewrite [psi_ih]
     rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf_v1 V phi]
-    bool_eq_to_prop
+    simp_all_bool
     tauto
   case iff_ phi psi phi_ih psi_ih =>
     simp only [to_nnf_v1]
@@ -232,7 +232,7 @@ example
     rewrite [psi_ih]
     rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf_v1 V phi]
     rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf_v1 V psi]
-    bool_eq_to_prop
+    simp_all_bool
     tauto
 
 
@@ -346,7 +346,7 @@ theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v2
     simp only [to_nnf_v2]
     simp only [to_nnf_neg_v2]
     rewrite [ih]
-    bool_eq_to_prop
+    simp_all_bool
     tauto
   case
       and_ phi psi phi_ih psi_ih
@@ -358,7 +358,7 @@ theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v2
     simp only [eval]
     rewrite [phi_ih]
     rewrite [psi_ih]
-    bool_eq_to_prop
+    simp_all_bool
     tauto
 
 
@@ -395,7 +395,7 @@ example
     rewrite [phi_ih]
     rewrite [psi_ih]
     rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf_v2 V phi]
-    bool_eq_to_prop
+    simp_all_bool
     tauto
   case iff_ phi psi phi_ih psi_ih =>
     simp only [to_nnf_v2]
@@ -404,7 +404,7 @@ example
     rewrite [psi_ih]
     rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf_v2 V phi]
     rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf_v2 V psi]
-    bool_eq_to_prop
+    simp_all_bool
     tauto
 
 
@@ -678,21 +678,21 @@ example
   case false_ | true_ =>
     unfold replace_atom_one_rec
     simp only [eval]
-    bool_eq_to_prop
+    simp_all_bool
     tauto
   case atom_ X =>
     unfold replace_atom_one_rec
     simp only [eval]
-    --intro a1 a2
+    simp_all_bool
     split_ifs
     case pos c1 =>
-      rewrite [c1]-- at a1
+      rewrite [c1]
       unfold eval
-      bool_eq_to_prop
+      simp_all_bool
       tauto
     case neg c1 =>
       unfold eval
-      bool_eq_to_prop
+      simp_all_bool
       tauto
   case not_ phi ih =>
     cases phi
@@ -701,7 +701,7 @@ example
       simp only [replace_atom_one_rec]
       split_ifs
       simp only [eval]
-      bool_eq_to_prop
+      simp_all_bool
       tauto
     all_goals
       simp only [is_nnf] at h1
@@ -738,14 +738,14 @@ example
   case false_ | true_ =>
     unfold replace_atom_one_rec
     simp only [eval]
-    bool_eq_to_prop
+    simp_all_bool
     tauto
   case atom_ X =>
     simp only [is_pos_literal_in] at h2
     unfold replace_atom_one_rec
     split_ifs
     simp only [eval]
-    bool_eq_to_prop
+    simp_all_bool
     tauto
   case not_ phi ih =>
     cases phi
@@ -755,11 +755,11 @@ example
       case pos c1 =>
         simp only [eval]
         rewrite [c1]
-        bool_eq_to_prop
+        simp_all_bool
         tauto
       case neg c1 =>
         simp only [eval]
-        bool_eq_to_prop
+        simp_all_bool
         tauto
     all_goals
       simp only [is_nnf] at h1
@@ -778,7 +778,7 @@ example
 
     simp only [replace_atom_one_rec]
     simp only [eval]
-    bool_eq_to_prop
+    simp_all_bool
     tauto
   all_goals
     simp only [is_nnf] at h1

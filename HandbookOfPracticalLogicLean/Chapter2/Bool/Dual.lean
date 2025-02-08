@@ -99,7 +99,7 @@ theorem theorem_2_7
     rewrite [phi_ih h1_left]
     rewrite [psi_ih h1_right]
 
-    bool_eq_to_prop
+    simp_all_bool
     tauto
   case or_ phi psi phi_ih psi_ih =>
     unfold has_dual at h1
@@ -108,7 +108,7 @@ theorem theorem_2_7
     rewrite [phi_ih h1_left]
     rewrite [psi_ih h1_right]
 
-    bool_eq_to_prop
+    simp_all_bool
     tauto
   all_goals
     unfold has_dual at h1

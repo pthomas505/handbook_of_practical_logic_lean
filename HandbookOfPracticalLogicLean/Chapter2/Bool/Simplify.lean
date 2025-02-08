@@ -533,7 +533,7 @@ lemma simplify_aux_is_logically_equivalent
         simp only [simplify_aux]
       all_goals
         simp only [eval]
-        bool_eq_to_prop
+        simp_all_bool
       all_goals
         tauto
 
