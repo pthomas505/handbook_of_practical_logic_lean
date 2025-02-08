@@ -564,9 +564,6 @@ example
   (F : Formula_) :
   are_logically_equivalent F (simplify F) :=
   by
-  unfold are_logically_equivalent
-  unfold is_tautology
+  simp only [are_logically_equivalent_iff_eval_eq_all_val]
   intro V
-  unfold satisfies
-  unfold eval
   apply simplify_is_logically_equivalent
