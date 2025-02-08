@@ -15,13 +15,6 @@ open Formula_
 
 
 /--
-  A function from the set of atoms to the set of truth values `{false, true}`.
--/
-def Valuation : Type := String → Bool
-  deriving Inhabited
-
-
-/--
   The truth table definition of boolean `not`.
 -/
 def b_not : Bool → Bool
@@ -63,6 +56,77 @@ def b_iff : Bool → Bool → Bool
 | false, true => false
 | true, false => false
 | true, true => true
+
+
+lemma bool_iff_prop_not
+  (b : Bool) :
+  (b_not b = true) ↔ ¬ (b = true) :=
+  by
+  cases b
+  all_goals
+    simp only [b_not]
+    tauto
+
+
+lemma bool_iff_prop_and
+  (b1 b2 : Bool) :
+  (b_and b1 b2 = true) ↔ ((b1 = true) ∧ (b2 = true)) :=
+  by
+  cases b1
+  all_goals
+    cases b2
+    all_goals
+      simp only [b_and]
+      tauto
+
+
+lemma bool_iff_prop_or
+  (b1 b2 : Bool) :
+  (b_or b1 b2 = true) ↔ ((b1 = true) ∨ (b2 = true)) :=
+  by
+  cases b1
+  all_goals
+    cases b2
+    all_goals
+      simp only [b_or]
+      tauto
+
+
+lemma bool_iff_prop_imp
+  (b1 b2 : Bool) :
+  (b_imp b1 b2 = true) ↔ ((b1 = true) → (b2 = true)) :=
+  by
+  cases b1
+  all_goals
+    cases b2
+    all_goals
+      simp only [b_imp]
+      tauto
+
+
+lemma bool_iff_prop_iff
+  (b1 b2 : Bool) :
+  (b_iff b1 b2 = true) ↔ ((b1 = true) ↔ (b2 = true)) :=
+  by
+  cases b1
+  all_goals
+    cases b2
+    all_goals
+      simp only [b_iff]
+    all_goals
+      tauto
+
+
+macro "bool_eq_to_prop" : tactic => `(tactic|(
+  rewrite [Bool.eq_iff_iff]
+  simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff] at *
+))
+
+/--
+  A function from the set of atoms to the set of truth values `{false, true}`.
+-/
+def Valuation : Type := String → Bool
+  deriving Inhabited
 
 
 /--
@@ -173,13 +237,8 @@ example
   unfold is_unsatisfiable
   unfold satisfies
   simp only [eval]
-  simp only [not_exists]
-  congr!
-  case _ V =>
-    cases eval V F
-    all_goals
-      simp only [b_not]
-      tauto
+  simp only [bool_iff_prop_not]
+  exact not_exists_not
 
 
 example
@@ -190,13 +249,8 @@ example
   unfold is_tautology
   unfold satisfies
   simp only [eval]
-  simp only [not_exists]
-  congr!
-  case _ V =>
-    cases eval V F
-    all_goals
-      simp only [b_not]
-      tauto
+  simp only [bool_iff_prop_not]
+  exact not_exists
 
 
 example
@@ -216,16 +270,8 @@ lemma are_logically_equivalent_iff_eval_eq_all_val
   unfold is_tautology
   unfold satisfies
   simp only [eval]
-  congr! 1
-  case _ V =>
-    cases eval V P
-    · cases eval V Q
-      · simp only [b_iff]
-      · simp only [b_iff]
-    · cases eval V Q
-      · simp only [b_iff]
-        tauto
-      · simp only [b_iff]
+  simp only [bool_iff_prop_iff]
+  simp only [Bool.coe_iff_coe]
 
 
 theorem theorem_2_2
@@ -387,4 +433,4 @@ example
     simp
 
 
-#lint
+--#lint

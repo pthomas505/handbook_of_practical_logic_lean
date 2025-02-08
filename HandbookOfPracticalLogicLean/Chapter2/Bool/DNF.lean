@@ -269,78 +269,18 @@ def list_disj :
 
 
 def gen_all_assignments :
-  List String → List (List (String × Prop))
+  List String → List (List (String × Bool))
 | [] => [[]]
 | hd :: tl =>
-  let left := List.map (fun (l : List (String × Prop)) => (hd, False) :: l) (gen_all_assignments tl)
+  let left := List.map (fun (l : List (String × Bool)) => (hd, false) :: l) (gen_all_assignments tl)
 
-  let right := List.map (fun (l : List (String × Prop)) => (hd, True) :: l) (gen_all_assignments tl)
+  let right := List.map (fun (l : List (String × Bool)) => (hd, true) :: l) (gen_all_assignments tl)
 
   left ++ right
 
 
 def gen_valuation
   (default : Valuation) :
-  List (String × Prop) → Valuation
+  List (String × Bool) → Valuation
   | [] => default
   | hd :: tl => Function.updateITE (gen_valuation default tl) hd.fst hd.snd
-
-
-instance
-  (V : Valuation)
-  [DecidablePred V]
-  (l : List (String × Prop))
-  (h1 : ∀ (el : String × Prop), el ∈ l → Decidable el.2) :
-  DecidablePred (gen_valuation V l) :=
-  by
-  induction l
-  case nil =>
-    simp only [gen_valuation]
-    infer_instance
-  case cons hd tl ih =>
-    simp only [gen_valuation]
-    unfold DecidablePred
-    intro a
-    simp only [Function.updateITE]
-    split_ifs
-    case pos c1 =>
-      apply h1
-      simp
-    case neg c1 =>
-      apply ih
-      intro el a1
-      apply h1
-      simp
-      tauto
-
-
-instance
-  (V : Valuation)
-  [DecidablePred V]
-  (l : List (String × Prop))
-  (F : Formula_)
-  (h1 : ∀ (el : String × Prop), el ∈ l → Decidable el.2) :
-  Decidable (eval (gen_valuation V l) F) :=
-  by
-  have s1 : DecidablePred (gen_valuation V l) :=
-  by
-    induction l
-    case nil =>
-      simp only [gen_valuation]
-      infer_instance
-    case cons hd tl ih =>
-      simp only [gen_valuation]
-      unfold DecidablePred
-      intro a
-      simp only [Function.updateITE]
-      split_ifs
-      case pos c1 =>
-        apply h1
-        simp
-      case neg c1 =>
-        apply ih
-        intro el a1
-        apply h1
-        simp
-        tauto
-  infer_instance

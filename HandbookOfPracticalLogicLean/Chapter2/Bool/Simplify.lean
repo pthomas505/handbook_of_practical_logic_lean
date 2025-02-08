@@ -533,11 +533,9 @@ lemma simplify_aux_is_logically_equivalent
         simp only [simplify_aux]
       all_goals
         simp only [eval]
-        simp only [b_not, b_and, b_or, b_imp, b_iff]
+        bool_eq_to_prop
       all_goals
-        split
-      all_goals
-        simp_all only
+        tauto
 
 
 lemma simplify_is_logically_equivalent

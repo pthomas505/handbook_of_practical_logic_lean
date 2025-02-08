@@ -158,7 +158,7 @@ end
 theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v1
   (V : Valuation)
   (F : Formula_) :
-  eval V (to_nnf_neg_v1 F) ↔ ¬ eval V (to_nnf_v1 F) :=
+  eval V (to_nnf_neg_v1 F) = b_not (eval V (to_nnf_v1 F)) :=
   by
   induction F
   case false_ | true_ =>
@@ -174,6 +174,7 @@ theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v1
     simp only [to_nnf_v1]
     simp only [to_nnf_neg_v1]
     rewrite [ih]
+    bool_eq_to_prop
     tauto
   case
       and_ phi psi phi_ih psi_ih
@@ -185,13 +186,14 @@ theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v1
     simp only [eval]
     rewrite [phi_ih]
     rewrite [psi_ih]
+    bool_eq_to_prop
     tauto
 
 
 example
   (V : Valuation)
   (F : Formula_) :
-  eval V F ↔ eval V (to_nnf_v1 F) :=
+  eval V F = eval V (to_nnf_v1 F) :=
   by
   induction F
   case false_ | true_ | atom_ X =>
@@ -221,6 +223,7 @@ example
     rewrite [phi_ih]
     rewrite [psi_ih]
     rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf_v1 V phi]
+    bool_eq_to_prop
     tauto
   case iff_ phi psi phi_ih psi_ih =>
     simp only [to_nnf_v1]
@@ -229,6 +232,7 @@ example
     rewrite [psi_ih]
     rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf_v1 V phi]
     rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf_v1 V psi]
+    bool_eq_to_prop
     tauto
 
 
@@ -327,7 +331,7 @@ end
 theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v2
   (V : Valuation)
   (F : Formula_) :
-  eval V (to_nnf_neg_v2 F) ↔ ¬ eval V (to_nnf_v2 F) :=
+  eval V (to_nnf_neg_v2 F) = b_not (eval V (to_nnf_v2 F)) :=
   by
   induction F
   case false_ | true_ =>
@@ -342,6 +346,7 @@ theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v2
     simp only [to_nnf_v2]
     simp only [to_nnf_neg_v2]
     rewrite [ih]
+    bool_eq_to_prop
     tauto
   case
       and_ phi psi phi_ih psi_ih
@@ -353,13 +358,14 @@ theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v2
     simp only [eval]
     rewrite [phi_ih]
     rewrite [psi_ih]
+    bool_eq_to_prop
     tauto
 
 
 example
   (V : Valuation)
   (F : Formula_) :
-  eval V F ↔ eval V (to_nnf_v2 F) :=
+  eval V F = eval V (to_nnf_v2 F) :=
   by
   induction F
   case false_ | true_ | atom_ X =>
@@ -389,6 +395,7 @@ example
     rewrite [phi_ih]
     rewrite [psi_ih]
     rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf_v2 V phi]
+    bool_eq_to_prop
     tauto
   case iff_ phi psi phi_ih psi_ih =>
     simp only [to_nnf_v2]
@@ -397,6 +404,7 @@ example
     rewrite [psi_ih]
     rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf_v2 V phi]
     rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf_v2 V psi]
+    bool_eq_to_prop
     tauto
 
 
@@ -670,19 +678,22 @@ example
   case false_ | true_ =>
     unfold replace_atom_one_rec
     simp only [eval]
+    bool_eq_to_prop
     tauto
   case atom_ X =>
     unfold replace_atom_one_rec
     simp only [eval]
-    intro a1 a2
+    --intro a1 a2
     split_ifs
     case pos c1 =>
-      rewrite [c1] at a1
+      rewrite [c1]-- at a1
       unfold eval
+      bool_eq_to_prop
       tauto
     case neg c1 =>
       unfold eval
-      exact a2
+      bool_eq_to_prop
+      tauto
   case not_ phi ih =>
     cases phi
     case atom_ X =>
@@ -690,6 +701,7 @@ example
       simp only [replace_atom_one_rec]
       split_ifs
       simp only [eval]
+      bool_eq_to_prop
       tauto
     all_goals
       simp only [is_nnf] at h1
@@ -708,6 +720,7 @@ example
 
     simp only [replace_atom_one_rec]
     simp only [eval]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff] at *
     tauto
   all_goals
     simp only [is_nnf] at h1
@@ -725,12 +738,14 @@ example
   case false_ | true_ =>
     unfold replace_atom_one_rec
     simp only [eval]
+    bool_eq_to_prop
     tauto
   case atom_ X =>
     simp only [is_pos_literal_in] at h2
     unfold replace_atom_one_rec
     split_ifs
     simp only [eval]
+    bool_eq_to_prop
     tauto
   case not_ phi ih =>
     cases phi
@@ -740,9 +755,11 @@ example
       case pos c1 =>
         simp only [eval]
         rewrite [c1]
+        bool_eq_to_prop
         tauto
       case neg c1 =>
         simp only [eval]
+        bool_eq_to_prop
         tauto
     all_goals
       simp only [is_nnf] at h1
@@ -761,6 +778,7 @@ example
 
     simp only [replace_atom_one_rec]
     simp only [eval]
+    bool_eq_to_prop
     tauto
   all_goals
     simp only [is_nnf] at h1

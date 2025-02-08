@@ -98,14 +98,18 @@ theorem theorem_2_7
 
     rewrite [phi_ih h1_left]
     rewrite [psi_ih h1_right]
-    sorry
+
+    bool_eq_to_prop
+    tauto
   case or_ phi psi phi_ih psi_ih =>
     unfold has_dual at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
     rewrite [phi_ih h1_left]
     rewrite [psi_ih h1_right]
-    sorry
+
+    bool_eq_to_prop
+    tauto
   all_goals
     unfold has_dual at h1
     contradiction
