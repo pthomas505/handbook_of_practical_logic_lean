@@ -106,10 +106,7 @@ theorem corollary_2_6_one
   (h1 : are_logically_equivalent P Q) :
   eval V (replace_atom_one_rec X P R) ↔ eval V (replace_atom_one_rec X Q R) :=
   by
-  unfold are_logically_equivalent at h1
-  unfold is_tautology at h1
-  unfold satisfies at h1
-  unfold eval at h1
+  simp only [are_logically_equivalent_iff_eval_eq_all_val] at h1
 
   apply theorem_2_5_one
   apply h1
@@ -197,10 +194,7 @@ theorem corollary_2_6_all
   (h1 : ∀ (X : String), are_logically_equivalent (τ1 X) (τ2 X)) :
   eval V (replace_atom_all_rec τ1 F) ↔ eval V (replace_atom_all_rec τ2 F) :=
   by
-  unfold are_logically_equivalent at h1
-  unfold is_tautology at h1
-  unfold satisfies at h1
-  unfold eval at h1
+  simp only [are_logically_equivalent_iff_eval_eq_all_val] at h1
 
   apply theorem_2_5_all
   intro X

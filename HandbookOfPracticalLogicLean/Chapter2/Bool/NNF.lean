@@ -720,7 +720,7 @@ example
 
     simp only [replace_atom_one_rec]
     simp only [eval]
-    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff] at *
+    simp_all_bool
     tauto
   all_goals
     simp only [is_nnf] at h1
