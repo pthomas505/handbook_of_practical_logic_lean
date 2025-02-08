@@ -516,11 +516,10 @@ lemma simplify_aux_is_logically_equivalent
       simp only [simplify_aux]
     all_goals
       simp only [eval]
-      simp only [b_not]
-    case not_ phi =>
-      cases eval V phi
-      all_goals
-        simp only
+      rewrite [Bool.eq_iff_iff]
+      simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
+    all_goals
+      tauto
   case
       and_ phi psi
     | or_ phi psi
@@ -533,7 +532,6 @@ lemma simplify_aux_is_logically_equivalent
         simp only [simplify_aux]
       all_goals
         simp only [eval]
-      all_goals
         rewrite [Bool.eq_iff_iff]
         simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
       all_goals
