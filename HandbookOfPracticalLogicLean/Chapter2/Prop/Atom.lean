@@ -1,4 +1,4 @@
-import HandbookOfPracticalLogicLean.Chapter2.Formula
+import HandbookOfPracticalLogicLean.Chapter2.Prop.Formula
 
 import Mathlib.Tactic
 
