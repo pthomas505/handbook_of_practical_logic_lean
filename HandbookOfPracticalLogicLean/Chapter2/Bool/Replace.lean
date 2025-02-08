@@ -109,6 +109,7 @@ theorem corollary_2_6_one
   simp only [are_logically_equivalent_iff_eval_eq_all_val] at h1
 
   apply theorem_2_5_one
+  rewrite [Bool.eq_iff_iff]
   apply h1
 
 
@@ -197,6 +198,7 @@ theorem corollary_2_6_all
 
   apply theorem_2_5_all
   intro X
+  rewrite [Bool.eq_iff_iff]
   apply h1
 
 

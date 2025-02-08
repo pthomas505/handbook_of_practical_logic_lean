@@ -533,7 +533,9 @@ lemma simplify_aux_is_logically_equivalent
         simp only [simplify_aux]
       all_goals
         simp only [eval]
-        simp_all_bool
+      all_goals
+        rewrite [Bool.eq_iff_iff]
+        simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
       all_goals
         tauto
 
@@ -571,4 +573,5 @@ example
   by
   simp only [are_logically_equivalent_iff_eval_eq_all_val]
   intro V
+  rewrite [← Bool.eq_iff_iff]
   apply simplify_is_logically_equivalent

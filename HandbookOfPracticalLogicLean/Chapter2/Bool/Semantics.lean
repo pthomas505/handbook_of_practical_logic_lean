@@ -117,12 +117,6 @@ lemma bool_iff_prop_iff
       tauto
 
 
-macro "simp_all_bool" : tactic => `(tactic|(
-  rewrite [Bool.eq_iff_iff] at *
-  simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff] at *
-))
-
-
 /--
   A function from the set of atoms to the set of truth values `{false, true}`.
 -/
@@ -265,14 +259,13 @@ example
 
 lemma are_logically_equivalent_iff_eval_eq_all_val
   (P Q : Formula_) :
-  are_logically_equivalent P Q ↔ ∀ (V : Valuation), eval V P = eval V Q :=
+  are_logically_equivalent P Q ↔ ∀ (V : Valuation), (eval V P = true) ↔ (eval V Q = true) :=
   by
   unfold are_logically_equivalent
   unfold is_tautology
   unfold satisfies
   simp only [eval]
   simp only [bool_iff_prop_iff]
-  simp only [Bool.coe_iff_coe]
 
 
 theorem theorem_2_2

@@ -174,7 +174,8 @@ theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v1
     simp only [to_nnf_v1]
     simp only [to_nnf_neg_v1]
     rewrite [ih]
-    simp_all_bool
+    rewrite [Bool.eq_iff_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
     tauto
   case
       and_ phi psi phi_ih psi_ih
@@ -186,7 +187,8 @@ theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v1
     simp only [eval]
     rewrite [phi_ih]
     rewrite [psi_ih]
-    simp_all_bool
+    rewrite [Bool.eq_iff_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
     tauto
 
 
@@ -223,7 +225,8 @@ example
     rewrite [phi_ih]
     rewrite [psi_ih]
     rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf_v1 V phi]
-    simp_all_bool
+    rewrite [Bool.eq_iff_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
     tauto
   case iff_ phi psi phi_ih psi_ih =>
     simp only [to_nnf_v1]
@@ -232,7 +235,8 @@ example
     rewrite [psi_ih]
     rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf_v1 V phi]
     rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf_v1 V psi]
-    simp_all_bool
+    rewrite [Bool.eq_iff_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
     tauto
 
 
@@ -346,7 +350,8 @@ theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v2
     simp only [to_nnf_v2]
     simp only [to_nnf_neg_v2]
     rewrite [ih]
-    simp_all_bool
+    rewrite [Bool.eq_iff_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
     tauto
   case
       and_ phi psi phi_ih psi_ih
@@ -358,7 +363,8 @@ theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v2
     simp only [eval]
     rewrite [phi_ih]
     rewrite [psi_ih]
-    simp_all_bool
+    rewrite [Bool.eq_iff_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
     tauto
 
 
@@ -395,7 +401,8 @@ example
     rewrite [phi_ih]
     rewrite [psi_ih]
     rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf_v2 V phi]
-    simp_all_bool
+    rewrite [Bool.eq_iff_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
     tauto
   case iff_ phi psi phi_ih psi_ih =>
     simp only [to_nnf_v2]
@@ -404,7 +411,8 @@ example
     rewrite [psi_ih]
     rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf_v2 V phi]
     rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf_v2 V psi]
-    simp_all_bool
+    rewrite [Bool.eq_iff_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
     tauto
 
 
@@ -678,21 +686,25 @@ example
   case false_ | true_ =>
     unfold replace_atom_one_rec
     simp only [eval]
-    simp_all_bool
+    rewrite [Bool.eq_iff_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
     tauto
   case atom_ X =>
     unfold replace_atom_one_rec
     simp only [eval]
-    simp_all_bool
+    rewrite [Bool.eq_iff_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
     split_ifs
     case pos c1 =>
       rewrite [c1]
       unfold eval
-      simp_all_bool
+      rewrite [Bool.eq_iff_iff]
+      simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
       tauto
     case neg c1 =>
       unfold eval
-      simp_all_bool
+      rewrite [Bool.eq_iff_iff]
+      simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
       tauto
   case not_ phi ih =>
     cases phi
@@ -701,7 +713,8 @@ example
       simp only [replace_atom_one_rec]
       split_ifs
       simp only [eval]
-      simp_all_bool
+      rewrite [Bool.eq_iff_iff]
+      simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
       tauto
     all_goals
       simp only [is_nnf] at h1
@@ -720,7 +733,8 @@ example
 
     simp only [replace_atom_one_rec]
     simp only [eval]
-    simp_all_bool
+    rewrite [Bool.eq_iff_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff] at *
     tauto
   all_goals
     simp only [is_nnf] at h1
@@ -738,14 +752,16 @@ example
   case false_ | true_ =>
     unfold replace_atom_one_rec
     simp only [eval]
-    simp_all_bool
+    rewrite [Bool.eq_iff_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
     tauto
   case atom_ X =>
     simp only [is_pos_literal_in] at h2
     unfold replace_atom_one_rec
     split_ifs
     simp only [eval]
-    simp_all_bool
+    rewrite [Bool.eq_iff_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
     tauto
   case not_ phi ih =>
     cases phi
@@ -755,11 +771,13 @@ example
       case pos c1 =>
         simp only [eval]
         rewrite [c1]
-        simp_all_bool
+        rewrite [Bool.eq_iff_iff]
+        simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
         tauto
       case neg c1 =>
         simp only [eval]
-        simp_all_bool
+        rewrite [Bool.eq_iff_iff]
+        simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
         tauto
     all_goals
       simp only [is_nnf] at h1
@@ -778,7 +796,8 @@ example
 
     simp only [replace_atom_one_rec]
     simp only [eval]
-    simp_all_bool
+    rewrite [Bool.eq_iff_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff] at *
     tauto
   all_goals
     simp only [is_nnf] at h1

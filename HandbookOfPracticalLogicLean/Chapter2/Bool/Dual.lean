@@ -99,7 +99,8 @@ theorem theorem_2_7
     rewrite [phi_ih h1_left]
     rewrite [psi_ih h1_right]
 
-    simp_all_bool
+    rewrite [Bool.eq_iff_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
     tauto
   case or_ phi psi phi_ih psi_ih =>
     unfold has_dual at h1
@@ -108,7 +109,8 @@ theorem theorem_2_7
     rewrite [phi_ih h1_left]
     rewrite [psi_ih h1_right]
 
-    simp_all_bool
+    rewrite [Bool.eq_iff_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
     tauto
   all_goals
     unfold has_dual at h1
@@ -123,13 +125,14 @@ theorem corollary_2_8_a
   are_logically_equivalent (dual P) (dual Q) :=
   by
   simp only [are_logically_equivalent_iff_eval_eq_all_val] at h1
+  simp only [← Bool.eq_iff_iff] at h1
 
   simp only [are_logically_equivalent_iff_eval_eq_all_val]
   intro V
   rewrite [theorem_2_7 V P h2]
   rewrite [theorem_2_7 V Q h3]
-  congr! 1
-  apply h1
+  rewrite [h1]
+  rfl
 
 
 lemma is_tautology_iff_logically_equivalent_to_true
@@ -139,6 +142,7 @@ lemma is_tautology_iff_logically_equivalent_to_true
   simp only [are_logically_equivalent_iff_eval_eq_all_val]
   unfold is_tautology
   unfold satisfies
+  simp only [← Bool.eq_iff_iff]
   simp only [eval]
 
 
@@ -174,6 +178,7 @@ theorem corollary_2_8_b
   unfold satisfies
   unfold eval
   intro V
+  simp only [← Bool.eq_iff_iff] at s1
   rewrite [s1]
   simp only [eval]
   simp only [b_not]
