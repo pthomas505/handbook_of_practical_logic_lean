@@ -207,9 +207,9 @@ lemma are_logically_equivalent_true_iff
   simp only [b_not_eq_false]
 
 
-lemma not_is_tautology_iff_logically_equivalent_to_false
+lemma are_logically_equivalent_to_false_iff_not_is_tautology
   (F : Formula_) :
-  (not_ F).is_tautology ↔ are_logically_equivalent F false_ :=
+  are_logically_equivalent F false_ ↔ (not_ F).is_tautology :=
   by
   unfold are_logically_equivalent
   unfold is_tautology
@@ -219,9 +219,9 @@ lemma not_is_tautology_iff_logically_equivalent_to_false
   simp only [b_not_eq_true]
 
 
-lemma is_tautology_iff_logically_equivalent_to_true
+lemma are_logically_equivalent_to_true_iff_is_tautology
   (F : Formula_) :
-  F.is_tautology ↔ are_logically_equivalent F true_ :=
+  are_logically_equivalent F true_ ↔ F.is_tautology :=
   by
   unfold are_logically_equivalent
   unfold is_tautology

@@ -140,15 +140,15 @@ theorem corollary_2_8_b
   (h2 : has_dual F) :
   (not_ (dual F)).is_tautology :=
   by
-  rewrite [is_tautology_iff_logically_equivalent_to_true] at h1
+  rewrite [← are_logically_equivalent_to_true_iff_is_tautology] at h1
 
   obtain s1 := corollary_2_8_a F true_ h1 h2
   unfold has_dual at s1
   simp only [dual] at s1
 
-  rewrite [not_is_tautology_iff_logically_equivalent_to_false]
+  rewrite [← are_logically_equivalent_to_false_iff_not_is_tautology]
   apply s1
-  trivial
+  exact trivial
 
 
 #lint
