@@ -51,6 +51,9 @@ def b_iff : Bool → Bool → Bool
 | true, true => true
 
 
+-------------------------------------------------------------------------------
+
+
 lemma bool_iff_prop_not
   (b : Bool) :
   (b_not b = true) ↔ ¬ (b = true) :=
