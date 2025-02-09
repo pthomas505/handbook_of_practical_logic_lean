@@ -100,7 +100,7 @@ theorem theorem_2_7
     rewrite [psi_ih h1_right]
 
     rewrite [Bool.eq_iff_iff]
-    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or]
     tauto
   case or_ phi psi phi_ih psi_ih =>
     unfold has_dual at h1
@@ -110,7 +110,7 @@ theorem theorem_2_7
     rewrite [psi_ih h1_right]
 
     rewrite [Bool.eq_iff_iff]
-    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or]
     tauto
   all_goals
     unfold has_dual at h1
@@ -124,40 +124,14 @@ theorem corollary_2_8_a
   (h3 : has_dual Q) :
   are_logically_equivalent (dual P) (dual Q) :=
   by
-  simp only [are_logically_equivalent_iff_eval_eq_all_val] at h1
-  simp only [← Bool.eq_iff_iff] at h1
+  simp only [are_logically_equivalent_iff_eval_eq] at h1
 
-  simp only [are_logically_equivalent_iff_eval_eq_all_val]
+  simp only [are_logically_equivalent_iff_eval_eq]
   intro V
   rewrite [theorem_2_7 V P h2]
   rewrite [theorem_2_7 V Q h3]
   rewrite [h1]
   rfl
-
-
-lemma is_tautology_iff_logically_equivalent_to_true
-  (F : Formula_) :
-  F.is_tautology ↔ are_logically_equivalent F true_ :=
-  by
-  simp only [are_logically_equivalent_iff_eval_eq_all_val]
-  unfold is_tautology
-  unfold satisfies
-  simp only [← Bool.eq_iff_iff]
-  simp only [eval]
-
-
-example
-  (F : Formula_) :
-  are_logically_equivalent F false_ ↔ are_logically_equivalent (not_ F) true_ :=
-  by
-  simp only [are_logically_equivalent_iff_eval_eq_all_val]
-  simp only [eval]
-  congr! 1
-  case _ V =>
-    simp only [b_not]
-    cases eval V F
-    all_goals
-      tauto
 
 
 theorem corollary_2_8_b
@@ -169,19 +143,12 @@ theorem corollary_2_8_b
   rewrite [is_tautology_iff_logically_equivalent_to_true] at h1
 
   obtain s1 := corollary_2_8_a F true_ h1 h2
-  simp only [has_dual] at s1
+  unfold has_dual at s1
   simp only [dual] at s1
-  simp at s1
-  simp only [are_logically_equivalent_iff_eval_eq_all_val] at s1
 
-  unfold is_tautology
-  unfold satisfies
-  unfold eval
-  intro V
-  simp only [← Bool.eq_iff_iff] at s1
-  rewrite [s1]
-  simp only [eval]
-  simp only [b_not]
+  rewrite [not_is_tautology_iff_logically_equivalent_to_false]
+  apply s1
+  trivial
 
 
 #lint

@@ -212,6 +212,9 @@ def are_logically_equivalent
   (P.iff_ Q).is_tautology
 
 
+-------------------------------------------------------------------------------
+
+
 example
   (F : Formula_)
   (h1 : F.is_tautology) :
@@ -226,10 +229,28 @@ example
 
 example
   (F : Formula_) :
+  F.is_unsatisfiable ↔ ¬ F.is_satisfiable :=
+  by
+  unfold is_unsatisfiable
+  unfold is_satisfiable
+  rfl
+
+
+example
+  (F : Formula_) :
+  ¬ F.is_unsatisfiable ↔ F.is_satisfiable :=
+  by
+  unfold is_unsatisfiable
+  unfold is_satisfiable
+  exact not_not
+
+
+example
+  (F : Formula_) :
   (not_ F).is_unsatisfiable ↔ F.is_tautology :=
   by
-  unfold is_tautology
   unfold is_unsatisfiable
+  unfold is_tautology
   unfold satisfies
   simp only [eval]
   simp only [bool_iff_prop_not]
@@ -248,24 +269,165 @@ example
   exact not_exists
 
 
-example
-  (F : Formula_) :
-  ¬ F.is_unsatisfiable ↔ F.is_satisfiable :=
+-------------------------------------------------------------------------------
+
+
+lemma b_iff_rfl
+  (b : Bool) :
+  b_iff b b = true :=
   by
-  unfold is_satisfiable
-  unfold is_unsatisfiable
-  exact not_not
+  cases b
+  · simp only [b_iff]
+  · simp only [b_iff]
 
 
-lemma are_logically_equivalent_iff_eval_eq_all_val
+lemma b_not_eq_false
+  (b : Bool) :
+  (b_not b = false ↔ b = true) :=
+  by
+  constructor
+  · intro a1
+    cases b
+    · simp only [b_not] at a1
+      cases a1
+    · rfl
+  · intro a1
+    cases b
+    · cases a1
+    · simp only [b_not]
+
+
+lemma b_not_eq_true
+  (b : Bool) :
+  (b_not b = true ↔ b = false) :=
+  by
+  constructor
+  · intro a1
+    cases b
+    · rfl
+    · simp only [b_not] at a1
+      cases a1
+  · intro a1
+    cases b
+    · simp only [b_not]
+    · cases a1
+
+
+lemma b_iff_eq_false
+  (b1 b2 : Bool) :
+  (b_iff b1 b2 = false) ↔ ¬ (b1 = b2) :=
+  by
+  constructor
+  · intro a1
+    cases b1
+    · cases b2
+      · simp only [b_iff] at a1
+        cases a1
+      · intro contra
+        cases contra
+    · cases b2
+      · intro contra
+        cases contra
+      · simp only [b_iff] at a1
+        cases a1
+  · intro a1
+    cases b1
+    · cases b2
+      · exfalso
+        apply a1
+        rfl
+      · simp only [b_iff]
+    · cases b2
+      · simp only [b_iff]
+      · exfalso
+        apply a1
+        rfl
+
+
+lemma b_iff_eq_true
+  (b1 b2 : Bool) :
+  (b_iff b1 b2 = true) ↔ (b1 = b2) :=
+  by
+  constructor
+  · intro a1
+    cases b1
+    · cases b2
+      · rfl
+      · simp only [b_iff] at a1
+        cases a1
+    · cases b2
+      · simp only [b_iff] at a1
+        cases a1
+      · rfl
+  · intro a1
+    rewrite [a1]
+    apply b_iff_rfl
+
+
+-------------------------------------------------------------------------------
+
+
+lemma are_logically_equivalent_iff_eval_eq
   (P Q : Formula_) :
-  are_logically_equivalent P Q ↔ ∀ (V : Valuation), (eval V P = true) ↔ (eval V Q = true) :=
+  are_logically_equivalent P Q ↔ ∀ (V : Valuation), eval V P = eval V Q :=
   by
   unfold are_logically_equivalent
   unfold is_tautology
   unfold satisfies
   simp only [eval]
-  simp only [bool_iff_prop_iff]
+  simp only [b_iff_eq_true]
+
+
+lemma are_logically_equivalent_false_iff
+  (F : Formula_) :
+  are_logically_equivalent F false_ ↔
+  are_logically_equivalent (not_ F) true_ :=
+  by
+  unfold are_logically_equivalent
+  unfold is_tautology
+  unfold satisfies
+  simp only [eval]
+  simp only [b_iff_eq_true]
+  simp only [b_not_eq_true]
+
+
+lemma are_logically_equivalent_true_iff
+  (F : Formula_) :
+  are_logically_equivalent F true_ ↔
+  are_logically_equivalent (not_ F) false_ :=
+  by
+  unfold are_logically_equivalent
+  unfold is_tautology
+  unfold satisfies
+  simp only [eval]
+  simp only [b_iff_eq_true]
+  simp only [b_not_eq_false]
+
+
+lemma not_is_tautology_iff_logically_equivalent_to_false
+  (F : Formula_) :
+  (not_ F).is_tautology ↔ are_logically_equivalent F false_ :=
+  by
+  unfold are_logically_equivalent
+  unfold is_tautology
+  unfold satisfies
+  simp only [eval]
+  simp only [b_iff_eq_true]
+  simp only [b_not_eq_true]
+
+
+lemma is_tautology_iff_logically_equivalent_to_true
+  (F : Formula_) :
+  F.is_tautology ↔ are_logically_equivalent F true_ :=
+  by
+  unfold are_logically_equivalent
+  unfold is_tautology
+  unfold satisfies
+  simp only [eval]
+  simp only [b_iff_eq_true]
+
+
+-------------------------------------------------------------------------------
 
 
 theorem theorem_2_2

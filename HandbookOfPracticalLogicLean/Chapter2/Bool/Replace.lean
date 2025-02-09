@@ -106,10 +106,9 @@ theorem corollary_2_6_one
   (h1 : are_logically_equivalent P Q) :
   eval V (replace_atom_one_rec X P R) = eval V (replace_atom_one_rec X Q R) :=
   by
-  simp only [are_logically_equivalent_iff_eval_eq_all_val] at h1
+  simp only [are_logically_equivalent_iff_eval_eq] at h1
 
   apply theorem_2_5_one
-  rewrite [Bool.eq_iff_iff]
   apply h1
 
 
@@ -194,11 +193,10 @@ theorem corollary_2_6_all
   (h1 : ∀ (X : String), are_logically_equivalent (τ1 X) (τ2 X)) :
   eval V (replace_atom_all_rec τ1 F) = eval V (replace_atom_all_rec τ2 F) :=
   by
-  simp only [are_logically_equivalent_iff_eval_eq_all_val] at h1
+  simp only [are_logically_equivalent_iff_eval_eq] at h1
 
   apply theorem_2_5_all
   intro X
-  rewrite [Bool.eq_iff_iff]
   apply h1
 
 

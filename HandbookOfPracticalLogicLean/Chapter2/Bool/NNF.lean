@@ -692,8 +692,6 @@ example
   case atom_ X =>
     unfold replace_atom_one_rec
     simp only [eval]
-    rewrite [Bool.eq_iff_iff]
-    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
     split_ifs
     case pos c1 =>
       rewrite [c1]
@@ -745,7 +743,7 @@ example
   (F : Formula_)
   (h1 : F.is_nnf)
   (h2 : ¬ is_pos_literal_in A F) :
-  ∀ (V : Valuation), eval V (((atom_ A).imp_ (atom_ A')).imp_ ((replace_atom_one_rec A (atom_ A') F).imp_ F)) :=
+  ∀ (V : Valuation), eval V (((atom_ A).imp_ (atom_ A')).imp_ ((replace_atom_one_rec A (atom_ A') F).imp_ F)) = true :=
   by
   intro V
   induction F
