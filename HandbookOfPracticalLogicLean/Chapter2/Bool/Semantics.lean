@@ -117,6 +117,101 @@ lemma bool_iff_prop_iff
       tauto
 
 
+-------------------------------------------------------------------------------
+
+
+lemma b_iff_rfl
+  (b : Bool) :
+  b_iff b b = true :=
+  by
+  cases b
+  · simp only [b_iff]
+  · simp only [b_iff]
+
+
+lemma b_not_eq_false
+  (b : Bool) :
+  (b_not b = false ↔ b = true) :=
+  by
+  constructor
+  · intro a1
+    cases b
+    · simp only [b_not] at a1
+      cases a1
+    · rfl
+  · intro a1
+    cases b
+    · cases a1
+    · simp only [b_not]
+
+
+lemma b_not_eq_true
+  (b : Bool) :
+  (b_not b = true ↔ b = false) :=
+  by
+  constructor
+  · intro a1
+    cases b
+    · rfl
+    · simp only [b_not] at a1
+      cases a1
+  · intro a1
+    cases b
+    · simp only [b_not]
+    · cases a1
+
+
+lemma b_iff_eq_false
+  (b1 b2 : Bool) :
+  (b_iff b1 b2 = false) ↔ ¬ (b1 = b2) :=
+  by
+  constructor
+  · intro a1
+    cases b1
+    · cases b2
+      · simp only [b_iff] at a1
+        cases a1
+      · intro contra
+        cases contra
+    · cases b2
+      · intro contra
+        cases contra
+      · simp only [b_iff] at a1
+        cases a1
+  · intro a1
+    cases b1
+    · cases b2
+      · exfalso
+        apply a1
+        rfl
+      · simp only [b_iff]
+    · cases b2
+      · simp only [b_iff]
+      · exfalso
+        apply a1
+        rfl
+
+
+lemma b_iff_eq_true
+  (b1 b2 : Bool) :
+  (b_iff b1 b2 = true) ↔ (b1 = b2) :=
+  by
+  constructor
+  · intro a1
+    cases b1
+    · cases b2
+      · rfl
+      · simp only [b_iff] at a1
+        cases a1
+    · cases b2
+      · simp only [b_iff] at a1
+        cases a1
+      · rfl
+  · intro a1
+    rewrite [a1]
+    apply b_iff_rfl
+
+
 /--
   A function from the set of atoms to the set of truth values `{false, true}`.
 -/
@@ -267,101 +362,6 @@ example
   simp only [eval]
   simp only [bool_iff_prop_not]
   exact not_exists
-
-
--------------------------------------------------------------------------------
-
-
-lemma b_iff_rfl
-  (b : Bool) :
-  b_iff b b = true :=
-  by
-  cases b
-  · simp only [b_iff]
-  · simp only [b_iff]
-
-
-lemma b_not_eq_false
-  (b : Bool) :
-  (b_not b = false ↔ b = true) :=
-  by
-  constructor
-  · intro a1
-    cases b
-    · simp only [b_not] at a1
-      cases a1
-    · rfl
-  · intro a1
-    cases b
-    · cases a1
-    · simp only [b_not]
-
-
-lemma b_not_eq_true
-  (b : Bool) :
-  (b_not b = true ↔ b = false) :=
-  by
-  constructor
-  · intro a1
-    cases b
-    · rfl
-    · simp only [b_not] at a1
-      cases a1
-  · intro a1
-    cases b
-    · simp only [b_not]
-    · cases a1
-
-
-lemma b_iff_eq_false
-  (b1 b2 : Bool) :
-  (b_iff b1 b2 = false) ↔ ¬ (b1 = b2) :=
-  by
-  constructor
-  · intro a1
-    cases b1
-    · cases b2
-      · simp only [b_iff] at a1
-        cases a1
-      · intro contra
-        cases contra
-    · cases b2
-      · intro contra
-        cases contra
-      · simp only [b_iff] at a1
-        cases a1
-  · intro a1
-    cases b1
-    · cases b2
-      · exfalso
-        apply a1
-        rfl
-      · simp only [b_iff]
-    · cases b2
-      · simp only [b_iff]
-      · exfalso
-        apply a1
-        rfl
-
-
-lemma b_iff_eq_true
-  (b1 b2 : Bool) :
-  (b_iff b1 b2 = true) ↔ (b1 = b2) :=
-  by
-  constructor
-  · intro a1
-    cases b1
-    · cases b2
-      · rfl
-      · simp only [b_iff] at a1
-        cases a1
-    · cases b2
-      · simp only [b_iff] at a1
-        cases a1
-      · rfl
-  · intro a1
-    rewrite [a1]
-    apply b_iff_rfl
 
 
 -------------------------------------------------------------------------------
