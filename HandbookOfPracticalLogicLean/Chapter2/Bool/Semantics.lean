@@ -434,7 +434,7 @@ def opt_val_to_val
     | none => default
 
 
-example
+lemma val_to_opt_val_eq_some_val
   (V : Valuation)
   (A : String) :
   (val_to_opt_val V) A = some (V A) :=
@@ -443,19 +443,106 @@ example
   rfl
 
 
-example
-  (V : Option_.Valuation)
+lemma opt_val_eq_some_opt_val_to_val
+  (V_opt : Option_.Valuation)
   (A : String)
-  (h1 : ¬ V A = none) :
-  V A = some ((opt_val_to_val V) A) :=
+  (h1 : ¬ V_opt A = none) :
+  V_opt A = some ((opt_val_to_val V_opt) A) :=
   by
-  cases c1 : V A
+  cases c1 : V_opt A
   case none =>
     contradiction
   case some b =>
     unfold opt_val_to_val
     rewrite [c1]
     rfl
+
+
+lemma eval_opt_val_to_val
+  (V_opt : Option_.Valuation)
+  (F : Formula_)
+  (h1 : ∀ (A : String), atom_occurs_in A F → ¬ V_opt A = none) :
+  Option_.eval V_opt F = some (eval (opt_val_to_val V_opt) F) :=
+  by
+  induction F
+  case false_ | true_ =>
+    unfold Option_.eval
+    unfold eval
+    rfl
+  case atom_ X =>
+    unfold Option_.eval
+    unfold eval
+    apply opt_val_eq_some_opt_val_to_val
+    apply h1
+    unfold atom_occurs_in
+    rfl
+  case not_ phi ih =>
+    unfold atom_occurs_in at h1
+    specialize ih h1
+
+    unfold Option_.eval
+    unfold eval
+    rewrite [ih]
+    simp only [Option.bind_eq_bind, Option.some_bind]
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    unfold atom_occurs_in at h1
+
+    have s1 : ∀ (A : String), atom_occurs_in A phi → ¬ V_opt A = none :=
+    by
+      intro A a1
+      apply h1
+      tauto
+
+    have s2 : ∀ (A : String), atom_occurs_in A psi → ¬ V_opt A = none :=
+    by
+      intro A a1
+      apply h1
+      tauto
+
+    specialize phi_ih s1
+    specialize psi_ih s2
+
+    unfold Option_.eval
+    unfold eval
+    rewrite [phi_ih]
+    rewrite [psi_ih]
+    simp only [Option.bind_eq_bind, Option.some_bind]
+
+
+lemma eval_val_to_opt_val
+  (V : Valuation)
+  (F : Formula_) :
+  Option_.eval (val_to_opt_val V) F = some (eval V F) :=
+  by
+  induction F
+  case false_ | true_ =>
+    unfold Option_.eval
+    unfold eval
+    rfl
+  case atom_ X =>
+    unfold Option_.eval
+    unfold eval
+    unfold val_to_opt_val
+    rfl
+  case not_ phi ih =>
+    unfold Option_.eval
+    unfold eval
+    rewrite [ih]
+    simp only [Option.bind_eq_bind, Option.some_bind]
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    unfold Option_.eval
+    unfold eval
+    rewrite [phi_ih]
+    rewrite [psi_ih]
+    simp only [Option.bind_eq_bind, Option.some_bind]
 
 
 example
@@ -469,31 +556,34 @@ example
   unfold Option_.Formula_.is_tautology
   unfold Option_.satisfies
   intro V_opt a1
-  rewrite [← h1 (opt_val_to_val V_opt)]
-  clear h1
-  induction F
-  case false_ | true_ =>
-    unfold Option_.eval
-    unfold eval
-    rfl
-  case atom_ X =>
-    unfold Option_.eval
-    unfold eval
+  specialize h1 (opt_val_to_val V_opt)
+  rewrite [← h1]
+  apply eval_opt_val_to_val
+  exact a1
 
-    cases c1 : V_opt X
-    case none =>
-      specialize a1 X
-      unfold atom_occurs_in at a1
-      exfalso
-      apply a1
-      · rfl
-      · exact c1
-    case some b =>
-      unfold opt_val_to_val
-      rewrite [c1]
-      rfl
-  all_goals
-    sorry
+
+example
+  (F : Formula_)
+  (h1 : Option_.Formula_.is_tautology F) :
+  F.is_tautology :=
+  by
+  unfold Option_.Formula_.is_tautology at h1
+  unfold Option_.satisfies at h1
+
+  unfold is_tautology
+  unfold satisfies
+  intro V
+  specialize h1 (val_to_opt_val V)
+  rewrite [eval_val_to_opt_val V F] at h1
+  have s1 : some (eval V F) = some true :=
+  by
+    apply h1
+    intro A a1
+    unfold val_to_opt_val
+    intro contra
+    cases contra
+  simp only [Option.some.injEq] at s1
+  exact s1
 
 
 --#lint
