@@ -319,6 +319,33 @@ def eval
 
 
 /--
+  `satisfies V F` := True if and only if the valuation `V` satisfies the formula `F`.
+-/
+def satisfies
+  (V : Valuation)
+  (F : Formula_) :
+  Prop :=
+  eval V F = some true
+
+instance
+  (V : Valuation)
+  (F : Formula_) :
+  Decidable (satisfies V F) :=
+  by
+  unfold satisfies
+  infer_instance
+
+
+/--
+  `Formula_.is_tautology F` := True if and only if the formula `F` is a tautology.
+-/
+def Formula_.is_tautology
+  (F : Formula_) :
+  Prop :=
+  ∀ (V : Valuation), ((∀ (A : String), atom_occurs_in A F → ¬ V A = none) → satisfies V F)
+
+
+/--
   `gen_valuation` := The generation of a valuation function from a list of pairs of atoms and truth values.
 -/
 def gen_valuation :
@@ -345,8 +372,8 @@ example
   (V_opt : Option_.Valuation)
   (V : Valuation)
   (F : Formula_)
-  (h1 : ∀ (A : String), atom_occurs_in A F → V_opt A = Option.some (V A)) :
-  Option_.eval V_opt F = Option.some (eval V F) :=
+  (h1 : ∀ (A : String), atom_occurs_in A F → V_opt A = some (V A)) :
+  Option_.eval V_opt F = some (eval V F) :=
   by
   induction F
   case false_ | true_ =>
@@ -392,4 +419,81 @@ example
     simp
 
 
-#lint
+def val_to_opt_val
+  (V : Valuation) :
+  Option_.Valuation :=
+  fun (A : String) => some (V A)
+
+
+def opt_val_to_val
+  (V_opt : Option_.Valuation) :
+  Valuation :=
+  fun (A : String) =>
+    match V_opt A with
+    | some b => b
+    | none => default
+
+
+example
+  (V : Valuation)
+  (A : String) :
+  (val_to_opt_val V) A = some (V A) :=
+  by
+  unfold val_to_opt_val
+  rfl
+
+
+example
+  (V : Option_.Valuation)
+  (A : String)
+  (h1 : ¬ V A = none) :
+  V A = some ((opt_val_to_val V) A) :=
+  by
+  cases c1 : V A
+  case none =>
+    contradiction
+  case some b =>
+    unfold opt_val_to_val
+    rewrite [c1]
+    rfl
+
+
+example
+  (F : Formula_)
+  (h1 : F.is_tautology) :
+  Option_.Formula_.is_tautology F :=
+  by
+  unfold is_tautology at h1
+  unfold satisfies at h1
+
+  unfold Option_.Formula_.is_tautology
+  unfold Option_.satisfies
+  intro V_opt a1
+  rewrite [← h1 (opt_val_to_val V_opt)]
+  clear h1
+  induction F
+  case false_ | true_ =>
+    unfold Option_.eval
+    unfold eval
+    rfl
+  case atom_ X =>
+    unfold Option_.eval
+    unfold eval
+
+    cases c1 : V_opt X
+    case none =>
+      specialize a1 X
+      unfold atom_occurs_in at a1
+      exfalso
+      apply a1
+      · rfl
+      · exact c1
+    case some b =>
+      unfold opt_val_to_val
+      rewrite [c1]
+      rfl
+  all_goals
+    sorry
+
+
+--#lint
