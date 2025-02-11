@@ -8,7 +8,7 @@ import Mathlib.Tactic
 set_option autoImplicit false
 
 
-namespace Prop_
+namespace Bool_
 
 
 open Formula_

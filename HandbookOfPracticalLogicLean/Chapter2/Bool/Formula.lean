@@ -5,7 +5,7 @@ import Mathlib.Util.CompileInductive
 set_option autoImplicit false
 
 
-namespace Prop_
+namespace Bool_
 
 
 /--
