@@ -28,6 +28,21 @@ def Formula_.atom_set :
 
 
 /--
+  `Formula_.atom_list F` := The list of all of the atoms that have an occurrence in the formula `F`.
+-/
+def Formula_.atom_list :
+  Formula_ → List String
+  | false_ => []
+  | true_ => []
+  | atom_ X => [X]
+  | not_ phi => phi.atom_list
+  | and_ phi psi => phi.atom_list ++ psi.atom_list
+  | or_ phi psi => phi.atom_list ++ psi.atom_list
+  | imp_ phi psi => phi.atom_list ++ psi.atom_list
+  | iff_ phi psi => phi.atom_list ++ psi.atom_list
+
+
+/--
   `atom_occurs_in A F` := True if and only if there is an occurrence of the atom `A` in the formula `F`.
 -/
 def atom_occurs_in
@@ -62,6 +77,32 @@ example
   all_goals
     unfold atom_occurs_in
     unfold atom_set
+  case true_ | false_ =>
+    simp
+  case atom_ X =>
+    simp
+  case not_ phi ih =>
+    exact ih
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    simp
+    rewrite [phi_ih]
+    rewrite [psi_ih]
+    rfl
+
+
+example
+  (A : String)
+  (F : Formula_) :
+  atom_occurs_in A F ↔ A ∈ F.atom_list :=
+  by
+  induction F
+  all_goals
+    unfold atom_occurs_in
+    unfold atom_list
   case true_ | false_ =>
     simp
   case atom_ X =>

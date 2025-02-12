@@ -279,8 +279,42 @@ def gen_all_assignments :
   left ++ right
 
 
-def gen_valuation
-  (default : Valuation) :
+def gen_valuation :
   List (String × Bool) → Valuation
   | [] => default
-  | hd :: tl => Function.updateITE (gen_valuation default tl) hd.fst hd.snd
+  | hd :: tl => Function.updateITE (gen_valuation tl) hd.fst hd.snd
+
+
+def gen_all_valuations
+  (atoms : List String) :
+  List Valuation :=
+  (gen_all_assignments atoms).map gen_valuation
+
+
+def gen_all_satisfying_valuations
+  (F : Formula_) :
+  List Valuation :=
+  let atoms := List.insertionSort (fun (s1 s2 : String) => s1 < s2) F.atom_list.dedup
+  (gen_all_valuations atoms).filter (fun (V : Valuation) => satisfies V F)
+
+
+def mk_lits
+  (atoms : List String)
+  (V : Valuation) :
+  Formula_ :=
+  let f : String → Formula_ := fun (A : String) =>
+    if V A = true
+    then atom_ A
+    else not_ (atom_ A)
+  list_conj (atoms.map f)
+
+
+def to_dnf_v1
+  (F : Formula_) :
+  Formula_ :=
+  let atoms := List.insertionSort (fun (s1 s2 : String) => s1 < s2) F.atom_list.dedup
+  let sat_vals := gen_all_satisfying_valuations F
+  list_disj (sat_vals.map (mk_lits atoms))
+
+
+#eval (to_dnf_v1 (Formula_| ((P \/ (Q /\ R)) /\ (~ P \/ ~ R)))).toString
