@@ -291,11 +291,44 @@ def gen_all_valuations
   (gen_all_assignments atoms).map gen_valuation
 
 
+lemma gen_all_valuations_nil :
+  gen_all_valuations [] = [default] :=
+  by
+  unfold gen_all_valuations
+  unfold gen_all_assignments
+  unfold List.map
+  unfold gen_valuation
+  simp only [List.map_nil]
+
+
 def gen_all_satisfying_valuations
   (F : Formula_) :
   List Valuation :=
-  let atoms := List.insertionSort (fun (s1 s2 : String) => s1 < s2) F.atom_list.dedup
-  (gen_all_valuations atoms).filter (fun (V : Valuation) => satisfies V F)
+  -- let atoms := List.insertionSort (fun (s1 s2 : String) => s1 < s2) F.atom_list.dedup
+  -- let atoms := F.atom_list.dedup
+  -- (gen_all_valuations atoms).filter (fun (V : Valuation) => satisfies V F)
+  (gen_all_valuations F.atom_list.dedup).filter (fun (V : Valuation) => satisfies V F)
+
+
+lemma gen_all_satisfying_valuations_false_ :
+  gen_all_satisfying_valuations false_ = [] :=
+  by
+  unfold gen_all_satisfying_valuations
+  unfold satisfies
+  simp only [eval]
+  simp only [Bool.false_eq_true, decide_false, List.filter_false]
+
+
+lemma gen_all_satisfying_valuations_true_ :
+  gen_all_satisfying_valuations true_ = [default] :=
+  by
+  unfold gen_all_satisfying_valuations
+  unfold satisfies
+  simp only [eval]
+  unfold atom_list
+  simp only [List.dedup_nil]
+  simp only [gen_all_valuations_nil]
+  simp only [decide_true, List.filter_true]
 
 
 def mk_lits
@@ -309,12 +342,46 @@ def mk_lits
   list_conj (atoms.map f)
 
 
+lemma mk_lits_nil
+  (V : Valuation) :
+  mk_lits [] V = true_ :=
+  by
+  unfold mk_lits
+  simp only [List.map_nil]
+  unfold list_conj
+  rfl
+
+
 def to_dnf_v1
   (F : Formula_) :
   Formula_ :=
-  let atoms := List.insertionSort (fun (s1 s2 : String) => s1 < s2) F.atom_list.dedup
-  let sat_vals := gen_all_satisfying_valuations F
-  list_disj (sat_vals.map (mk_lits atoms))
+  -- let atoms := List.insertionSort (fun (s1 s2 : String) => s1 < s2) F.atom_list.dedup
+  -- let atoms := F.atom_list.dedup
+  -- list_disj ((gen_all_satisfying_valuations F).map (mk_lits atoms))
+  list_disj ((gen_all_satisfying_valuations F).map (mk_lits F.atom_list.dedup))
 
 
 #eval (to_dnf_v1 (Formula_| ((P \/ (Q /\ R)) /\ (~ P \/ ~ R)))).toString
+
+
+example :
+  to_dnf_v1 false_ = false_ :=
+  by
+  unfold to_dnf_v1
+  simp only [gen_all_satisfying_valuations_false_]
+  simp only [List.map_nil]
+  unfold list_disj
+  rfl
+
+
+example :
+  to_dnf_v1 true_ = true_ :=
+  by
+  unfold to_dnf_v1
+  simp only [gen_all_satisfying_valuations_true_]
+  simp only [List.map_cons, List.map_nil]
+  unfold atom_list
+  simp only [List.dedup_nil]
+  simp only [mk_lits_nil]
+  unfold list_disj
+  rfl
