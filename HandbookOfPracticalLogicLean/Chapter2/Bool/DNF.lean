@@ -72,6 +72,48 @@ inductive is_dnf_ind : Formula_ → Prop
 -------------------------------------------------------------------------------
 
 
+lemma is_literal_ind_imp_is_literal
+  (F : Formula_)
+  (h1 : is_literal_ind F) :
+  F.is_literal :=
+  by
+  cases h1
+  all_goals
+    simp only [is_literal]
+
+
+lemma is_literal_imp_is_literal_ind
+  (F : Formula_)
+  (h1 : F.is_literal) :
+  is_literal_ind F :=
+  by
+  cases F
+  case atom_ X =>
+    apply is_literal_ind.rule_1
+  case not_ phi =>
+    cases phi
+    case atom_ X =>
+      apply is_literal_ind.rule_2
+    all_goals
+      simp only [is_literal] at h1
+  all_goals
+    simp only [is_literal] at h1
+
+
+lemma is_literal_ind_iff_is_literal
+  (F : Formula_) :
+  is_literal_ind F ↔ F.is_literal:=
+  by
+  constructor
+  · intro a1
+    exact is_literal_ind_imp_is_literal F a1
+  · intro a1
+    exact is_literal_imp_is_literal_ind F a1
+
+
+-------------------------------------------------------------------------------
+
+
 def Formula_.is_conj_rec_v1 :
   Formula_ → Prop
   | false_ => True
@@ -420,3 +462,42 @@ example
   unfold list_conj
   unfold list_disj
   rfl
+
+
+example
+  (atoms : List String)
+  (V : Valuation) :
+  is_conj_ind (mk_lits atoms V) :=
+  by
+  induction atoms
+  case nil =>
+    simp only [mk_lits_nil]
+    apply is_conj_ind.rule_3
+    exact is_constant_ind.rule_2
+  case cons hd tl ih =>
+    cases tl
+    case nil =>
+      simp only [mk_lits]
+      simp only [List.map_cons, List.map_nil]
+      simp only [list_conj]
+      split_ifs
+      case pos c1 =>
+        apply is_conj_ind.rule_4
+        apply is_literal_ind.rule_1
+      case neg c1 =>
+        apply is_conj_ind.rule_4
+        apply is_literal_ind.rule_2
+    case cons tl_hd tl_tl =>
+      simp only [mk_lits] at ih
+
+      simp only [mk_lits]
+
+      simp only [list_conj]
+      apply is_conj_ind.rule_2
+      · split_ifs
+        case pos c1 =>
+          apply is_literal_ind.rule_1
+        case neg c1 =>
+          apply is_literal_ind.rule_2
+      · simp only [List.map_cons] at ih
+        apply ih
