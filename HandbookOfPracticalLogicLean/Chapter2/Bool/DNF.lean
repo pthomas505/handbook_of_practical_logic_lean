@@ -321,9 +321,37 @@ def gen_all_assignments :
   left ++ right
 
 
+lemma all_mem_gen_all_assignments
+  (xs : List String)
+  (f : String → Bool) :
+  List.map (fun (s : String) => (s, f s)) xs ∈ gen_all_assignments xs :=
+  by
+  induction xs
+  case nil =>
+    unfold gen_all_assignments
+    simp only [List.map_nil, List.mem_singleton]
+  case cons hd tl ih =>
+    simp only [List.map_cons]
+    unfold gen_all_assignments
+    simp only [List.mem_append, List.mem_map]
+    cases c1 : f hd
+    case false =>
+      left
+      apply Exists.intro (List.map (fun s ↦ (s, f s)) tl)
+      constructor
+      · exact ih
+      · rfl
+    case true =>
+      right
+      apply Exists.intro (List.map (fun s ↦ (s, f s)) tl)
+      constructor
+      · exact ih
+      · rfl
+
+
 def gen_valuation :
   List (String × Bool) → Valuation
-  | [] => default
+  | [] => (fun _ => default)
   | hd :: tl => Function.updateITE (gen_valuation tl) hd.fst hd.snd
 
 
@@ -334,13 +362,55 @@ def gen_all_valuations
 
 
 lemma gen_all_valuations_nil :
-  gen_all_valuations [] = [default] :=
+  gen_all_valuations [] = [fun _ => default] :=
   by
   unfold gen_all_valuations
   unfold gen_all_assignments
   unfold List.map
   unfold gen_valuation
   simp only [List.map_nil]
+
+
+lemma all_mem_gen_all_valuations
+  (V : Valuation)
+  (atoms : List String)
+  (h1 : ∀ (s : String), ¬ s ∈ atoms → V s = default) :
+  V ∈ gen_all_valuations atoms :=
+  by
+  unfold gen_all_valuations
+  induction atoms
+  case nil =>
+    unfold gen_all_assignments
+    simp
+    unfold gen_valuation
+    funext s
+    apply h1
+    apply List.not_mem_nil
+  case cons hd tl ih =>
+    have s1 : ∀ (s : String), (¬ s = hd ∧ s ∉ tl) → V s = default :=
+    by
+      intro s a1
+      apply h1
+      simp only [List.mem_cons]
+      tauto
+    clear h1
+
+
+    unfold gen_all_assignments
+    simp only [List.map_append, List.map_map, List.mem_append, List.mem_map, Function.comp_apply]
+
+    unfold gen_valuation
+    simp only
+    cases c1 : V hd
+    case false =>
+      left
+      apply Exists.intro (List.map (fun (s : String) => (s, V s)) tl)
+      constructor
+      · sorry
+      · sorry
+    case true =>
+      right
+      sorry
 
 
 def gen_all_satisfying_valuations
@@ -350,6 +420,18 @@ def gen_all_satisfying_valuations
   -- let atoms := F.atom_list.dedup
   -- (gen_all_valuations atoms).filter (fun (V : Valuation) => satisfies V F)
   (gen_all_valuations F.atom_list.dedup).filter (fun (V : Valuation) => satisfies V F)
+
+
+lemma mem_gen_all_satisfying_valuations
+  (V : Valuation)
+  (F : Formula_)
+  (h1 : satisfies V F) :
+  V ∈ gen_all_satisfying_valuations F :=
+  by
+  unfold gen_all_satisfying_valuations
+  simp only [List.mem_filter]
+  simp only [decide_eq_true_eq]
+  sorry
 
 
 lemma gen_all_satisfying_valuations_false_ :
@@ -362,7 +444,7 @@ lemma gen_all_satisfying_valuations_false_ :
 
 
 lemma gen_all_satisfying_valuations_true_ :
-  gen_all_satisfying_valuations true_ = [default] :=
+  gen_all_satisfying_valuations true_ = [fun _ => default] :=
   by
   unfold gen_all_satisfying_valuations
   unfold satisfies
@@ -559,3 +641,11 @@ example
   apply blah
   intro phi
   apply meh
+
+
+example
+  (V : Valuation)
+  (F : Formula_) :
+  eval V F = eval V (to_dnf_v1 F) :=
+  by
+  sorry
