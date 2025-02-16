@@ -464,7 +464,7 @@ example
   rfl
 
 
-example
+lemma mk_lits_is_conj_ind
   (atoms : List String)
   (V : Valuation) :
   is_conj_ind (mk_lits atoms V) :=
@@ -501,3 +501,61 @@ example
           apply is_literal_ind.rule_2
       · simp only [List.map_cons] at ih
         apply ih
+
+
+lemma meh
+  (atoms : List String)
+  (vs : List Valuation)
+  (F : Formula_)
+  (h1 : F ∈ (List.map (mk_lits atoms) vs)) :
+  is_conj_ind F :=
+  by
+    simp only [List.mem_map] at h1
+    obtain ⟨V, h1⟩ := h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+    rewrite [← h1_right]
+    apply mk_lits_is_conj_ind
+
+
+lemma blah
+  (xs : List Formula_)
+  (h1 : ∀ (F : Formula_), F ∈ xs → is_conj_ind F) :
+  is_dnf_ind (list_disj xs) :=
+  by
+  induction xs
+  case nil =>
+    unfold list_disj
+    apply is_dnf_ind.rule_2 false_
+    apply is_conj_ind.rule_3 false_
+    exact is_constant_ind.rule_1
+  case cons hd tl ih =>
+    cases tl
+    case nil =>
+      unfold list_disj
+      apply is_dnf_ind.rule_2 hd
+      apply h1
+      simp
+    case cons tl_hd tl_tl =>
+      unfold list_disj
+      apply is_dnf_ind.rule_1
+      · apply h1
+        simp only [List.mem_cons]
+        left
+        trivial
+      · apply ih
+        intro F a1
+        apply h1
+        simp only [List.mem_cons]
+        right
+        simp only [List.mem_cons] at a1
+        exact a1
+
+
+example
+  (F : Formula_) :
+  is_dnf_ind (to_dnf_v1 F) :=
+  by
+  unfold to_dnf_v1
+  apply blah
+  intro phi
+  apply meh
