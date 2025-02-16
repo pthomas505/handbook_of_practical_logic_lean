@@ -337,13 +337,13 @@ lemma all_mem_gen_all_assignments
     cases c1 : f hd
     case false =>
       left
-      apply Exists.intro (List.map (fun s ↦ (s, f s)) tl)
+      apply Exists.intro (List.map (fun s => (s, f s)) tl)
       constructor
       · exact ih
       · rfl
     case true =>
       right
-      apply Exists.intro (List.map (fun s ↦ (s, f s)) tl)
+      apply Exists.intro (List.map (fun s => (s, f s)) tl)
       constructor
       · exact ih
       · rfl
@@ -351,8 +351,60 @@ lemma all_mem_gen_all_assignments
 
 def gen_valuation :
   List (String × Bool) → Valuation
-  | [] => (fun _ => default)
+  | [] => fun _ => default
   | hd :: tl => Function.updateITE (gen_valuation tl) hd.fst hd.snd
+
+
+lemma gen_valuation_mem_atoms
+  (f : String → Bool)
+  (atoms : List String)
+  (s : String)
+  (h1 : s ∈ atoms) :
+  (gen_valuation (List.map (fun (x : String) => (x, f x)) atoms)) s = f s :=
+  by
+  induction atoms
+  case nil =>
+    simp only [List.not_mem_nil] at h1
+  case cons hd tl ih =>
+    simp only [List.mem_cons] at h1
+
+    simp only [List.map_cons]
+    unfold gen_valuation
+    simp only
+    unfold Function.updateITE
+    split_ifs
+    case pos c1 =>
+      rewrite [c1]
+      rfl
+    case neg c1 =>
+      apply ih
+      tauto
+
+
+lemma gen_valuation_not_mem_atoms
+  (f : String → Bool)
+  (atoms : List String)
+  (s : String)
+  (h1 : s ∉ atoms) :
+  (gen_valuation (List.map (fun (x : String) => (x, f x)) atoms)) s = default :=
+  by
+  induction atoms
+  case nil =>
+    simp only [List.map_nil]
+    unfold gen_valuation
+    rfl
+  case cons hd tl ih =>
+    simp only [List.mem_cons] at h1
+
+    simp only [gen_valuation]
+    unfold Function.updateITE
+    have s1 : ¬ s = hd ∧ s ∉ tl :=
+    by
+      tauto
+    obtain ⟨s1_left, s1_right⟩ := s1
+    split_ifs
+    apply ih
+    exact s1_right
 
 
 def gen_all_valuations
@@ -374,31 +426,22 @@ lemma gen_all_valuations_nil :
 lemma all_mem_gen_all_valuations
   (V : Valuation)
   (atoms : List String)
-  (h1 : ∀ (s : String), ¬ s ∈ atoms → V s = default) :
+  (h1 : ∀ (s : String), s ∉ atoms → V s = default) :
   V ∈ gen_all_valuations atoms :=
   by
-  unfold gen_all_valuations
-  induction atoms
+  cases atoms
   case nil =>
+    unfold gen_all_valuations
     unfold gen_all_assignments
     simp
     unfold gen_valuation
     funext s
     apply h1
     apply List.not_mem_nil
-  case cons hd tl ih =>
-    have s1 : ∀ (s : String), (¬ s = hd ∧ s ∉ tl) → V s = default :=
-    by
-      intro s a1
-      apply h1
-      simp only [List.mem_cons]
-      tauto
-    clear h1
-
-
+  case cons hd tl =>
+    unfold gen_all_valuations
     unfold gen_all_assignments
     simp only [List.map_append, List.map_map, List.mem_append, List.mem_map, Function.comp_apply]
-
     unfold gen_valuation
     simp only
     cases c1 : V hd
@@ -406,11 +449,54 @@ lemma all_mem_gen_all_valuations
       left
       apply Exists.intro (List.map (fun (s : String) => (s, V s)) tl)
       constructor
-      · sorry
-      · sorry
+      · apply all_mem_gen_all_assignments
+      · funext s
+        unfold Function.updateITE
+        split_ifs
+        case pos c2 =>
+          rewrite [c2]
+          rewrite [c1]
+          rfl
+        case neg c2 =>
+          by_cases c3 : s ∈ tl
+          case pos =>
+            apply gen_valuation_mem_atoms
+            exact c3
+          case neg =>
+            have s1 : V s = default :=
+            by
+              apply h1
+              simp only [List.mem_cons]
+              tauto
+            rewrite [s1]
+            apply gen_valuation_not_mem_atoms
+            exact c3
     case true =>
       right
-      sorry
+      apply Exists.intro (List.map (fun (s : String) => (s, V s)) tl)
+      constructor
+      · apply all_mem_gen_all_assignments
+      · funext s
+        unfold Function.updateITE
+        split_ifs
+        case pos c2 =>
+          rewrite [c2]
+          rewrite [c1]
+          rfl
+        case neg c2 =>
+          by_cases c3 : s ∈ tl
+          case pos =>
+            apply gen_valuation_mem_atoms
+            exact c3
+          case neg =>
+            have s1 : V s = default :=
+            by
+              apply h1
+              simp only [List.mem_cons]
+              tauto
+            rewrite [s1]
+            apply gen_valuation_not_mem_atoms
+            exact c3
 
 
 def gen_all_satisfying_valuations
