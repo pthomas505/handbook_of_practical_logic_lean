@@ -511,13 +511,28 @@ def gen_all_satisfying_valuations
 lemma mem_gen_all_satisfying_valuations
   (V : Valuation)
   (F : Formula_)
-  (h1 : satisfies V F) :
+  (h1 : ∀ (s : String), s ∉ F.atom_list.dedup → V s = default)
+  (h2 : satisfies V F) :
   V ∈ gen_all_satisfying_valuations F :=
   by
   unfold gen_all_satisfying_valuations
   simp only [List.mem_filter]
   simp only [decide_eq_true_eq]
-  sorry
+  constructor
+  · apply all_mem_gen_all_valuations
+    exact h1
+  · exact h2
+
+
+example
+  (V : Valuation)
+  (F : Formula_)
+  (h1 : V ∈ gen_all_satisfying_valuations F) :
+  V ∈ gen_all_valuations F.atom_list.dedup ∧ satisfies V F :=
+  by
+  unfold gen_all_satisfying_valuations at h1
+  simp only [List.mem_filter, decide_eq_true_eq] at h1
+  exact h1
 
 
 lemma gen_all_satisfying_valuations_false_ :
