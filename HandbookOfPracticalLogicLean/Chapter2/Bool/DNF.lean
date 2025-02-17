@@ -357,6 +357,46 @@ example
     simp only [is_conj_rec_v2] at h1
 
 
+example
+  (F : Formula_)
+  (h1 : is_dnf_ind F) :
+  is_dnf_rec F :=
+  by
+  induction h1
+  case rule_1 phi psi ih_1 ih_2 ih_3 =>
+    unfold is_dnf_rec
+    constructor
+    · apply is_conj_ind_imp_is_conj_rec_v2
+      exact ih_1
+    · exact ih_3
+  case rule_2 phi ih_1 =>
+    cases ih_1
+    case rule_1 phi psi phi_ih psi_ih =>
+      unfold is_dnf_rec
+      apply is_conj_ind_imp_is_conj_rec_v2
+      apply is_conj_ind.rule_1
+      · exact phi_ih
+      · exact psi_ih
+    case rule_2 phi psi phi_ih psi_ih =>
+      unfold is_dnf_rec
+      apply is_conj_ind_imp_is_conj_rec_v2
+      apply is_conj_ind.rule_2
+      · exact phi_ih
+      · exact psi_ih
+    case rule_3 ih =>
+      cases ih
+      all_goals
+        unfold is_dnf_rec
+        unfold is_conj_rec_v2
+        exact trivial
+    case rule_4 ih =>
+      cases ih
+      all_goals
+        unfold is_dnf_rec
+        unfold is_conj_rec_v2
+        exact trivial
+
+
 -------------------------------------------------------------------------------
 
 
