@@ -361,7 +361,7 @@ instance
     infer_instance
 
 
-example
+lemma is_dnf_rec_imp_is_dnf_ind
   (F : Formula_)
   (h1 : is_dnf_rec F) :
   is_dnf_ind F :=
@@ -407,7 +407,7 @@ example
     simp only [is_conj_rec_v2] at h1
 
 
-example
+lemma is_dnf_ind_imp_is_dnf_rec
   (F : Formula_)
   (h1 : is_dnf_ind F) :
   is_dnf_rec F :=
@@ -445,6 +445,15 @@ example
         unfold is_dnf_rec
         unfold is_conj_rec_v2
         exact trivial
+
+
+lemma is_dnf_rec_iff_is_dnf_ind
+  (F : Formula_) :
+  is_dnf_rec F ↔ is_dnf_ind F :=
+  by
+  constructor
+  · apply is_dnf_rec_imp_is_dnf_ind
+  · apply is_dnf_ind_imp_is_dnf_rec
 
 
 -------------------------------------------------------------------------------
