@@ -303,6 +303,85 @@ def list_conj :
   | hd :: tl => and_ hd (list_conj tl)
 
 
+lemma eval_all_eq_true_imp_eval_list_conj_eq_true
+  (V : Valuation)
+  (l : List Formula_)
+  (h1 : ∀ (F : Formula_), F ∈ l → eval V F = true) :
+  eval V (list_conj l) = true :=
+  by
+  induction l
+  case nil =>
+    unfold list_conj
+    unfold eval
+    rfl
+  case cons hd tl ih =>
+    cases tl
+    case nil =>
+      unfold list_conj
+      apply h1
+      simp only [List.mem_singleton]
+    case cons tl_hd tl_tl =>
+      unfold list_conj
+      unfold eval
+      simp only [bool_iff_prop_and]
+      constructor
+      · apply h1
+        simp only [List.mem_cons]
+        left
+        trivial
+      · apply ih
+        intro F a1
+        apply h1
+        simp only [List.mem_cons] at a1
+        simp only [List.mem_cons]
+        right
+        exact a1
+
+
+lemma eval_list_conj_eq_true_imp_eval_all_eq_true
+  (V : Valuation)
+  (l : List Formula_)
+  (h1 : eval V (list_conj l) = true) :
+  ∀ (F : Formula_), F ∈ l → eval V F = true :=
+  by
+  intro F a1
+  induction l
+  case nil =>
+    simp only [List.not_mem_nil] at a1
+  case cons hd tl ih =>
+    cases tl
+    case nil =>
+      unfold list_conj at h1
+      simp only [List.mem_singleton] at a1
+      rewrite [a1]
+      exact h1
+    case cons tl_hd tl_tl =>
+      unfold list_conj at h1
+      unfold eval at h1
+      simp only [bool_iff_prop_and] at h1
+
+      simp only [List.mem_cons] at a1
+      cases a1
+      case inl a1_left =>
+        rewrite [a1_left]
+        tauto
+      case inr a1_right =>
+        apply ih
+        · tauto
+        · simp only [List.mem_cons]
+          exact a1_right
+
+
+lemma eval_all_eq_true_iff_eval_list_conj_eq_true
+  (V : Valuation)
+  (l : List Formula_) :
+  (∀ (F : Formula_), F ∈ l → eval V F = true) ↔ eval V (list_conj l) = true :=
+  by
+  constructor
+  · apply eval_all_eq_true_imp_eval_list_conj_eq_true
+  · apply eval_list_conj_eq_true_imp_eval_all_eq_true
+
+
 def list_disj :
   List Formula_ → Formula_
   | [] => false_
