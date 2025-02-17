@@ -208,4 +208,31 @@ lemma b_iff_eq_true
     apply b_iff_rfl
 
 
+-------------------------------------------------------------------------------
+
+
+example
+  (b : Bool)
+  (h1 : ¬ b = true) :
+  b = false :=
+  by
+  cases b
+  case false =>
+    rfl
+  case true =>
+    contradiction
+
+
+example
+  (b : Bool)
+  (h1 : ¬ b = false) :
+  b = true :=
+  by
+  cases b
+  case false =>
+    contradiction
+  case true =>
+    rfl
+
+
 #lint
