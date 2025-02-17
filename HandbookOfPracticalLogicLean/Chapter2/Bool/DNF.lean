@@ -504,6 +504,24 @@ lemma gen_valuation_not_mem_atoms
     exact s1_right
 
 
+theorem extracted_1
+  (V : Valuation)
+  (atoms : List String)
+  (h1 : ∀ s ∉ atoms, V s = default) :
+  gen_valuation (List.map (fun s ↦ (s, V s)) atoms) = V :=
+  by
+  funext s
+  by_cases c1 : s ∈ atoms
+  case pos =>
+    apply gen_valuation_mem_atoms
+    exact c1
+  case neg =>
+    specialize h1 s c1
+    rewrite [h1]
+    apply gen_valuation_not_mem_atoms
+    exact c1
+
+
 def gen_all_valuations
   (atoms : List String) :
   List Valuation :=
@@ -526,74 +544,13 @@ lemma all_mem_gen_all_valuations
   (h1 : ∀ (s : String), s ∉ atoms → V s = default) :
   V ∈ gen_all_valuations atoms :=
   by
-  cases atoms
-  case nil =>
-    unfold gen_all_valuations
-    unfold gen_all_assignments
-    simp
-    unfold gen_valuation
-    funext s
-    apply h1
-    apply List.not_mem_nil
-  case cons hd tl =>
-    unfold gen_all_valuations
-    unfold gen_all_assignments
-    simp only [List.map_append, List.map_map, List.mem_append, List.mem_map, Function.comp_apply]
-    unfold gen_valuation
-    simp only
-    cases c1 : V hd
-    case false =>
-      left
-      apply Exists.intro (List.map (fun (s : String) => (s, V s)) tl)
-      constructor
-      · apply all_mem_gen_all_assignments
-      · funext s
-        unfold Function.updateITE
-        split_ifs
-        case pos c2 =>
-          rewrite [c2]
-          rewrite [c1]
-          rfl
-        case neg c2 =>
-          by_cases c3 : s ∈ tl
-          case pos =>
-            apply gen_valuation_mem_atoms
-            exact c3
-          case neg =>
-            have s1 : V s = default :=
-            by
-              apply h1
-              simp only [List.mem_cons]
-              tauto
-            rewrite [s1]
-            apply gen_valuation_not_mem_atoms
-            exact c3
-    case true =>
-      right
-      apply Exists.intro (List.map (fun (s : String) => (s, V s)) tl)
-      constructor
-      · apply all_mem_gen_all_assignments
-      · funext s
-        unfold Function.updateITE
-        split_ifs
-        case pos c2 =>
-          rewrite [c2]
-          rewrite [c1]
-          rfl
-        case neg c2 =>
-          by_cases c3 : s ∈ tl
-          case pos =>
-            apply gen_valuation_mem_atoms
-            exact c3
-          case neg =>
-            have s1 : V s = default :=
-            by
-              apply h1
-              simp only [List.mem_cons]
-              tauto
-            rewrite [s1]
-            apply gen_valuation_not_mem_atoms
-            exact c3
+  unfold gen_all_valuations
+  simp only [List.mem_map]
+  apply Exists.intro (List.map (fun s ↦ (s, V s)) atoms)
+  constructor
+  · apply all_mem_gen_all_assignments
+  · apply extracted_1
+    exact h1
 
 
 def gen_all_satisfying_valuations
