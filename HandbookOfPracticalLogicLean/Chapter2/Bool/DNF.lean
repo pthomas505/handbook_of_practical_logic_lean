@@ -198,7 +198,7 @@ example
     simp only [is_conj_rec_v2] at h1
 
 
-example
+lemma is_conj_rec_v2_imp_is_conj_ind
   (F : Formula_)
   (h1 : is_conj_rec_v2 F) :
   is_conj_ind F :=
@@ -257,7 +257,7 @@ example
     simp only [is_conj_rec_v2] at h1
 
 
-example
+lemma is_conj_ind_imp_is_conj_rec_v2
   (F : Formula_)
   (h1 : is_conj_ind F) :
   is_conj_rec_v2 F :=
@@ -291,6 +291,70 @@ example
       simp only [is_conj_rec_v2]
     case rule_2 X =>
       simp only [is_conj_rec_v2]
+
+
+lemma is_conj_rec_v2_iff_is_conj_ind
+  (F : Formula_) :
+  is_conj_rec_v2 F ↔ is_conj_ind F :=
+  by
+  constructor
+  · apply is_conj_rec_v2_imp_is_conj_ind
+  · apply is_conj_ind_imp_is_conj_rec_v2
+
+
+-------------------------------------------------------------------------------
+
+
+def Formula_.is_dnf_rec :
+  Formula_ → Prop
+  | or_ phi psi => phi.is_conj_rec_v2 ∧ psi.is_dnf_rec
+  | F => is_conj_rec_v2 F
+
+
+example
+  (F : Formula_)
+  (h1 : is_dnf_rec F) :
+  is_dnf_ind F :=
+  by
+  induction F
+  case false_ =>
+    apply is_dnf_ind.rule_2
+    apply is_conj_ind.rule_3
+    apply is_constant_ind.rule_1
+  case true_ =>
+    apply is_dnf_ind.rule_2
+    apply is_conj_ind.rule_3
+    apply is_constant_ind.rule_2
+  case atom_ X =>
+    apply is_dnf_ind.rule_2
+    apply is_conj_ind.rule_4
+    apply is_literal_ind.rule_1
+  case not_ phi ih =>
+    cases phi
+    case atom_ X =>
+      apply is_dnf_ind.rule_2
+      apply is_conj_ind.rule_4
+      apply is_literal_ind.rule_2
+    all_goals
+      simp only [is_dnf_rec] at h1
+      simp only [is_conj_rec_v2] at h1
+  case or_ phi psi phi_ih psi_ih =>
+    unfold is_dnf_rec at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
+    apply is_dnf_ind.rule_1
+    · apply is_conj_rec_v2_imp_is_conj_ind
+      exact h1_left
+    · apply psi_ih
+      exact h1_right
+  case and_ phi psi phi_ih psi_ih =>
+    unfold is_dnf_rec at h1
+    apply is_dnf_ind.rule_2
+    apply is_conj_rec_v2_imp_is_conj_ind
+    exact h1
+  all_goals
+    simp only [is_dnf_rec] at h1
+    simp only [is_conj_rec_v2] at h1
 
 
 -------------------------------------------------------------------------------
