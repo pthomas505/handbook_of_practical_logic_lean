@@ -351,6 +351,16 @@ def Formula_.is_dnf_rec :
   | F => is_conj_rec_v2 F
 
 
+instance
+  (F : Formula_) :
+  Decidable (Formula_.is_dnf_rec F) :=
+  by
+  induction F
+  all_goals
+    simp only [is_dnf_rec]
+    infer_instance
+
+
 example
   (F : Formula_)
   (h1 : is_dnf_rec F) :
