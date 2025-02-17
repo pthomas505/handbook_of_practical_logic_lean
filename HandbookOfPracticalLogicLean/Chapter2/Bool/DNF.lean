@@ -389,6 +389,24 @@ def list_disj :
   | hd :: tl => or_ hd (list_disj tl)
 
 
+example
+  (V : Valuation)
+  (l : List Formula_)
+  (h1 : ∃ (F : Formula_), F ∈ l ∧ eval V F = true) :
+  eval V (list_disj l) = true :=
+  by
+  sorry
+
+
+example
+  (V : Valuation)
+  (l : List Formula_)
+  (h1 : eval V (list_conj l) = true) :
+  ∃ (F : Formula_), F ∈ l ∧ eval V F = true :=
+  by
+  sorry
+
+
 def gen_all_assignments :
   List String → List (List (String × Bool))
 | [] => [[]]
