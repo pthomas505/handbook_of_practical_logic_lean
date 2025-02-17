@@ -124,6 +124,21 @@ def Formula_.is_conj_rec_v1 :
   | _ => False
 
 
+instance
+  (F : Formula_) :
+  Decidable (Formula_.is_conj_rec_v1 F) :=
+  by
+  induction F
+  case not_ phi ih =>
+    cases phi
+    all_goals
+      simp only [is_conj_rec_v1]
+      infer_instance
+  all_goals
+    simp only [is_conj_rec_v1]
+    infer_instance
+
+
 lemma is_conj_rec_v1_imp_is_nnf
   (F : Formula_)
   (h1 : F.is_conj_rec_v1) :
