@@ -744,10 +744,10 @@ lemma gen_valuation_not_mem_atoms
 
 
 theorem extracted_1
-  (V : Valuation)
+  (f : String → Bool)
   (atoms : List String)
-  (h1 : ∀ s ∉ atoms, V s = default) :
-  gen_valuation (List.map (fun s ↦ (s, V s)) atoms) = V :=
+  (h1 : ∀ s ∉ atoms, f s = default) :
+  gen_valuation (List.map (fun x => (x, f x)) atoms) = f :=
   by
   funext s
   by_cases c1 : s ∈ atoms
@@ -759,6 +759,18 @@ theorem extracted_1
     rewrite [h1]
     apply gen_valuation_not_mem_atoms
     exact c1
+
+
+example
+  (f : String → Bool)
+  (atoms : List String)
+  (h1 : gen_valuation (List.map (fun x => (x, f x)) atoms) = f) :
+  ∀ s ∉ atoms, f s = default :=
+  by
+  intro s a1
+  rewrite [← h1]
+  apply gen_valuation_not_mem_atoms
+  exact a1
 
 
 -------------------------------------------------------------------------------
@@ -780,7 +792,7 @@ lemma gen_all_valuations_nil :
   simp only [List.map_nil]
 
 
-lemma all_mem_gen_all_valuations
+lemma not_mem_is_default_imp_mem_gen_all_valuations
   (V : Valuation)
   (atoms : List String)
   (h1 : ∀ (s : String), s ∉ atoms → V s = default) :
@@ -793,6 +805,18 @@ lemma all_mem_gen_all_valuations
   · apply all_mem_gen_all_assignments
   · apply extracted_1
     exact h1
+
+
+lemma mem_gen_all_valuations_imp_not_mem_is_default
+  (V : Valuation)
+  (atoms : List String)
+  (h1 : V ∈ gen_all_valuations atoms) :
+  ∀ (s : String), s ∉ atoms → V s = default :=
+  by
+  unfold gen_all_valuations at h1
+
+  intro s a1
+  sorry
 
 
 -------------------------------------------------------------------------------
@@ -818,20 +842,9 @@ lemma mem_gen_all_satisfying_valuations
   simp only [List.mem_filter]
   simp only [decide_eq_true_eq]
   constructor
-  · apply all_mem_gen_all_valuations
+  · apply not_mem_is_default_imp_mem_gen_all_valuations
     exact h1
   · exact h2
-
-
-example
-  (V : Valuation)
-  (F : Formula_)
-  (h1 : V ∈ gen_all_satisfying_valuations F) :
-  V ∈ gen_all_valuations F.atom_list.dedup ∧ satisfies V F :=
-  by
-  unfold gen_all_satisfying_valuations at h1
-  simp only [List.mem_filter, decide_eq_true_eq] at h1
-  exact h1
 
 
 lemma gen_all_satisfying_valuations_false_ :
