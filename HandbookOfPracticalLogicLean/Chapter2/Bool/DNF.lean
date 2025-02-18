@@ -467,7 +467,7 @@ def list_conj :
 
 
 lemma eval_all_eq_true_imp_eval_list_conj_eq_true
-  (V : Valuation)
+  (V : ValuationTotalFunction)
   (l : List Formula_)
   (h1 : ∀ (F : Formula_), F ∈ l → eval V F = true) :
   eval V (list_conj l) = true :=
@@ -502,7 +502,7 @@ lemma eval_all_eq_true_imp_eval_list_conj_eq_true
 
 
 lemma eval_list_conj_eq_true_imp_eval_all_eq_true
-  (V : Valuation)
+  (V : ValuationTotalFunction)
   (l : List Formula_)
   (h1 : eval V (list_conj l) = true) :
   ∀ (F : Formula_), F ∈ l → eval V F = true :=
@@ -536,7 +536,7 @@ lemma eval_list_conj_eq_true_imp_eval_all_eq_true
 
 
 lemma eval_all_eq_true_iff_eval_list_conj_eq_true
-  (V : Valuation)
+  (V : ValuationTotalFunction)
   (l : List Formula_) :
   (∀ (F : Formula_), F ∈ l → eval V F = true) ↔ eval V (list_conj l) = true :=
   by
@@ -556,7 +556,7 @@ def list_disj :
 
 
 lemma eval_exists_eq_true_imp_eval_list_disj_eq_true
-  (V : Valuation)
+  (V : ValuationTotalFunction)
   (l : List Formula_)
   (h1 : ∃ (F : Formula_), F ∈ l ∧ eval V F = true) :
   eval V (list_disj l) = true :=
@@ -594,7 +594,7 @@ lemma eval_exists_eq_true_imp_eval_list_disj_eq_true
 
 
 lemma eval_list_disj_eq_true_imp_eval_exists_eq_true
-  (V : Valuation)
+  (V : ValuationTotalFunction)
   (l : List Formula_)
   (h1 : eval V (list_disj l) = true) :
   ∃ (F : Formula_), F ∈ l ∧ eval V F = true :=
@@ -631,7 +631,7 @@ lemma eval_list_disj_eq_true_imp_eval_exists_eq_true
 
 
 lemma eval_exists_eq_true_iff_eval_list_disj_eq_true
-  (V : Valuation)
+  (V : ValuationTotalFunction)
   (l : List Formula_) :
   (∃ (F : Formula_), F ∈ l ∧ eval V F = true) ↔ eval V (list_disj l) = true :=
   by
@@ -641,6 +641,9 @@ lemma eval_exists_eq_true_iff_eval_list_disj_eq_true
 
 
 -------------------------------------------------------------------------------
+
+
+def ValuationList : Type := List (String × Bool)
 
 
 def gen_all_assignments :
@@ -685,10 +688,16 @@ lemma all_mem_gen_all_assignments
 -------------------------------------------------------------------------------
 
 
-def gen_valuation :
-  List (String × Bool) → Valuation
+def assignment_to_valuation :
+  List (String × Bool) → ValuationTotalFunction
   | [] => fun _ => default
-  | hd :: tl => Function.updateITE (gen_valuation tl) hd.fst hd.snd
+  | hd :: tl => Function.updateITE (assignment_to_valuation tl) hd.fst hd.snd
+
+
+def valuation_to_assignment
+  (V : ValuationTotalFunction)
+  (atoms : List String) :=
+  List.map (fun (x : String) => (x, V x)) atoms
 
 
 lemma gen_valuation_mem_atoms
@@ -696,7 +705,7 @@ lemma gen_valuation_mem_atoms
   (atoms : List String)
   (s : String)
   (h1 : s ∈ atoms) :
-  (gen_valuation (List.map (fun (x : String) => (x, f x)) atoms)) s = f s :=
+  (assignment_to_valuation (List.map (fun (x : String) => (x, f x)) atoms)) s = f s :=
   by
   induction atoms
   case nil =>
@@ -705,7 +714,7 @@ lemma gen_valuation_mem_atoms
     simp only [List.mem_cons] at h1
 
     simp only [List.map_cons]
-    unfold gen_valuation
+    unfold assignment_to_valuation
     simp only
     unfold Function.updateITE
     split_ifs
@@ -722,17 +731,17 @@ lemma gen_valuation_not_mem_atoms
   (atoms : List String)
   (s : String)
   (h1 : s ∉ atoms) :
-  (gen_valuation (List.map (fun (x : String) => (x, f x)) atoms)) s = default :=
+  (assignment_to_valuation (List.map (fun (x : String) => (x, f x)) atoms)) s = default :=
   by
   induction atoms
   case nil =>
     simp only [List.map_nil]
-    unfold gen_valuation
+    unfold assignment_to_valuation
     rfl
   case cons hd tl ih =>
     simp only [List.mem_cons] at h1
 
-    simp only [gen_valuation]
+    simp only [assignment_to_valuation]
     unfold Function.updateITE
     have s1 : ¬ s = hd ∧ s ∉ tl :=
     by
@@ -747,7 +756,7 @@ theorem extracted_1
   (f : String → Bool)
   (atoms : List String)
   (h1 : ∀ s ∉ atoms, f s = default) :
-  gen_valuation (List.map (fun x => (x, f x)) atoms) = f :=
+  assignment_to_valuation (List.map (fun x => (x, f x)) atoms) = f :=
   by
   funext s
   by_cases c1 : s ∈ atoms
@@ -764,7 +773,7 @@ theorem extracted_1
 example
   (f : String → Bool)
   (atoms : List String)
-  (h1 : gen_valuation (List.map (fun x => (x, f x)) atoms) = f) :
+  (h1 : assignment_to_valuation (List.map (fun x => (x, f x)) atoms) = f) :
   ∀ s ∉ atoms, f s = default :=
   by
   intro s a1
@@ -778,8 +787,8 @@ example
 
 def gen_all_valuations
   (atoms : List String) :
-  List Valuation :=
-  (gen_all_assignments atoms).map gen_valuation
+  List ValuationTotalFunction :=
+  (gen_all_assignments atoms).map assignment_to_valuation
 
 
 lemma gen_all_valuations_nil :
@@ -788,12 +797,12 @@ lemma gen_all_valuations_nil :
   unfold gen_all_valuations
   unfold gen_all_assignments
   unfold List.map
-  unfold gen_valuation
+  unfold assignment_to_valuation
   simp only [List.map_nil]
 
 
 lemma not_mem_is_default_imp_mem_gen_all_valuations
-  (V : Valuation)
+  (V : ValuationTotalFunction)
   (atoms : List String)
   (h1 : ∀ (s : String), s ∉ atoms → V s = default) :
   V ∈ gen_all_valuations atoms :=
@@ -808,7 +817,7 @@ lemma not_mem_is_default_imp_mem_gen_all_valuations
 
 
 lemma mem_gen_all_valuations_imp_not_mem_is_default
-  (V : Valuation)
+  (V : ValuationTotalFunction)
   (atoms : List String)
   (h1 : V ∈ gen_all_valuations atoms) :
   ∀ (s : String), s ∉ atoms → V s = default :=
@@ -824,15 +833,15 @@ lemma mem_gen_all_valuations_imp_not_mem_is_default
 
 def gen_all_satisfying_valuations
   (F : Formula_) :
-  List Valuation :=
+  List ValuationTotalFunction :=
   -- let atoms := List.insertionSort (fun (s1 s2 : String) => s1 < s2) F.atom_list.dedup
   -- let atoms := F.atom_list.dedup
-  -- (gen_all_valuations atoms).filter (fun (V : Valuation) => satisfies V F)
-  (gen_all_valuations F.atom_list.dedup).filter (fun (V : Valuation) => satisfies V F)
+  -- (gen_all_valuations atoms).filter (fun (V : ValuationTotalFunction) => satisfies V F)
+  (gen_all_valuations F.atom_list.dedup).filter (fun (V : ValuationTotalFunction) => satisfies V F)
 
 
 lemma mem_gen_all_satisfying_valuations
-  (V : Valuation)
+  (V : ValuationTotalFunction)
   (F : Formula_)
   (h1 : ∀ (s : String), s ∉ F.atom_list.dedup → V s = default)
   (h2 : satisfies V F) :
@@ -873,7 +882,7 @@ lemma gen_all_satisfying_valuations_true_ :
 
 def mk_lits
   (atoms : List String)
-  (V : Valuation) :
+  (V : ValuationTotalFunction) :
   Formula_ :=
   let f : String → Formula_ := fun (A : String) =>
     if V A = true
@@ -883,7 +892,7 @@ def mk_lits
 
 
 lemma mk_lits_nil
-  (V : Valuation) :
+  (V : ValuationTotalFunction) :
   mk_lits [] V = true_ :=
   by
   unfold mk_lits
@@ -894,7 +903,7 @@ lemma mk_lits_nil
 
 lemma mk_lits_is_conj_ind
   (atoms : List String)
-  (V : Valuation) :
+  (V : ValuationTotalFunction) :
   is_conj_ind (mk_lits atoms V) :=
   by
   induction atoms
@@ -933,7 +942,7 @@ lemma mk_lits_is_conj_ind
 
 lemma mem_list_map_mk_lits_is_conj_ind
   (atoms : List String)
-  (vs : List Valuation)
+  (vs : List ValuationTotalFunction)
   (F : Formula_)
   (h1 : F ∈ (List.map (mk_lits atoms) vs)) :
   is_conj_ind F :=
@@ -1004,7 +1013,7 @@ example
 
 
 example
-  (V : Valuation)
+  (V : ValuationTotalFunction)
   (F : Formula_)
   (h1 : satisfies V F) :
   satisfies V (to_dnf_v1 F) :=

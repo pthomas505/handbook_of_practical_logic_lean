@@ -36,7 +36,7 @@ def replace_atom_one_rec
 
 
 theorem theorem_2_3_one
-  (V : Valuation)
+  (V : ValuationTotalFunction)
   (A : String)
   (P : Formula_)
   (F : Formula_) :
@@ -86,7 +86,7 @@ theorem corollary_2_4_one
 
 
 theorem theorem_2_5_one
-  (V : Valuation)
+  (V : ValuationTotalFunction)
   (P Q : Formula_)
   (X : String)
   (R : Formula_)
@@ -99,7 +99,7 @@ theorem theorem_2_5_one
 
 
 theorem corollary_2_6_one
-  (V : Valuation)
+  (V : ValuationTotalFunction)
   (P Q : Formula_)
   (X : String)
   (R : Formula_)
@@ -129,7 +129,7 @@ def replace_atom_all_rec
 
 
 theorem theorem_2_3_all
-  (V : Valuation)
+  (V : ValuationTotalFunction)
   (τ : String → Formula_)
   (F : Formula_) :
   eval V (replace_atom_all_rec τ F) = eval (eval V ∘ τ) F :=
@@ -173,7 +173,7 @@ theorem corollary_2_4_all
 
 
 theorem theorem_2_5_all
-  (V : Valuation)
+  (V : ValuationTotalFunction)
   (τ1 τ2 : String → Formula_)
   (F : Formula_)
   (h1 : ∀ (X : String), eval V (τ1 X) = eval V (τ2 X)) :
@@ -187,7 +187,7 @@ theorem theorem_2_5_all
 
 
 theorem corollary_2_6_all
-  (V : Valuation)
+  (V : ValuationTotalFunction)
   (τ1 τ2 : String → Formula_)
   (F : Formula_)
   (h1 : ∀ (X : String), are_logically_equivalent (τ1 X) (τ2 X)) :
@@ -413,7 +413,7 @@ lemma is_repl_of_formula_in_formula_fun_iff_is_repl_of_formula_in_formula
 
 
 example
-  (V : Valuation)
+  (V : ValuationTotalFunction)
   (R S : Formula_)
   (P_R P_S : Formula_)
   (h1 : is_repl_of_formula_in_formula R S P_R P_S)
