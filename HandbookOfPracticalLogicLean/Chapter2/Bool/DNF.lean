@@ -555,7 +555,7 @@ def list_disj :
   | hd :: tl => or_ hd (list_disj tl)
 
 
-example
+lemma eval_exists_eq_true_imp_eval_list_disj_eq_true
   (V : Valuation)
   (l : List Formula_)
   (h1 : ∃ (F : Formula_), F ∈ l ∧ eval V F = true) :
@@ -593,7 +593,7 @@ example
         tauto
 
 
-example
+lemma eval_list_disj_eq_true_imp_eval_exists_eq_true
   (V : Valuation)
   (l : List Formula_)
   (h1 : eval V (list_disj l) = true) :
