@@ -658,6 +658,12 @@ def gen_all_valuation_lists :
   left ++ right
 
 
+def valuation_list_to_valuation_partial_function :
+  List (String × Bool) → ValuationTotalFunction
+  | [] => fun _ => default
+  | hd :: tl => Function.updateITE (valuation_list_to_valuation_partial_function tl) hd.fst hd.snd
+
+
 lemma all_mem_gen_all_assignments
   (xs : List String)
   (f : String → Bool) :
@@ -689,10 +695,6 @@ lemma all_mem_gen_all_assignments
 -------------------------------------------------------------------------------
 
 
-def assignment_to_valuation :
-  List (String × Bool) → ValuationTotalFunction
-  | [] => fun _ => default
-  | hd :: tl => Function.updateITE (assignment_to_valuation tl) hd.fst hd.snd
 
 
 def valuation_to_assignment
@@ -706,7 +708,7 @@ lemma gen_valuation_mem_atoms
   (atoms : List String)
   (s : String)
   (h1 : s ∈ atoms) :
-  (assignment_to_valuation (List.map (fun (x : String) => (x, f x)) atoms)) s = f s :=
+  (valuation_list_to_valuation_partial_function (List.map (fun (x : String) => (x, f x)) atoms)) s = f s :=
   by
   induction atoms
   case nil =>
@@ -715,7 +717,7 @@ lemma gen_valuation_mem_atoms
     simp only [List.mem_cons] at h1
 
     simp only [List.map_cons]
-    unfold assignment_to_valuation
+    unfold valuation_list_to_valuation_partial_function
     simp only
     unfold Function.updateITE
     split_ifs
@@ -732,17 +734,17 @@ lemma gen_valuation_not_mem_atoms
   (atoms : List String)
   (s : String)
   (h1 : s ∉ atoms) :
-  (assignment_to_valuation (List.map (fun (x : String) => (x, f x)) atoms)) s = default :=
+  (valuation_list_to_valuation_partial_function (List.map (fun (x : String) => (x, f x)) atoms)) s = default :=
   by
   induction atoms
   case nil =>
     simp only [List.map_nil]
-    unfold assignment_to_valuation
+    unfold valuation_list_to_valuation_partial_function
     rfl
   case cons hd tl ih =>
     simp only [List.mem_cons] at h1
 
-    simp only [assignment_to_valuation]
+    simp only [valuation_list_to_valuation_partial_function]
     unfold Function.updateITE
     have s1 : ¬ s = hd ∧ s ∉ tl :=
     by
@@ -757,7 +759,7 @@ theorem extracted_1
   (f : String → Bool)
   (atoms : List String)
   (h1 : ∀ s ∉ atoms, f s = default) :
-  assignment_to_valuation (List.map (fun x => (x, f x)) atoms) = f :=
+  valuation_list_to_valuation_partial_function (List.map (fun x => (x, f x)) atoms) = f :=
   by
   funext s
   by_cases c1 : s ∈ atoms
@@ -774,7 +776,7 @@ theorem extracted_1
 example
   (f : String → Bool)
   (atoms : List String)
-  (h1 : assignment_to_valuation (List.map (fun x => (x, f x)) atoms) = f) :
+  (h1 : valuation_list_to_valuation_partial_function (List.map (fun x => (x, f x)) atoms) = f) :
   ∀ s ∉ atoms, f s = default :=
   by
   intro s a1
@@ -789,7 +791,7 @@ example
 def gen_all_valuations
   (atoms : List String) :
   List ValuationTotalFunction :=
-  (gen_all_valuation_lists atoms).map assignment_to_valuation
+  (gen_all_valuation_lists atoms).map valuation_list_to_valuation_partial_function
 
 
 lemma gen_all_valuations_nil :
@@ -798,7 +800,7 @@ lemma gen_all_valuations_nil :
   unfold gen_all_valuations
   unfold gen_all_valuation_lists
   unfold List.map
-  unfold assignment_to_valuation
+  unfold valuation_list_to_valuation_partial_function
   simp only [List.map_nil]
 
 
