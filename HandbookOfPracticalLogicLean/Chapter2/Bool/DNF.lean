@@ -879,6 +879,59 @@ lemma mk_lits_nil
   rfl
 
 
+lemma mk_lits_is_conj_ind
+  (atoms : List String)
+  (V : Valuation) :
+  is_conj_ind (mk_lits atoms V) :=
+  by
+  induction atoms
+  case nil =>
+    simp only [mk_lits_nil]
+    apply is_conj_ind.rule_3
+    exact is_constant_ind.rule_2
+  case cons hd tl ih =>
+    cases tl
+    case nil =>
+      simp only [mk_lits]
+      simp only [List.map_cons, List.map_nil]
+      simp only [list_conj]
+      split_ifs
+      case pos c1 =>
+        apply is_conj_ind.rule_4
+        apply is_literal_ind.rule_1
+      case neg c1 =>
+        apply is_conj_ind.rule_4
+        apply is_literal_ind.rule_2
+    case cons tl_hd tl_tl =>
+      simp only [mk_lits] at ih
+
+      simp only [mk_lits]
+
+      simp only [list_conj]
+      apply is_conj_ind.rule_2
+      · split_ifs
+        case pos c1 =>
+          apply is_literal_ind.rule_1
+        case neg c1 =>
+          apply is_literal_ind.rule_2
+      · simp only [List.map_cons] at ih
+        apply ih
+
+
+lemma meh
+  (atoms : List String)
+  (vs : List Valuation)
+  (F : Formula_)
+  (h1 : F ∈ (List.map (mk_lits atoms) vs)) :
+  is_conj_ind F :=
+  by
+    simp only [List.mem_map] at h1
+    obtain ⟨V, h1⟩ := h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+    rewrite [← h1_right]
+    apply mk_lits_is_conj_ind
+
+
 -------------------------------------------------------------------------------
 
 
@@ -952,57 +1005,6 @@ example
   rfl
 
 
-lemma mk_lits_is_conj_ind
-  (atoms : List String)
-  (V : Valuation) :
-  is_conj_ind (mk_lits atoms V) :=
-  by
-  induction atoms
-  case nil =>
-    simp only [mk_lits_nil]
-    apply is_conj_ind.rule_3
-    exact is_constant_ind.rule_2
-  case cons hd tl ih =>
-    cases tl
-    case nil =>
-      simp only [mk_lits]
-      simp only [List.map_cons, List.map_nil]
-      simp only [list_conj]
-      split_ifs
-      case pos c1 =>
-        apply is_conj_ind.rule_4
-        apply is_literal_ind.rule_1
-      case neg c1 =>
-        apply is_conj_ind.rule_4
-        apply is_literal_ind.rule_2
-    case cons tl_hd tl_tl =>
-      simp only [mk_lits] at ih
-
-      simp only [mk_lits]
-
-      simp only [list_conj]
-      apply is_conj_ind.rule_2
-      · split_ifs
-        case pos c1 =>
-          apply is_literal_ind.rule_1
-        case neg c1 =>
-          apply is_literal_ind.rule_2
-      · simp only [List.map_cons] at ih
-        apply ih
-
-
-lemma meh
-  (atoms : List String)
-  (vs : List Valuation)
-  (F : Formula_)
-  (h1 : F ∈ (List.map (mk_lits atoms) vs)) :
-  is_conj_ind F :=
-  by
-    simp only [List.mem_map] at h1
-    obtain ⟨V, h1⟩ := h1
-    obtain ⟨h1_left, h1_right⟩ := h1
-    rewrite [← h1_right]
-    apply mk_lits_is_conj_ind
 
 
 lemma blah
