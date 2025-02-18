@@ -990,57 +990,6 @@ example
   apply mem_list_map_mk_lits_is_conj_ind
 
 
-lemma satisfies_mk_lits
-  (V : Valuation)
-  (F : Formula_) :
-  satisfies V (mk_lits F.atom_list.dedup V) :=
-  by
-  induction F.atom_list.dedup
-  case nil =>
-    simp only [mk_lits_nil]
-    unfold satisfies
-    unfold eval
-    rfl
-  case cons hd tl ih =>
-    simp only [mk_lits]
-    simp only [List.map_cons]
-    cases tl
-    case nil =>
-      simp only [List.map_nil]
-      split_ifs
-      case pos c1 =>
-        unfold list_conj
-        unfold satisfies
-        unfold eval
-        exact c1
-      case neg c1 =>
-        unfold list_conj
-        unfold satisfies
-        simp only [eval]
-        simp only [b_not_eq_true]
-        exact eq_false_of_ne_true c1
-    case cons tl_hd tl_tl =>
-      simp only [mk_lits] at ih
-      simp only [List.map_cons] at ih
-      unfold satisfies at ih
-
-      simp only [List.map_cons]
-      simp only [list_conj]
-      unfold satisfies
-      unfold eval
-      simp only [bool_iff_prop_and]
-      constructor
-      · split_ifs
-        case pos c1 =>
-          unfold eval
-          exact c1
-        case neg c1 =>
-          simp only [eval]
-          simp only [b_not_eq_true]
-          exact eq_false_of_ne_true c1
-      · exact ih
-
-
 example
   (V : Valuation)
   (F : Formula_)
