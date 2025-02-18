@@ -630,6 +630,16 @@ lemma eval_list_disj_eq_true_imp_eval_exists_eq_true
         tauto
 
 
+lemma eval_exists_eq_true_iff_eval_list_disj_eq_true
+  (V : Valuation)
+  (l : List Formula_) :
+  (∃ (F : Formula_), F ∈ l ∧ eval V F = true) ↔ eval V (list_disj l) = true :=
+  by
+  constructor
+  · apply eval_exists_eq_true_imp_eval_list_disj_eq_true
+  · apply eval_list_disj_eq_true_imp_eval_exists_eq_true
+
+
 -------------------------------------------------------------------------------
 
 
