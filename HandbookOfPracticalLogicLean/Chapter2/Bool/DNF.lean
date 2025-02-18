@@ -491,7 +491,7 @@ lemma eval_all_eq_true_imp_eval_list_conj_eq_true
       · apply h1
         simp only [List.mem_cons]
         left
-        trivial
+        exact trivial
       · apply ih
         intro F a1
         apply h1
@@ -558,7 +558,36 @@ example
   (h1 : ∃ (F : Formula_), F ∈ l ∧ eval V F = true) :
   eval V (list_disj l) = true :=
   by
-  sorry
+  induction l
+  case nil =>
+    obtain ⟨F, ⟨h1_left, h1_right⟩⟩ := h1
+    simp only [List.not_mem_nil] at h1_left
+  case cons hd tl ih =>
+    cases tl
+    case nil =>
+      obtain ⟨F, ⟨h1_left, h1_right⟩⟩ := h1
+      simp only [List.mem_singleton] at h1_left
+
+      unfold list_disj
+      rewrite [← h1_left]
+      exact h1_right
+    case cons tl_hd tl_tl =>
+      simp only [List.mem_cons] at h1
+      obtain ⟨F, ⟨h1_left, h1_right⟩⟩ := h1
+
+      unfold list_disj
+      unfold eval
+      simp only [bool_iff_prop_or]
+      cases h1_left
+      case inl h1_left_left =>
+        rewrite [← h1_left_left]
+        tauto
+      case inr h1_left_right =>
+        right
+        apply ih
+        apply Exists.intro F
+        simp only [List.mem_cons]
+        tauto
 
 
 example
