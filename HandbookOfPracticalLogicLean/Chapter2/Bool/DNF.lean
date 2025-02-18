@@ -918,7 +918,7 @@ lemma mk_lits_is_conj_ind
         apply ih
 
 
-lemma meh
+lemma mem_list_map_mk_lits_is_conj_ind
   (atoms : List String)
   (vs : List Valuation)
   (F : Formula_)
@@ -947,7 +947,7 @@ def to_dnf_v1
 #eval (to_dnf_v1 (Formula_| ((P \/ (Q /\ R)) /\ (~ P \/ ~ R)))).toString
 
 
-lemma blah
+lemma list_disj_of_is_conj_ind_is_dnf_ind
   (xs : List Formula_)
   (h1 : ∀ (F : Formula_), F ∈ xs → is_conj_ind F) :
   is_dnf_ind (list_disj xs) :=
@@ -986,9 +986,8 @@ example
   is_dnf_ind (to_dnf_v1 F) :=
   by
   unfold to_dnf_v1
-  apply blah
-  intro phi
-  apply meh
+  apply list_disj_of_is_conj_ind_is_dnf_ind
+  apply mem_list_map_mk_lits_is_conj_ind
 
 
 lemma satisfies_mk_lits
