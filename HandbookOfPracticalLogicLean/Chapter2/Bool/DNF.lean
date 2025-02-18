@@ -682,6 +682,9 @@ lemma all_mem_gen_all_assignments
       · rfl
 
 
+-------------------------------------------------------------------------------
+
+
 def gen_valuation :
   List (String × Bool) → Valuation
   | [] => fun _ => default
@@ -758,6 +761,9 @@ theorem extracted_1
     exact c1
 
 
+-------------------------------------------------------------------------------
+
+
 def gen_all_valuations
   (atoms : List String) :
   List Valuation :=
@@ -787,6 +793,9 @@ lemma all_mem_gen_all_valuations
   · apply all_mem_gen_all_assignments
   · apply extracted_1
     exact h1
+
+
+-------------------------------------------------------------------------------
 
 
 def gen_all_satisfying_valuations
@@ -846,6 +855,9 @@ lemma gen_all_satisfying_valuations_true_ :
   simp only [decide_true, List.filter_true]
 
 
+-------------------------------------------------------------------------------
+
+
 def mk_lits
   (atoms : List String)
   (V : Valuation) :
@@ -865,6 +877,9 @@ lemma mk_lits_nil
   simp only [List.map_nil]
   unfold list_conj
   rfl
+
+
+-------------------------------------------------------------------------------
 
 
 def to_dnf_v1
