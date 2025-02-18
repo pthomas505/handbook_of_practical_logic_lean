@@ -947,66 +947,6 @@ def to_dnf_v1
 #eval (to_dnf_v1 (Formula_| ((P \/ (Q /\ R)) /\ (~ P \/ ~ R)))).toString
 
 
-example :
-  to_dnf_v1 false_ = false_ :=
-  by
-  unfold to_dnf_v1
-  simp only [gen_all_satisfying_valuations_false_]
-  simp only [List.map_nil]
-  unfold list_disj
-  rfl
-
-
-example :
-  to_dnf_v1 true_ = true_ :=
-  by
-  unfold to_dnf_v1
-  simp only [gen_all_satisfying_valuations_true_]
-  simp only [List.map_cons, List.map_nil]
-  unfold atom_list
-  simp only [List.dedup_nil]
-  simp only [mk_lits_nil]
-  unfold list_disj
-  rfl
-
-
-lemma List.dedup_singleton
-  {α : Type}
-  [DecidableEq α]
-  (x : α) :
-  [x].dedup = [x] := rfl
-
-
-example
-  (X : String) :
-  to_dnf_v1 (atom_ X) = atom_ X :=
-  by
-  unfold to_dnf_v1
-  simp only [gen_all_satisfying_valuations]
-  unfold atom_list
-  simp only [List.dedup_singleton]
-  unfold satisfies
-  simp only [eval]
-  simp only [gen_all_valuations]
-  simp only [gen_all_assignments]
-  simp only [List.map_cons, List.map_nil, List.singleton_append]
-  simp only [gen_valuation]
-  simp only [List.filter]
-  simp only [Bool.decide_eq_true]
-  simp only [Function.updateITE]
-  simp only [if_pos]
-  simp only [List.map_cons, List.map_nil]
-  simp only [mk_lits]
-  simp only [List.map_cons, List.map_nil]
-  simp only [Function.updateITE]
-  simp only [if_pos]
-  unfold list_conj
-  unfold list_disj
-  rfl
-
-
-
-
 lemma blah
   (xs : List Formula_)
   (h1 : ∀ (F : Formula_), F ∈ xs → is_conj_ind F) :
