@@ -644,15 +644,16 @@ lemma eval_exists_eq_true_iff_eval_list_disj_eq_true
 
 
 def ValuationList : Type := List (String × Bool)
+  deriving Inhabited
 
 
-def gen_all_assignments :
-  List String → List (List (String × Bool))
+def gen_all_valuation_lists :
+  List String → List (ValuationList)
 | [] => [[]]
 | hd :: tl =>
-  let left := List.map (fun (l : List (String × Bool)) => (hd, false) :: l) (gen_all_assignments tl)
+  let left := List.map (fun (l : ValuationList) => (hd, false) :: l) (gen_all_valuation_lists tl)
 
-  let right := List.map (fun (l : List (String × Bool)) => (hd, true) :: l) (gen_all_assignments tl)
+  let right := List.map (fun (l : ValuationList) => (hd, true) :: l) (gen_all_valuation_lists tl)
 
   left ++ right
 
@@ -660,15 +661,15 @@ def gen_all_assignments :
 lemma all_mem_gen_all_assignments
   (xs : List String)
   (f : String → Bool) :
-  List.map (fun (s : String) => (s, f s)) xs ∈ gen_all_assignments xs :=
+  List.map (fun (s : String) => (s, f s)) xs ∈ gen_all_valuation_lists xs :=
   by
   induction xs
   case nil =>
-    unfold gen_all_assignments
+    unfold gen_all_valuation_lists
     simp only [List.map_nil, List.mem_singleton]
   case cons hd tl ih =>
     simp only [List.map_cons]
-    unfold gen_all_assignments
+    unfold gen_all_valuation_lists
     simp only [List.mem_append, List.mem_map]
     cases c1 : f hd
     case false =>
@@ -788,14 +789,14 @@ example
 def gen_all_valuations
   (atoms : List String) :
   List ValuationTotalFunction :=
-  (gen_all_assignments atoms).map assignment_to_valuation
+  (gen_all_valuation_lists atoms).map assignment_to_valuation
 
 
 lemma gen_all_valuations_nil :
   gen_all_valuations [] = [fun _ => default] :=
   by
   unfold gen_all_valuations
-  unfold gen_all_assignments
+  unfold gen_all_valuation_lists
   unfold List.map
   unfold assignment_to_valuation
   simp only [List.map_nil]
