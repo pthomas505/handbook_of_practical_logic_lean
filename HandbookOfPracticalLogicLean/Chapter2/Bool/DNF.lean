@@ -865,8 +865,6 @@ lemma mem_gen_all_valuation_as_total_functions_imp_all_not_mem_is_default
 
   rewrite [← h1_right]
 
-  apply updateFromListOfPairsITE_of_toListOfPairs_imp_all_not_mem_are_default
-
   sorry
 
 
