@@ -18,7 +18,7 @@ open Formula_
 /--
   A function from the set of atoms to the set of truth values `{false, true}`.
 -/
-def ValuationTotalFunction : Type := String → Bool
+def ValuationAsTotalFunction : Type := String → Bool
   deriving Inhabited
 
 
@@ -26,7 +26,7 @@ def ValuationTotalFunction : Type := String → Bool
   `eval V F` := The evaluation of a formula `F` given the valuation `V`.
 -/
 def eval
-  (V : ValuationTotalFunction) :
+  (V : ValuationAsTotalFunction) :
   Formula_ → Bool
   | false_ => false
   | true_ => true
@@ -42,13 +42,13 @@ def eval
   `satisfies V F` := True if and only if the valuation `V` satisfies the formula `F`.
 -/
 def satisfies
-  (V : ValuationTotalFunction)
+  (V : ValuationAsTotalFunction)
   (F : Formula_) :
   Prop :=
   eval V F = true
 
 instance
-  (V : ValuationTotalFunction)
+  (V : ValuationAsTotalFunction)
   (F : Formula_) :
   Decidable (satisfies V F) :=
   by
@@ -62,7 +62,7 @@ instance
 def Formula_.is_tautology
   (F : Formula_) :
   Prop :=
-  ∀ (V : ValuationTotalFunction), satisfies V F
+  ∀ (V : ValuationAsTotalFunction), satisfies V F
 
 
 /--
@@ -71,7 +71,7 @@ def Formula_.is_tautology
 def Formula_.is_satisfiable
   (F : Formula_) :
   Prop :=
-  ∃ (V : ValuationTotalFunction), satisfies V F
+  ∃ (V : ValuationAsTotalFunction), satisfies V F
 
 
 /--
@@ -80,7 +80,7 @@ def Formula_.is_satisfiable
 def Formula_.is_unsatisfiable
   (F : Formula_) :
   Prop :=
-  ¬ ∃ (V : ValuationTotalFunction), satisfies V F
+  ¬ ∃ (V : ValuationAsTotalFunction), satisfies V F
 
 
 /--
@@ -89,7 +89,7 @@ def Formula_.is_unsatisfiable
 def set_is_satisfiable
   (Γ : Set Formula_) :
   Prop :=
-  ∃ (V : ValuationTotalFunction), ∀ (F : Formula_), F ∈ Γ → satisfies V F
+  ∃ (V : ValuationAsTotalFunction), ∀ (F : Formula_), F ∈ Γ → satisfies V F
 
 
 /--
@@ -172,7 +172,7 @@ example
 
 lemma are_logically_equivalent_iff_eval_eq
   (P Q : Formula_) :
-  are_logically_equivalent P Q ↔ ∀ (V : ValuationTotalFunction), eval V P = eval V Q :=
+  are_logically_equivalent P Q ↔ ∀ (V : ValuationAsTotalFunction), eval V P = eval V Q :=
   by
   unfold are_logically_equivalent
   unfold is_tautology
@@ -234,7 +234,7 @@ lemma are_logically_equivalent_to_true_iff_is_tautology
 
 
 theorem theorem_2_2
-  (V V' : ValuationTotalFunction)
+  (V V' : ValuationAsTotalFunction)
   (F : Formula_)
   (h1 : ∀ (A : String), atom_occurs_in A F → (V A = V' A)) :
   eval V F = eval V' F :=
@@ -284,7 +284,7 @@ namespace Option_
 /--
   A partial function from the set of atoms to the set of truth values `{false, true}`.
 -/
-def ValuationTotalFunction : Type := String → Option Bool
+def ValuationAsTotalFunction : Type := String → Option Bool
   deriving Inhabited
 
 
@@ -292,7 +292,7 @@ def ValuationTotalFunction : Type := String → Option Bool
   `eval V F` := The evaluation of a formula `F` given the valuation `V` as a partial function.
 -/
 def eval
-  (V : ValuationTotalFunction) :
+  (V : ValuationAsTotalFunction) :
   Formula_ → Option Bool
   | false_ => some false
   | true_ => some true
@@ -322,13 +322,13 @@ def eval
   `satisfies V F` := True if and only if the valuation `V` satisfies the formula `F`.
 -/
 def satisfies
-  (V : ValuationTotalFunction)
+  (V : ValuationAsTotalFunction)
   (F : Formula_) :
   Prop :=
   eval V F = some true
 
 instance
-  (V : ValuationTotalFunction)
+  (V : ValuationAsTotalFunction)
   (F : Formula_) :
   Decidable (satisfies V F) :=
   by
@@ -342,14 +342,14 @@ instance
 def Formula_.is_tautology
   (F : Formula_) :
   Prop :=
-  ∀ (V : ValuationTotalFunction), ((∀ (A : String), atom_occurs_in A F → ¬ V A = none) → satisfies V F)
+  ∀ (V : ValuationAsTotalFunction), ((∀ (A : String), atom_occurs_in A F → ¬ V A = none) → satisfies V F)
 
 
 /--
   `gen_valuation` := The generation of a valuation function from a list of pairs of atoms and truth values.
 -/
 def gen_valuation :
-  List (String × Bool) → ValuationTotalFunction
+  List (String × Bool) → ValuationAsTotalFunction
   | [] => fun _ => Option.none
   | hd :: tl => Function.updateITE (gen_valuation tl) hd.fst (Option.some hd.snd)
 
@@ -369,8 +369,8 @@ end Option_
 
 
 example
-  (V_opt : Option_.ValuationTotalFunction)
-  (V : ValuationTotalFunction)
+  (V_opt : Option_.ValuationAsTotalFunction)
+  (V : ValuationAsTotalFunction)
   (F : Formula_)
   (h1 : ∀ (A : String), atom_occurs_in A F → V_opt A = some (V A)) :
   Option_.eval V_opt F = some (eval V F) :=
@@ -420,14 +420,14 @@ example
 
 
 def val_to_opt_val
-  (V : ValuationTotalFunction) :
-  Option_.ValuationTotalFunction :=
+  (V : ValuationAsTotalFunction) :
+  Option_.ValuationAsTotalFunction :=
   fun (A : String) => some (V A)
 
 
 def opt_val_to_val
-  (V_opt : Option_.ValuationTotalFunction) :
-  ValuationTotalFunction :=
+  (V_opt : Option_.ValuationAsTotalFunction) :
+  ValuationAsTotalFunction :=
   fun (A : String) =>
     match V_opt A with
     | some b => b
@@ -435,7 +435,7 @@ def opt_val_to_val
 
 
 lemma val_to_opt_val_eq_some_val
-  (V : ValuationTotalFunction)
+  (V : ValuationAsTotalFunction)
   (A : String) :
   (val_to_opt_val V) A = some (V A) :=
   by
@@ -444,7 +444,7 @@ lemma val_to_opt_val_eq_some_val
 
 
 lemma opt_val_eq_some_opt_val_to_val
-  (V_opt : Option_.ValuationTotalFunction)
+  (V_opt : Option_.ValuationAsTotalFunction)
   (A : String)
   (h1 : ¬ V_opt A = none) :
   V_opt A = some ((opt_val_to_val V_opt) A) :=
@@ -459,7 +459,7 @@ lemma opt_val_eq_some_opt_val_to_val
 
 
 lemma eval_opt_val_to_val
-  (V_opt : Option_.ValuationTotalFunction)
+  (V_opt : Option_.ValuationAsTotalFunction)
   (F : Formula_)
   (h1 : ∀ (A : String), atom_occurs_in A F → ¬ V_opt A = none) :
   Option_.eval V_opt F = some (eval (opt_val_to_val V_opt) F) :=
@@ -514,7 +514,7 @@ lemma eval_opt_val_to_val
 
 
 lemma eval_val_to_opt_val
-  (V : ValuationTotalFunction)
+  (V : ValuationAsTotalFunction)
   (F : Formula_) :
   Option_.eval (val_to_opt_val V) F = some (eval V F) :=
   by

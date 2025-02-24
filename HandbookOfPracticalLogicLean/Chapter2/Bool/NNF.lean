@@ -156,7 +156,7 @@ end
 
 
 theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v1
-  (V : ValuationTotalFunction)
+  (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V (to_nnf_neg_v1 F) = b_not (eval V (to_nnf_v1 F)) :=
   by
@@ -193,7 +193,7 @@ theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v1
 
 
 example
-  (V : ValuationTotalFunction)
+  (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V F = eval V (to_nnf_v1 F) :=
   by
@@ -333,7 +333,7 @@ end
 
 
 theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v2
-  (V : ValuationTotalFunction)
+  (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V (to_nnf_neg_v2 F) = b_not (eval V (to_nnf_v2 F)) :=
   by
@@ -369,7 +369,7 @@ theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v2
 
 
 example
-  (V : ValuationTotalFunction)
+  (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V F = eval V (to_nnf_v2 F) :=
   by
@@ -679,7 +679,7 @@ example
   (F : Formula_)
   (h1 : F.is_nnf)
   (h2 : ¬ is_neg_literal_in A F) :
-  ∀ (V : ValuationTotalFunction), eval V (((atom_ A).imp_ (atom_ A')).imp_ (F.imp_ (replace_atom_one_rec A (atom_ A') F))) :=
+  ∀ (V : ValuationAsTotalFunction), eval V (((atom_ A).imp_ (atom_ A')).imp_ (F.imp_ (replace_atom_one_rec A (atom_ A') F))) :=
   by
   intro V
   induction F
@@ -743,7 +743,7 @@ example
   (F : Formula_)
   (h1 : F.is_nnf)
   (h2 : ¬ is_pos_literal_in A F) :
-  ∀ (V : ValuationTotalFunction), eval V (((atom_ A).imp_ (atom_ A')).imp_ ((replace_atom_one_rec A (atom_ A') F).imp_ F)) = true :=
+  ∀ (V : ValuationAsTotalFunction), eval V (((atom_ A).imp_ (atom_ A')).imp_ ((replace_atom_one_rec A (atom_ A') F).imp_ F)) = true :=
   by
   intro V
   induction F

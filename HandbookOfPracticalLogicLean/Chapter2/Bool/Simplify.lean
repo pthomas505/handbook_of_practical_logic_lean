@@ -503,7 +503,7 @@ lemma simplify_aux_iff_cases
 
 
 lemma simplify_aux_is_logically_equivalent
-  (V : ValuationTotalFunction)
+  (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V F = eval V (simplify_aux F) :=
   by
@@ -539,7 +539,7 @@ lemma simplify_aux_is_logically_equivalent
 
 
 lemma simplify_is_logically_equivalent
-  (V : ValuationTotalFunction)
+  (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V F = eval V (simplify F) :=
   by

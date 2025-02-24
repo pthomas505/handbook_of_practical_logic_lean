@@ -71,7 +71,7 @@ example
 
 
 theorem theorem_2_7
-  (V : ValuationTotalFunction)
+  (V : ValuationAsTotalFunction)
   (F : Formula_)
   (h1 : has_dual F) :
   eval V (dual F) = b_not (eval (b_not ∘ V) F) :=
