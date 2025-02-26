@@ -860,10 +860,14 @@ lemma mem_gen_all_valuation_as_total_functions_imp_all_not_mem_is_default
   unfold gen_all_valuation_as_total_functions at h1
   simp only [List.mem_map] at h1
   obtain ⟨l, ⟨h1_left, h1_right⟩⟩ := h1
-
   unfold valuation_as_list_of_pairs_to_valuation_as_total_function at h1_right
 
   rewrite [← h1_right]
+  apply updateFromListOfPairsITE_of_toListOfPairs_imp_all_not_mem_are_default
+
+  have s2 : l.map Prod.fst = atoms := sorry
+
+  have s1 : l = Function.toListOfPairs (Function.updateFromListOfPairsITE (fun x ↦ default) l) atoms := sorry
 
   sorry
 
@@ -1052,35 +1056,112 @@ example
   apply mem_list_map_mk_lits_is_conj_ind
 
 
-example
+
+
+theorem aux_1
   (V : ValuationAsTotalFunction)
-  (F : Formula_)
-  (h1 : satisfies V F) :
-  satisfies V (to_dnf_v1 F) :=
+  (atom_list : List String) :
+  eval V (mk_lits atom_list V) = true :=
   by
-  unfold to_dnf_v1
-  induction gen_all_satisfying_valuations F
+  induction atom_list
   case nil =>
-    simp
-    sorry
+    unfold mk_lits
+    simp only [List.map_nil]
+    unfold list_conj
+    unfold eval
+    rfl
   case cons hd tl ih =>
     cases tl
     case nil =>
-      simp at ih
-      simp only [list_disj] at ih
-      unfold satisfies at ih
-      unfold eval at ih
-      contradiction
+      unfold mk_lits
+      simp only [List.map_cons, List.map_nil]
+      unfold list_conj
+      split_ifs
+      case pos c1 =>
+        unfold eval
+        exact c1
+      case neg c1 =>
+        unfold eval
+        simp only [bool_iff_prop_not]
+        unfold eval
+        exact c1
     case cons tl_hd tl_tl =>
-      simp only [List.map_cons] at ih
-      simp only [mk_lits] at ih
-      unfold satisfies at ih
+      unfold mk_lits
+      simp only [List.map_cons]
+      unfold list_conj
+      unfold eval
+      simp only [bool_iff_prop_and]
+      constructor
+      · split_ifs
+        case pos c1 =>
+          unfold eval
+          exact c1
+        case neg c1 =>
+          unfold eval
+          simp only [bool_iff_prop_not]
+          unfold eval
+          exact c1
+      · unfold mk_lits at ih
+        simp only [List.map_cons] at ih
+        exact ih
+
+
+theorem aux_2
+  (V : ValuationAsTotalFunction)
+  (atom_list : List String)
+  (l : List ValuationAsTotalFunction)
+  (h2 : V ∈ l) :
+  eval V (list_disj (List.map (mk_lits atom_list) l)) = true :=
+  by
+  induction l
+  case nil =>
+    contradiction
+  case cons hd tl ih =>
+    cases tl
+    case nil =>
+      simp only [List.mem_singleton] at h2
+      rewrite [← h2]
+      simp only [List.map_cons, List.map_nil]
+      apply aux_1
+    case cons tl_hd tl_tl =>
+      simp only [List.mem_cons, List.map_cons] at ih
+
+      simp only [List.mem_cons] at h2
 
       simp only [List.map_cons]
-      simp only [list_disj]
-      unfold satisfies
-      unfold eval
-      simp only [bool_iff_prop_or]
-      simp only [mk_lits]
-      right
-      exact ih
+      cases h2
+      case inl c1 =>
+        rewrite [← c1]
+        unfold list_disj
+        unfold eval
+        simp only [bool_iff_prop_or]
+        left
+        apply aux_1
+      case inr c1 =>
+        unfold mk_lits at ih
+        simp at ih
+        unfold mk_lits
+        simp
+        unfold list_disj
+        unfold eval
+        simp only [bool_iff_prop_or]
+        right
+        apply ih
+        exact c1
+
+
+example
+  (V : ValuationAsTotalFunction)
+  (F : Formula_)
+  (h1 : eval V F = true) :
+  eval V (to_dnf_v1 F) = true:=
+  by
+  unfold to_dnf_v1
+  apply aux_2
+  unfold gen_all_satisfying_valuations
+  simp
+  constructor
+  · unfold gen_all_valuation_as_total_functions
+    sorry
+  · unfold satisfies
+    exact h1
