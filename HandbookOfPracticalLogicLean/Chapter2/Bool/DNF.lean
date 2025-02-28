@@ -427,6 +427,39 @@ def list_conj :
   | hd :: tl => and_ hd (list_conj tl)
 
 
+lemma list_conj_of_is_literal_ind_is_conj_ind
+  (l : List Formula_)
+  (h1 : ∀ (F : Formula_), F ∈ l → is_literal_ind F) :
+  is_conj_ind (list_conj l) :=
+  by
+  induction l
+  case nil =>
+    unfold list_conj
+    apply is_conj_ind.rule_3
+    apply is_constant_ind.rule_2
+  case cons hd tl ih =>
+    cases tl
+    case nil =>
+      unfold list_conj
+      apply is_conj_ind.rule_4
+      apply h1
+      simp only [List.mem_singleton]
+    case cons tl_hd tl_tl =>
+      unfold list_conj
+      apply is_conj_ind.rule_2
+      · apply h1
+        simp only [List.mem_cons]
+        left
+        exact trivial
+      · apply ih
+        intro F a1
+        simp only [List.mem_cons] at a1
+        apply h1
+        simp only [List.mem_cons]
+        right
+        exact a1
+
+
 lemma eval_all_eq_true_imp_eval_list_conj_eq_true
   (V : ValuationAsTotalFunction)
   (l : List Formula_)
@@ -525,40 +558,18 @@ lemma mk_lits_is_conj_ind
   (V : ValuationAsTotalFunction) :
   is_conj_ind (mk_lits atoms V) :=
   by
-  induction atoms
-  case nil =>
-    unfold mk_lits
-    simp only [List.map_nil]
-    unfold list_conj
-    apply is_conj_ind.rule_3
-    exact is_constant_ind.rule_2
-  case cons hd tl ih =>
-    cases tl
-    case nil =>
-      simp only [mk_lits]
-      simp only [List.map_cons, List.map_nil]
-      simp only [list_conj]
-      split_ifs
-      case pos c1 =>
-        apply is_conj_ind.rule_4
-        apply is_literal_ind.rule_1
-      case neg c1 =>
-        apply is_conj_ind.rule_4
-        apply is_literal_ind.rule_2
-    case cons tl_hd tl_tl =>
-      simp only [mk_lits] at ih
-
-      simp only [mk_lits]
-
-      simp only [list_conj]
-      apply is_conj_ind.rule_2
-      · split_ifs
-        case pos c1 =>
-          apply is_literal_ind.rule_1
-        case neg c1 =>
-          apply is_literal_ind.rule_2
-      · simp only [List.map_cons] at ih
-        apply ih
+  unfold mk_lits
+  apply list_conj_of_is_literal_ind_is_conj_ind
+  intro F a1
+  simp only [List.mem_map] at a1
+  obtain ⟨X, ⟨a1_left, a1_right⟩⟩ := a1
+  split_ifs at a1_right
+  case pos c1 =>
+    rewrite [← a1_right]
+    apply is_literal_ind.rule_1
+  case neg c1 =>
+    rewrite [← a1_right]
+    apply is_literal_ind.rule_2
 
 
 lemma mem_list_map_mk_lits_is_conj_ind
@@ -581,8 +592,7 @@ theorem eval_mk_lits_eq_true
   eval V (mk_lits atom_list V) = true :=
   by
   unfold mk_lits
-  simp only
-  rewrite [← eval_all_eq_true_iff_eval_list_conj_eq_true]
+  apply eval_all_eq_true_imp_eval_list_conj_eq_true
   intro F a1
   simp only [List.mem_map] at a1
   obtain ⟨X, ⟨a1_left, a1_right⟩⟩ := a1
@@ -735,7 +745,6 @@ theorem aux_2
   (h1 : V ∈ l) :
   eval V (list_disj (List.map (mk_lits atom_list) l)) = true :=
   by
-
   induction l
   case nil =>
     contradiction
