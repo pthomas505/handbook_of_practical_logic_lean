@@ -580,47 +580,23 @@ theorem eval_mk_lits_eq_true
   (atom_list : List String) :
   eval V (mk_lits atom_list V) = true :=
   by
-  induction atom_list
-  case nil =>
-    unfold mk_lits
-    simp only [List.map_nil]
-    unfold list_conj
+  unfold mk_lits
+  simp only
+  rewrite [← eval_all_eq_true_iff_eval_list_conj_eq_true]
+  intro F a1
+  simp only [List.mem_map] at a1
+  obtain ⟨X, ⟨a1_left, a1_right⟩⟩ := a1
+  split_ifs at a1_right
+  case pos c1 =>
+    rewrite [← a1_right]
     unfold eval
-    rfl
-  case cons hd tl ih =>
-    cases tl
-    case nil =>
-      unfold mk_lits
-      simp only [List.map_cons, List.map_nil]
-      unfold list_conj
-      split_ifs
-      case pos c1 =>
-        unfold eval
-        exact c1
-      case neg c1 =>
-        unfold eval
-        simp only [bool_iff_prop_not]
-        unfold eval
-        exact c1
-    case cons tl_hd tl_tl =>
-      unfold mk_lits
-      simp only [List.map_cons]
-      unfold list_conj
-      unfold eval
-      simp only [bool_iff_prop_and]
-      constructor
-      · split_ifs
-        case pos c1 =>
-          unfold eval
-          exact c1
-        case neg c1 =>
-          unfold eval
-          simp only [bool_iff_prop_not]
-          unfold eval
-          exact c1
-      · unfold mk_lits at ih
-        simp only [List.map_cons] at ih
-        exact ih
+    exact c1
+  case neg c1 =>
+    rewrite [← a1_right]
+    unfold eval
+    simp only [bool_iff_prop_not]
+    unfold eval
+    exact c1
 
 
 -------------------------------------------------------------------------------
@@ -756,26 +732,27 @@ theorem aux_2
   (V : ValuationAsTotalFunction)
   (atom_list : List String)
   (l : List ValuationAsTotalFunction)
-  (h2 : V ∈ l) :
+  (h1 : V ∈ l) :
   eval V (list_disj (List.map (mk_lits atom_list) l)) = true :=
   by
+
   induction l
   case nil =>
     contradiction
   case cons hd tl ih =>
     cases tl
     case nil =>
-      simp only [List.mem_singleton] at h2
-      rewrite [← h2]
+      simp only [List.mem_singleton] at h1
+      rewrite [← h1]
       simp only [List.map_cons, List.map_nil]
       apply eval_mk_lits_eq_true
     case cons tl_hd tl_tl =>
       simp only [List.mem_cons, List.map_cons] at ih
 
-      simp only [List.mem_cons] at h2
+      simp only [List.mem_cons] at h1
 
       simp only [List.map_cons]
-      cases h2
+      cases h1
       case inl c1 =>
         rewrite [← c1]
         unfold list_disj
