@@ -114,57 +114,6 @@ lemma is_literal_ind_iff_is_literal
 -------------------------------------------------------------------------------
 
 
-def Formula_.is_conj_rec_v1 :
-  Formula_ → Prop
-  | false_ => True
-  | true_ => True
-  | atom_ _ => True
-  | not_ (atom_ _) => True
-  | and_ phi psi => phi.is_conj_rec_v1 ∧ psi.is_conj_rec_v1
-  | _ => False
-
-
-instance
-  (F : Formula_) :
-  Decidable (Formula_.is_conj_rec_v1 F) :=
-  by
-  induction F
-  case not_ phi ih =>
-    cases phi
-    all_goals
-      simp only [is_conj_rec_v1]
-      infer_instance
-  all_goals
-    simp only [is_conj_rec_v1]
-    infer_instance
-
-
-lemma is_conj_rec_v1_imp_is_nnf
-  (F : Formula_)
-  (h1 : F.is_conj_rec_v1) :
-  F.is_nnf :=
-  by
-  induction F
-  case false_ | true_ | atom_ X =>
-    simp only [is_nnf]
-  case not_ phi ih =>
-    cases phi
-    case atom_ X =>
-      simp only [is_nnf]
-    all_goals
-      simp only [is_conj_rec_v1] at h1
-  case and_ phi psi phi_ih psi_ih =>
-    simp only [is_conj_rec_v1] at h1
-
-    simp only [is_nnf]
-    tauto
-  all_goals
-    simp only [is_conj_rec_v1] at h1
-
-
--------------------------------------------------------------------------------
-
-
 def Formula_.is_conj_rec_v2 :
   Formula_ → Prop
   | false_ => True
@@ -248,41 +197,6 @@ lemma is_conj_rec_v2_imp_is_nnf
   all_goals
     unfold is_conj_rec_v2 at h1
     contradiction
-
-
-example
-  (F : Formula_)
-  (h1 : is_conj_rec_v2 F) :
-  is_conj_rec_v1 F :=
-  by
-  induction F
-  case false_ | true_ | atom_ X =>
-    simp only [is_conj_rec_v1]
-  case not_ phi ih =>
-    cases phi
-    case atom_ X =>
-      simp only [is_conj_rec_v1]
-    all_goals
-      simp only [is_conj_rec_v2] at h1
-  case and_ phi psi phi_ih psi_ih =>
-    cases phi
-    case false_ | true_ | atom_ X =>
-      simp only [is_conj_rec_v2] at h1
-
-      simp only [is_conj_rec_v1]
-      tauto
-    case not_ phi =>
-      cases phi
-      case atom_ X =>
-        simp only [is_conj_rec_v1]
-        simp only [is_conj_rec_v2] at h1
-        tauto
-      all_goals
-        simp only [is_conj_rec_v2] at h1
-    all_goals
-      simp only [is_conj_rec_v2] at h1
-  all_goals
-    simp only [is_conj_rec_v2] at h1
 
 
 lemma is_conj_rec_v2_imp_is_conj_ind
