@@ -114,47 +114,47 @@ lemma is_literal_ind_iff_is_literal
 -------------------------------------------------------------------------------
 
 
-def Formula_.is_conj_rec_v2 :
+def Formula_.is_conj_rec :
   Formula_ → Prop
   | false_ => True
   | true_ => True
   | atom_ _ => True
   | not_ (atom_ _) => True
-  | and_ (false_) psi => psi.is_conj_rec_v2
-  | and_ (true_) psi => psi.is_conj_rec_v2
-  | and_ (atom_ _) psi => psi.is_conj_rec_v2
-  | and_ (not_ (atom_ _)) psi => psi.is_conj_rec_v2
+  | and_ (false_) psi => psi.is_conj_rec
+  | and_ (true_) psi => psi.is_conj_rec
+  | and_ (atom_ _) psi => psi.is_conj_rec
+  | and_ (not_ (atom_ _)) psi => psi.is_conj_rec
   | _ => False
 
 
 instance
   (F : Formula_) :
-  Decidable (Formula_.is_conj_rec_v2 F) :=
+  Decidable (Formula_.is_conj_rec F) :=
   by
   induction F
   case not_ phi ih =>
     cases phi
     all_goals
-      simp only [is_conj_rec_v2]
+      simp only [is_conj_rec]
       infer_instance
   case and_ phi psi phi_ih psi_ih =>
     cases phi
     case not_ phi =>
       cases phi
       all_goals
-        simp only [is_conj_rec_v2]
+        simp only [is_conj_rec]
         infer_instance
     all_goals
-      simp only [is_conj_rec_v2]
+      simp only [is_conj_rec]
       infer_instance
   all_goals
-    simp only [is_conj_rec_v2]
+    simp only [is_conj_rec]
     infer_instance
 
 
-lemma is_conj_rec_v2_imp_is_nnf
+lemma is_conj_rec_imp_is_nnf
   (F : Formula_)
-  (h1 : F.is_conj_rec_v2) :
+  (h1 : F.is_conj_rec) :
   F.is_nnf :=
   by
   induction F
@@ -167,13 +167,13 @@ lemma is_conj_rec_v2_imp_is_nnf
       unfold is_nnf
       exact trivial
     all_goals
-      unfold is_conj_rec_v2 at h1
+      unfold is_conj_rec at h1
       contradiction
   case and_ phi psi phi_ih psi_ih =>
     unfold is_nnf
     cases phi
     case false_ | true_ | atom_ X =>
-      unfold is_conj_rec_v2 at h1
+      unfold is_conj_rec at h1
       constructor
       · unfold is_nnf
         exact trivial
@@ -182,26 +182,26 @@ lemma is_conj_rec_v2_imp_is_nnf
     case not_ phi =>
       cases phi
       case atom_ X =>
-        unfold is_conj_rec_v2 at h1
+        unfold is_conj_rec at h1
         constructor
         · unfold is_nnf
           exact trivial
         · apply psi_ih
           exact h1
       all_goals
-        unfold is_conj_rec_v2 at h1
+        unfold is_conj_rec at h1
         contradiction
     all_goals
-      unfold is_conj_rec_v2 at h1
+      unfold is_conj_rec at h1
       contradiction
   all_goals
-    unfold is_conj_rec_v2 at h1
+    unfold is_conj_rec at h1
     contradiction
 
 
-lemma is_conj_rec_v2_imp_is_conj_ind
+lemma is_conj_rec_imp_is_conj_ind
   (F : Formula_)
-  (h1 : is_conj_rec_v2 F) :
+  (h1 : is_conj_rec F) :
   is_conj_ind F :=
   by
   induction F
@@ -220,23 +220,23 @@ lemma is_conj_rec_v2_imp_is_conj_ind
       apply is_conj_ind.rule_4
       apply is_literal_ind.rule_2
     all_goals
-      simp only [is_conj_rec_v2] at h1
+      simp only [is_conj_rec] at h1
   case and_ phi psi phi_ih psi_ih =>
     cases phi
     case false_ =>
-      simp only [is_conj_rec_v2] at h1
+      simp only [is_conj_rec] at h1
       apply is_conj_ind.rule_1
       · apply is_constant_ind.rule_1
       · apply psi_ih
         exact h1
     case true_ =>
-      simp only [is_conj_rec_v2] at h1
+      simp only [is_conj_rec] at h1
       apply is_conj_ind.rule_1
       · apply is_constant_ind.rule_2
       · apply psi_ih
         exact h1
     case atom_ X =>
-      simp only [is_conj_rec_v2] at h1
+      simp only [is_conj_rec] at h1
       apply is_conj_ind.rule_2
       · apply is_literal_ind.rule_1
       · apply psi_ih
@@ -244,63 +244,63 @@ lemma is_conj_rec_v2_imp_is_conj_ind
     case not_ phi =>
       cases phi
       case atom_ X =>
-        simp only [is_conj_rec_v2] at h1
-        simp only [is_conj_rec_v2] at phi_ih
+        simp only [is_conj_rec] at h1
+        simp only [is_conj_rec] at phi_ih
         apply is_conj_ind.rule_2
         · apply is_literal_ind.rule_2
         · apply psi_ih
           exact h1
       all_goals
-        simp only [is_conj_rec_v2] at h1
+        simp only [is_conj_rec] at h1
     all_goals
-      simp only [is_conj_rec_v2] at h1
+      simp only [is_conj_rec] at h1
   all_goals
-    simp only [is_conj_rec_v2] at h1
+    simp only [is_conj_rec] at h1
 
 
-lemma is_conj_ind_imp_is_conj_rec_v2
+lemma is_conj_ind_imp_is_conj_rec
   (F : Formula_)
   (h1 : is_conj_ind F) :
-  is_conj_rec_v2 F :=
+  is_conj_rec F :=
   by
   induction h1
   case rule_1 phi psi ih_1 ih_2 ih_3 =>
     cases ih_1
     case rule_1 =>
-      simp only [is_conj_rec_v2]
+      simp only [is_conj_rec]
       exact ih_3
     case rule_2 =>
-      simp only [is_conj_rec_v2]
+      simp only [is_conj_rec]
       exact ih_3
   case rule_2 phi psi ih_1 ih_2 ih_3 =>
     cases ih_1
     case rule_1 X =>
-      simp only [is_conj_rec_v2]
+      simp only [is_conj_rec]
       exact ih_3
     case rule_2 X =>
-      simp only [is_conj_rec_v2]
+      simp only [is_conj_rec]
       exact ih_3
   case rule_3 phi ih_1 =>
     cases ih_1
     case rule_1 =>
-      simp only [is_conj_rec_v2]
+      simp only [is_conj_rec]
     case rule_2 =>
-      simp only [is_conj_rec_v2]
+      simp only [is_conj_rec]
   case rule_4 phi ih_1 =>
     cases ih_1
     case rule_1 X =>
-      simp only [is_conj_rec_v2]
+      simp only [is_conj_rec]
     case rule_2 X =>
-      simp only [is_conj_rec_v2]
+      simp only [is_conj_rec]
 
 
-lemma is_conj_rec_v2_iff_is_conj_ind
+lemma is_conj_rec_iff_is_conj_ind
   (F : Formula_) :
-  is_conj_rec_v2 F ↔ is_conj_ind F :=
+  is_conj_rec F ↔ is_conj_ind F :=
   by
   constructor
-  · apply is_conj_rec_v2_imp_is_conj_ind
-  · apply is_conj_ind_imp_is_conj_rec_v2
+  · apply is_conj_rec_imp_is_conj_ind
+  · apply is_conj_ind_imp_is_conj_rec
 
 
 -------------------------------------------------------------------------------
@@ -308,8 +308,8 @@ lemma is_conj_rec_v2_iff_is_conj_ind
 
 def Formula_.is_dnf_rec :
   Formula_ → Prop
-  | or_ phi psi => phi.is_conj_rec_v2 ∧ psi.is_dnf_rec
-  | F => is_conj_rec_v2 F
+  | or_ phi psi => phi.is_conj_rec ∧ psi.is_dnf_rec
+  | F => is_conj_rec F
 
 
 instance
@@ -348,24 +348,24 @@ lemma is_dnf_rec_imp_is_dnf_ind
       apply is_literal_ind.rule_2
     all_goals
       simp only [is_dnf_rec] at h1
-      simp only [is_conj_rec_v2] at h1
+      simp only [is_conj_rec] at h1
   case or_ phi psi phi_ih psi_ih =>
     unfold is_dnf_rec at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
     apply is_dnf_ind.rule_1
-    · apply is_conj_rec_v2_imp_is_conj_ind
+    · apply is_conj_rec_imp_is_conj_ind
       exact h1_left
     · apply psi_ih
       exact h1_right
   case and_ phi psi phi_ih psi_ih =>
     unfold is_dnf_rec at h1
     apply is_dnf_ind.rule_2
-    apply is_conj_rec_v2_imp_is_conj_ind
+    apply is_conj_rec_imp_is_conj_ind
     exact h1
   all_goals
     simp only [is_dnf_rec] at h1
-    simp only [is_conj_rec_v2] at h1
+    simp only [is_conj_rec] at h1
 
 
 lemma is_dnf_ind_imp_is_dnf_rec
@@ -377,20 +377,20 @@ lemma is_dnf_ind_imp_is_dnf_rec
   case rule_1 phi psi ih_1 ih_2 ih_3 =>
     unfold is_dnf_rec
     constructor
-    · apply is_conj_ind_imp_is_conj_rec_v2
+    · apply is_conj_ind_imp_is_conj_rec
       exact ih_1
     · exact ih_3
   case rule_2 phi ih_1 =>
     cases ih_1
     case rule_1 phi psi phi_ih psi_ih =>
       unfold is_dnf_rec
-      apply is_conj_ind_imp_is_conj_rec_v2
+      apply is_conj_ind_imp_is_conj_rec
       apply is_conj_ind.rule_1
       · exact phi_ih
       · exact psi_ih
     case rule_2 phi psi phi_ih psi_ih =>
       unfold is_dnf_rec
-      apply is_conj_ind_imp_is_conj_rec_v2
+      apply is_conj_ind_imp_is_conj_rec
       apply is_conj_ind.rule_2
       · exact phi_ih
       · exact psi_ih
@@ -398,13 +398,13 @@ lemma is_dnf_ind_imp_is_dnf_rec
       cases ih
       all_goals
         unfold is_dnf_rec
-        unfold is_conj_rec_v2
+        unfold is_conj_rec
         exact trivial
     case rule_4 ih =>
       cases ih
       all_goals
         unfold is_dnf_rec
-        unfold is_conj_rec_v2
+        unfold is_conj_rec
         exact trivial
 
 
