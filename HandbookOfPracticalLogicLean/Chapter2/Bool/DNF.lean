@@ -757,8 +757,6 @@ theorem aux_2
 -------------------------------------------------------------------------------
 
 
-
-
 def Function.toListOfPairs
   {α β : Type}
   [DecidableEq α]
