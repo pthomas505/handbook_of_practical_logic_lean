@@ -738,8 +738,6 @@ lemma eval_exists_eq_true_iff_eval_list_disj_eq_true
   · apply eval_list_disj_eq_true_imp_eval_exists_eq_true
 
 
-
-
 theorem aux_2
   (V : ValuationAsTotalFunction)
   (atom_list : List String)
@@ -747,41 +745,13 @@ theorem aux_2
   (h1 : V ∈ l) :
   eval V (list_disj (List.map (mk_lits atom_list) l)) = true :=
   by
-  induction l
-  case nil =>
-    contradiction
-  case cons hd tl ih =>
-    cases tl
-    case nil =>
-      simp only [List.mem_singleton] at h1
-      rewrite [← h1]
-      simp only [List.map_cons, List.map_nil]
-      apply eval_mk_lits_eq_true
-    case cons tl_hd tl_tl =>
-      simp only [List.mem_cons, List.map_cons] at ih
-
-      simp only [List.mem_cons] at h1
-
-      simp only [List.map_cons]
-      cases h1
-      case inl c1 =>
-        rewrite [← c1]
-        unfold list_disj
-        unfold eval
-        simp only [bool_iff_prop_or]
-        left
-        apply eval_mk_lits_eq_true
-      case inr c1 =>
-        unfold mk_lits at ih
-        simp at ih
-        unfold mk_lits
-        simp
-        unfold list_disj
-        unfold eval
-        simp only [bool_iff_prop_or]
-        right
-        apply ih
-        exact c1
+  apply eval_exists_eq_true_imp_eval_list_disj_eq_true
+  simp only [List.mem_map]
+  simp only [exists_exists_and_eq_and]
+  apply Exists.intro V
+  constructor
+  · exact h1
+  · apply eval_mk_lits_eq_true
 
 
 -------------------------------------------------------------------------------
