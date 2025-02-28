@@ -565,7 +565,7 @@ lemma mem_list_map_mk_lits_is_conj_ind
   (atoms : List String)
   (vs : List ValuationAsTotalFunction)
   (F : Formula_)
-  (h1 : F ∈ (List.map (mk_lits atoms) vs)) :
+  (h1 : F ∈ List.map (mk_lits atoms) vs) :
   is_conj_ind F :=
   by
     simp only [List.mem_map] at h1
@@ -668,6 +668,40 @@ lemma eval_exists_eq_true_iff_eval_list_disj_eq_true
   constructor
   · apply eval_exists_eq_true_imp_eval_list_disj_eq_true
   · apply eval_list_disj_eq_true_imp_eval_exists_eq_true
+
+
+lemma list_disj_of_is_conj_ind_is_dnf_ind
+  (xs : List Formula_)
+  (h1 : ∀ (F : Formula_), F ∈ xs → is_conj_ind F) :
+  is_dnf_ind (list_disj xs) :=
+  by
+  induction xs
+  case nil =>
+    unfold list_disj
+    apply is_dnf_ind.rule_2 false_
+    apply is_conj_ind.rule_3 false_
+    exact is_constant_ind.rule_1
+  case cons hd tl ih =>
+    cases tl
+    case nil =>
+      unfold list_disj
+      apply is_dnf_ind.rule_2 hd
+      apply h1
+      simp
+    case cons tl_hd tl_tl =>
+      unfold list_disj
+      apply is_dnf_ind.rule_1
+      · apply h1
+        simp only [List.mem_cons]
+        left
+        trivial
+      · apply ih
+        intro F a1
+        apply h1
+        simp only [List.mem_cons]
+        right
+        simp only [List.mem_cons] at a1
+        exact a1
 
 
 -------------------------------------------------------------------------------
@@ -973,38 +1007,6 @@ def to_dnf_v1
 #eval (to_dnf_v1 (Formula_| ((P \/ (Q /\ R)) /\ (~ P \/ ~ R)))).toString
 
 
-lemma list_disj_of_is_conj_ind_is_dnf_ind
-  (xs : List Formula_)
-  (h1 : ∀ (F : Formula_), F ∈ xs → is_conj_ind F) :
-  is_dnf_ind (list_disj xs) :=
-  by
-  induction xs
-  case nil =>
-    unfold list_disj
-    apply is_dnf_ind.rule_2 false_
-    apply is_conj_ind.rule_3 false_
-    exact is_constant_ind.rule_1
-  case cons hd tl ih =>
-    cases tl
-    case nil =>
-      unfold list_disj
-      apply is_dnf_ind.rule_2 hd
-      apply h1
-      simp
-    case cons tl_hd tl_tl =>
-      unfold list_disj
-      apply is_dnf_ind.rule_1
-      · apply h1
-        simp only [List.mem_cons]
-        left
-        trivial
-      · apply ih
-        intro F a1
-        apply h1
-        simp only [List.mem_cons]
-        right
-        simp only [List.mem_cons] at a1
-        exact a1
 
 
 example
