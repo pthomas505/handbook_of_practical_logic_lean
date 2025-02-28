@@ -509,6 +509,83 @@ lemma eval_all_eq_true_iff_eval_list_conj_eq_true
 -------------------------------------------------------------------------------
 
 
+def mk_lits
+  (atoms : List String)
+  (V : ValuationAsTotalFunction) :
+  Formula_ :=
+  let f : String → Formula_ := fun (A : String) =>
+    if V A = true
+    then atom_ A
+    else not_ (atom_ A)
+  list_conj (atoms.map f)
+
+
+lemma mk_lits_nil
+  (V : ValuationAsTotalFunction) :
+  mk_lits [] V = true_ :=
+  by
+  unfold mk_lits
+  simp only [List.map_nil]
+  unfold list_conj
+  rfl
+
+
+lemma mk_lits_is_conj_ind
+  (atoms : List String)
+  (V : ValuationAsTotalFunction) :
+  is_conj_ind (mk_lits atoms V) :=
+  by
+  induction atoms
+  case nil =>
+    simp only [mk_lits_nil]
+    apply is_conj_ind.rule_3
+    exact is_constant_ind.rule_2
+  case cons hd tl ih =>
+    cases tl
+    case nil =>
+      simp only [mk_lits]
+      simp only [List.map_cons, List.map_nil]
+      simp only [list_conj]
+      split_ifs
+      case pos c1 =>
+        apply is_conj_ind.rule_4
+        apply is_literal_ind.rule_1
+      case neg c1 =>
+        apply is_conj_ind.rule_4
+        apply is_literal_ind.rule_2
+    case cons tl_hd tl_tl =>
+      simp only [mk_lits] at ih
+
+      simp only [mk_lits]
+
+      simp only [list_conj]
+      apply is_conj_ind.rule_2
+      · split_ifs
+        case pos c1 =>
+          apply is_literal_ind.rule_1
+        case neg c1 =>
+          apply is_literal_ind.rule_2
+      · simp only [List.map_cons] at ih
+        apply ih
+
+
+lemma mem_list_map_mk_lits_is_conj_ind
+  (atoms : List String)
+  (vs : List ValuationAsTotalFunction)
+  (F : Formula_)
+  (h1 : F ∈ (List.map (mk_lits atoms) vs)) :
+  is_conj_ind F :=
+  by
+    simp only [List.mem_map] at h1
+    obtain ⟨V, h1⟩ := h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+    rewrite [← h1_right]
+    apply mk_lits_is_conj_ind
+
+
+-------------------------------------------------------------------------------
+
+
 def list_disj :
   List Formula_ → Formula_
   | [] => false_
@@ -602,6 +679,8 @@ lemma eval_exists_eq_true_iff_eval_list_disj_eq_true
 
 
 -------------------------------------------------------------------------------
+
+
 
 
 def Function.toListOfPairs
@@ -885,78 +964,6 @@ lemma gen_all_satisfying_valuations_true_ :
 -------------------------------------------------------------------------------
 
 
-def mk_lits
-  (atoms : List String)
-  (V : ValuationAsTotalFunction) :
-  Formula_ :=
-  let f : String → Formula_ := fun (A : String) =>
-    if V A = true
-    then atom_ A
-    else not_ (atom_ A)
-  list_conj (atoms.map f)
-
-
-lemma mk_lits_nil
-  (V : ValuationAsTotalFunction) :
-  mk_lits [] V = true_ :=
-  by
-  unfold mk_lits
-  simp only [List.map_nil]
-  unfold list_conj
-  rfl
-
-
-lemma mk_lits_is_conj_ind
-  (atoms : List String)
-  (V : ValuationAsTotalFunction) :
-  is_conj_ind (mk_lits atoms V) :=
-  by
-  induction atoms
-  case nil =>
-    simp only [mk_lits_nil]
-    apply is_conj_ind.rule_3
-    exact is_constant_ind.rule_2
-  case cons hd tl ih =>
-    cases tl
-    case nil =>
-      simp only [mk_lits]
-      simp only [List.map_cons, List.map_nil]
-      simp only [list_conj]
-      split_ifs
-      case pos c1 =>
-        apply is_conj_ind.rule_4
-        apply is_literal_ind.rule_1
-      case neg c1 =>
-        apply is_conj_ind.rule_4
-        apply is_literal_ind.rule_2
-    case cons tl_hd tl_tl =>
-      simp only [mk_lits] at ih
-
-      simp only [mk_lits]
-
-      simp only [list_conj]
-      apply is_conj_ind.rule_2
-      · split_ifs
-        case pos c1 =>
-          apply is_literal_ind.rule_1
-        case neg c1 =>
-          apply is_literal_ind.rule_2
-      · simp only [List.map_cons] at ih
-        apply ih
-
-
-lemma mem_list_map_mk_lits_is_conj_ind
-  (atoms : List String)
-  (vs : List ValuationAsTotalFunction)
-  (F : Formula_)
-  (h1 : F ∈ (List.map (mk_lits atoms) vs)) :
-  is_conj_ind F :=
-  by
-    simp only [List.mem_map] at h1
-    obtain ⟨V, h1⟩ := h1
-    obtain ⟨h1_left, h1_right⟩ := h1
-    rewrite [← h1_right]
-    apply mk_lits_is_conj_ind
 
 
 -------------------------------------------------------------------------------
