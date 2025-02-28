@@ -520,16 +520,6 @@ def mk_lits
   list_conj (atoms.map f)
 
 
-lemma mk_lits_nil
-  (V : ValuationAsTotalFunction) :
-  mk_lits [] V = true_ :=
-  by
-  unfold mk_lits
-  simp only [List.map_nil]
-  unfold list_conj
-  rfl
-
-
 lemma mk_lits_is_conj_ind
   (atoms : List String)
   (V : ValuationAsTotalFunction) :
@@ -537,7 +527,9 @@ lemma mk_lits_is_conj_ind
   by
   induction atoms
   case nil =>
-    simp only [mk_lits_nil]
+    unfold mk_lits
+    simp only [List.map_nil]
+    unfold list_conj
     apply is_conj_ind.rule_3
     exact is_constant_ind.rule_2
   case cons hd tl ih =>
