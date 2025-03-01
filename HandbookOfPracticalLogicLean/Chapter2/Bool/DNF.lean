@@ -817,14 +817,6 @@ example
 
 
 example
-  (init_1 init_2 : ValuationAsTotalFunction)
-  (F : Formula_) :
-  to_dnf init_1 F = to_dnf init_2 F :=
-  by
-  sorry
-
-
-example
   (init : ValuationAsTotalFunction)
   (V : ValuationAsTotalFunction)
   (F : Formula_)
@@ -847,3 +839,11 @@ example
         exact h2
     · rfl
   · apply eval_mk_lits_eq_true
+
+
+example
+  (init_1 init_2 : ValuationAsTotalFunction)
+  (F : Formula_) :
+  to_dnf init_1 F = to_dnf init_2 F :=
+  by
+  sorry
