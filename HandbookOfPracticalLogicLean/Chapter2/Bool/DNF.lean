@@ -844,11 +844,9 @@ example
 example
   (init_1 init_2 : ValuationAsTotalFunction)
   (F : Formula_) :
-  list_disj
-    (List.map (mk_lits F.atom_list.dedup)
-      (List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup))) =
-  list_disj
-    (List.map (mk_lits F.atom_list.dedup)
-      (List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup))) :=
+    List.map (mk_lits F.atom_list.dedup)
+      (List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup)) =
+    List.map (mk_lits F.atom_list.dedup)
+      (List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup)) :=
   by
   sorry
