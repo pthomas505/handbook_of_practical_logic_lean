@@ -779,7 +779,42 @@ example
   (atom_list : List String) :
   (gen_all_valuations_as_list_of_list_of_pairs atom_list).map (valuation_as_list_of_pairs_to_valuation_as_total_function init) = gen_all_valuations_as_list_of_total_functions init atom_list :=
   by
-  sorry
+  induction atom_list
+  case nil =>
+    unfold gen_all_valuations_as_list_of_list_of_pairs
+    simp only [List.map_cons, List.map_nil]
+    unfold valuation_as_list_of_pairs_to_valuation_as_total_function
+    unfold Function.updateFromListOfPairsITE
+    unfold gen_all_valuations_as_list_of_total_functions
+    rfl
+  case cons hd tl ih =>
+    unfold valuation_as_list_of_pairs_to_valuation_as_total_function at ih
+
+    unfold gen_all_valuations_as_list_of_list_of_pairs
+    simp only [List.map_append, List.map_map]
+    unfold valuation_as_list_of_pairs_to_valuation_as_total_function
+    unfold gen_all_valuations_as_list_of_total_functions
+    simp only
+    congr 1
+    all_goals
+      rewrite [← ih]
+      simp only [List.map_map, List.map_inj_left, Function.comp_apply]
+      intro l a1
+      funext X
+      unfold Function.updateITE
+      split_ifs
+      case pos c1 =>
+        unfold Function.updateFromListOfPairsITE
+        simp only
+        unfold Function.updateITE
+        split_ifs
+        rfl
+      case neg c1 =>
+        conv => left; unfold Function.updateFromListOfPairsITE
+        simp only
+        unfold Function.updateITE
+        split_ifs
+        rfl
 
 
 -------------------------------------------------------------------------------
@@ -844,9 +879,21 @@ example
 example
   (init_1 init_2 : ValuationAsTotalFunction)
   (F : Formula_) :
-    List.map (mk_lits F.atom_list.dedup)
-      (List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup)) =
-    List.map (mk_lits F.atom_list.dedup)
-      (List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup)) :=
+  to_dnf init_1 F = to_dnf init_2 F :=
   by
   sorry
+
+
+example
+  (V_1 V_2 : ValuationAsTotalFunction)
+  (atom_list : List String)
+  (h1 : ∀ (X : String), X ∈ atom_list → V_1 X = V_2 X) :
+  mk_lits atom_list V_1 = mk_lits atom_list V_2 :=
+  by
+  unfold mk_lits
+  simp only
+  congr! 1
+  simp only [List.map_inj_left]
+  intro X a1
+  rewrite [h1 X a1]
+  rfl
