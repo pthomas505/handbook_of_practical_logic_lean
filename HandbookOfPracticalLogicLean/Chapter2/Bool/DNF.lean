@@ -765,10 +765,10 @@ def valuation_as_list_of_pairs_to_valuation_as_total_function
 
 
 def valuation_as_total_function_to_valuation_as_list_of_pairs
-  (V : ValuationAsTotalFunction)
-  (atom_list : List String) :
+  (atom_list : List String)
+  (V : ValuationAsTotalFunction) :
   ValuationAsListOfPairs :=
-  Function.toListOfPairs V atom_list
+  Function.toListOfPairs atom_list V
 
 
 -------------------------------------------------------------------------------
@@ -815,6 +815,56 @@ example
         unfold Function.updateITE
         split_ifs
         rfl
+
+
+example
+  (init : ValuationAsTotalFunction)
+  (atom_list : List String)
+  (h1 : atom_list.Nodup) :
+  (gen_all_valuations_as_list_of_total_functions init atom_list).map (valuation_as_total_function_to_valuation_as_list_of_pairs atom_list) = gen_all_valuations_as_list_of_list_of_pairs atom_list :=
+  by
+  induction atom_list
+  case nil =>
+    unfold gen_all_valuations_as_list_of_total_functions
+    simp only [List.map_cons, List.map_nil]
+    unfold valuation_as_total_function_to_valuation_as_list_of_pairs
+    unfold Function.toListOfPairs
+    simp only [List.map_nil]
+    unfold gen_all_valuations_as_list_of_list_of_pairs
+    rfl
+  case cons hd tl ih =>
+    unfold valuation_as_total_function_to_valuation_as_list_of_pairs at ih
+
+    simp only [List.nodup_cons] at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
+    unfold gen_all_valuations_as_list_of_total_functions
+    simp only [List.map_append, List.map_map]
+    unfold valuation_as_total_function_to_valuation_as_list_of_pairs
+    unfold gen_all_valuations_as_list_of_list_of_pairs
+    simp only
+    congr 1
+    all_goals
+      rewrite [← ih h1_right]
+      simp only [List.map_map, List.map_inj_left, Function.comp_apply]
+      intro V a1
+      unfold Function.toListOfPairs
+      simp only [List.map_cons]
+      congr! 1
+      · unfold Function.updateITE
+        simp only [if_pos]
+      · simp only [List.map_inj_left]
+        intro X a2
+        simp only [Prod.mk.injEq]
+        constructor
+        · exact trivial
+        · unfold Function.updateITE
+          split_ifs
+          case pos c1 =>
+            rewrite [c1] at a2
+            contradiction
+          case neg c1 =>
+            rfl
 
 
 -------------------------------------------------------------------------------
