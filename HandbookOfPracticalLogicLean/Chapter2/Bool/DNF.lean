@@ -757,6 +757,48 @@ def gen_all_valuations_as_list_of_total_functions
 -------------------------------------------------------------------------------
 
 
+example
+  (atom_list : List String)
+  (f : String → Bool) :
+  Function.toListOfPairs atom_list f ∈ gen_all_valuations_as_list_of_list_of_pairs atom_list :=
+  by
+  induction atom_list
+  case nil =>
+    unfold Function.toListOfPairs
+    unfold gen_all_valuations_as_list_of_list_of_pairs
+    simp only [List.map_nil, List.mem_singleton]
+  case cons hd tl ih =>
+    unfold Function.toListOfPairs at ih
+
+    unfold Function.toListOfPairs
+    unfold gen_all_valuations_as_list_of_list_of_pairs
+    simp only [List.map_cons, List.mem_append, List.mem_map, List.cons.injEq, Prod.mk.injEq]
+    cases f hd
+    case false =>
+      left
+      apply Exists.intro (List.map (fun x => (x, f x)) tl)
+      constructor
+      · exact ih
+      · constructor
+        · constructor
+          · exact trivial
+          · rfl
+        · rfl
+    case true =>
+      right
+      apply Exists.intro (List.map (fun x => (x, f x)) tl)
+      constructor
+      · exact ih
+      · constructor
+        · constructor
+          · exact trivial
+          · rfl
+        · rfl
+
+
+-------------------------------------------------------------------------------
+
+
 def valuation_as_list_of_pairs_to_valuation_as_total_function
   (init : ValuationAsTotalFunction)
   (l : ValuationAsListOfPairs) :
@@ -887,6 +929,11 @@ def to_dnf
   list_disj ((gen_all_satisfying_valuations_as_list_of_total_functions init F).map (mk_lits F.atom_list.dedup))
 
 
+#eval (to_dnf (fun _ => false) (Formula_| ((P \/ (Q /\ R)) /\ (~P \/ ~R)))).toString
+
+#eval (to_dnf (fun _ => true) (Formula_| ((P \/ (Q /\ R)) /\ (~P \/ ~R)))).toString
+
+
 example
   (init : ValuationAsTotalFunction)
   (F : Formula_) :
@@ -926,18 +973,7 @@ example
   · apply eval_mk_lits_eq_true
 
 
-example
-  (init_1 init_2 : ValuationAsTotalFunction)
-  (F : Formula_) :
-  List.map (mk_lits F.atom_list.dedup)
-    (List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup)) =
-  List.map (mk_lits F.atom_list.dedup)
-    (List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup)) :=
-  by
-  sorry
-
-
-example
+lemma blah
   (V_1 V_2 : ValuationAsTotalFunction)
   (atom_list : List String)
   (h1 : ∀ (X : String), X ∈ atom_list → V_1 X = V_2 X) :
@@ -950,3 +986,25 @@ example
   intro X a1
   rewrite [h1 X a1]
   rfl
+
+
+example
+  (init_1 init_2 : ValuationAsTotalFunction)
+  (F : Formula_) :
+  List.map (mk_lits F.atom_list.dedup)
+    (List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup)) =
+  List.map (mk_lits F.atom_list.dedup)
+    (List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup)) :=
+  by
+  sorry
+
+
+example
+  (init_1 init_2 : ValuationAsTotalFunction)
+  (F : Formula_)
+  (V_1 V_2 : ValuationAsTotalFunction)
+  (h1 : V_1 ∈ List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup))
+  (h2 : V_2 ∈ List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup)) :
+  ∀ (X : String), X ∈ F.atom_list → V_1 X = V_2 X :=
+  by
+    sorry
