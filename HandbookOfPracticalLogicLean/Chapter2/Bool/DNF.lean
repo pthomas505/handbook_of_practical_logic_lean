@@ -871,6 +871,54 @@ lemma gen_all_valuations_as_list_of_total_functions_is_complete
 -------------------------------------------------------------------------------
 
 
+lemma gen_all_valuations_as_list_of_total_functions_length_pos
+  (init : String → Bool)
+  (atom_list : List String) :
+  0 < (gen_all_valuations_as_list_of_total_functions init atom_list).length :=
+  by
+  induction atom_list
+  case nil =>
+    unfold gen_all_valuations_as_list_of_total_functions
+    simp only [List.length_singleton]
+    exact Nat.one_pos
+  case cons hd tl ih =>
+    unfold gen_all_valuations_as_list_of_total_functions
+    simp only [List.length_append, List.length_map]
+    apply Nat.add_pos_left
+    exact ih
+
+
+lemma gen_all_valuations_as_list_of_total_functions_length_cons
+  (init : String → Bool)
+  (X : String)
+  (atom_list : List String) :
+  (gen_all_valuations_as_list_of_total_functions init atom_list).length < (gen_all_valuations_as_list_of_total_functions init (X :: atom_list)).length :=
+  by
+  conv => right; unfold gen_all_valuations_as_list_of_total_functions
+  simp only [List.length_append, List.length_map]
+  apply Nat.lt_add_of_pos_left
+  apply gen_all_valuations_as_list_of_total_functions_length_pos
+
+
+lemma gen_all_valuations_as_list_of_total_functions_length_eq
+  (init_1 init_2 : String → Bool)
+  (atom_list : List String) :
+  (gen_all_valuations_as_list_of_total_functions init_1 atom_list).length = (gen_all_valuations_as_list_of_total_functions init_2 atom_list).length :=
+  by
+  induction atom_list
+  case nil =>
+    unfold gen_all_valuations_as_list_of_total_functions
+    simp only [List.length_singleton]
+  case cons hd tl ih =>
+    unfold gen_all_valuations_as_list_of_total_functions
+    simp only [List.length_append, List.length_map]
+    rewrite [ih]
+    rfl
+
+
+-------------------------------------------------------------------------------
+
+
 def valuation_as_list_of_pairs_to_valuation_as_total_function
   (init : ValuationAsTotalFunction)
   (l : ValuationAsListOfPairs) :
@@ -1046,7 +1094,7 @@ example
   · apply eval_mk_lits_eq_true
 
 
-lemma blah
+lemma aux_1
   (V_1 V_2 : ValuationAsTotalFunction)
   (atom_list : List String)
   (h1 : ∀ (X : String), X ∈ atom_list → V_1 X = V_2 X) :
@@ -1072,12 +1120,101 @@ example
   sorry
 
 
-example
-  (init_1 init_2 : ValuationAsTotalFunction)
-  (F : Formula_)
-  (V_1 V_2 : ValuationAsTotalFunction)
-  (h1 : V_1 ∈ List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup))
-  (h2 : V_2 ∈ List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup)) :
-  ∀ (X : String), X ∈ F.atom_list → V_1 X = V_2 X :=
+lemma aux_2
+  {α β : Type}
+  (f : α → β)
+  (xs ys : List α)
+  (h1 : xs.length = ys.length)
+  (h1 : ∀ (n : ℕ), (h : (n < xs.length ∧ n < ys.length)) → f (xs[n]) = f (ys[n])) :
+  List.map f xs = List.map f ys :=
   by
   sorry
+
+
+lemma aux_3
+  (init_1 init_2 : ValuationAsTotalFunction)
+  (atom_list : List String)
+  (n : ℕ)
+  (X : String)
+  (h1 : X ∈ atom_list)
+  (h2 : n < (gen_all_valuations_as_list_of_total_functions init_1 atom_list).length)
+  (h3 : n < (gen_all_valuations_as_list_of_total_functions init_2 atom_list).length) :
+  (gen_all_valuations_as_list_of_total_functions init_1 atom_list)[n] X = (gen_all_valuations_as_list_of_total_functions init_2 atom_list)[n] X :=
+  by
+  induction atom_list generalizing n
+  case nil =>
+    simp only [List.not_mem_nil] at h1
+  case cons hd tl ih =>
+    simp only [List.mem_cons] at h1
+
+    simp only [gen_all_valuations_as_list_of_total_functions]
+    simp only [List.getElem_append]
+    simp
+    split_ifs
+    case pos c1 c2 =>
+      cases h1
+      case inl h1_left =>
+        unfold Function.updateITE
+        split_ifs
+        rfl
+      case inr h1_right =>
+        unfold Function.updateITE
+        split_ifs
+        case pos c3 =>
+          rfl
+        case neg c3 =>
+          apply ih
+          exact h1_right
+    case neg c1 c2 =>
+      sorry
+    case pos c1 c2 =>
+      sorry
+    case neg c1 c2 =>
+      sorry
+
+
+example
+  (init_1 init_2 : ValuationAsTotalFunction)
+  (atom_list : List String) :
+  List.map (mk_lits atom_list)
+  (gen_all_valuations_as_list_of_total_functions init_1 atom_list) =
+  List.map (mk_lits atom_list)
+  (gen_all_valuations_as_list_of_total_functions init_2 atom_list) :=
+  by
+  apply aux_2
+  · intro n h
+    apply aux_1
+    intro X a1
+    apply aux_3
+    exact a1
+  · apply gen_all_valuations_as_list_of_total_functions_length_eq
+
+
+example
+  (init_1 init_2 : ValuationAsTotalFunction)
+  (atom_list : List String) :
+  List.map (mk_lits atom_list)
+  (gen_all_valuations_as_list_of_total_functions init_1 atom_list) =
+  List.map (mk_lits atom_list)
+  (gen_all_valuations_as_list_of_total_functions init_2 atom_list) :=
+  by
+  induction atom_list
+  case nil =>
+    unfold gen_all_valuations_as_list_of_total_functions
+    simp only [List.map_cons, List.map_nil]
+    unfold mk_lits
+    simp only [List.map_nil]
+  case cons hd tl ih =>
+    unfold gen_all_valuations_as_list_of_total_functions
+    simp only [List.map_append, List.map_map]
+    cases tl
+    case nil =>
+      unfold gen_all_valuations_as_list_of_total_functions
+      simp only [List.map_cons, Function.comp_apply, List.map_nil, List.singleton_append]
+      unfold mk_lits
+      simp only [List.map_cons, List.map_nil]
+      sorry
+    case cons tl_hd tl_tl =>
+      unfold gen_all_valuations_as_list_of_total_functions
+      simp only [List.map_append, List.map_map, List.append_assoc]
+      sorry
