@@ -757,7 +757,7 @@ def gen_all_valuations_as_list_of_total_functions
 -------------------------------------------------------------------------------
 
 
-example
+lemma gen_all_valuations_as_list_of_list_of_pairs_is_complete
   (atom_list : List String)
   (f : String → Bool) :
   Function.toListOfPairs atom_list f ∈ gen_all_valuations_as_list_of_list_of_pairs atom_list :=
@@ -796,7 +796,7 @@ example
         · rfl
 
 
-example
+lemma gen_all_valuations_as_list_of_total_functions_is_complete
   (init : String → Bool)
   (atom_list : List String)
   (V : ValuationAsTotalFunction)
