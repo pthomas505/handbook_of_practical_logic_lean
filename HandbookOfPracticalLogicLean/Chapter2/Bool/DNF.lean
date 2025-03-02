@@ -1024,7 +1024,7 @@ example
   (init : ValuationAsTotalFunction)
   (V : ValuationAsTotalFunction)
   (F : Formula_)
-  (h1 : V ∈ gen_all_valuations_as_list_of_total_functions init F.atom_list.dedup)
+  (h1 : ∀ (X : String), X ∉ F.atom_list.dedup → V X = init X)
   (h2 : eval V F = true) :
   eval V (to_dnf init F) = true :=
   by
@@ -1038,7 +1038,8 @@ example
     · unfold gen_all_satisfying_valuations_as_list_of_total_functions
       simp only [List.mem_filter]
       constructor
-      · exact h1
+      · apply gen_all_valuations_as_list_of_total_functions_is_complete
+        exact h1
       · simp only [Bool.decide_eq_true]
         exact h2
     · rfl
@@ -1079,4 +1080,4 @@ example
   (h2 : V_2 ∈ List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup)) :
   ∀ (X : String), X ∈ F.atom_list → V_1 X = V_2 X :=
   by
-    sorry
+  sorry
