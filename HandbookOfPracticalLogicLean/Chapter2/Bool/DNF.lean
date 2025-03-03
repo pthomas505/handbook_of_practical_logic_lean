@@ -595,6 +595,76 @@ theorem eval_mk_lits_eq_true
     exact c1
 
 
+lemma eval_mk_lits_eq_true_imp_valuations_eq_on_atom_list
+  (V V' : ValuationAsTotalFunction)
+  (atom_list : List String)
+  (h1 : eval V (mk_lits atom_list V') = true) :
+  ∀ (X : String), X ∈ atom_list → V X = V' X :=
+  by
+  intro X a1
+  induction atom_list
+  case nil =>
+    simp only [List.not_mem_nil] at a1
+  case cons hd tl ih =>
+    cases tl
+    case nil =>
+      unfold mk_lits at h1
+      simp only [List.map_cons, List.map_nil] at h1
+      unfold list_conj at h1
+
+      simp only [List.mem_singleton] at a1
+      rewrite [a1]
+
+      split_ifs at h1
+      case pos c1 =>
+        rewrite [c1]
+        unfold eval at h1
+        exact h1
+      case neg c1 =>
+        simp only [Bool.not_eq_true] at c1
+        rewrite [c1]
+
+        unfold eval at h1
+        simp only [bool_iff_prop_not] at h1
+        unfold eval at h1
+        simp only [Bool.not_eq_true] at h1
+        exact h1
+    case cons tl_hd tl_tl =>
+      unfold mk_lits at ih
+      simp only [List.map_cons, List.mem_cons] at ih
+
+      unfold mk_lits at h1
+      simp only [List.map_cons] at h1
+      unfold list_conj at h1
+      unfold eval at h1
+      simp only [bool_iff_prop_and] at h1
+      obtain ⟨h1_left, h1_right⟩ := h1
+
+      simp only [List.mem_cons] at a1
+      specialize ih h1_right
+
+      cases a1
+      case inl a1_left =>
+        rewrite [a1_left]
+        split_ifs at h1_left
+        case pos c1 =>
+          rewrite [c1]
+          unfold eval at h1_left
+          exact h1_left
+        case neg c1 =>
+          simp only [Bool.not_eq_true] at c1
+          rewrite [c1]
+
+          unfold eval at h1_left
+          simp only [bool_iff_prop_not] at h1_left
+          unfold eval at h1_left
+          simp only [Bool.not_eq_true] at h1_left
+          exact h1_left
+      case inr a1_right =>
+        apply ih
+        exact a1_right
+
+
 -------------------------------------------------------------------------------
 
 
@@ -1092,6 +1162,31 @@ example
         exact h2
     · rfl
   · apply eval_mk_lits_eq_true
+
+
+example
+  (init : ValuationAsTotalFunction)
+  (V : ValuationAsTotalFunction)
+  (F : Formula_)
+  (h1 : eval V (to_dnf init F) = true) :
+  eval V F = true :=
+  by
+  unfold to_dnf at h1
+  rewrite [← eval_exists_eq_true_iff_eval_list_disj_eq_true] at h1
+  obtain ⟨F', ⟨h1_left, h1_right⟩⟩ := h1
+  unfold gen_all_satisfying_valuations_as_list_of_total_functions at h1_left
+  simp only [Bool.decide_eq_true, List.mem_map, List.mem_filter] at h1_left
+  obtain ⟨V', ⟨h1_left_left_left, h1_left_left_right⟩, h1_left_right⟩ := h1_left
+  rewrite [← h1_left_right] at h1_right
+  clear h1_left_right
+  obtain s1 := eval_mk_lits_eq_true_imp_valuations_eq_on_atom_list V V' F.atom_list.dedup h1_right
+  rewrite [← h1_left_left_right]
+  apply theorem_2_2
+  intro X a1
+  apply s1
+  simp only [List.mem_dedup]
+  rewrite [← atom_occurs_in_iff_atom_list]
+  exact a1
 
 
 lemma aux_1

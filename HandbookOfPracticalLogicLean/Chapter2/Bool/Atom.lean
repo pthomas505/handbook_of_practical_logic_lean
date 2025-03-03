@@ -94,7 +94,7 @@ example
     rfl
 
 
-example
+lemma atom_occurs_in_iff_atom_list
   (A : String)
   (F : Formula_) :
   atom_occurs_in A F ↔ A ∈ F.atom_list :=
