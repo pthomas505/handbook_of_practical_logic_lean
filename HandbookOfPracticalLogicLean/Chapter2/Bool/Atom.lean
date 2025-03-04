@@ -64,11 +64,11 @@ instance
   by
   induction F
   all_goals
-    simp only [atom_occurs_in]
+    unfold atom_occurs_in
     infer_instance
 
 
-example
+lemma atom_occurs_in_iff_mem_atom_set
   (A : String)
   (F : Formula_) :
   atom_occurs_in A F ↔ A ∈ F.atom_set :=
@@ -78,9 +78,9 @@ example
     unfold atom_occurs_in
     unfold atom_set
   case true_ | false_ =>
-    simp
+    simp only [Finset.not_mem_empty]
   case atom_ X =>
-    simp
+    simp only [Finset.mem_singleton]
   case not_ phi ih =>
     exact ih
   case
@@ -88,13 +88,13 @@ example
     | or_ phi psi phi_ih psi_ih
     | imp_ phi psi phi_ih psi_ih
     | iff_ phi psi phi_ih psi_ih =>
-    simp
+    simp only [Finset.mem_union]
     rewrite [phi_ih]
     rewrite [psi_ih]
     rfl
 
 
-lemma atom_occurs_in_iff_atom_list
+lemma atom_occurs_in_iff_mem_atom_list
   (A : String)
   (F : Formula_) :
   atom_occurs_in A F ↔ A ∈ F.atom_list :=
@@ -104,9 +104,9 @@ lemma atom_occurs_in_iff_atom_list
     unfold atom_occurs_in
     unfold atom_list
   case true_ | false_ =>
-    simp
+    simp only [List.not_mem_nil]
   case atom_ X =>
-    simp
+    simp only [List.mem_singleton]
   case not_ phi ih =>
     exact ih
   case
@@ -114,7 +114,7 @@ lemma atom_occurs_in_iff_atom_list
     | or_ phi psi phi_ih psi_ih
     | imp_ phi psi phi_ih psi_ih
     | iff_ phi psi phi_ih psi_ih =>
-    simp
+    simp only [List.mem_append]
     rewrite [phi_ih]
     rewrite [psi_ih]
     rfl

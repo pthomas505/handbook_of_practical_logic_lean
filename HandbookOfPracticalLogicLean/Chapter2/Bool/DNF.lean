@@ -1185,7 +1185,7 @@ example
   intro X a1
   apply s1
   simp only [List.mem_dedup]
-  rewrite [← atom_occurs_in_iff_atom_list]
+  rewrite [← atom_occurs_in_iff_mem_atom_list]
   exact a1
 
 
