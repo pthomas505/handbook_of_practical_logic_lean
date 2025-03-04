@@ -47,19 +47,25 @@ instance
   by
   induction F'
   all_goals
-    simp only [is_subformula]
+    unfold is_subformula
     infer_instance
 
 
 lemma not_is_subformula_imp_not_equal
   (F F' : Formula_)
   (h1 : ¬ is_subformula F F') :
-  ¬ F' = F :=
+  ¬ F = F' :=
   by
   cases F'
   all_goals
-    simp only [is_subformula] at h1
-    tauto
+    intro contra
+    apply h1
+    unfold is_subformula
+  case false_ | true_ | atom_ X =>
+    exact contra
+  all_goals
+    left
+    exact contra
 
 
 /--

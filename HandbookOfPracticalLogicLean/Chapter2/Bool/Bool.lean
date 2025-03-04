@@ -60,8 +60,9 @@ lemma bool_iff_prop_not
   by
   cases b
   all_goals
-    simp only [b_not]
-    tauto
+    unfold b_not
+    dsimp only
+    decide
 
 
 lemma bool_iff_prop_and
@@ -72,8 +73,9 @@ lemma bool_iff_prop_and
   all_goals
     cases b2
     all_goals
-      simp only [b_and]
-      tauto
+      unfold b_and
+      dsimp only
+      decide
 
 
 lemma bool_iff_prop_or
@@ -84,8 +86,9 @@ lemma bool_iff_prop_or
   all_goals
     cases b2
     all_goals
-      simp only [b_or]
-      tauto
+      unfold b_or
+      dsimp only
+      decide
 
 
 lemma bool_iff_prop_imp
@@ -96,8 +99,9 @@ lemma bool_iff_prop_imp
   all_goals
     cases b2
     all_goals
-      simp only [b_imp]
-      tauto
+      unfold b_imp
+      dsimp only
+      decide
 
 
 lemma bool_iff_prop_iff
@@ -108,9 +112,10 @@ lemma bool_iff_prop_iff
   all_goals
     cases b2
     all_goals
-      simp only [b_iff]
+      unfold b_iff
+      dsimp only
     all_goals
-      tauto
+      decide
 
 
 -------------------------------------------------------------------------------
@@ -121,8 +126,10 @@ lemma b_iff_rfl
   b_iff b b = true :=
   by
   cases b
-  · simp only [b_iff]
-  · simp only [b_iff]
+  · unfold b_iff
+    dsimp only
+  · unfold b_iff
+    dsimp only
 
 
 lemma b_not_eq_false
@@ -132,13 +139,15 @@ lemma b_not_eq_false
   constructor
   · intro a1
     cases b
-    · simp only [b_not] at a1
-      cases a1
+    · unfold b_not at a1
+      dsimp at a1
+      contradiction
     · rfl
   · intro a1
     cases b
-    · cases a1
-    · simp only [b_not]
+    · contradiction
+    · unfold b_not
+      dsimp only
 
 
 lemma b_not_eq_true
@@ -149,12 +158,14 @@ lemma b_not_eq_true
   · intro a1
     cases b
     · rfl
-    · simp only [b_not] at a1
-      cases a1
+    · unfold b_not at a1
+      dsimp only at a1
+      contradiction
   · intro a1
     cases b
-    · simp only [b_not]
-    · cases a1
+    · unfold b_not
+      dsimp only
+    · contradiction
 
 
 lemma b_iff_eq_false
@@ -165,27 +176,27 @@ lemma b_iff_eq_false
   · intro a1
     cases b1
     · cases b2
-      · simp only [b_iff] at a1
-        cases a1
+      · unfold b_iff at a1
+        dsimp only at a1
+        contradiction
       · intro contra
-        cases contra
+        contradiction
     · cases b2
       · intro contra
-        cases contra
-      · simp only [b_iff] at a1
-        cases a1
+        contradiction
+      · unfold b_iff at a1
+        dsimp only at a1
+        contradiction
   · intro a1
     cases b1
     · cases b2
-      · exfalso
-        apply a1
-        rfl
-      · simp only [b_iff]
+      · contradiction
+      · unfold b_iff
+        dsimp only
     · cases b2
-      · simp only [b_iff]
-      · exfalso
-        apply a1
-        rfl
+      · unfold b_iff
+        dsimp only
+      · contradiction
 
 
 lemma b_iff_eq_true
@@ -197,11 +208,13 @@ lemma b_iff_eq_true
     cases b1
     · cases b2
       · rfl
-      · simp only [b_iff] at a1
-        cases a1
+      · unfold b_iff at a1
+        dsimp only at a1
+        contradiction
     · cases b2
-      · simp only [b_iff] at a1
-        cases a1
+      · unfold b_iff at a1
+        dsimp only at a1
+        contradiction
       · rfl
   · intro a1
     rewrite [a1]
@@ -217,10 +230,8 @@ example
   b = false :=
   by
   cases b
-  case false =>
-    rfl
-  case true =>
-    contradiction
+  · rfl
+  · contradiction
 
 
 example
@@ -229,10 +240,8 @@ example
   b = true :=
   by
   cases b
-  case false =>
-    contradiction
-  case true =>
-    rfl
+  · contradiction
+  · rfl
 
 
 #lint
