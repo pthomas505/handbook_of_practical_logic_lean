@@ -394,7 +394,7 @@ example
     unfold Option_.eval
     unfold eval
     rewrite [ih h1]
-    simp
+    simp only [Option.bind_eq_bind, Option.some_bind]
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih
@@ -459,7 +459,7 @@ lemma opt_val_eq_some_opt_val_to_val
   case some b =>
     unfold opt_val_to_val
     rewrite [c1]
-    rfl
+    dsimp only
 
 
 lemma eval_opt_val_to_val
