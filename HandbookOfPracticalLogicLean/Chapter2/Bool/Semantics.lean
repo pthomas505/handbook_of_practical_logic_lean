@@ -423,12 +423,18 @@ example
     simp only [Option.bind_eq_bind, Option.some_bind]
 
 
+/--
+  `val_to_opt_val V` := The conversion of the valuation function `V` to an option valued valuation function.
+-/
 def val_to_opt_val
   (V : ValuationAsTotalFunction) :
   Option_.ValuationAsTotalFunction :=
   fun (A : String) => some (V A)
 
 
+/--
+  `opt_val_to_val V_opt` := The conversion of the option valued valuation function `V_opt` to a valuation function.
+-/
 def opt_val_to_val
   (V_opt : Option_.ValuationAsTotalFunction) :
   ValuationAsTotalFunction :=
@@ -592,4 +598,4 @@ example
   exact s1
 
 
---#lint
+#lint
