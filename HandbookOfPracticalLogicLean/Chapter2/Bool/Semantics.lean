@@ -587,6 +587,7 @@ example
   intro V
   specialize h1 (val_to_opt_val V)
   rewrite [eval_val_to_opt_val V F] at h1
+
   have s1 : some (eval V F) = some true :=
   by
     apply h1
@@ -594,6 +595,7 @@ example
     unfold val_to_opt_val
     intro contra
     contradiction
+
   simp only [Option.some.injEq] at s1
   exact s1
 
