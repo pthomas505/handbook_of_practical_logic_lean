@@ -249,28 +249,29 @@ theorem theorem_2_2
     unfold atom_occurs_in
     rfl
   case not_ phi ih =>
-    congr! 1
+    unfold atom_occurs_in at h1
+
+    congr 1
     apply ih
     intro X a1
     apply h1
-    unfold atom_occurs_in
     exact a1
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih
     | imp_ phi psi phi_ih psi_ih
     | iff_ phi psi phi_ih psi_ih =>
-    congr! 1
+    unfold atom_occurs_in at h1
+
+    congr 1
     · apply phi_ih
       intro X a1
       apply h1
-      unfold atom_occurs_in
       left
       exact a1
     · apply psi_ih
       intro X a1
       apply h1
-      unfold atom_occurs_in
       right
       exact a1
 
@@ -381,10 +382,11 @@ example
     unfold eval
     rfl
   case atom_ X =>
+    unfold atom_occurs_in at h1
+
     unfold Option_.eval
     unfold eval
     apply h1
-    unfold atom_occurs_in
     rfl
   case not_ phi ih =>
     unfold atom_occurs_in at h1
@@ -404,19 +406,21 @@ example
     by
       intro A a1
       apply h1
-      tauto
+      left
+      exact a1
 
     have s2 : (∀ (A : String), atom_occurs_in A psi → V_opt A = some (V A)) :=
     by
       intro A a1
       apply h1
-      tauto
+      right
+      exact a1
 
     unfold Option_.eval
     unfold eval
     rewrite [phi_ih s1]
     rewrite [psi_ih s2]
-    simp
+    simp only [Option.bind_eq_bind, Option.some_bind]
 
 
 def val_to_opt_val
@@ -495,13 +499,15 @@ lemma eval_opt_val_to_val
     by
       intro A a1
       apply h1
-      tauto
+      left
+      exact a1
 
     have s2 : ∀ (A : String), atom_occurs_in A psi → ¬ V_opt A = none :=
     by
       intro A a1
       apply h1
-      tauto
+      right
+      exact a1
 
     specialize phi_ih s1
     specialize psi_ih s2
@@ -581,7 +587,7 @@ example
     intro A a1
     unfold val_to_opt_val
     intro contra
-    cases contra
+    contradiction
   simp only [Option.some.injEq] at s1
   exact s1
 
