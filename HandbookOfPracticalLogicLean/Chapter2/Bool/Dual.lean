@@ -31,7 +31,7 @@ instance
   by
   induction F
   all_goals
-    simp only [has_dual]
+    unfold has_dual
     infer_instance
 
 
