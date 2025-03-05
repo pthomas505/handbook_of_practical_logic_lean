@@ -49,6 +49,7 @@ def simplify :
 
 #eval simplify (Formula_| (((P -> Q) -> T.) \/ ~ F.))
 
+
 -------------------------------------------------------------------------------
 
 
@@ -547,9 +548,9 @@ lemma simplify_is_logically_equivalent
   case false_ | true_ | atom_ X =>
     rfl
   case not_ phi ih =>
-    simp only [simplify]
+    unfold simplify
     rewrite [← simplify_aux_is_logically_equivalent]
-    simp only [eval]
+    unfold eval
     rewrite [ih]
     rfl
   case
@@ -557,9 +558,9 @@ lemma simplify_is_logically_equivalent
     | or_ phi psi phi_ih psi_ih
     | imp_ phi psi phi_ih psi_ih
     | iff_ phi psi phi_ih psi_ih =>
-    simp only [simplify]
+    unfold simplify
     rewrite [← simplify_aux_is_logically_equivalent]
-    simp only [eval]
+    unfold eval
     rewrite [phi_ih]
     rewrite [psi_ih]
     rfl
