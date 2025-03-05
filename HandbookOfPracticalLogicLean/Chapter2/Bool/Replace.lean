@@ -180,7 +180,7 @@ theorem theorem_2_5_all
   eval V (replace_atom_all_rec τ1 F) = eval V (replace_atom_all_rec τ2 F) :=
   by
     simp only [theorem_2_3_all]
-    congr! 1
+    congr 1
     funext X
     simp only [Function.comp_apply]
     apply h1
@@ -234,7 +234,7 @@ instance (U V F F' : Formula_) : Decidable (is_repl_of_formula_in_formula_fun U 
   all_goals
     cases F'
     all_goals
-      simp only [is_repl_of_formula_in_formula_fun]
+      unfold is_repl_of_formula_in_formula_fun
       infer_instance
 
 
@@ -367,9 +367,9 @@ lemma is_repl_of_formula_in_formula_fun_imp_is_repl_of_formula_in_formula
   all_goals
     unfold is_repl_of_formula_in_formula_fun at h1
     cases h1
-    case _ h1 =>
+    case inl h1 =>
       cases h1
-    case _ h1 =>
+    case inr h1 =>
       obtain ⟨h1_left, h1_right⟩ := h1
       apply is_repl_of_formula_in_formula.diff_
       · exact h1_left
@@ -388,18 +388,18 @@ lemma is_repl_of_formula_in_formula_imp_is_repl_of_formula_in_formula_fun
     all_goals
       cases P_v
       all_goals
-        simp only [is_repl_of_formula_in_formula_fun]
-        tauto
+        unfold is_repl_of_formula_in_formula_fun
+        itauto
   case diff_ P_u P_v h1_ih_1 h1_ih_2 =>
     induction P_u generalizing P_v
     all_goals
       cases P_v
       all_goals
-        simp only [is_repl_of_formula_in_formula_fun]
-        tauto
+        unfold is_repl_of_formula_in_formula_fun
+        itauto
   all_goals
-    simp only [is_repl_of_formula_in_formula_fun]
-    tauto
+    unfold is_repl_of_formula_in_formula_fun
+    itauto
 
 
 lemma is_repl_of_formula_in_formula_fun_iff_is_repl_of_formula_in_formula
