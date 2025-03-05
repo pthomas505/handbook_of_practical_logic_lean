@@ -110,10 +110,10 @@ instance
   case not_ phi ih =>
     cases phi
     all_goals
-      simp only [is_nnf]
+      unfold is_nnf
       infer_instance
   all_goals
-    simp only [is_nnf]
+    unfold is_nnf
     infer_instance
 
 
@@ -162,27 +162,27 @@ theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v1
   by
   induction F
   case false_ | true_ =>
-    simp only [to_nnf_v1]
-    simp only [to_nnf_neg_v1]
-    simp only [eval]
-    tauto
+    unfold to_nnf_v1
+    unfold to_nnf_neg_v1
+    unfold eval
+    simp only [b_not]
   case atom_ X =>
-    simp only [to_nnf_v1]
-    simp only [to_nnf_neg_v1]
+    unfold to_nnf_v1
+    unfold to_nnf_neg_v1
     simp only [eval]
   case not_ phi ih =>
-    simp only [to_nnf_v1]
+    unfold to_nnf_v1
     simp only [to_nnf_neg_v1]
     rewrite [ih]
     rewrite [Bool.eq_iff_iff]
-    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
+    simp only [bool_iff_prop_not]
     tauto
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih
     | imp_ phi psi phi_ih psi_ih
     | iff_ phi psi phi_ih psi_ih =>
-    simp only [to_nnf_v1]
+    unfold to_nnf_v1
     simp only [to_nnf_neg_v1]
     simp only [eval]
     rewrite [phi_ih]
@@ -202,26 +202,26 @@ example
     unfold to_nnf_v1
     rfl
   case not_ phi ih =>
-    simp only [to_nnf_v1]
+    unfold to_nnf_v1
     simp only [eval]
     rewrite [ih]
     rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf_v1 V phi]
     rfl
   case and_ phi psi phi_ih psi_ih =>
-    simp only [to_nnf_v1]
-    simp only [eval]
+    unfold to_nnf_v1
+    unfold eval
     rewrite [phi_ih]
     rewrite [psi_ih]
     rfl
   case or_ phi psi phi_ih psi_ih =>
-    simp only [to_nnf_v1]
-    simp only [eval]
+    unfold to_nnf_v1
+    unfold eval
     rewrite [phi_ih]
     rewrite [psi_ih]
     rfl
   case imp_ phi psi phi_ih psi_ih =>
-    simp only [to_nnf_v1]
-    simp only [eval]
+    unfold to_nnf_v1
+    unfold eval
     rewrite [phi_ih]
     rewrite [psi_ih]
     rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf_v1 V phi]
@@ -229,7 +229,7 @@ example
     simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
     tauto
   case iff_ phi psi phi_ih psi_ih =>
-    simp only [to_nnf_v1]
+    unfold to_nnf_v1
     simp only [eval]
     rewrite [phi_ih]
     rewrite [psi_ih]
@@ -246,11 +246,12 @@ lemma to_nnf_neg_is_nnf_iff_to_nnf_is_nnf_v1
   by
   induction F
   case true_ | false_ | atom_ X =>
-    simp only [to_nnf_v1]
-    simp only [to_nnf_neg_v1]
-    simp only [is_nnf]
+    unfold to_nnf_v1
+    unfold to_nnf_neg_v1
+    unfold is_nnf
+    rfl
   case not_ phi ih =>
-    simp only [to_nnf_v1]
+    unfold to_nnf_v1
     simp only [to_nnf_neg_v1]
     rewrite [ih]
     rfl
@@ -259,6 +260,8 @@ lemma to_nnf_neg_is_nnf_iff_to_nnf_is_nnf_v1
     | or_ phi psi phi_ih psi_ih
     | imp_ phi psi phi_ih psi_ih
     | iff_ phi psi phi_ih psi_ih =>
+    unfold to_nnf_v1
+    simp only [to_nnf_neg_v1]
     simp only [is_nnf]
     rewrite [phi_ih]
     rewrite [psi_ih]
@@ -275,25 +278,25 @@ example
     unfold is_nnf
     exact trivial
   case not_ phi ih =>
-    simp only [to_nnf_v1]
+    unfold to_nnf_v1
     rewrite [to_nnf_neg_is_nnf_iff_to_nnf_is_nnf_v1]
     apply ih
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih =>
-    simp only [to_nnf_v1]
+    unfold to_nnf_v1
     simp only [is_nnf]
-    tauto
+    exact ⟨phi_ih, psi_ih⟩
   case imp_ phi psi phi_ih psi_ih =>
-    simp only [to_nnf_v1]
+    unfold to_nnf_v1
     simp only [is_nnf]
     rewrite [to_nnf_neg_is_nnf_iff_to_nnf_is_nnf_v1]
-    tauto
+    exact ⟨phi_ih, psi_ih⟩
   case iff_ phi psi phi_ih psi_ih =>
-    simp only [to_nnf_v1]
+    unfold to_nnf_v1
     simp only [is_nnf]
     simp only [to_nnf_neg_is_nnf_iff_to_nnf_is_nnf_v1]
-    tauto
+    exact ⟨⟨phi_ih, psi_ih⟩, ⟨phi_ih, psi_ih⟩⟩
 
 
 -------------------------------------------------------------------------------
@@ -339,15 +342,15 @@ theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v2
   by
   induction F
   case false_ | true_ =>
-    simp only [to_nnf_v2]
-    simp only [to_nnf_neg_v2]
+    unfold to_nnf_v2
+    unfold to_nnf_neg_v2
     simp only [eval]
   case atom_ X =>
-    simp only [to_nnf_v2]
-    simp only [to_nnf_neg_v2]
+    unfold to_nnf_v2
+    unfold to_nnf_neg_v2
     simp only [eval]
   case not_ phi ih =>
-    simp only [to_nnf_v2]
+    unfold to_nnf_v2
     simp only [to_nnf_neg_v2]
     rewrite [ih]
     rewrite [Bool.eq_iff_iff]
@@ -358,7 +361,7 @@ theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v2
     | or_ phi psi phi_ih psi_ih
     | imp_ phi psi phi_ih psi_ih
     | iff_ phi psi phi_ih psi_ih =>
-    simp only [to_nnf_v2]
+    unfold to_nnf_v2
     simp only [to_nnf_neg_v2]
     simp only [eval]
     rewrite [phi_ih]
@@ -378,25 +381,25 @@ example
     unfold to_nnf_v2
     rfl
   case not_ phi ih =>
-    simp only [to_nnf_v2]
+    unfold to_nnf_v2
     simp only [eval]
     rewrite [ih]
     rewrite [eval_to_nnf_neg_iff_not_eval_to_nnf_v2 V phi]
     rfl
   case and_ phi psi phi_ih psi_ih =>
-    simp only [to_nnf_v2]
+    unfold to_nnf_v2
     simp only [eval]
     rewrite [phi_ih]
     rewrite [psi_ih]
     rfl
   case or_ phi psi phi_ih psi_ih =>
-    simp only [to_nnf_v2]
+    unfold to_nnf_v2
     simp only [eval]
     rewrite [phi_ih]
     rewrite [psi_ih]
     rfl
   case imp_ phi psi phi_ih psi_ih =>
-    simp only [to_nnf_v2]
+    unfold to_nnf_v2
     simp only [eval]
     rewrite [phi_ih]
     rewrite [psi_ih]
@@ -405,7 +408,7 @@ example
     simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
     tauto
   case iff_ phi psi phi_ih psi_ih =>
-    simp only [to_nnf_v2]
+    unfold to_nnf_v2
     simp only [eval]
     rewrite [phi_ih]
     rewrite [psi_ih]
@@ -424,20 +427,20 @@ lemma to_nnf_neg_is_nnf_iff_to_nnf_is_nnf_v2
   by
   induction F
   case false_ =>
-    simp only [is_subformula] at h1
+    unfold is_subformula at h1
     contradiction
   case true_ =>
-    simp only [is_subformula] at h2
+    unfold is_subformula at h2
     contradiction
   case atom_ X =>
-    simp only [to_nnf_v2]
+    unfold to_nnf_v2
     simp only [to_nnf_neg_v2]
     simp only [is_nnf]
   case not_ phi ih =>
-    simp only [is_subformula] at h1
-    simp only [is_subformula] at h2
+    unfold is_subformula at h1
+    unfold is_subformula at h2
 
-    simp only [to_nnf_v2]
+    unfold to_nnf_v2
     simp only [to_nnf_neg_v2]
     tauto
   case
@@ -445,9 +448,11 @@ lemma to_nnf_neg_is_nnf_iff_to_nnf_is_nnf_v2
     | or_ phi psi phi_ih psi_ih
     | imp_ phi psi phi_ih psi_ih
     | iff_ phi psi phi_ih psi_ih =>
-    simp only [is_subformula] at h1
-    simp only [is_subformula] at h2
+    unfold is_subformula at h1
+    unfold is_subformula at h2
 
+    unfold to_nnf_v2
+    simp only [to_nnf_neg_v2]
     simp only [is_nnf]
     tauto
 
@@ -463,63 +468,43 @@ example
     unfold to_nnf_v2
     unfold is_nnf
     exact trivial
+  all_goals
+    unfold is_proper_subformula at h2
+    unfold is_subformula at h2
+
+    unfold is_proper_subformula at h3
+    unfold is_subformula at h3
+
+    unfold to_nnf_v2
   case not_ phi ih =>
-    simp only [is_proper_subformula] at h2
-    simp only [is_subformula] at h2
-
-    simp only [is_proper_subformula] at h3
-    simp only [is_subformula] at h3
-
-    simp only [to_nnf_v2]
     rewrite [to_nnf_neg_is_nnf_iff_to_nnf_is_nnf_v2]
     apply ih
-    · simp only [is_proper_subformula]
+    · unfold is_proper_subformula
       tauto
-    · simp only [is_proper_subformula]
+    · unfold is_proper_subformula
       tauto
     · tauto
     · tauto
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih =>
-    simp only [is_proper_subformula] at h2
-    simp only [is_subformula] at h2
+    unfold is_proper_subformula at phi_ih
+    unfold is_proper_subformula at psi_ih
 
-    simp only [is_proper_subformula] at h3
-    simp only [is_subformula] at h3
-
-    simp only [is_proper_subformula] at phi_ih
-    simp only [is_proper_subformula] at psi_ih
-
-    simp only [to_nnf_v2]
-    simp only [is_nnf]
+    unfold is_nnf
     tauto
   case imp_ phi psi phi_ih psi_ih =>
-    simp only [is_proper_subformula] at h2
-    simp only [is_subformula] at h2
+    unfold is_proper_subformula at phi_ih
+    unfold is_proper_subformula at psi_ih
 
-    simp only [is_proper_subformula] at h3
-    simp only [is_subformula] at h3
-
-    simp only [is_proper_subformula] at phi_ih
-    simp only [is_proper_subformula] at psi_ih
-
-    simp only [to_nnf_v2]
-    simp only [is_nnf]
+    unfold is_nnf
     rewrite [to_nnf_neg_is_nnf_iff_to_nnf_is_nnf_v2]
     all_goals
       tauto
   case iff_ phi psi phi_ih psi_ih =>
-    simp only [is_proper_subformula] at h2
-    simp only [is_subformula] at h2
+    unfold is_proper_subformula at phi_ih
+    unfold is_proper_subformula at psi_ih
 
-    simp only [is_proper_subformula] at h3
-    simp only [is_subformula] at h3
-
-    simp only [is_proper_subformula] at phi_ih
-    simp only [is_proper_subformula] at psi_ih
-
-    simp only [to_nnf_v2]
     simp only [is_nnf]
     rewrite [to_nnf_neg_is_nnf_iff_to_nnf_is_nnf_v2]
     rewrite [to_nnf_neg_is_nnf_iff_to_nnf_is_nnf_v2]
@@ -551,10 +536,10 @@ instance
   case not_ phi ih =>
     cases phi
     all_goals
-      simp only [is_pos_nnf]
+      unfold is_pos_nnf
       infer_instance
   all_goals
-    simp only [is_pos_nnf]
+    unfold is_pos_nnf
     infer_instance
 
 
@@ -565,20 +550,23 @@ example
   by
   induction F
   case false_ | true_ | atom_ X =>
-    simp only [is_nnf]
+    unfold is_nnf
+    exact trivial
   case not_ phi ih =>
     cases phi
     all_goals
-      simp only [is_pos_nnf] at h1
+      unfold is_pos_nnf at h1
+      contradiction
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih =>
-    simp only [is_pos_nnf] at h1
+    unfold is_pos_nnf at h1
 
-    simp only [is_nnf]
+    unfold is_nnf
     tauto
   all_goals
-    simp only [is_pos_nnf] at h1
+    unfold is_pos_nnf at h1
+    contradiction
 
 
 -------------------------------------------------------------------------------
@@ -605,10 +593,10 @@ instance
   case not_ phi ih =>
     cases phi
     all_goals
-      simp only [is_neg_nnf]
+      unfold is_neg_nnf
       infer_instance
   all_goals
-    simp only [is_neg_nnf]
+    unfold is_neg_nnf
     infer_instance
 
 
@@ -619,22 +607,26 @@ example
   by
   induction F
   case false_ | true_ | atom_ X =>
-    simp only [is_nnf]
+    unfold is_nnf
+    exact trivial
   case not_ phi ih =>
     cases phi
     case atom_ X =>
-      simp only [is_nnf]
+      unfold is_nnf
+      exact trivial
     all_goals
-      simp only [is_neg_nnf] at h1
+      unfold is_neg_nnf at h1
+      contradiction
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih =>
-    simp only [is_neg_nnf] at h1
+    unfold is_neg_nnf at h1
 
-    simp only [is_nnf]
+    unfold is_nnf
     tauto
   all_goals
-    simp only [is_neg_nnf] at h1
+    unfold is_neg_nnf at h1
+    contradiction
 
 
 -------------------------------------------------------------------------------
@@ -707,7 +699,8 @@ example
   case not_ phi ih =>
     cases phi
     case atom_ X =>
-      simp only [is_neg_literal_in] at h2
+      unfold is_neg_literal_in at h2
+
       simp only [replace_atom_one_rec]
       split_ifs
       simp only [eval]
@@ -715,15 +708,16 @@ example
       simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
       tauto
     all_goals
-      simp only [is_nnf] at h1
+      unfold is_nnf at h1
+      contradiction
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih =>
-    simp only [is_nnf] at h1
+    unfold is_nnf at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
-    simp only [is_neg_literal_in] at h2
-    simp at h2
+    unfold is_neg_literal_in at h2
+    simp only [not_or] at h2
     obtain ⟨h2_left, h2_right⟩ := h2
 
     simp only [eval] at phi_ih
@@ -735,7 +729,8 @@ example
     simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff] at *
     tauto
   all_goals
-    simp only [is_nnf] at h1
+    unfold is_nnf at h1
+    contradiction
 
 
 example
@@ -754,7 +749,8 @@ example
     simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
     tauto
   case atom_ X =>
-    simp only [is_pos_literal_in] at h2
+    unfold is_pos_literal_in at h2
+
     unfold replace_atom_one_rec
     split_ifs
     simp only [eval]
@@ -778,15 +774,16 @@ example
         simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
         tauto
     all_goals
-      simp only [is_nnf] at h1
+      unfold is_nnf at h1
+      contradiction
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih =>
-    simp only [is_nnf] at h1
+    unfold is_nnf at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
-    simp only [is_pos_literal_in] at h2
-    simp at h2
+    unfold is_pos_literal_in at h2
+    simp only [not_or] at h2
     obtain ⟨h2_left, h2_right⟩ := h2
 
     simp only [eval] at phi_ih
@@ -798,7 +795,8 @@ example
     simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff] at *
     tauto
   all_goals
-    simp only [is_nnf] at h1
+    unfold is_nnf at h1
+    contradiction
 
 
 #lint
