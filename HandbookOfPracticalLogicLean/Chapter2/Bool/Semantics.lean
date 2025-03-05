@@ -283,17 +283,17 @@ namespace Option_
 
 
 /--
-  A partial function from the set of atoms to the set of truth values `{false, true}`.
+  A function from the set of atoms to the set of optional truth values `{false, true}`.
 -/
-def ValuationAsTotalFunction : Type := String → Option Bool
+def ValuationAsOptionFunction : Type := String → Option Bool
   deriving Inhabited
 
 
 /--
-  `eval V F` := The evaluation of a formula `F` given the valuation `V` as a partial function.
+  `eval V F` := The evaluation of a formula `F` given the valuation `V`.
 -/
 def eval
-  (V : ValuationAsTotalFunction) :
+  (V : ValuationAsOptionFunction) :
   Formula_ → Option Bool
   | false_ => some false
   | true_ => some true
@@ -323,13 +323,13 @@ def eval
   `satisfies V F` := True if and only if the valuation `V` satisfies the formula `F`.
 -/
 def satisfies
-  (V : ValuationAsTotalFunction)
+  (V : ValuationAsOptionFunction)
   (F : Formula_) :
   Prop :=
   eval V F = some true
 
 instance
-  (V : ValuationAsTotalFunction)
+  (V : ValuationAsOptionFunction)
   (F : Formula_) :
   Decidable (satisfies V F) :=
   by
@@ -343,14 +343,14 @@ instance
 def Formula_.is_tautology
   (F : Formula_) :
   Prop :=
-  ∀ (V : ValuationAsTotalFunction), ((∀ (A : String), atom_occurs_in A F → ¬ V A = none) → satisfies V F)
+  ∀ (V : ValuationAsOptionFunction), ((∀ (A : String), atom_occurs_in A F → ¬ V A = none) → satisfies V F)
 
 
 /--
   `gen_valuation` := The generation of a valuation function from a list of pairs of atoms and truth values.
 -/
 def gen_valuation :
-  List (String × Bool) → ValuationAsTotalFunction
+  List (String × Bool) → ValuationAsOptionFunction
   | [] => fun _ => Option.none
   | hd :: tl => Function.updateITE (gen_valuation tl) hd.fst (Option.some hd.snd)
 
@@ -370,7 +370,7 @@ end Option_
 
 
 example
-  (V_opt : Option_.ValuationAsTotalFunction)
+  (V_opt : Option_.ValuationAsOptionFunction)
   (V : ValuationAsTotalFunction)
   (F : Formula_)
   (h1 : ∀ (A : String), atom_occurs_in A F → V_opt A = some (V A)) :
@@ -402,14 +402,14 @@ example
     | iff_ phi psi phi_ih psi_ih =>
     unfold atom_occurs_in at h1
 
-    have s1 : (∀ (A : String), atom_occurs_in A phi → V_opt A = some (V A)) :=
+    have s1 : ∀ (A : String), atom_occurs_in A phi → V_opt A = some (V A) :=
     by
       intro A a1
       apply h1
       left
       exact a1
 
-    have s2 : (∀ (A : String), atom_occurs_in A psi → V_opt A = some (V A)) :=
+    have s2 : ∀ (A : String), atom_occurs_in A psi → V_opt A = some (V A) :=
     by
       intro A a1
       apply h1
@@ -428,7 +428,7 @@ example
 -/
 def val_to_opt_val
   (V : ValuationAsTotalFunction) :
-  Option_.ValuationAsTotalFunction :=
+  Option_.ValuationAsOptionFunction :=
   fun (A : String) => some (V A)
 
 
@@ -436,7 +436,7 @@ def val_to_opt_val
   `opt_val_to_val V_opt` := The conversion of the option valued valuation function `V_opt` to a valuation function.
 -/
 def opt_val_to_val
-  (V_opt : Option_.ValuationAsTotalFunction) :
+  (V_opt : Option_.ValuationAsOptionFunction) :
   ValuationAsTotalFunction :=
   fun (A : String) =>
     match V_opt A with
@@ -454,7 +454,7 @@ lemma val_to_opt_val_eq_some_val
 
 
 lemma opt_val_eq_some_opt_val_to_val
-  (V_opt : Option_.ValuationAsTotalFunction)
+  (V_opt : Option_.ValuationAsOptionFunction)
   (A : String)
   (h1 : ¬ V_opt A = none) :
   V_opt A = some ((opt_val_to_val V_opt) A) :=
@@ -465,11 +465,11 @@ lemma opt_val_eq_some_opt_val_to_val
   case some b =>
     unfold opt_val_to_val
     rewrite [c1]
-    dsimp only
+    rfl
 
 
 lemma eval_opt_val_to_val
-  (V_opt : Option_.ValuationAsTotalFunction)
+  (V_opt : Option_.ValuationAsOptionFunction)
   (F : Formula_)
   (h1 : ∀ (A : String), atom_occurs_in A F → ¬ V_opt A = none) :
   Option_.eval V_opt F = some (eval (opt_val_to_val V_opt) F) :=
@@ -480,19 +480,19 @@ lemma eval_opt_val_to_val
     unfold eval
     rfl
   case atom_ X =>
+    unfold atom_occurs_in at h1
+
     unfold Option_.eval
     unfold eval
     apply opt_val_eq_some_opt_val_to_val
     apply h1
-    unfold atom_occurs_in
     rfl
   case not_ phi ih =>
     unfold atom_occurs_in at h1
-    specialize ih h1
 
     unfold Option_.eval
     unfold eval
-    rewrite [ih]
+    rewrite [ih h1]
     simp only [Option.bind_eq_bind, Option.some_bind]
   case
       and_ phi psi phi_ih psi_ih
@@ -515,13 +515,10 @@ lemma eval_opt_val_to_val
       right
       exact a1
 
-    specialize phi_ih s1
-    specialize psi_ih s2
-
     unfold Option_.eval
     unfold eval
-    rewrite [phi_ih]
-    rewrite [psi_ih]
+    rewrite [phi_ih s1]
+    rewrite [psi_ih s2]
     simp only [Option.bind_eq_bind, Option.some_bind]
 
 
@@ -568,8 +565,7 @@ example
   unfold Option_.Formula_.is_tautology
   unfold Option_.satisfies
   intro V_opt a1
-  specialize h1 (opt_val_to_val V_opt)
-  rewrite [← h1]
+  rewrite [← h1 (opt_val_to_val V_opt)]
   apply eval_opt_val_to_val
   exact a1
 
@@ -585,19 +581,13 @@ example
   unfold is_tautology
   unfold satisfies
   intro V
-  specialize h1 (val_to_opt_val V)
-  rewrite [eval_val_to_opt_val V F] at h1
-
-  have s1 : some (eval V F) = some true :=
-  by
-    apply h1
-    intro A a1
-    unfold val_to_opt_val
-    intro contra
-    contradiction
-
-  simp only [Option.some.injEq] at s1
-  exact s1
+  rewrite [← Option.some.injEq]
+  rewrite [← eval_val_to_opt_val V F]
+  apply h1
+  intro A a1
+  unfold val_to_opt_val
+  intro contra
+  contradiction
 
 
 #lint
