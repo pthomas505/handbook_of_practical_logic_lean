@@ -665,6 +665,91 @@ lemma eval_mk_lits_eq_true_imp_valuations_eq_on_atom_list
         exact a1_right
 
 
+lemma valuations_eq_on_atom_list_imp_eval_mk_lits_eq_true
+  (V V' : ValuationAsTotalFunction)
+  (atom_list : List String)
+  (h1 : ∀ (X : String), X ∈ atom_list → V X = V' X) :
+  eval V (mk_lits atom_list V') = true :=
+  by
+  induction atom_list
+  case nil =>
+    unfold mk_lits
+    simp only [List.map_nil]
+    unfold list_conj
+    unfold eval
+    rfl
+  case cons hd tl ih =>
+    cases tl
+    case nil =>
+      simp only [List.mem_singleton] at h1
+
+      unfold mk_lits
+      simp only [List.map_cons, List.map_nil]
+      unfold list_conj
+      split_ifs
+      case pos c1 =>
+        rewrite [← c1]
+        unfold eval
+        apply h1
+        rfl
+      case neg c1 =>
+        unfold eval
+        simp only [bool_iff_prop_not]
+        unfold eval
+        intro contra
+        apply c1
+        rewrite [← contra]
+        rewrite [h1]
+        · rfl
+        · rfl
+    case cons tl_hd tl_tl =>
+      unfold mk_lits at ih
+      simp only [List.mem_cons, List.map_cons] at ih
+
+      simp only [List.mem_cons] at h1
+
+      unfold mk_lits
+      simp only [List.map_cons]
+      unfold list_conj
+      unfold eval
+      simp only [bool_iff_prop_and]
+      constructor
+      · split_ifs
+        case pos c1 =>
+          unfold eval
+          rewrite [← c1]
+          apply h1
+          left
+          rfl
+        case neg c1 =>
+          unfold eval
+          simp only [bool_iff_prop_not]
+          unfold eval
+          intro contra
+          apply c1
+          rewrite [← contra]
+          rewrite [h1]
+          · rfl
+          · left
+            rfl
+      · apply ih
+        intro X a1
+        apply h1
+        right
+        exact a1
+
+
+lemma eval_mk_lits_eq_true_iff_valuations_eq_on_atom_list
+  (V V' : ValuationAsTotalFunction)
+  (atom_list : List String) :
+  eval V (mk_lits atom_list V') = true ↔
+    ∀ (X : String), X ∈ atom_list → V X = V' X :=
+  by
+  constructor
+  · apply eval_mk_lits_eq_true_imp_valuations_eq_on_atom_list
+  · apply valuations_eq_on_atom_list_imp_eval_mk_lits_eq_true
+
+
 -------------------------------------------------------------------------------
 
 
