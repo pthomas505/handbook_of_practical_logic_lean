@@ -1415,33 +1415,3 @@ example
   apply aux_2
   · sorry
   · sorry
-
-
-example
-  (init_1 init_2 : ValuationAsTotalFunction)
-  (atom_list : List String) :
-  List.map (mk_lits atom_list)
-  (gen_all_valuations_as_list_of_total_functions init_1 atom_list) =
-  List.map (mk_lits atom_list)
-  (gen_all_valuations_as_list_of_total_functions init_2 atom_list) :=
-  by
-  induction atom_list
-  case nil =>
-    unfold gen_all_valuations_as_list_of_total_functions
-    simp only [List.map_cons, List.map_nil]
-    unfold mk_lits
-    simp only [List.map_nil]
-  case cons hd tl ih =>
-    unfold gen_all_valuations_as_list_of_total_functions
-    simp only [List.map_append, List.map_map]
-    cases tl
-    case nil =>
-      unfold gen_all_valuations_as_list_of_total_functions
-      simp only [List.map_cons, Function.comp_apply, List.map_nil, List.singleton_append]
-      unfold mk_lits
-      simp only [List.map_cons, List.map_nil]
-      sorry
-    case cons tl_hd tl_tl =>
-      unfold gen_all_valuations_as_list_of_total_functions
-      simp only [List.map_append, List.map_map, List.append_assoc]
-      sorry
