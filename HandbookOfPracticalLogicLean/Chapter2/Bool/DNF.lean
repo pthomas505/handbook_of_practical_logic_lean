@@ -1423,4 +1423,73 @@ example
   by
   apply aux_2
   · sorry
-  · sorry
+  · intro p a1
+    apply eq_on_mem_imp_mk_lits_eq
+    extract_goal
+    sorry
+
+
+example
+  (init_1 init_2 : ValuationAsTotalFunction)
+  (atom_list : List String)
+  (p : ValuationAsTotalFunction × ValuationAsTotalFunction)
+  (X : String)
+  (h1 : p ∈ List.zip
+    (gen_all_valuations_as_list_of_total_functions init_1 atom_list)
+    (gen_all_valuations_as_list_of_total_functions init_2 atom_list))
+  (h2 : X ∈ atom_list) :
+  p.1 X = p.2 X :=
+  by
+  induction atom_list generalizing p
+  case nil =>
+    simp only [List.not_mem_nil] at h2
+  case cons hd tl ih =>
+    simp only [List.mem_cons] at h2
+
+    unfold gen_all_valuations_as_list_of_total_functions at h1
+    simp only at h1
+
+    rewrite [List.zip_append] at h1
+    · simp only [List.mem_append] at h1
+
+      cases h2
+      case inl h2 =>
+        cases h1
+        case inl h1 =>
+          obtain s1 := List.of_mem_zip h1
+          obtain ⟨s1_left, s1_right⟩ := s1
+
+          simp only [List.mem_map] at s1_left
+          obtain ⟨V_1, ⟨s1_left_left, s1_left_right⟩⟩ := s1_left
+
+          simp only [List.mem_map] at s1_right
+          obtain ⟨V_2, ⟨s1_right_left, s1_right_right⟩⟩ := s1_right
+
+          rewrite [← s1_left_right]
+          rewrite [← s1_right_right]
+          unfold Function.updateITE
+          split_ifs
+          rfl
+        case inr h1 =>
+          sorry
+      case inr h2 =>
+        cases h1
+        case inl h1 =>
+          simp only [List.zip_map] at h1
+          simp only [List.mem_map, Prod.exists, Prod.map_apply] at h1
+          obtain ⟨a, b, ⟨h1_left, h1_right⟩⟩ := h1
+          rewrite [← h1_right]
+          simp only
+          unfold Function.updateITE
+          split_ifs
+          case pos c1 =>
+            rfl
+          case neg c1 =>
+            specialize ih (a, b)
+            simp only at ih
+            apply ih
+            · exact h1_left
+            · exact h2
+        case inr h1 =>
+          sorry
+    · sorry
