@@ -572,34 +572,11 @@ lemma mk_lits_is_conj_ind
     apply is_literal_ind.rule_2
 
 
-theorem eval_mk_lits_eq_true
-  (V : ValuationAsTotalFunction)
-  (atom_list : List String) :
-  eval V (mk_lits atom_list V) = true :=
-  by
-  unfold mk_lits
-  apply eval_all_eq_true_imp_eval_list_conj_eq_true
-  intro F a1
-  simp only [List.mem_map] at a1
-  obtain ⟨X, ⟨a1_left, a1_right⟩⟩ := a1
-  split_ifs at a1_right
-  case pos c1 =>
-    rewrite [← a1_right]
-    unfold eval
-    exact c1
-  case neg c1 =>
-    rewrite [← a1_right]
-    unfold eval
-    simp only [bool_iff_prop_not]
-    unfold eval
-    exact c1
-
-
 lemma eval_mk_lits_eq_true_imp_valuations_eq_on_atom_list
-  (V V' : ValuationAsTotalFunction)
+  (V_1 V_2 : ValuationAsTotalFunction)
   (atom_list : List String)
-  (h1 : eval V (mk_lits atom_list V') = true) :
-  ∀ (X : String), X ∈ atom_list → V X = V' X :=
+  (h1 : eval V_1 (mk_lits atom_list V_2) = true) :
+  ∀ (X : String), X ∈ atom_list → V_1 X = V_2 X :=
   by
   intro X a1
   induction atom_list
@@ -666,10 +643,10 @@ lemma eval_mk_lits_eq_true_imp_valuations_eq_on_atom_list
 
 
 lemma valuations_eq_on_atom_list_imp_eval_mk_lits_eq_true
-  (V V' : ValuationAsTotalFunction)
+  (V_1 V_2 : ValuationAsTotalFunction)
   (atom_list : List String)
-  (h1 : ∀ (X : String), X ∈ atom_list → V X = V' X) :
-  eval V (mk_lits atom_list V') = true :=
+  (h1 : ∀ (X : String), X ∈ atom_list → V_1 X = V_2 X) :
+  eval V_1 (mk_lits atom_list V_2) = true :=
   by
   induction atom_list
   case nil =>
@@ -740,14 +717,103 @@ lemma valuations_eq_on_atom_list_imp_eval_mk_lits_eq_true
 
 
 lemma eval_mk_lits_eq_true_iff_valuations_eq_on_atom_list
-  (V V' : ValuationAsTotalFunction)
+  (V_1 V_2 : ValuationAsTotalFunction)
   (atom_list : List String) :
-  eval V (mk_lits atom_list V') = true ↔
-    ∀ (X : String), X ∈ atom_list → V X = V' X :=
+  eval V_1 (mk_lits atom_list V_2) = true ↔
+    ∀ (X : String), X ∈ atom_list → V_1 X = V_2 X :=
   by
   constructor
   · apply eval_mk_lits_eq_true_imp_valuations_eq_on_atom_list
   · apply valuations_eq_on_atom_list_imp_eval_mk_lits_eq_true
+
+
+theorem eval_mk_lits_eq_true
+  (V : ValuationAsTotalFunction)
+  (atom_list : List String) :
+  eval V (mk_lits atom_list V) = true :=
+  by
+  apply valuations_eq_on_atom_list_imp_eval_mk_lits_eq_true
+  intro X a1
+  rfl
+
+
+example
+  (V_1 V_2 : ValuationAsTotalFunction)
+  (atom_list : List String)
+  (h1 : ∀ (X : String), X ∈ atom_list → V_1 X = V_2 X) :
+  mk_lits atom_list V_1 = mk_lits atom_list V_2 :=
+  by
+  unfold mk_lits
+  simp only
+  congr! 1
+  simp only [List.map_inj_left]
+  intro X a1
+  rewrite [h1 X a1]
+  rfl
+
+
+example
+  (V_1 V_2 : ValuationAsTotalFunction)
+  (atom_list : List String)
+  (h1 : mk_lits atom_list V_1 = mk_lits atom_list V_2) :
+  ∀ (X : String), X ∈ atom_list → V_1 X = V_2 X :=
+  by
+  induction atom_list
+  case nil =>
+    simp only [List.not_mem_nil]
+    intro X a1
+    contradiction
+  case cons hd tl ih =>
+    cases tl
+    case nil =>
+      unfold mk_lits at h1
+      simp only [List.map_cons, List.map_nil] at h1
+      unfold list_conj at h1
+
+      intro X a1
+      simp only [List.mem_singleton] at a1
+      rewrite [a1]
+      split_ifs at h1
+      case pos c1 c2 =>
+        rewrite [c1]
+        rewrite [c2]
+        rfl
+      case neg c1 c2 =>
+        simp only [Bool.not_eq_true] at c1
+        simp only [Bool.not_eq_true] at c2
+        rewrite [c1]
+        rewrite [c2]
+        rfl
+    case cons tl_hd tl_tl =>
+      unfold mk_lits at ih
+      simp only [List.map_cons, List.mem_cons] at ih
+
+      unfold mk_lits at h1
+      simp only [List.map_cons] at h1
+      unfold list_conj at h1
+      simp only [and_.injEq] at h1
+      obtain ⟨h1_left, h1_right⟩ := h1
+
+      intro X a1
+      simp only [List.mem_cons] at a1
+      cases a1
+      case inl c1 =>
+        rewrite [c1]
+        split_ifs at h1_left
+        case pos c2 c3 =>
+          rewrite [c2]
+          rewrite [c3]
+          rfl
+        case neg c2 c3 =>
+          simp only [Bool.not_eq_true] at c2
+          simp only [Bool.not_eq_true] at c3
+          rewrite [c2]
+          rewrite [c3]
+          rfl
+      case inr c1 =>
+        apply ih
+        · exact h1_right
+        · exact c1
 
 
 -------------------------------------------------------------------------------
@@ -1223,7 +1289,7 @@ example
   apply mk_lits_is_conj_ind
 
 
-example
+lemma eval_eq_true_imp_eval_to_dnf_eq_true
   (init : ValuationAsTotalFunction)
   (V : ValuationAsTotalFunction)
   (F : Formula_)
@@ -1249,7 +1315,7 @@ example
   · apply eval_mk_lits_eq_true
 
 
-example
+lemma eval_to_dnf_eq_true_imp_eval_eq_true
   (init : ValuationAsTotalFunction)
   (V : ValuationAsTotalFunction)
   (F : Formula_)
@@ -1274,21 +1340,6 @@ example
   exact a1
 
 
-lemma aux_1
-  (V_1 V_2 : ValuationAsTotalFunction)
-  (atom_list : List String)
-  (h1 : ∀ (X : String), X ∈ atom_list → V_1 X = V_2 X) :
-  mk_lits atom_list V_1 = mk_lits atom_list V_2 :=
-  by
-  unfold mk_lits
-  simp only
-  congr! 1
-  simp only [List.map_inj_left]
-  intro X a1
-  rewrite [h1 X a1]
-  rfl
-
-
 example
   (init_1 init_2 : ValuationAsTotalFunction)
   (F : Formula_) :
@@ -1300,7 +1351,7 @@ example
   sorry
 
 
-lemma aux_2
+lemma aux_1
   {α β : Type}
   (f : α → β)
   (xs ys : List α)
@@ -1311,46 +1362,46 @@ lemma aux_2
   sorry
 
 
-lemma aux_3
-  (init_1 init_2 : ValuationAsTotalFunction)
-  (atom_list : List String)
-  (n : ℕ)
-  (X : String)
-  (h1 : X ∈ atom_list)
-  (h2 : n < (gen_all_valuations_as_list_of_total_functions init_1 atom_list).length)
-  (h3 : n < (gen_all_valuations_as_list_of_total_functions init_2 atom_list).length) :
-  (gen_all_valuations_as_list_of_total_functions init_1 atom_list)[n] X = (gen_all_valuations_as_list_of_total_functions init_2 atom_list)[n] X :=
+lemma aux_2
+  {α β γ : Type}
+  (f : α → γ)
+  (g : β → γ)
+  (xs : List α)
+  (ys : List β)
+  (h1 : xs.length = ys.length)
+  (h2 : ∀ (p : α × β), p ∈ List.zip xs ys → f p.fst = g p.snd) :
+  List.map f xs = List.map g ys :=
   by
-  induction atom_list generalizing n
+  induction xs generalizing ys f g
   case nil =>
-    simp only [List.not_mem_nil] at h1
-  case cons hd tl ih =>
-    simp only [List.mem_cons] at h1
+    cases ys
+    case nil =>
+      simp only [List.map_nil]
+    case cons ys_hd ys_tl =>
+      simp only [List.length_nil, List.length_cons] at h1
+      simp only [Nat.zero_ne_add_one] at h1
+  case cons xs_hd xs_tl xs_ih =>
+    cases ys
+    case nil =>
+      simp only [List.length_cons, List.length_nil] at h1
+      simp only [Nat.add_one_ne_zero] at h1
+    case cons ys_hd ys_tl =>
+      simp only [List.length_cons, add_left_inj] at h1
 
-    simp only [gen_all_valuations_as_list_of_total_functions]
-    simp only [List.getElem_append]
-    simp
-    split_ifs
-    case pos c1 c2 =>
-      cases h1
-      case inl h1_left =>
-        unfold Function.updateITE
-        split_ifs
+      simp only [List.zip_cons_cons, List.mem_cons] at h2
+
+      simp only [List.map_cons, List.cons.injEq]
+      constructor
+      · specialize h2 (xs_hd, ys_hd)
+        apply h2
+        left
         rfl
-      case inr h1_right =>
-        unfold Function.updateITE
-        split_ifs
-        case pos c3 =>
-          rfl
-        case neg c3 =>
-          apply ih
-          exact h1_right
-    case neg c1 c2 =>
-      sorry
-    case pos c1 c2 =>
-      sorry
-    case neg c1 c2 =>
-      sorry
+      · apply xs_ih
+        · exact h1
+        · intro p a1
+          apply h2
+          right
+          exact a1
 
 
 example
@@ -1362,12 +1413,8 @@ example
   (gen_all_valuations_as_list_of_total_functions init_2 atom_list) :=
   by
   apply aux_2
-  · intro n h
-    apply aux_1
-    intro X a1
-    apply aux_3
-    exact a1
-  · apply gen_all_valuations_as_list_of_total_functions_length_eq
+  · sorry
+  · sorry
 
 
 example
