@@ -737,7 +737,7 @@ theorem eval_mk_lits_eq_true
   rfl
 
 
-example
+lemma eq_on_mem_imp_mk_lits_eq
   (V_1 V_2 : ValuationAsTotalFunction)
   (atom_list : List String)
   (h1 : ∀ (X : String), X ∈ atom_list → V_1 X = V_2 X) :
@@ -1340,17 +1340,6 @@ lemma eval_to_dnf_eq_true_imp_eval_eq_true
   exact a1
 
 
-example
-  (init_1 init_2 : ValuationAsTotalFunction)
-  (F : Formula_) :
-  List.map (mk_lits F.atom_list.dedup)
-    (List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup)) =
-  List.map (mk_lits F.atom_list.dedup)
-    (List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup)) :=
-  by
-  sorry
-
-
 lemma aux_1
   {α β : Type}
   (f : α → β)
@@ -1402,6 +1391,26 @@ lemma aux_2
           apply h2
           right
           exact a1
+
+
+example
+  (init_1 init_2 : ValuationAsTotalFunction)
+  (F : Formula_) :
+  to_dnf init_1 F = to_dnf init_2 F :=
+  by
+  unfold to_dnf
+  sorry
+
+
+example
+  (init_1 init_2 : ValuationAsTotalFunction)
+  (F : Formula_) :
+  List.map (mk_lits F.atom_list.dedup)
+    (List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup)) =
+  List.map (mk_lits F.atom_list.dedup)
+    (List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup)) :=
+  by
+  sorry
 
 
 example
