@@ -1455,7 +1455,7 @@ example
       cases h2
       case inl h2 =>
         cases h1
-        case inl h1 =>
+        case inl h1 | inr h1 =>
           obtain s1 := List.of_mem_zip h1
           obtain ⟨s1_left, s1_right⟩ := s1
 
@@ -1470,11 +1470,9 @@ example
           unfold Function.updateITE
           split_ifs
           rfl
-        case inr h1 =>
-          sorry
       case inr h2 =>
         cases h1
-        case inl h1 =>
+        case inl h1 | inr h1 =>
           simp only [List.zip_map] at h1
           simp only [List.mem_map, Prod.exists, Prod.map_apply] at h1
           obtain ⟨a, b, ⟨h1_left, h1_right⟩⟩ := h1
@@ -1490,6 +1488,5 @@ example
             apply ih
             · exact h1_left
             · exact h2
-        case inr h1 =>
-          sorry
-    · sorry
+    · simp only [List.length_map]
+      apply gen_all_valuations_as_list_of_total_functions_length_eq
