@@ -1487,6 +1487,81 @@ example
 
 
 example
+  {α : Type}
+  (xs ys : List α)
+  (pred : α → Bool)
+  (p : α × α)
+  (h1 : p ∈ List.zip (List.filter pred xs) (List.filter pred ys)) :
+  p ∈ List.zip xs ys :=
+  by
+  sorry
+
+
+example
+  {α : Type}
+  (xs ys : List α)
+  (pred : α → Bool)
+  (h1 : xs.length = ys.length)
+  (h2 : ∀ (p : α × α), p ∈ List.zip xs ys → pred p.1 = pred p.2) :
+  (List.filter pred xs).length = (List.filter pred ys).length :=
+  by
+  induction xs generalizing ys
+  case nil =>
+    cases ys
+    case nil =>
+      simp only [List.filter_nil, List.length_nil]
+    case cons ys_hd ys_tl =>
+      simp only [List.length_nil, List.length_cons] at h1
+      simp only [Nat.zero_ne_add_one] at h1
+  case cons xs_hd xs_tl xs_ih =>
+    cases ys
+    case nil =>
+      simp only [List.length_cons, List.length_nil] at h1
+      simp only [Nat.add_one_ne_zero] at h1
+    case cons ys_hd ys_tl =>
+      simp only [List.length_cons, add_left_inj] at h1
+
+      simp only [List.zip_cons_cons, List.mem_cons] at h2
+
+      simp only [List.filter_cons]
+      split_ifs
+      case pos c1 c2 =>
+        simp only [List.length_cons, add_left_inj]
+        apply xs_ih
+        · exact h1
+        · intro p a1
+          apply h2
+          right
+          exact a1
+      case neg c1 c2 =>
+        exfalso
+        apply c2
+        rewrite [← c1]
+        specialize h2 (xs_hd, ys_hd)
+        simp only at h2
+        rewrite [← h2]
+        · rfl
+        · left
+          exact trivial
+      case pos c1 c2 =>
+        exfalso
+        apply c1
+        rewrite [← c2]
+        specialize h2 (xs_hd, ys_hd)
+        simp only at h2
+        apply h2
+        left
+        exact trivial
+      case neg c1 c2 =>
+        apply xs_ih
+        · exact h1
+        · intro p a1
+          apply h2
+          right
+          exact a1
+
+
+example
   (init_1 init_2 : ValuationAsTotalFunction)
   (F : Formula_) :
   List.map (mk_lits F.atom_list.dedup)
@@ -1494,4 +1569,11 @@ example
   List.map (mk_lits F.atom_list.dedup)
     (List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup)) :=
   by
-  sorry
+  apply aux_2
+  · sorry
+  · intro p a1
+    apply eq_on_mem_imp_mk_lits_eq
+    intro X a2
+    apply gen_all_valuations_as_list_of_total_functions_eq_on_atom_list init_1 init_2 F.atom_list.dedup
+    · sorry
+    · sorry
