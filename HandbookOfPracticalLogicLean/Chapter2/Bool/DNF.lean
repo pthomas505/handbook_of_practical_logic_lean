@@ -1253,7 +1253,7 @@ example
 -------------------------------------------------------------------------------
 
 
-example
+lemma gen_all_valuations_as_list_of_total_functions_eq_on_atom_list
   (init_1 init_2 : ValuationAsTotalFunction)
   (atom_list : List String)
   (p : ValuationAsTotalFunction × ValuationAsTotalFunction)
