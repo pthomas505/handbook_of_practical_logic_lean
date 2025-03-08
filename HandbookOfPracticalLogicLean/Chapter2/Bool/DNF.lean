@@ -1470,17 +1470,6 @@ example
 
 example
   (init_1 init_2 : ValuationAsTotalFunction)
-  (F : Formula_) :
-  List.map (mk_lits F.atom_list.dedup)
-    (List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup)) =
-  List.map (mk_lits F.atom_list.dedup)
-    (List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup)) :=
-  by
-  sorry
-
-
-example
-  (init_1 init_2 : ValuationAsTotalFunction)
   (atom_list : List String) :
   List.map (mk_lits atom_list)
   (gen_all_valuations_as_list_of_total_functions init_1 atom_list) =
@@ -1495,3 +1484,14 @@ example
     apply gen_all_valuations_as_list_of_total_functions_eq_on_atom_list init_1 init_2 atom_list
     · exact a1
     · exact a2
+
+
+example
+  (init_1 init_2 : ValuationAsTotalFunction)
+  (F : Formula_) :
+  List.map (mk_lits F.atom_list.dedup)
+    (List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup)) =
+  List.map (mk_lits F.atom_list.dedup)
+    (List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup)) :=
+  by
+  sorry
