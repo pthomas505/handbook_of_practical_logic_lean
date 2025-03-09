@@ -1316,7 +1316,7 @@ lemma gen_all_valuations_as_list_of_total_functions_eq_on_atom_list
       apply gen_all_valuations_as_list_of_total_functions_length_eq
 
 
-example
+lemma mem_zip_gen_all_valuations_as_list_of_total_functions_imp_eval_eq
   (init_1 init_2 : ValuationAsTotalFunction)
   (F : Formula_)
   (p : ValuationAsTotalFunction × ValuationAsTotalFunction)
@@ -1345,7 +1345,9 @@ example
   (h2 : X ∈ F.atom_list.dedup) :
   p.1 X = p.2 X :=
   by
-  sorry
+  apply gen_all_valuations_as_list_of_total_functions_eq_on_atom_list init_1 init_2 F.atom_list.dedup
+  · sorry
+  · exact h2
 
 
 -------------------------------------------------------------------------------
@@ -1491,15 +1493,71 @@ lemma aux_2
           exact a1
 
 
-example
+lemma aux_3
   {α : Type}
   (xs ys : List α)
   (pred : α → Bool)
   (p : α × α)
-  (h1 : ∀ (q : α × α), q ∈ List.zip xs ys → pred q.1 = pred q.2) :
-  List.zip (List.filter pred xs) (List.filter pred ys) =
-    List.filter (fun (p : α × α) => pred p.1 = pred p.2) (List.zip xs ys) :=
-  sorry
+  (h1 : p ∈ List.zip (List.filter pred xs) (List.filter pred ys))
+  (h2 : ∀ (q : α × α), q ∈ List.zip xs ys → pred q.1 = pred q.2) :
+  p ∈ List.zip xs ys :=
+  by
+  induction xs generalizing ys
+  case nil =>
+    simp only [List.filter_nil, List.zip_nil_left, List.not_mem_nil] at h1
+  case cons xs_hd xs_tl xs_ih =>
+    cases ys
+    case nil =>
+      simp only [List.filter_nil, List.zip_nil_right, List.not_mem_nil] at h1
+    case cons ys_hd ys_tl =>
+      simp only [List.filter_cons] at h1
+
+      simp only [List.zip_cons_cons, List.mem_cons] at h2
+
+      simp only [List.zip_cons_cons, List.mem_cons]
+      split_ifs at h1
+      case pos c1 c2 =>
+        simp only [List.zip_cons_cons, List.mem_cons] at h1
+        cases h1
+        case inl h1 =>
+          left
+          exact h1
+        case inr h1 =>
+          right
+          apply xs_ih
+          · exact h1
+          · intro q a1
+            apply h2
+            right
+            exact a1
+      case neg c1 c2 =>
+        exfalso
+        apply c2
+        rewrite [← c1]
+        specialize h2 (xs_hd, ys_hd)
+        simp only at h2
+        rewrite [← h2]
+        · rfl
+        · left
+          exact trivial
+      case pos c1 c2 =>
+        exfalso
+        apply c1
+        rewrite [← c2]
+        specialize h2 (xs_hd, ys_hd)
+        simp only at h2
+        apply h2
+        left
+        exact trivial
+      case neg c1 c2 =>
+        right
+        apply xs_ih
+        · exact h1
+        · intro q a1
+          apply h2
+          right
+          exact a1
+
 
 
 example
@@ -1616,5 +1674,9 @@ example
     apply eq_on_mem_imp_mk_lits_eq
     intro X a2
     apply gen_all_valuations_as_list_of_total_functions_eq_on_atom_list init_1 init_2 F.atom_list.dedup
-    · sorry
+    · apply aux_3 (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup) (fun V => eval V F)
+      · exact a1
+      · intro q a3
+        apply mem_zip_gen_all_valuations_as_list_of_total_functions_imp_eval_eq init_1 init_2
+        exact a3
     · exact a2
