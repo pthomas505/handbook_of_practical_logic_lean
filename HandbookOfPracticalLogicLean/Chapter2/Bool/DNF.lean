@@ -1559,16 +1559,6 @@ lemma aux_3
           exact a1
 
 
-
-example
-  (init_1 init_2 : ValuationAsTotalFunction)
-  (F : Formula_) :
-  to_dnf init_1 F = to_dnf init_2 F :=
-  by
-  unfold to_dnf
-  sorry
-
-
 lemma pred_eq_all_mem_zip_imp_filter_length_eq
   {α : Type}
   (xs ys : List α)
@@ -1680,3 +1670,12 @@ example
         apply mem_zip_gen_all_valuations_as_list_of_total_functions_imp_eval_eq init_1 init_2
         exact a3
     · exact a2
+
+
+example
+  (init_1 init_2 : ValuationAsTotalFunction)
+  (F : Formula_) :
+  to_dnf init_1 F = to_dnf init_2 F :=
+  by
+  unfold to_dnf
+  sorry
