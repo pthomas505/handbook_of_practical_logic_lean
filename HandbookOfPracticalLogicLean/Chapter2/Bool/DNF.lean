@@ -1334,22 +1334,6 @@ lemma mem_zip_gen_all_valuations_as_list_of_total_functions_imp_eval_eq
     exact a1
 
 
-example
-  (init_1 init_2 : ValuationAsTotalFunction)
-  (F : Formula_)
-  (X : String)
-  (p : ValuationAsTotalFunction × ValuationAsTotalFunction)
-  (h1 : p ∈ List.zip
-    (List.filter (fun (V : ValuationAsTotalFunction) => eval V F) (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup))
-    (List.filter (fun (V : ValuationAsTotalFunction) => eval V F) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup)))
-  (h2 : X ∈ F.atom_list.dedup) :
-  p.1 X = p.2 X :=
-  by
-  apply gen_all_valuations_as_list_of_total_functions_eq_on_atom_list init_1 init_2 F.atom_list.dedup
-  · sorry
-  · exact h2
-
-
 -------------------------------------------------------------------------------
 
 
@@ -1670,6 +1654,22 @@ example
         apply mem_zip_gen_all_valuations_as_list_of_total_functions_imp_eval_eq init_1 init_2
         exact a3
     · exact a2
+
+
+example
+  (init_1 init_2 : ValuationAsTotalFunction)
+  (F : Formula_)
+  (X : String)
+  (p : ValuationAsTotalFunction × ValuationAsTotalFunction)
+  (h1 : p ∈ List.zip
+    (List.filter (fun (V : ValuationAsTotalFunction) => eval V F) (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup))
+    (List.filter (fun (V : ValuationAsTotalFunction) => eval V F) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup)))
+  (h2 : X ∈ F.atom_list.dedup) :
+  p.1 X = p.2 X :=
+  by
+  apply gen_all_valuations_as_list_of_total_functions_eq_on_atom_list init_1 init_2 F.atom_list.dedup
+  · sorry
+  · exact h2
 
 
 example
