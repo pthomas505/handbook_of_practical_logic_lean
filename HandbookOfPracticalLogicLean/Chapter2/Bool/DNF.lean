@@ -1668,7 +1668,11 @@ example
   p.1 X = p.2 X :=
   by
   apply gen_all_valuations_as_list_of_total_functions_eq_on_atom_list init_1 init_2 F.atom_list.dedup
-  · sorry
+  · apply aux_3 (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup) (fun V ↦ eval V F)
+    · exact h1
+    · intro q a1
+      apply mem_zip_gen_all_valuations_as_list_of_total_functions_imp_eval_eq
+      exact a1
   · exact h2
 
 
