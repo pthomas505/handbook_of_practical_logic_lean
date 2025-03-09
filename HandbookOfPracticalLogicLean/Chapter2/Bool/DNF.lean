@@ -1486,17 +1486,6 @@ example
     · exact a2
 
 
-example
-  {α : Type}
-  (xs ys : List α)
-  (pred : α → Bool)
-  (p : α × α)
-  (h1 : p ∈ List.zip (List.filter pred xs) (List.filter pred ys)) :
-  p ∈ List.zip xs ys :=
-  by
-  sorry
-
-
 lemma pred_eq_all_mem_zip_imp_filter_length_eq
   {α : Type}
   (xs ys : List α)
