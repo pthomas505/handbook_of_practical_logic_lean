@@ -1468,24 +1468,6 @@ example
   sorry
 
 
-example
-  (init_1 init_2 : ValuationAsTotalFunction)
-  (atom_list : List String) :
-  List.map (mk_lits atom_list)
-  (gen_all_valuations_as_list_of_total_functions init_1 atom_list) =
-  List.map (mk_lits atom_list)
-  (gen_all_valuations_as_list_of_total_functions init_2 atom_list) :=
-  by
-  apply aux_2
-  · apply gen_all_valuations_as_list_of_total_functions_length_eq
-  · intro p a1
-    apply eq_on_mem_imp_mk_lits_eq
-    intro X a2
-    apply gen_all_valuations_as_list_of_total_functions_eq_on_atom_list init_1 init_2 atom_list
-    · exact a1
-    · exact a2
-
-
 lemma pred_eq_all_mem_zip_imp_filter_length_eq
   {α : Type}
   (xs ys : List α)
@@ -1548,6 +1530,24 @@ lemma pred_eq_all_mem_zip_imp_filter_length_eq
           apply h2
           right
           exact a1
+
+
+example
+  (init_1 init_2 : ValuationAsTotalFunction)
+  (atom_list : List String) :
+  List.map (mk_lits atom_list)
+  (gen_all_valuations_as_list_of_total_functions init_1 atom_list) =
+  List.map (mk_lits atom_list)
+  (gen_all_valuations_as_list_of_total_functions init_2 atom_list) :=
+  by
+  apply aux_2
+  · apply gen_all_valuations_as_list_of_total_functions_length_eq
+  · intro p a1
+    apply eq_on_mem_imp_mk_lits_eq
+    intro X a2
+    apply gen_all_valuations_as_list_of_total_functions_eq_on_atom_list init_1 init_2 atom_list
+    · exact a1
+    · exact a2
 
 
 example
