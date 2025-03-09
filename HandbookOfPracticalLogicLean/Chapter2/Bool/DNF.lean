@@ -1625,7 +1625,7 @@ example
     · exact a2
 
 
-example
+lemma aux_4
   (init_1 init_2 : ValuationAsTotalFunction)
   (F : Formula_) :
   List.map (mk_lits F.atom_list.dedup)
@@ -1682,4 +1682,7 @@ example
   to_dnf init_1 F = to_dnf init_2 F :=
   by
   unfold to_dnf
-  sorry
+  unfold gen_all_satisfying_valuations_as_list_of_total_functions
+  congr 1
+  simp only [Bool.decide_eq_true]
+  apply aux_4
