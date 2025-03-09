@@ -1497,7 +1497,7 @@ example
   sorry
 
 
-example
+lemma pred_eq_all_mem_zip_imp_filter_length_eq
   {α : Type}
   (xs ys : List α)
   (pred : α → Bool)
@@ -1570,10 +1570,19 @@ example
     (List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup)) :=
   by
   apply aux_2
-  · sorry
+  · apply pred_eq_all_mem_zip_imp_filter_length_eq
+    · apply gen_all_valuations_as_list_of_total_functions_length_eq
+    · intro p a1
+      apply theorem_2_2
+      intro X a2
+      apply gen_all_valuations_as_list_of_total_functions_eq_on_atom_list init_1 init_2 F.atom_list.dedup
+      · exact a1
+      · simp only [List.mem_dedup]
+        simp only [← atom_occurs_in_iff_mem_atom_list]
+        exact a2
   · intro p a1
     apply eq_on_mem_imp_mk_lits_eq
     intro X a2
     apply gen_all_valuations_as_list_of_total_functions_eq_on_atom_list init_1 init_2 F.atom_list.dedup
     · sorry
-    · sorry
+    · exact a2
