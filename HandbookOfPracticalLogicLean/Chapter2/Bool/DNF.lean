@@ -1751,4 +1751,22 @@ def allpairs
   | [] => []
 
 
-#eval allpairs List.union [[1], [2]] [[4], [5, 6]]
+#eval allpairs List.union [[1], [2]] [[4], [5, 6], [1]]
+
+#eval allpairs List.append [[1], [2]] [[4], [5, 6], [1]]
+
+
+def gen_all_pairs
+  {α : Type}
+  (l1 l2 : List α) :
+  List (List α) :=
+  match l1 with
+  | [] => []
+  | hd :: tl => List.map (fun (y : α) => [hd, y]) l2 ++ gen_all_pairs tl l2
+
+
+#eval (gen_all_pairs [[1], [2]] [[4], [5, 6], [1]])
+
+#eval List.map (List.foldr List.union []) (gen_all_pairs [[1], [2]] [[4], [5, 6], [1]])
+
+#eval List.map (List.foldr List.append []) (gen_all_pairs [[1], [2]] [[4], [5, 6], [1]])
