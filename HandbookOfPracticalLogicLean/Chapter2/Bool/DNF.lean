@@ -1743,11 +1743,11 @@ let rec allpairs f l1 l2 =
 
 def allpairs
   {α : Type}
-  (f : List α → List α → List α)
-  (l1 l2 : List (List α)) :
-  List (List α) :=
+  (f : α → α → α)
+  (l1 l2 : List α) :
+  List α :=
   match l1 with
-  | h1 :: t1 => itlist (fun (x : List α) (a : List (List α)) => (f h1 x) :: a) l2 (allpairs f t1 l2)
+  | h1 :: t1 => itlist (fun (x : α) (a : List α) => (f h1 x) :: a) l2 (allpairs f t1 l2)
   | [] => []
 
 
