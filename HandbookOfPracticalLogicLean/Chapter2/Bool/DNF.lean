@@ -1686,3 +1686,69 @@ example
   congr 1
   simp only [Bool.decide_eq_true]
   apply aux_4
+
+
+-------------------------------------------------------------------------------
+
+
+def distrib :
+  Formula_ → Formula_
+  | and_ p (or_ q r) => or_ (distrib (and_ p q)) (distrib (and_ p r))
+  | and_ (or_ p q) r => or_ (distrib (and_ p r)) (distrib (and_ q r))
+  | F => F
+
+
+def rawdnf :
+  Formula_ → Formula_
+  | and_ p q => distrib (and_ (rawdnf p) (rawdnf q))
+  | or_ p q => or_ (rawdnf p) (rawdnf q)
+  | F => F
+
+
+#eval (rawdnf (Formula_| ((p \/ (q /\ r)) /\ (~p \/ ~ r)))).toString
+
+
+/-
+https://www.cl.cam.ac.uk/~jrh13/atp/OCaml/lib.ml
+
+let rec itlist f l b =
+  match l with
+    [] -> b
+  | (h::t) -> f h (itlist f t b);;
+-/
+
+def itlist
+  {α β : Type}
+  (f : α → β → β)
+  (l : List α)
+  (b : β) :
+  β :=
+  match l with
+  | [] => b
+  | h :: t => f h (itlist f t b)
+
+
+#eval itlist Nat.add [0, 1, 2, 3, 4] 0
+#eval List.foldr Nat.add 0 [0, 1, 2, 3, 4]
+
+
+/-
+https://www.cl.cam.ac.uk/~jrh13/atp/OCaml/lib.ml
+
+let rec allpairs f l1 l2 =
+  match l1 with
+   h1::t1 ->  itlist (fun x a -> f h1 x :: a) l2 (allpairs f t1 l2)
+  | [] -> [];;
+-/
+
+def allpairs
+  {α : Type}
+  (f : List α → List α → List α)
+  (l1 l2 : List (List α)) :
+  List (List α) :=
+  match l1 with
+  | h1 :: t1 => itlist (fun (x : List α) (a : List (List α)) => (f h1 x) :: a) l2 (allpairs f t1 l2)
+  | [] => []
+
+
+#eval allpairs List.union [[1], [2]] [[4], [5, 6]]
