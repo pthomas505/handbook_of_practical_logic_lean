@@ -1770,3 +1770,39 @@ def gen_all_pairs
 #eval List.map (List.foldr List.union []) (gen_all_pairs [[1], [2]] [[4], [5, 6], [1]])
 
 #eval List.map (List.foldr List.append []) (gen_all_pairs [[1], [2]] [[4], [5, 6], [1]])
+
+
+def dnf_list_of_list_to_formula
+  (l : List (List Formula_)) :
+  Formula_ :=
+  list_disj (List.map list_conj l)
+
+
+#eval (dnf_list_of_list_to_formula [[atom_ "P", atom_ "Q"], [not_ (atom_ "P"), atom_ "R"]]).toString
+
+
+def to_list_conj :
+  Formula_ → List Formula_
+  | and_ phi psi => to_list_conj phi ++ to_list_conj psi
+  | F => [F]
+
+def to_list_disj :
+  Formula_ → List (List Formula_)
+  | or_ phi psi => to_list_disj phi ++ to_list_disj psi
+  | F => [to_list_conj F]
+
+def dnf_formula_to_list_of_list
+  (F : Formula_) :
+  List (List Formula_) :=
+  to_list_disj F
+
+
+#eval (dnf_formula_to_list_of_list (dnf_list_of_list_to_formula [[atom_ "P", atom_ "Q"], [not_ (atom_ "P"), atom_ "R"]])).toString
+
+#eval (dnf_list_of_list_to_formula (dnf_formula_to_list_of_list (Formula_| ((P /\ Q) \/ (~ P /\ R))))).toString
+
+#eval (dnf_list_of_list_to_formula (dnf_formula_to_list_of_list (Formula_| (P /\ Q)))).toString
+#eval (dnf_list_of_list_to_formula (dnf_formula_to_list_of_list (Formula_| (P \/ Q)))).toString
+#eval (dnf_list_of_list_to_formula (dnf_formula_to_list_of_list (Formula_| ((P \/ Q) \/ R)))).toString
+#eval (dnf_list_of_list_to_formula (dnf_formula_to_list_of_list (Formula_| (P \/ (Q \/ R))))).toString
+#eval (dnf_list_of_list_to_formula (dnf_formula_to_list_of_list (Formula_| ((P /\ Q) \/ (((Q /\ (R /\ V)) /\ S) \/ (T \/ U)))))).toString
