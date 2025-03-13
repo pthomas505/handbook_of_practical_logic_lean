@@ -1728,8 +1728,23 @@ def itlist
   | h :: t => f h (itlist f t b)
 
 
-#eval itlist Nat.add [0, 1, 2, 3, 4] 0
-#eval List.foldr Nat.add 0 [0, 1, 2, 3, 4]
+example
+  {α β : Type}
+  (f : α → β → β)
+  (l : List α)
+  (b : β) :
+  itlist f l b = List.foldr f b l :=
+  by
+  induction l
+  case nil =>
+    unfold itlist
+    unfold List.foldr
+    rfl
+  case cons hd tl ih =>
+    unfold itlist
+    unfold List.foldr
+    rewrite [ih]
+    rfl
 
 
 /-
@@ -1741,19 +1756,19 @@ let rec allpairs f l1 l2 =
   | [] -> [];;
 -/
 
-def allpairs
+def all_pairs
   {α : Type}
   (f : α → α → α)
   (l1 l2 : List α) :
   List α :=
   match l1 with
-  | h1 :: t1 => itlist (fun (x : α) (a : List α) => (f h1 x) :: a) l2 (allpairs f t1 l2)
   | [] => []
+  | h1 :: t1 => List.foldr (fun (x : α) (a : List α) => (f h1 x) :: a) (all_pairs f t1 l2) l2
 
 
-#eval allpairs List.union [[1], [2]] [[4], [5, 6], [1]]
+#eval all_pairs List.union [[1], [2]] [[4], [5, 6], [1]]
 
-#eval allpairs List.append [[1], [2]] [[4], [5, 6], [1]]
+#eval all_pairs List.append [[1], [2]] [[4], [5, 6], [1]]
 
 
 def gen_all_pairs
