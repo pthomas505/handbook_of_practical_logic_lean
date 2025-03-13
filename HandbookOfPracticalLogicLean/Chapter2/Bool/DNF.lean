@@ -1758,33 +1758,41 @@ let rec allpairs f l1 l2 =
 
 def all_pairs
   {α : Type}
-  (f : α → α → α)
-  (l1 l2 : List α) :
-  List α :=
-  match l1 with
-  | [] => []
-  | h1 :: t1 => List.foldr (fun (x : α) (a : List α) => (f h1 x) :: a) (all_pairs f t1 l2) l2
-
-
-#eval all_pairs List.union [[1], [2]] [[4], [5, 6], [1]]
-
-#eval all_pairs List.append [[1], [2]] [[4], [5, 6], [1]]
-
-
-def gen_all_pairs
-  {α : Type}
-  (l1 l2 : List α) :
+  (f : List α → List α → List α)
+  (l1 l2 : List (List α)) :
   List (List α) :=
   match l1 with
   | [] => []
-  | hd :: tl => List.map (fun (y : α) => [hd, y]) l2 ++ gen_all_pairs tl l2
+  | hd :: tl =>
+    List.foldr
+      (fun (next : List α) (acc : List (List α)) => (f hd next) :: acc)
+        (all_pairs f tl l2)
+          l2
 
 
-#eval (gen_all_pairs [[1], [2]] [[4], [5, 6], [1]])
+#eval all_pairs List.append [[1]] []
+#eval all_pairs List.append [[1], [2]] []
+#eval all_pairs List.append [[1]] [[4]]
+#eval all_pairs List.append [[1], [2]] [[4]]
+#eval all_pairs List.append [[1], [2]] [[4], [5]]
+#eval all_pairs List.append [[1]] [[4], [5]]
+#eval all_pairs List.append [] [[4], [5]]
 
-#eval List.map (List.foldr List.union []) (gen_all_pairs [[1], [2]] [[4], [5, 6], [1]])
 
-#eval List.map (List.foldr List.append []) (gen_all_pairs [[1], [2]] [[4], [5, 6], [1]])
+-- (a + b) * (c + d)
+-- a * c + a * d + b * c + b * d
+
+
+def distrib_one
+  {α : Type}
+  (f : List α → List α → List α)
+  (x : List α)
+  (xs : List (List α)) :
+  List (List α) :=
+    List.foldr
+      (fun (next : List α) (acc : List (List α)) => (f x next) :: acc) [] xs
+
+#eval distrib_one List.append [5] [[1], [2], [3]]
 
 
 def dnf_list_of_list_to_formula
