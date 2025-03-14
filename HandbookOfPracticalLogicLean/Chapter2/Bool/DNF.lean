@@ -1698,14 +1698,14 @@ def distrib :
   | F => F
 
 
-def rawdnf :
+def raw_dnf :
   Formula_ → Formula_
-  | and_ p q => distrib (and_ (rawdnf p) (rawdnf q))
-  | or_ p q => or_ (rawdnf p) (rawdnf q)
+  | and_ p q => distrib (and_ (raw_dnf p) (raw_dnf q))
+  | or_ p q => or_ (raw_dnf p) (raw_dnf q)
   | F => F
 
 
-#eval (rawdnf (Formula_| ((p \/ (q /\ r)) /\ (~p \/ ~ r)))).toString
+#eval (raw_dnf (Formula_| ((p \/ (q /\ r)) /\ (~p \/ ~ r)))).toString
 
 
 /-
@@ -1802,3 +1802,12 @@ def dnf_list_of_list_to_formula
 
 
 #eval (dnf_list_of_list_to_formula [[atom_ "P", atom_ "Q"], [not_ (atom_ "P"), atom_ "R"]]).toString
+
+
+def pure_dnf :
+  Formula_ → List (List Formula_)
+  | and_ p q => all_pairs List.union (pure_dnf p) (pure_dnf q)
+  | or_ p q => List.union (pure_dnf p) (pure_dnf q)
+  | F => [[F]]
+
+#eval (pure_dnf (Formula_| ((p \/ (q /\ r)) /\ (~p \/ ~ r)))).toString
