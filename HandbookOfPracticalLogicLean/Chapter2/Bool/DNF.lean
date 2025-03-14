@@ -1795,15 +1795,6 @@ def distrib_one
 #eval distrib_one List.append [5] [[1], [2], [3]]
 
 
-def dnf_list_of_list_to_formula
-  (l : List (List Formula_)) :
-  Formula_ :=
-  list_disj (List.map list_conj l)
-
-
-#eval (dnf_list_of_list_to_formula [[atom_ "P", atom_ "Q"], [not_ (atom_ "P"), atom_ "R"]]).toString
-
-
 def pure_dnf :
   Formula_ → List (List Formula_)
   | and_ p q => all_pairs List.union (pure_dnf p) (pure_dnf q)
@@ -1811,3 +1802,12 @@ def pure_dnf :
   | F => [[F]]
 
 #eval (pure_dnf (Formula_| ((p \/ (q /\ r)) /\ (~p \/ ~ r)))).toString
+
+
+def dnf_list_of_list_to_formula
+  (l : List (List Formula_)) :
+  Formula_ :=
+  list_disj (List.map list_conj l)
+
+
+#eval (dnf_list_of_list_to_formula [[atom_ "P", atom_ "Q"], [not_ (atom_ "P"), atom_ "R"]]).toString
