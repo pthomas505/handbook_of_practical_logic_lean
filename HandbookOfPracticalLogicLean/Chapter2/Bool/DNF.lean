@@ -1802,30 +1802,3 @@ def dnf_list_of_list_to_formula
 
 
 #eval (dnf_list_of_list_to_formula [[atom_ "P", atom_ "Q"], [not_ (atom_ "P"), atom_ "R"]]).toString
-
-
-def to_list_conj :
-  Formula_ → List Formula_
-  | and_ phi psi => to_list_conj phi ++ to_list_conj psi
-  | F => [F]
-
-def to_list_disj :
-  Formula_ → List (List Formula_)
-  | or_ phi psi => to_list_disj phi ++ to_list_disj psi
-  | F => [to_list_conj F]
-
-def dnf_formula_to_list_of_list
-  (F : Formula_) :
-  List (List Formula_) :=
-  to_list_disj F
-
-
-#eval (dnf_formula_to_list_of_list (dnf_list_of_list_to_formula [[atom_ "P", atom_ "Q"], [not_ (atom_ "P"), atom_ "R"]])).toString
-
-#eval (dnf_list_of_list_to_formula (dnf_formula_to_list_of_list (Formula_| ((P /\ Q) \/ (~ P /\ R))))).toString
-
-#eval (dnf_list_of_list_to_formula (dnf_formula_to_list_of_list (Formula_| (P /\ Q)))).toString
-#eval (dnf_list_of_list_to_formula (dnf_formula_to_list_of_list (Formula_| (P \/ Q)))).toString
-#eval (dnf_list_of_list_to_formula (dnf_formula_to_list_of_list (Formula_| ((P \/ Q) \/ R)))).toString
-#eval (dnf_list_of_list_to_formula (dnf_formula_to_list_of_list (Formula_| (P \/ (Q \/ R))))).toString
-#eval (dnf_list_of_list_to_formula (dnf_formula_to_list_of_list (Formula_| ((P /\ Q) \/ (((Q /\ (R /\ V)) /\ S) \/ (T \/ U)))))).toString
