@@ -1776,7 +1776,19 @@ def all_pairs
 #eval all_pairs List.append [[1], [2]] [[4]]
 #eval all_pairs List.append [[1], [2]] [[4], [5]]
 #eval all_pairs List.append [[1]] [[4], [5]]
+#eval all_pairs List.append [[1]] [[4], [5], [6]]
 #eval all_pairs List.append [] [[4], [5]]
+
+
+#eval all_pairs List.union [[1]] []
+#eval all_pairs List.union [[1], [2]] []
+#eval all_pairs List.union [[1]] [[4]]
+#eval all_pairs List.union [[1], [2]] [[4]]
+#eval all_pairs List.union [[1], [2]] [[4], [5]]
+#eval all_pairs List.union [[1]] [[4], [5]]
+#eval all_pairs List.union [[1]] [[4], [5], [6]]
+#eval all_pairs List.union [] [[4], [5]]
+#eval all_pairs List.union [[1], [1]] [[4], [5], [6], [1]]
 
 
 -- (a + b) * (c + d)
@@ -1795,6 +1807,117 @@ def distrib_one
 #eval distrib_one List.append [5] [[1], [2], [3]]
 
 
+lemma all_pairs_nil_right
+  {α : Type}
+  (f : List α → List α → List α)
+  (l : List (List α)) :
+  all_pairs f l [] = [] :=
+  by
+  induction l
+  case nil =>
+    unfold all_pairs
+    rfl
+  case cons hd tl ih =>
+    unfold all_pairs
+    simp only [List.foldr_nil]
+    exact ih
+
+
+lemma all_pairs_singleton_left_cons_right
+  {α : Type}
+  (f : List α → List α → List α)
+  (xs : List α)
+  (ys : List α)
+  (yss : List (List α)) :
+  all_pairs f [xs] (ys :: yss) = all_pairs f [xs] [ys] ++ all_pairs f [xs] yss :=
+  by
+  simp only [all_pairs]
+  simp only [List.foldr_cons, List.foldr_nil, List.singleton_append]
+
+
+def all_pairs_alt
+  {α : Type}
+  (f : List α → List α → List α)
+  (l1 l2 : List (List α)) :
+  List (List α) :=
+  match l1 with
+  | [] => []
+  | hd :: tl => distrib_one f hd l2 ++ all_pairs_alt f tl l2
+
+
+example
+  {α β : Type}
+  (f : α → β)
+  (xs_left xs_right : List β)
+  (ys : List α) :
+  List.foldr (fun (next : α) (prev : List β) => f next :: prev) (xs_left ++ xs_right) ys =
+    List.foldr (fun (next : α) (prev : List β) => f next :: prev) xs_left ys ++ xs_right :=
+  by
+  induction ys
+  case nil =>
+    simp only [List.foldr_nil]
+  case cons hd tl ih =>
+    simp only [List.foldr_cons, List.cons_append]
+    rewrite [ih]
+    rfl
+
+
+#eval List.foldr (fun next acc => List.diff [0] next :: acc) [[1, 2]] [[2], [3]]
+
+example
+  {α : Type}
+  (f : List α → List α → List α)
+  (l1 l2 : List (List α)) :
+  all_pairs f l1 l2 = all_pairs_alt f l1 l2 :=
+  by
+  induction l1 generalizing l2
+  case nil =>
+    unfold all_pairs
+    unfold all_pairs_alt
+    rfl
+  case cons l1_hd l1_tl l1_ih =>
+    unfold all_pairs
+    unfold all_pairs_alt
+    unfold distrib_one
+    rewrite [l1_ih]
+    sorry
+
+
+#eval all_pairs_alt List.append [[1]] []
+#eval all_pairs_alt List.append [[1], [2]] []
+#eval all_pairs_alt List.append [[1]] [[4]]
+#eval all_pairs_alt List.append [[1], [2]] [[4]]
+#eval all_pairs_alt List.append [[1], [2]] [[4], [5]]
+#eval all_pairs_alt List.append [[1]] [[4], [5]]
+#eval all_pairs_alt List.append [[1]] [[4], [5], [6]]
+#eval all_pairs_alt List.append [] [[4], [5]]
+
+
+#eval all_pairs_alt List.union [[1]] []
+#eval all_pairs_alt List.union [[1], [2]] []
+#eval all_pairs_alt List.union [[1]] [[4]]
+#eval all_pairs_alt List.union [[1], [2]] [[4]]
+#eval all_pairs_alt List.union [[1], [2]] [[4], [5]]
+#eval all_pairs_alt List.union [[1]] [[4], [5]]
+#eval all_pairs_alt List.union [[1]] [[4], [5], [6]]
+#eval all_pairs_alt List.union [] [[4], [5]]
+#eval all_pairs List.union [[1], [1]] [[4], [5], [6], [1]]
+#eval all_pairs_alt List.union [[1], [1]] [[4], [5], [6], [1]]
+
+
+#eval all_pairs List.diff [[1]] []
+#eval all_pairs List.diff [[1], [2]] []
+#eval all_pairs List.diff [[1]] [[4]]
+#eval all_pairs List.diff [[1], [2]] [[4]]
+#eval all_pairs List.diff [[1], [2]] [[4], [5]]
+#eval all_pairs List.diff [[1]] [[4], [5]]
+#eval all_pairs List.diff [[1]] [[4], [5], [6]]
+#eval all_pairs List.diff [] [[4], [5]]
+#eval all_pairs List.diff [[1], [1]] [[4], [5], [6], [1]]
+#eval all_pairs_alt List.diff [[1], [1]] [[4], [5], [6], [1]]
+
+
+
 def pure_dnf :
   Formula_ → List (List Formula_)
   | and_ p q => all_pairs List.union (pure_dnf p) (pure_dnf q)
@@ -1811,3 +1934,85 @@ def dnf_list_of_list_to_formula
 
 
 #eval (dnf_list_of_list_to_formula [[atom_ "P", atom_ "Q"], [not_ (atom_ "P"), atom_ "R"]]).toString
+
+
+example
+  {α : Type}
+  [DecidableEq α]
+  (xss yss : List (List α))
+  (zs : List α)
+  (z : α)
+  (h1 : zs ∈ all_pairs List.union xss yss)
+  (h2 : z ∈ zs) :
+  (∃ (xs : List α), xs ∈ xss ∧ z ∈ xs) ∨
+  (∃ (ys : List α), ys ∈ yss ∧ z ∈ ys) :=
+  by
+  induction xss generalizing yss
+  case nil =>
+    unfold all_pairs at h1
+    simp only [List.not_mem_nil] at h1
+  case cons xss_hd xss_tl xss_ih =>
+    cases yss
+    case nil =>
+      unfold all_pairs at h1
+      simp only [List.foldr_nil] at h1
+      simp only [all_pairs_nil_right] at h1
+      simp only [List.not_mem_nil] at h1
+    case cons yss_hd yss_tl =>
+      unfold all_pairs at h1
+      simp only [List.foldr_cons, List.mem_cons] at h1
+      cases h1
+      case inl h1 =>
+        sorry
+      case inr h1 =>
+        sorry
+
+
+example
+  (P Q : Formula_)
+  (xs : List Formula_)
+  (h1 : is_nnf P)
+  (h2 : xs ∈ pure_dnf P)
+  (h3 : Q ∈ xs) :
+  is_constant_ind Q ∨ is_literal_ind Q :=
+  by
+  induction P generalizing xs
+  case false_ =>
+    unfold pure_dnf at h2
+    sorry
+  case and_ phi psi phi_ih psi_ih =>
+    unfold is_nnf at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
+    unfold pure_dnf at h2
+    sorry
+  all_goals
+    sorry
+
+
+example
+  (F : Formula_)
+  (h1 : is_nnf F) :
+  is_dnf_ind (dnf_list_of_list_to_formula (pure_dnf F)) :=
+  by
+  induction F
+  case false_ =>
+    unfold pure_dnf
+    unfold dnf_list_of_list_to_formula
+    simp only [List.map_cons, List.map_nil]
+    unfold list_conj
+    unfold list_disj
+    apply is_dnf_ind.rule_2
+    apply is_conj_ind.rule_3
+    apply is_constant_ind.rule_1
+  case and_ phi psi phi_ih psi_ih =>
+    unfold pure_dnf
+    sorry
+  case or_ phi psi phi_ih psi_ih =>
+    unfold pure_dnf
+    unfold dnf_list_of_list_to_formula
+    unfold is_nnf at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+    sorry
+  all_goals
+    sorry
