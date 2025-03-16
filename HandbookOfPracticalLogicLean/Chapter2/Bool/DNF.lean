@@ -1765,7 +1765,7 @@ def all_pairs
   | [] => []
   | hd :: tl =>
     List.foldr
-      (fun (next : List α) (acc : List (List α)) => (f hd next) :: acc)
+      (fun (next : List α) (prev : List (List α)) => (f hd next) :: prev)
         (all_pairs f tl l2)
           l2
 
@@ -1802,7 +1802,7 @@ def distrib_one
   (xs : List (List α)) :
   List (List α) :=
     List.foldr
-      (fun (next : List α) (acc : List (List α)) => (f x next) :: acc) [] xs
+      (fun (next : List α) (prev : List (List α)) => (f x next) :: prev) [] xs
 
 #eval distrib_one List.append [5] [[1], [2], [3]]
 
@@ -1845,13 +1845,13 @@ def all_pairs_alt
   | hd :: tl => distrib_one f hd l2 ++ all_pairs_alt f tl l2
 
 
-example
+lemma List.foldr_cons_append_init
   {α β : Type}
   (f : α → β)
   (xs_left xs_right : List β)
   (ys : List α) :
-  List.foldr (fun (next : α) (prev : List β) => f next :: prev) (xs_left ++ xs_right) ys =
-    (List.foldr (fun (next : α) (prev : List β) => f next :: prev) xs_left ys) ++ xs_right :=
+  List.foldr (fun (next : α) (prev : List β) => (f next) :: prev) (xs_left ++ xs_right) ys =
+    (List.foldr (fun (next : α) (prev : List β) => (f next) :: prev) xs_left ys) ++ xs_right :=
   by
   induction ys
   case nil =>
@@ -1863,6 +1863,7 @@ example
 
 
 #eval List.foldr (fun next acc => List.diff [0] next :: acc) [[1, 2]] [[2], [3]]
+
 
 example
   {α : Type}
@@ -1880,7 +1881,9 @@ example
     unfold all_pairs_alt
     unfold distrib_one
     rewrite [l1_ih]
-    sorry
+    obtain s1 := List.foldr_cons_append_init (f l1_hd) [] (all_pairs_alt f l1_tl l2) l2
+    simp only [List.nil_append] at s1
+    exact s1
 
 
 #eval all_pairs_alt List.append [[1]] []
