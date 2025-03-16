@@ -1821,7 +1821,7 @@ def distrib_one
     List.foldr
       (fun (next : List α) (prev : List (List α)) => (f x next) :: prev) [] xs
 
-#eval distrib_one List.append [5] [[1], [2], [3]]
+#eval distrib_one List.append [0] [[1], [2], [3]]
 
 
 def all_pairs_alt
