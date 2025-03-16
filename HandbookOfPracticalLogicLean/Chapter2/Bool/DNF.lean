@@ -1851,7 +1851,7 @@ example
   (xs_left xs_right : List β)
   (ys : List α) :
   List.foldr (fun (next : α) (prev : List β) => f next :: prev) (xs_left ++ xs_right) ys =
-    List.foldr (fun (next : α) (prev : List β) => f next :: prev) xs_left ys ++ xs_right :=
+    (List.foldr (fun (next : α) (prev : List β) => f next :: prev) xs_left ys) ++ xs_right :=
   by
   induction ys
   case nil =>
