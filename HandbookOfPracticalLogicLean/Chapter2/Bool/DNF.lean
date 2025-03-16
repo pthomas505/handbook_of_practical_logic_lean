@@ -1857,7 +1857,7 @@ example
   (l1 l2 : List (List α)) :
   all_pairs f l1 l2 = all_pairs_alt f l1 l2 :=
   by
-  induction l1 generalizing l2
+  induction l1
   case nil =>
     unfold all_pairs
     unfold all_pairs_alt
@@ -1867,6 +1867,7 @@ example
     unfold all_pairs_alt
     unfold distrib_one
     rewrite [l1_ih]
+
     obtain s1 := List.foldr_cons_append_init (f l1_hd) [] (all_pairs_alt f l1_tl l2) l2
     simp only [List.nil_append] at s1
     exact s1
