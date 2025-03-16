@@ -1784,18 +1784,6 @@ def all_pairs
 -- a * c + a * d + b * c + b * d
 
 
-def distrib_one
-  {α : Type}
-  (f : List α → List α → List α)
-  (x : List α)
-  (xs : List (List α)) :
-  List (List α) :=
-    List.foldr
-      (fun (next : List α) (prev : List (List α)) => (f x next) :: prev) [] xs
-
-#eval distrib_one List.append [5] [[1], [2], [3]]
-
-
 lemma all_pairs_nil_right
   {α : Type}
   (f : List α → List α → List α)
@@ -1822,6 +1810,18 @@ lemma all_pairs_singleton_left_cons_right
   by
   simp only [all_pairs]
   simp only [List.foldr_cons, List.foldr_nil, List.singleton_append]
+
+
+def distrib_one
+  {α : Type}
+  (f : List α → List α → List α)
+  (x : List α)
+  (xs : List (List α)) :
+  List (List α) :=
+    List.foldr
+      (fun (next : List α) (prev : List (List α)) => (f x next) :: prev) [] xs
+
+#eval distrib_one List.append [5] [[1], [2], [3]]
 
 
 def all_pairs_alt
