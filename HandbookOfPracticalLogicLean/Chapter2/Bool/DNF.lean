@@ -1780,17 +1780,6 @@ def all_pairs
 #eval all_pairs List.append [] [[4], [5]]
 
 
-#eval all_pairs List.union [[1]] []
-#eval all_pairs List.union [[1], [2]] []
-#eval all_pairs List.union [[1]] [[4]]
-#eval all_pairs List.union [[1], [2]] [[4]]
-#eval all_pairs List.union [[1], [2]] [[4], [5]]
-#eval all_pairs List.union [[1]] [[4], [5]]
-#eval all_pairs List.union [[1]] [[4], [5], [6]]
-#eval all_pairs List.union [] [[4], [5]]
-#eval all_pairs List.union [[1], [1]] [[4], [5], [6], [1]]
-
-
 -- (a + b) * (c + d)
 -- a * c + a * d + b * c + b * d
 
@@ -1862,9 +1851,6 @@ lemma List.foldr_cons_append_init
     rfl
 
 
-#eval List.foldr (fun next acc => List.diff [0] next :: acc) [[1, 2]] [[2], [3]]
-
-
 example
   {α : Type}
   (f : List α → List α → List α)
@@ -1884,41 +1870,6 @@ example
     obtain s1 := List.foldr_cons_append_init (f l1_hd) [] (all_pairs_alt f l1_tl l2) l2
     simp only [List.nil_append] at s1
     exact s1
-
-
-#eval all_pairs_alt List.append [[1]] []
-#eval all_pairs_alt List.append [[1], [2]] []
-#eval all_pairs_alt List.append [[1]] [[4]]
-#eval all_pairs_alt List.append [[1], [2]] [[4]]
-#eval all_pairs_alt List.append [[1], [2]] [[4], [5]]
-#eval all_pairs_alt List.append [[1]] [[4], [5]]
-#eval all_pairs_alt List.append [[1]] [[4], [5], [6]]
-#eval all_pairs_alt List.append [] [[4], [5]]
-
-
-#eval all_pairs_alt List.union [[1]] []
-#eval all_pairs_alt List.union [[1], [2]] []
-#eval all_pairs_alt List.union [[1]] [[4]]
-#eval all_pairs_alt List.union [[1], [2]] [[4]]
-#eval all_pairs_alt List.union [[1], [2]] [[4], [5]]
-#eval all_pairs_alt List.union [[1]] [[4], [5]]
-#eval all_pairs_alt List.union [[1]] [[4], [5], [6]]
-#eval all_pairs_alt List.union [] [[4], [5]]
-#eval all_pairs List.union [[1], [1]] [[4], [5], [6], [1]]
-#eval all_pairs_alt List.union [[1], [1]] [[4], [5], [6], [1]]
-
-
-#eval all_pairs List.diff [[1]] []
-#eval all_pairs List.diff [[1], [2]] []
-#eval all_pairs List.diff [[1]] [[4]]
-#eval all_pairs List.diff [[1], [2]] [[4]]
-#eval all_pairs List.diff [[1], [2]] [[4], [5]]
-#eval all_pairs List.diff [[1]] [[4], [5]]
-#eval all_pairs List.diff [[1]] [[4], [5], [6]]
-#eval all_pairs List.diff [] [[4], [5]]
-#eval all_pairs List.diff [[1], [1]] [[4], [5], [6], [1]]
-#eval all_pairs_alt List.diff [[1], [1]] [[4], [5], [6], [1]]
-
 
 
 def pure_dnf :
