@@ -1922,7 +1922,7 @@ lemma all_pairs_alt_nil_right
 
 def pure_dnf :
   Formula_ → List (List Formula_)
-  | and_ p q => all_pairs_alt List.union (pure_dnf p) (pure_dnf q)
+  | and_ p q => all_pairs_alt_alt List.union (pure_dnf p) (pure_dnf q)
   | or_ p q => List.union (pure_dnf p) (pure_dnf q)
   | F => [[F]]
 
