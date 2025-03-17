@@ -1936,3 +1936,11 @@ def dnf_list_of_list_to_formula
 
 
 #eval (dnf_list_of_list_to_formula [[atom_ "P", atom_ "Q"], [not_ (atom_ "P"), atom_ "R"]]).toString
+
+
+example
+  (F : Formula_)
+  (h1 : is_nnf F) :
+  is_dnf_ind (dnf_list_of_list_to_formula (pure_dnf F)) :=
+  by
+  sorry
