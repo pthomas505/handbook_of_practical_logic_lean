@@ -1815,11 +1815,11 @@ lemma all_pairs_singleton_left_cons_right
 def distrib_one
   {α : Type}
   (f : List α → List α → List α)
-  (x : List α)
-  (xs : List (List α)) :
+  (xs : List α)
+  (xss : List (List α)) :
   List (List α) :=
     List.foldr
-      (fun (next : List α) (prev : List (List α)) => (f x next) :: prev) [] xs
+      (fun (next : List α) (prev : List (List α)) => (f xs next) :: prev) [] xss
 
 #eval distrib_one List.append [0] [[1], [2], [3]]
 
@@ -1873,9 +1873,56 @@ example
     exact s1
 
 
+def all_pairs_alt_alt
+  {α : Type}
+  (f : List α → List α → List α)
+  (l1 l2 : List (List α)) :
+  List (List α) :=
+  match l1 with
+  | [] => []
+  | hd :: tl => List.map (f hd) l2 ++ all_pairs_alt_alt f tl l2
+
+
+example
+  {α : Type}
+  (f : List α → List α → List α)
+  (l1 l2 : List (List α)) :
+  all_pairs_alt f l1 l2 = all_pairs_alt_alt f l1 l2 :=
+  by
+  induction l1
+  case nil =>
+    unfold all_pairs_alt_alt
+    unfold all_pairs_alt
+    rfl
+  case cons hd tl ih =>
+    unfold all_pairs_alt_alt
+    unfold all_pairs_alt
+    unfold distrib_one
+    simp only [List.map_eq_foldr]
+    rewrite [ih]
+    rfl
+
+
+lemma all_pairs_alt_nil_right
+  {α : Type}
+  (f : List α → List α → List α)
+  (l : List (List α)) :
+  all_pairs_alt f l [] = [] :=
+  by
+  induction l
+  case nil =>
+    unfold all_pairs_alt
+    rfl
+  case cons hd tl ih =>
+    unfold all_pairs_alt
+    unfold distrib_one
+    simp only [List.foldr_nil, List.nil_append]
+    exact ih
+
+
 def pure_dnf :
   Formula_ → List (List Formula_)
-  | and_ p q => all_pairs List.union (pure_dnf p) (pure_dnf q)
+  | and_ p q => all_pairs_alt List.union (pure_dnf p) (pure_dnf q)
   | or_ p q => List.union (pure_dnf p) (pure_dnf q)
   | F => [[F]]
 
@@ -1889,85 +1936,3 @@ def dnf_list_of_list_to_formula
 
 
 #eval (dnf_list_of_list_to_formula [[atom_ "P", atom_ "Q"], [not_ (atom_ "P"), atom_ "R"]]).toString
-
-
-example
-  {α : Type}
-  [DecidableEq α]
-  (xss yss : List (List α))
-  (zs : List α)
-  (z : α)
-  (h1 : zs ∈ all_pairs List.union xss yss)
-  (h2 : z ∈ zs) :
-  (∃ (xs : List α), xs ∈ xss ∧ z ∈ xs) ∨
-  (∃ (ys : List α), ys ∈ yss ∧ z ∈ ys) :=
-  by
-  induction xss generalizing yss
-  case nil =>
-    unfold all_pairs at h1
-    simp only [List.not_mem_nil] at h1
-  case cons xss_hd xss_tl xss_ih =>
-    cases yss
-    case nil =>
-      unfold all_pairs at h1
-      simp only [List.foldr_nil] at h1
-      simp only [all_pairs_nil_right] at h1
-      simp only [List.not_mem_nil] at h1
-    case cons yss_hd yss_tl =>
-      unfold all_pairs at h1
-      simp only [List.foldr_cons, List.mem_cons] at h1
-      cases h1
-      case inl h1 =>
-        sorry
-      case inr h1 =>
-        sorry
-
-
-example
-  (P Q : Formula_)
-  (xs : List Formula_)
-  (h1 : is_nnf P)
-  (h2 : xs ∈ pure_dnf P)
-  (h3 : Q ∈ xs) :
-  is_constant_ind Q ∨ is_literal_ind Q :=
-  by
-  induction P generalizing xs
-  case false_ =>
-    unfold pure_dnf at h2
-    sorry
-  case and_ phi psi phi_ih psi_ih =>
-    unfold is_nnf at h1
-    obtain ⟨h1_left, h1_right⟩ := h1
-
-    unfold pure_dnf at h2
-    sorry
-  all_goals
-    sorry
-
-
-example
-  (F : Formula_)
-  (h1 : is_nnf F) :
-  is_dnf_ind (dnf_list_of_list_to_formula (pure_dnf F)) :=
-  by
-  induction F
-  case false_ =>
-    unfold pure_dnf
-    unfold dnf_list_of_list_to_formula
-    simp only [List.map_cons, List.map_nil]
-    unfold list_conj
-    unfold list_disj
-    apply is_dnf_ind.rule_2
-    apply is_conj_ind.rule_3
-    apply is_constant_ind.rule_1
-  case and_ phi psi phi_ih psi_ih =>
-    unfold pure_dnf
-    sorry
-  case or_ phi psi phi_ih psi_ih =>
-    unfold pure_dnf
-    unfold dnf_list_of_list_to_formula
-    unfold is_nnf at h1
-    obtain ⟨h1_left, h1_right⟩ := h1
-    sorry
-  all_goals
-    sorry
