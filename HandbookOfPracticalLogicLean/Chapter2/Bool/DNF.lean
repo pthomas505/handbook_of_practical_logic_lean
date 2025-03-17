@@ -1943,4 +1943,13 @@ example
   (h1 : is_nnf F) :
   is_dnf_ind (dnf_list_of_list_to_formula (pure_dnf F)) :=
   by
-  sorry
+  induction F
+  case or_ phi psi phi_ih psi_ih =>
+    unfold dnf_list_of_list_to_formula at phi_ih
+    unfold dnf_list_of_list_to_formula at psi_ih
+
+    unfold pure_dnf
+    unfold dnf_list_of_list_to_formula
+    sorry
+  all_goals
+    sorry
