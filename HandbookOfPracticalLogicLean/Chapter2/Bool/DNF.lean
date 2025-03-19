@@ -1939,6 +1939,111 @@ def dnf_list_of_list_to_formula
 
 
 example
+  {α β : Type}
+  [DecidableEq α]
+  [DecidableEq β]
+  (f : α → β)
+  (l1 l2 : List α)
+  (h1 : Function.Injective f) :
+  List.map f (l1 ∪ l2) = (List.map f l1) ∪ (List.map f l2) :=
+  by
+  induction l1
+  case nil =>
+    simp only [List.map_nil]
+    simp only [List.nil_union]
+  case cons hd tl ih =>
+    simp only [List.cons_union, List.map_cons]
+    rewrite [← ih]
+    unfold List.insert
+
+    have s1 : List.elem (f hd) (List.map f (tl ∪ l2)) = true ↔ List.elem hd (tl ∪ l2) = true :=
+    by
+      simp only [List.elem_eq_mem, decide_eq_true_eq]
+      apply List.mem_map_of_injective
+      exact h1
+
+    simp only [s1]
+    split_ifs
+    case pos c1 =>
+      rfl
+    case neg c1 =>
+      simp only [List.map_cons]
+
+
+lemma all_pairs_alt_alt_mem
+  {α : Type}
+  [DecidableEq α]
+  (l1 l2 : List (List α))
+  (l : List α)
+  (h1 : l ∈ all_pairs_alt_alt List.union l1 l2) :
+  ∃ (xs : List α) (ys : List α), xs ∈ l1 ∧ ys ∈ l2 ∧ xs ∪ ys = l :=
+  by
+  induction l1
+  case nil =>
+    unfold all_pairs_alt_alt at h1
+    simp only [List.not_mem_nil] at h1
+  case cons hd tl ih =>
+    unfold all_pairs_alt_alt at h1
+    simp only [List.mem_append, List.mem_map] at h1
+    cases h1
+    case inl h1 =>
+      obtain ⟨a, h1⟩ := h1
+      apply Exists.intro hd
+      apply Exists.intro a
+      constructor
+      · simp only [List.mem_cons]
+        left
+        exact trivial
+      · exact h1
+    case inr h1 =>
+      specialize ih h1
+      obtain ⟨xs, ys, ih_left, ih_right⟩ := ih
+      apply Exists.intro xs
+      apply Exists.intro ys
+      constructor
+      · simp only [List.mem_cons]
+        right
+        exact ih_left
+      · exact ih_right
+
+
+example
+  (F : Formula_)
+  (l : List Formula_)
+  (P : Formula_)
+  (h1 : is_nnf F)
+  (h2 : l ∈ pure_dnf F)
+  (h3 : P ∈ l) :
+  is_constant_ind P ∨ is_literal_ind P :=
+  by
+  induction F generalizing l
+  case and_ phi psi phi_ih psi_ih =>
+    unfold is_nnf at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
+    unfold pure_dnf at h2
+
+    obtain s1 := all_pairs_alt_alt_mem (pure_dnf phi) (pure_dnf psi) l h2
+    obtain ⟨xs, ys, xs_mem, ys_mem, eq⟩ := s1
+    rewrite [← eq] at h3
+
+    simp only [List.mem_union_iff] at h3
+    cases h3
+    case inl h3 =>
+      apply phi_ih xs
+      · exact h1_left
+      · exact xs_mem
+      · exact h3
+    case inr h3 =>
+      apply psi_ih ys
+      · exact h1_right
+      · exact ys_mem
+      · exact h3
+  all_goals
+    sorry
+
+
+example
   (F : Formula_)
   (h1 : is_nnf F) :
   is_dnf_ind (dnf_list_of_list_to_formula (pure_dnf F)) :=
