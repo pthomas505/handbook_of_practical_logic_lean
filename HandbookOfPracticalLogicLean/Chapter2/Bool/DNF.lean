@@ -460,6 +460,65 @@ lemma list_conj_of_is_literal_ind_is_conj_ind
         exact a1
 
 
+lemma list_conj_of_is_constant_ind_or_is_literal_ind_is_conj_ind
+  (l : List Formula_)
+  (h1 : ∀ (F : Formula_), F ∈ l → (is_constant_ind F ∨ is_literal_ind F)) :
+  is_conj_ind (list_conj l) :=
+  by
+  induction l
+  case nil =>
+    unfold list_conj
+    apply is_conj_ind.rule_3
+    apply is_constant_ind.rule_2
+  case cons hd tl ih =>
+    cases tl
+    case nil =>
+      unfold list_conj
+      simp only [List.mem_singleton] at h1
+
+      have s1 : is_constant_ind hd ∨ is_literal_ind hd :=
+      by
+        apply h1
+        rfl
+
+      cases s1
+      case inl s1 =>
+        apply is_conj_ind.rule_3
+        exact s1
+      case inr s1 =>
+        apply is_conj_ind.rule_4
+        exact s1
+    case cons tl_hd tl_tl =>
+      simp only [List.mem_cons] at h1
+
+      have s1 : is_constant_ind hd ∨ is_literal_ind hd :=
+      by
+        apply h1
+        left
+        rfl
+
+      unfold list_conj
+      cases s1
+      case inl s1 =>
+        apply is_conj_ind.rule_1
+        · exact s1
+        · apply ih
+          intro F a1
+          simp only [List.mem_cons] at a1
+          apply h1
+          right
+          exact a1
+      case inr s1 =>
+        apply is_conj_ind.rule_2
+        · exact s1
+        · apply ih
+          intro F a1
+          simp only [List.mem_cons] at a1
+          apply h1
+          right
+          exact a1
+
+
 lemma eval_all_eq_true_imp_eval_list_conj_eq_true
   (V : ValuationAsTotalFunction)
   (l : List Formula_)
@@ -2007,7 +2066,7 @@ lemma all_pairs_alt_alt_mem
       · exact ih_right
 
 
-example
+lemma aux_5
   (F : Formula_)
   (l : List Formula_)
   (P : Formula_)
@@ -2117,8 +2176,29 @@ example
     unfold dnf_list_of_list_to_formula at phi_ih
     unfold dnf_list_of_list_to_formula at psi_ih
 
+    unfold is_nnf at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
     unfold pure_dnf
     unfold dnf_list_of_list_to_formula
-    sorry
+    apply list_disj_of_is_conj_ind_is_dnf_ind
+    intro F a1
+    simp only [List.mem_map, List.mem_union_iff] at a1
+    obtain ⟨l, a1_left, a1_right⟩ := a1
+    rewrite [← a1_right]
+    apply list_conj_of_is_constant_ind_or_is_literal_ind_is_conj_ind
+    intro P a2
+
+    cases a1_left
+    case inl a1_left =>
+      apply aux_5 phi l
+      · exact h1_left
+      · exact a1_left
+      · exact a2
+    case inr a1_left =>
+      apply aux_5 psi l
+      · exact h1_right
+      · exact a1_left
+      · exact a2
   all_goals
     sorry
