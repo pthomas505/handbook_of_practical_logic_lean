@@ -2017,6 +2017,51 @@ example
   is_constant_ind P ∨ is_literal_ind P :=
   by
   induction F generalizing l
+  case false_ =>
+    unfold pure_dnf at h2
+    simp only [List.mem_singleton] at h2
+    rewrite [h2] at h3
+
+    simp only [List.mem_singleton] at h3
+    rewrite [h3]
+
+    left
+    apply is_constant_ind.rule_1
+  case true_ =>
+    unfold pure_dnf at h2
+    simp only [List.mem_singleton] at h2
+    rewrite [h2] at h3
+
+    simp only [List.mem_singleton] at h3
+    rewrite [h3]
+
+    left
+    apply is_constant_ind.rule_2
+  case atom_ X =>
+    unfold pure_dnf at h2
+    simp only [List.mem_singleton] at h2
+    rewrite [h2] at h3
+
+    simp only [List.mem_singleton] at h3
+    rewrite [h3]
+
+    right
+    apply is_literal_ind.rule_1
+  case not_ phi ih =>
+    unfold pure_dnf at h2
+    simp only [List.mem_singleton] at h2
+    rewrite [h2] at h3
+
+    simp only [List.mem_singleton] at h3
+    rewrite [h3]
+
+    cases phi
+    case atom_ X =>
+      right
+      apply is_literal_ind.rule_2
+    all_goals
+      unfold is_nnf at h1
+      contradiction
   case and_ phi psi phi_ih psi_ih =>
     unfold is_nnf at h1
     obtain ⟨h1_left, h1_right⟩ := h1
@@ -2057,7 +2102,6 @@ example
       · exact h1_right
       · exact h2
       · exact h3
-
   all_goals
     sorry
 
