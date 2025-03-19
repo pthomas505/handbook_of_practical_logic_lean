@@ -1923,7 +1923,7 @@ lemma all_pairs_alt_nil_right
 def pure_dnf :
   Formula_ → List (List Formula_)
   | and_ p q => all_pairs_alt_alt List.union (pure_dnf p) (pure_dnf q)
-  | or_ p q => List.union (pure_dnf p) (pure_dnf q)
+  | or_ p q => (pure_dnf p) ∪ (pure_dnf q)
   | F => [[F]]
 
 #eval (pure_dnf (Formula_| ((p \/ (q /\ r)) /\ (~p \/ ~ r)))).toString
@@ -2039,6 +2039,25 @@ example
       · exact h1_right
       · exact ys_mem
       · exact h3
+  case or_ phi psi phi_ih psi_ih =>
+    unfold is_nnf at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
+    unfold pure_dnf at h2
+    simp only [List.mem_union_iff] at h2
+
+    cases h2
+    case inl h2 =>
+      apply phi_ih l
+      · exact h1_left
+      · exact h2
+      · exact h3
+    case inr h2 =>
+      apply psi_ih l
+      · exact h1_right
+      · exact h2
+      · exact h3
+
   all_goals
     sorry
 
