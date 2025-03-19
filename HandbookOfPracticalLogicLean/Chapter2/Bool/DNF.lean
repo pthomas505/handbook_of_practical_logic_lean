@@ -2103,7 +2103,8 @@ example
       · exact h2
       · exact h3
   all_goals
-    sorry
+    unfold is_nnf at h1
+    contradiction
 
 
 example
