@@ -2172,6 +2172,15 @@ example
   is_dnf_ind (dnf_list_of_list_to_formula (pure_dnf F)) :=
   by
   induction F
+  case atom_ X =>
+    unfold pure_dnf
+    unfold dnf_list_of_list_to_formula
+    simp only [List.map_cons, List.map_nil]
+    unfold list_conj
+    unfold list_disj
+    apply is_dnf_ind.rule_2
+    apply is_conj_ind.rule_4
+    apply is_literal_ind.rule_1
   case not_ phi ih =>
     cases phi
     case atom_ X =>
