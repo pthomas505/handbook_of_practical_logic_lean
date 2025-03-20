@@ -2172,10 +2172,37 @@ example
   is_dnf_ind (dnf_list_of_list_to_formula (pure_dnf F)) :=
   by
   induction F
-  case or_ phi psi phi_ih psi_ih =>
-    unfold dnf_list_of_list_to_formula at phi_ih
-    unfold dnf_list_of_list_to_formula at psi_ih
+  case and_ phi psi phi_ih psi_ih =>
+    unfold is_nnf at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
 
+    unfold pure_dnf
+    unfold dnf_list_of_list_to_formula
+    apply list_disj_of_is_conj_ind_is_dnf_ind
+    intro F a1
+    simp only [List.mem_map] at a1
+    obtain ⟨l, a1_left, a1_right⟩ := a1
+    rewrite [← a1_right]
+    apply list_conj_of_is_constant_ind_or_is_literal_ind_is_conj_ind
+    intro P a2
+
+    obtain s1 := all_pairs_alt_alt_mem (pure_dnf phi) (pure_dnf psi) l a1_left
+    obtain ⟨xs, ys, xs_mem, ys_mem, eq⟩ := s1
+    rewrite [← eq] at a2
+    simp only [List.mem_union_iff] at a2
+
+    cases a2
+    case inl a2 =>
+      apply aux_5 phi xs
+      · exact h1_left
+      · exact xs_mem
+      · exact a2
+    case inr a2 =>
+      apply aux_5 psi ys
+      · exact h1_right
+      · exact ys_mem
+      · exact a2
+  case or_ phi psi phi_ih psi_ih =>
     unfold is_nnf at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
