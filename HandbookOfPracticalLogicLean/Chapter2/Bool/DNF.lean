@@ -2029,7 +2029,7 @@ example
       simp only [List.map_cons]
 
 
-lemma all_pairs_alt_alt_mem
+lemma mem_all_pairs_alt_alt_imp_eq_union
   {α : Type}
   [DecidableEq α]
   (l1 l2 : List (List α))
@@ -2064,6 +2064,50 @@ lemma all_pairs_alt_alt_mem
         right
         exact ih_left
       · exact ih_right
+
+
+lemma eq_union_imp_mem_all_pairs_alt_alt
+  {α : Type}
+  [DecidableEq α]
+  (l1 l2 : List (List α))
+  (l : List α)
+  (h1 : ∃ (xs : List α) (ys : List α), xs ∈ l1 ∧ ys ∈ l2 ∧ xs ∪ ys = l) :
+  l ∈ all_pairs_alt_alt List.union l1 l2 :=
+  by
+  obtain ⟨xs, ys, xs_mem, ys_mem, eq⟩ := h1
+  induction l1
+  case nil =>
+    simp only [List.not_mem_nil] at xs_mem
+  case cons l1_hd l1_tl l1_ih =>
+    simp only [List.mem_cons] at xs_mem
+
+    unfold all_pairs_alt_alt
+    simp only [List.mem_append, List.mem_map]
+    cases xs_mem
+    case inl xs_mem =>
+      left
+      apply Exists.intro ys
+      constructor
+      · exact ys_mem
+      · rewrite [← xs_mem]
+        exact eq
+    case inr xs_mem =>
+      right
+      apply l1_ih
+      exact xs_mem
+
+
+lemma mem_all_pairs_alt_alt_iff_eq_union
+  {α : Type}
+  [DecidableEq α]
+  (l1 l2 : List (List α))
+  (l : List α) :
+  l ∈ all_pairs_alt_alt List.union l1 l2 ↔
+    ∃ (xs : List α) (ys : List α), xs ∈ l1 ∧ ys ∈ l2 ∧ xs ∪ ys = l :=
+  by
+  constructor
+  · apply mem_all_pairs_alt_alt_imp_eq_union
+  · apply eq_union_imp_mem_all_pairs_alt_alt
 
 
 lemma aux_5
@@ -2127,7 +2171,7 @@ lemma aux_5
 
     unfold pure_dnf at h2
 
-    obtain s1 := all_pairs_alt_alt_mem (pure_dnf phi) (pure_dnf psi) l h2
+    obtain s1 := mem_all_pairs_alt_alt_imp_eq_union (pure_dnf phi) (pure_dnf psi) l h2
     obtain ⟨xs, ys, xs_mem, ys_mem, eq⟩ := s1
     rewrite [← eq] at h3
 
@@ -2171,7 +2215,7 @@ example
   (h1 : is_nnf F) :
   is_dnf_ind (dnf_list_of_list_to_formula (pure_dnf F)) :=
   by
-  induction F
+  cases F
   case false_ =>
     unfold pure_dnf
     unfold dnf_list_of_list_to_formula
@@ -2199,7 +2243,7 @@ example
     apply is_dnf_ind.rule_2
     apply is_conj_ind.rule_4
     apply is_literal_ind.rule_1
-  case not_ phi ih =>
+  case not_ phi =>
     cases phi
     case atom_ X =>
       unfold pure_dnf
@@ -2213,7 +2257,7 @@ example
     all_goals
       unfold is_nnf at h1
       contradiction
-  case and_ phi psi phi_ih psi_ih =>
+  case and_ phi psi =>
     unfold is_nnf at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
@@ -2227,7 +2271,7 @@ example
     apply list_conj_of_is_constant_ind_or_is_literal_ind_is_conj_ind
     intro P a2
 
-    obtain s1 := all_pairs_alt_alt_mem (pure_dnf phi) (pure_dnf psi) l a1_left
+    obtain s1 := mem_all_pairs_alt_alt_imp_eq_union (pure_dnf phi) (pure_dnf psi) l a1_left
     obtain ⟨xs, ys, xs_mem, ys_mem, eq⟩ := s1
     rewrite [← eq] at a2
     simp only [List.mem_union_iff] at a2
@@ -2243,7 +2287,7 @@ example
       · exact h1_right
       · exact ys_mem
       · exact a2
-  case or_ phi psi phi_ih psi_ih =>
+  case or_ phi psi =>
     unfold is_nnf at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
@@ -2271,3 +2315,51 @@ example
   all_goals
     unfold is_nnf at h1
     contradiction
+
+
+example
+  (V : ValuationAsTotalFunction)
+  (F : Formula_)
+  (h1 : is_nnf F)
+  (h2 : eval V F = true) :
+  eval V (dnf_list_of_list_to_formula (pure_dnf F)) = true :=
+  by
+  induction F
+  case false_ =>
+    unfold eval at h2
+    contradiction
+  case true_ =>
+    unfold pure_dnf
+    unfold dnf_list_of_list_to_formula
+    simp only [List.map_cons, List.map_nil]
+    unfold list_conj
+    unfold list_disj
+    unfold eval
+    rfl
+  case and_ phi psi phi_ih psi_ih =>
+    unfold dnf_list_of_list_to_formula at phi_ih
+    unfold dnf_list_of_list_to_formula at psi_ih
+
+    unfold is_nnf at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
+    unfold eval at h2
+    simp only [bool_iff_prop_and] at h2
+    obtain ⟨h2_left, h2_right⟩ := h2
+
+    specialize phi_ih h1_left h2_left
+    specialize psi_ih h1_right h2_right
+
+    simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true] at phi_ih
+    simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true] at psi_ih
+
+    simp only [List.mem_map] at phi_ih
+    simp only [List.mem_map] at psi_ih
+
+    unfold pure_dnf
+    unfold dnf_list_of_list_to_formula
+    apply eval_exists_eq_true_imp_eval_list_disj_eq_true
+    simp only [List.mem_map]
+    sorry
+  all_goals
+    sorry
