@@ -2360,12 +2360,18 @@ example
 
     obtain ⟨F_psi, ⟨⟨ys, psi_ih_left_left, psi_ih_left_right⟩, psi_ih_right⟩⟩ := psi_ih
 
+    rewrite [← phi_ih_left_right] at phi_ih_right
+    rewrite [← psi_ih_left_right] at psi_ih_right
+
+    simp only [← eval_all_eq_true_iff_eval_list_conj_eq_true] at phi_ih_right
+    simp only [← eval_all_eq_true_iff_eval_list_conj_eq_true] at psi_ih_right
+
     unfold pure_dnf
     unfold dnf_list_of_list_to_formula
     apply eval_exists_eq_true_imp_eval_list_disj_eq_true
     simp only [List.mem_map]
 
-    apply Exists.intro (and_ F_phi F_psi)
+    apply Exists.intro (list_conj (xs ∪ ys))
     constructor
     · apply Exists.intro (xs ∪ ys)
       constructor
@@ -2373,8 +2379,17 @@ example
         apply Exists.intro xs
         apply Exists.intro ys
         exact ⟨phi_ih_left_left, psi_ih_left_left, rfl⟩
-      · sorry
-    sorry
+      · rfl
+    · apply eval_all_eq_true_imp_eval_list_conj_eq_true
+      intro F a1
+      simp only [List.mem_union_iff] at a1
+      cases a1
+      case inl a1 =>
+        apply phi_ih_right
+        exact a1
+      case inr a1 =>
+        apply psi_ih_right
+        exact a1
   case or_ phi psi phi_ih psi_ih =>
     unfold dnf_list_of_list_to_formula at phi_ih
     unfold dnf_list_of_list_to_formula at psi_ih
