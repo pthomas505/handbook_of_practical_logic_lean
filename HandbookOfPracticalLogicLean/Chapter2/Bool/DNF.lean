@@ -2356,10 +2356,68 @@ example
     simp only [List.mem_map] at phi_ih
     simp only [List.mem_map] at psi_ih
 
+    obtain ⟨F_phi, ⟨⟨xs, phi_ih_left_left, phi_ih_left_right⟩, phi_ih_right⟩⟩ := phi_ih
+
+    obtain ⟨F_psi, ⟨⟨ys, psi_ih_left_left, psi_ih_left_right⟩, psi_ih_right⟩⟩ := psi_ih
+
     unfold pure_dnf
     unfold dnf_list_of_list_to_formula
     apply eval_exists_eq_true_imp_eval_list_disj_eq_true
     simp only [List.mem_map]
+
+    apply Exists.intro (and_ F_phi F_psi)
+    constructor
+    · apply Exists.intro (xs ∪ ys)
+      constructor
+      · apply eq_union_imp_mem_all_pairs_alt_alt
+        apply Exists.intro xs
+        apply Exists.intro ys
+        exact ⟨phi_ih_left_left, psi_ih_left_left, rfl⟩
+      · sorry
     sorry
+  case or_ phi psi phi_ih psi_ih =>
+    unfold dnf_list_of_list_to_formula at phi_ih
+    unfold dnf_list_of_list_to_formula at psi_ih
+
+    unfold is_nnf at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
+    unfold eval at h2
+    simp only [bool_iff_prop_or] at h2
+
+    unfold pure_dnf
+    unfold dnf_list_of_list_to_formula
+    apply eval_exists_eq_true_imp_eval_list_disj_eq_true
+    simp only [List.mem_map, List.mem_union_iff]
+
+    cases h2
+    case inl h2 =>
+      specialize phi_ih h1_left h2
+      simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true] at phi_ih
+      obtain ⟨F_phi, ⟨phi_ih_left, phi_ih_right⟩⟩ := phi_ih
+      simp only [List.mem_map] at phi_ih_left
+      obtain ⟨xs, phi_ih_left_left, phi_ih_left_right⟩ := phi_ih_left
+      apply Exists.intro F_phi
+      constructor
+      · apply Exists.intro xs
+        constructor
+        · left
+          exact phi_ih_left_left
+        · exact phi_ih_left_right
+      · exact phi_ih_right
+    case inr h2 =>
+      specialize psi_ih h1_right h2
+      simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true] at psi_ih
+      obtain ⟨F_psi, ⟨psi_ih_left, psi_ih_right⟩⟩ := psi_ih
+      simp only [List.mem_map] at psi_ih_left
+      obtain ⟨ys, psi_ih_left_left, psi_ih_left_right⟩ := psi_ih_left
+      apply Exists.intro F_psi
+      constructor
+      · apply Exists.intro ys
+        constructor
+        · right
+          exact psi_ih_left_left
+        · exact psi_ih_left_right
+      · exact psi_ih_right
   all_goals
     sorry
