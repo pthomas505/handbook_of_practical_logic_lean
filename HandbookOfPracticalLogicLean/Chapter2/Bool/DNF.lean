@@ -598,6 +598,35 @@ lemma eval_all_eq_true_iff_eval_list_conj_eq_true
   · apply eval_list_conj_eq_true_imp_eval_all_eq_true
 
 
+lemma eval_list_conj_union
+  (V : ValuationAsTotalFunction)
+  (l1 l2 : List Formula_) :
+  eval V (list_conj (l1 ∪ l2)) = true ↔ (eval V (list_conj l1) = true ∧ eval V (list_conj l2) = true) :=
+  by
+  simp only [← eval_all_eq_true_iff_eval_list_conj_eq_true]
+  simp only [List.mem_union_iff]
+  constructor
+  · intro a1
+    constructor
+    · intro F a2
+      apply a1
+      left
+      exact a2
+    · intro F a2
+      apply a1
+      right
+      exact a2
+  · intro a1 F a2
+    obtain ⟨a1_left, a1_right⟩ := a1
+    cases a2
+    case inl a2 =>
+      apply a1_left
+      exact a2
+    case inr a2 =>
+      apply a1_right
+      exact a2
+
+
 -------------------------------------------------------------------------------
 
 
@@ -2512,5 +2541,67 @@ example
         simp only [List.mem_union_iff]
         right
         exact a1
+  all_goals
+    sorry
+
+
+example
+  (V : ValuationAsTotalFunction)
+  (F : Formula_)
+  (h1 : is_nnf F) :
+  eval V (dnf_list_of_list_to_formula (pure_dnf F)) = true ↔ eval V F = true :=
+  by
+  induction F
+  case and_ phi psi phi_ih psi_ih =>
+    unfold dnf_list_of_list_to_formula at phi_ih
+    unfold dnf_list_of_list_to_formula at psi_ih
+
+    unfold is_nnf at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
+    specialize phi_ih h1_left
+    specialize psi_ih h1_right
+
+    unfold pure_dnf
+    unfold dnf_list_of_list_to_formula
+    simp only [eval]
+    simp only [bool_iff_prop_and]
+    rewrite [← phi_ih]
+    rewrite [← psi_ih]
+    simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
+    simp only [List.mem_map]
+    simp only [mem_all_pairs_alt_alt_iff_eq_union]
+    constructor
+    · intro a1
+      obtain ⟨F, ⟨P, ⟨xs, ys, ⟨xs_mem, ys_mem, eq⟩⟩, a1_left⟩, a1_right⟩ := a1
+      rewrite [← a1_left] at a1_right
+      rewrite [← eq] at a1_right
+      simp only [eval_list_conj_union] at a1_right
+      obtain ⟨a1_right_left, a1_right_right⟩ := a1_right
+      constructor
+      · apply Exists.intro (list_conj xs)
+        constructor
+        · apply Exists.intro xs
+          exact ⟨xs_mem, rfl⟩
+        · exact a1_right_left
+      · apply Exists.intro (list_conj ys)
+        constructor
+        · apply Exists.intro ys
+          exact ⟨ys_mem, rfl⟩
+        · exact a1_right_right
+    · intro a1
+      obtain ⟨⟨P, ⟨xs, xs_mem, a1_left_left⟩, a1_left_right⟩ , ⟨Q, ⟨ys, ys_mem, a1_right_left⟩, a1_right_right⟩ ⟩ := a1
+      rewrite [← a1_left_left] at a1_left_right
+      rewrite [← a1_right_left] at a1_right_right
+      apply Exists.intro (list_conj (xs ∪ ys))
+      constructor
+      · apply Exists.intro (xs ∪ ys)
+        constructor
+        · apply Exists.intro xs
+          apply Exists.intro ys
+          exact ⟨xs_mem, ys_mem, rfl⟩
+        · rfl
+      · simp only [eval_list_conj_union]
+        exact ⟨a1_left_right, a1_right_right⟩
   all_goals
     sorry
