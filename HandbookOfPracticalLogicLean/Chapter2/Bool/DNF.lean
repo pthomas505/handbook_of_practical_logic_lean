@@ -2552,6 +2552,25 @@ example
   eval V (dnf_list_of_list_to_formula (pure_dnf F)) = true ↔ eval V F = true :=
   by
   induction F
+  case false_ | true_ | atom_ X =>
+    unfold pure_dnf
+    unfold dnf_list_of_list_to_formula
+    simp only [List.map_cons, List.map_nil]
+    unfold list_conj
+    unfold list_disj
+    rfl
+  case not_ phi ih =>
+    cases phi
+    case atom_ X =>
+      unfold pure_dnf
+      unfold dnf_list_of_list_to_formula
+      simp only [List.map_cons, List.map_nil]
+      unfold list_conj
+      unfold list_disj
+      rfl
+    all_goals
+      unfold is_nnf at h1
+      contradiction
   case and_ phi psi phi_ih psi_ih =>
     unfold dnf_list_of_list_to_formula at phi_ih
     unfold dnf_list_of_list_to_formula at psi_ih
@@ -2662,4 +2681,5 @@ example
           · exact a1_left_right
         · exact a1_right
   all_goals
-    sorry
+    unfold is_nnf at h1
+    contradiction
