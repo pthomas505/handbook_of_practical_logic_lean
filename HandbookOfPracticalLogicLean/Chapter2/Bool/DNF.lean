@@ -2334,8 +2334,21 @@ example
     simp only [List.map_cons, List.map_nil]
     unfold list_conj
     unfold list_disj
-    unfold eval
-    rfl
+    exact h2
+  case atom_ X =>
+    unfold pure_dnf
+    unfold dnf_list_of_list_to_formula
+    simp only [List.map_cons, List.map_nil]
+    unfold list_conj
+    unfold list_disj
+    exact h2
+  case not_ phi ih =>
+    unfold pure_dnf
+    unfold dnf_list_of_list_to_formula
+    simp only [List.map_cons, List.map_nil]
+    unfold list_conj
+    unfold list_disj
+    exact h2
   case and_ phi psi phi_ih psi_ih =>
     unfold dnf_list_of_list_to_formula at phi_ih
     unfold dnf_list_of_list_to_formula at psi_ih
@@ -2435,4 +2448,5 @@ example
         · exact psi_ih_left_right
       · exact psi_ih_right
   all_goals
-    sorry
+    unfold is_nnf at h1
+    contradiction
