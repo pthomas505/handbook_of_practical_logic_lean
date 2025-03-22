@@ -2603,5 +2603,63 @@ example
         · rfl
       · simp only [eval_list_conj_union]
         exact ⟨a1_left_right, a1_right_right⟩
+  case or_ phi psi phi_ih psi_ih =>
+    unfold dnf_list_of_list_to_formula at phi_ih
+    unfold dnf_list_of_list_to_formula at psi_ih
+
+    unfold is_nnf at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
+    specialize phi_ih h1_left
+    specialize psi_ih h1_right
+
+    unfold pure_dnf
+    unfold dnf_list_of_list_to_formula
+    simp only [eval]
+    simp only [bool_iff_prop_or]
+    rewrite [← phi_ih]
+    rewrite [← psi_ih]
+    simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
+    simp only [List.mem_map, List.mem_union_iff]
+    constructor
+    · intro a1
+      obtain ⟨F, ⟨l, a1_left_left, a1_left_right⟩, a1_right⟩ := a1
+      cases a1_left_left
+      case inl a1_left_left =>
+        left
+        apply Exists.intro F
+        constructor
+        · apply Exists.intro l
+          exact ⟨a1_left_left, a1_left_right⟩
+        · exact a1_right
+      case inr a1_left_left =>
+        right
+        apply Exists.intro F
+        constructor
+        · apply Exists.intro l
+          exact ⟨a1_left_left, a1_left_right⟩
+        · exact a1_right
+    · intro a1
+      cases a1
+      case inl a1 =>
+        obtain ⟨F, ⟨l, a1_left_left, a1_left_right⟩, a1_right⟩ := a1
+        apply Exists.intro F
+        constructor
+        · apply Exists.intro l
+          constructor
+          · left
+            exact a1_left_left
+          · exact a1_left_right
+        · exact a1_right
+      case inr a1 =>
+        obtain ⟨F, ⟨l, a1_left_left, a1_left_right⟩, a1_right⟩ := a1
+        apply Exists.intro F
+        constructor
+        · apply Exists.intro l
+          constructor
+          · right
+            exact a1_left_left
+          · exact a1_left_right
+        · exact a1_right
   all_goals
     sorry
