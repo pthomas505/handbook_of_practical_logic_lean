@@ -2450,3 +2450,67 @@ example
   all_goals
     unfold is_nnf at h1
     contradiction
+
+
+example
+  (V : ValuationAsTotalFunction)
+  (F : Formula_)
+  (h1 : is_nnf F)
+  (h2 : eval V (dnf_list_of_list_to_formula (pure_dnf F)) = true) :
+  eval V F = true :=
+  by
+  induction F
+  case and_ phi psi phi_ih psi_ih =>
+    unfold dnf_list_of_list_to_formula at phi_ih
+    unfold dnf_list_of_list_to_formula at psi_ih
+
+    unfold is_nnf at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
+    specialize phi_ih h1_left
+    specialize psi_ih h1_right
+
+    simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true] at phi_ih
+    simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true] at psi_ih
+
+    simp only [List.mem_map] at phi_ih
+    simp only [List.mem_map] at psi_ih
+
+    unfold pure_dnf at h2
+    unfold dnf_list_of_list_to_formula at h2
+    simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true] at h2
+    simp only [List.mem_map] at h2
+    obtain ⟨F, ⟨a, h2_left_left, h2_left_right⟩, h2_right⟩ := h2
+    simp only [mem_all_pairs_alt_alt_iff_eq_union] at h2_left_left
+    obtain ⟨xs, ys, xs_mem, ys_mem, eq⟩ := h2_left_left
+    rewrite [← eq] at h2_left_right
+    rewrite [← h2_left_right] at h2_right
+    simp only [← eval_all_eq_true_iff_eval_list_conj_eq_true] at h2_right
+
+    unfold eval
+    simp only [bool_iff_prop_and]
+    constructor
+    · apply phi_ih
+      apply Exists.intro (list_conj xs)
+      constructor
+      · apply Exists.intro xs
+        exact ⟨xs_mem, rfl⟩
+      · apply eval_all_eq_true_imp_eval_list_conj_eq_true
+        intro P a1
+        apply h2_right
+        simp only [List.mem_union_iff]
+        left
+        exact a1
+    · apply psi_ih
+      apply Exists.intro (list_conj ys)
+      constructor
+      · apply Exists.intro ys
+        exact ⟨ys_mem, rfl⟩
+      · apply eval_all_eq_true_imp_eval_list_conj_eq_true
+        intro Q a1
+        apply h2_right
+        simp only [List.mem_union_iff]
+        right
+        exact a1
+  all_goals
+    sorry
