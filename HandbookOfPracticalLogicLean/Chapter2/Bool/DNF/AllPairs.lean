@@ -229,3 +229,84 @@ lemma all_pairs_alt_nil_right
     unfold distrib_one
     simp only [List.foldr_nil, List.nil_append]
     exact ih
+
+
+lemma mem_all_pairs_alt_alt_imp_eq_union
+  {α : Type}
+  [DecidableEq α]
+  (l1 l2 : List (List α))
+  (l : List α)
+  (h1 : l ∈ all_pairs_alt_alt List.union l1 l2) :
+  ∃ (xs : List α) (ys : List α), xs ∈ l1 ∧ ys ∈ l2 ∧ xs ∪ ys = l :=
+  by
+  induction l1
+  case nil =>
+    unfold all_pairs_alt_alt at h1
+    simp only [List.not_mem_nil] at h1
+  case cons hd tl ih =>
+    unfold all_pairs_alt_alt at h1
+    simp only [List.mem_append, List.mem_map] at h1
+    cases h1
+    case inl h1 =>
+      obtain ⟨a, h1⟩ := h1
+      apply Exists.intro hd
+      apply Exists.intro a
+      constructor
+      · simp only [List.mem_cons]
+        left
+        exact trivial
+      · exact h1
+    case inr h1 =>
+      specialize ih h1
+      obtain ⟨xs, ys, ih_left, ih_right⟩ := ih
+      apply Exists.intro xs
+      apply Exists.intro ys
+      constructor
+      · simp only [List.mem_cons]
+        right
+        exact ih_left
+      · exact ih_right
+
+
+lemma eq_union_imp_mem_all_pairs_alt_alt
+  {α : Type}
+  [DecidableEq α]
+  (l1 l2 : List (List α))
+  (l : List α)
+  (h1 : ∃ (xs : List α) (ys : List α), xs ∈ l1 ∧ ys ∈ l2 ∧ xs ∪ ys = l) :
+  l ∈ all_pairs_alt_alt List.union l1 l2 :=
+  by
+  obtain ⟨xs, ys, xs_mem, ys_mem, eq⟩ := h1
+  induction l1
+  case nil =>
+    simp only [List.not_mem_nil] at xs_mem
+  case cons l1_hd l1_tl l1_ih =>
+    simp only [List.mem_cons] at xs_mem
+
+    unfold all_pairs_alt_alt
+    simp only [List.mem_append, List.mem_map]
+    cases xs_mem
+    case inl xs_mem =>
+      left
+      apply Exists.intro ys
+      constructor
+      · exact ys_mem
+      · rewrite [← xs_mem]
+        exact eq
+    case inr xs_mem =>
+      right
+      apply l1_ih
+      exact xs_mem
+
+
+lemma mem_all_pairs_alt_alt_iff_eq_union
+  {α : Type}
+  [DecidableEq α]
+  (l1 l2 : List (List α))
+  (l : List α) :
+  l ∈ all_pairs_alt_alt List.union l1 l2 ↔
+    ∃ (xs : List α) (ys : List α), xs ∈ l1 ∧ ys ∈ l2 ∧ xs ∪ ys = l :=
+  by
+  constructor
+  · apply mem_all_pairs_alt_alt_imp_eq_union
+  · apply eq_union_imp_mem_all_pairs_alt_alt
