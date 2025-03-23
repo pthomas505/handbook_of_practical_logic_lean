@@ -1,4 +1,5 @@
 import MathlibExtraLean.FunctionUpdateFromListOfPairsITE
+import MathlibExtraLean.List
 
 import HandbookOfPracticalLogicLean.Chapter2.Bool.DNF.IsDNF
 import HandbookOfPracticalLogicLean.Chapter2.Bool.DNF.ListConj
@@ -143,23 +144,6 @@ def all_pairs_alt
   match l1 with
   | [] => []
   | hd :: tl => distrib_one f hd l2 ++ all_pairs_alt f tl l2
-
-
-lemma List.foldr_cons_append_init
-  {α β : Type}
-  (f : α → β)
-  (xs_left xs_right : List β)
-  (ys : List α) :
-  List.foldr (fun (next : α) (prev : List β) => (f next) :: prev) (xs_left ++ xs_right) ys =
-    (List.foldr (fun (next : α) (prev : List β) => (f next) :: prev) xs_left ys) ++ xs_right :=
-  by
-  induction ys
-  case nil =>
-    simp only [List.foldr_nil]
-  case cons hd tl ih =>
-    simp only [List.foldr_cons, List.cons_append]
-    rewrite [ih]
-    rfl
 
 
 example

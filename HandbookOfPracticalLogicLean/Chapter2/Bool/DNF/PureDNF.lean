@@ -38,36 +38,6 @@ def dnf_list_of_list_to_formula
 #eval (dnf_list_of_list_to_formula [[atom_ "P", atom_ "Q"], [not_ (atom_ "P"), atom_ "R"]]).toString
 
 
-example
-  {α β : Type}
-  [DecidableEq α]
-  [DecidableEq β]
-  (f : α → β)
-  (l1 l2 : List α)
-  (h1 : Function.Injective f) :
-  List.map f (l1 ∪ l2) = (List.map f l1) ∪ (List.map f l2) :=
-  by
-  induction l1
-  case nil =>
-    simp only [List.map_nil]
-    simp only [List.nil_union]
-  case cons hd tl ih =>
-    simp only [List.cons_union, List.map_cons]
-    rewrite [← ih]
-    unfold List.insert
-
-    have s1 : List.elem (f hd) (List.map f (tl ∪ l2)) = true ↔ List.elem hd (tl ∪ l2) = true :=
-    by
-      simp only [List.elem_eq_mem, decide_eq_true_eq]
-      apply List.mem_map_of_injective
-      exact h1
-
-    simp only [s1]
-    split_ifs
-    case pos c1 =>
-      rfl
-    case neg c1 =>
-      simp only [List.map_cons]
 
 
 
