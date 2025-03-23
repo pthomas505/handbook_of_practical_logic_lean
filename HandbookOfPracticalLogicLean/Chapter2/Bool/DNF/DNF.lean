@@ -130,17 +130,6 @@ lemma eval_to_dnf_eq_true_imp_eval_eq_true
   exact a1
 
 
-lemma aux_1
-  {α β : Type}
-  (f : α → β)
-  (xs ys : List α)
-  (h1 : xs.length = ys.length)
-  (h1 : ∀ (n : ℕ), (h : (n < xs.length ∧ n < ys.length)) → f (xs[n]) = f (ys[n])) :
-  List.map f xs = List.map f ys :=
-  by
-  sorry
-
-
 lemma aux_2
   {α β γ : Type}
   (f : α → γ)
