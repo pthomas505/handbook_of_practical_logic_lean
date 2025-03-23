@@ -1,9 +1,7 @@
 import MathlibExtraLean.FunctionUpdateFromListOfPairsITE
 
-import HandbookOfPracticalLogicLean.Chapter2.Bool.DNF.IsDNF
-import HandbookOfPracticalLogicLean.Chapter2.Bool.DNF.ListConj
-import HandbookOfPracticalLogicLean.Chapter2.Bool.DNF.MkLits
-import HandbookOfPracticalLogicLean.Chapter2.Bool.DNF.ListDisj
+import HandbookOfPracticalLogicLean.Chapter2.Bool.Semantics
+
 
 import Mathlib.Tactic
 

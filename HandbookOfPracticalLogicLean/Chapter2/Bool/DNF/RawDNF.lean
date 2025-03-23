@@ -1,13 +1,4 @@
-import MathlibExtraLean.FunctionUpdateFromListOfPairsITE
-
-import HandbookOfPracticalLogicLean.Chapter2.Bool.DNF.IsDNF
-import HandbookOfPracticalLogicLean.Chapter2.Bool.DNF.ListConj
-import HandbookOfPracticalLogicLean.Chapter2.Bool.DNF.MkLits
-import HandbookOfPracticalLogicLean.Chapter2.Bool.DNF.ListDisj
-import HandbookOfPracticalLogicLean.Chapter2.Bool.DNF.GenAllValuations
-import HandbookOfPracticalLogicLean.Chapter2.Bool.DNF.ToDNF
-
-import Mathlib.Tactic
+import HandbookOfPracticalLogicLean.Chapter2.Bool.Formula
 
 
 set_option autoImplicit false
