@@ -1,6 +1,6 @@
 import MathlibExtraLean.FunctionUpdateFromListOfPairsITE
 
-import HandbookOfPracticalLogicLean.Chapter2.Bool.NNF
+import HandbookOfPracticalLogicLean.Chapter2.Bool.DNF.IsDNF
 
 import Mathlib.Tactic
 
