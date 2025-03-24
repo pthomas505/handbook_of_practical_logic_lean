@@ -29,11 +29,7 @@ def dnf_list_of_list_to_formula
 #eval (dnf_list_of_list_to_formula [[atom_ "P", atom_ "Q"], [not_ (atom_ "P"), atom_ "R"]]).toString
 
 
-
-
-
-
-lemma aux_5
+lemma mem_list_mem_pure_dnf_of_nnf_imp_is_constant_or_literal
   (F : Formula_)
   (l : List Formula_)
   (P : Formula_)
@@ -201,12 +197,12 @@ example
 
     cases a2
     case inl a2 =>
-      apply aux_5 phi xs
+      apply mem_list_mem_pure_dnf_of_nnf_imp_is_constant_or_literal phi xs
       · exact h1_left
       · exact xs_mem
       · exact a2
     case inr a2 =>
-      apply aux_5 psi ys
+      apply mem_list_mem_pure_dnf_of_nnf_imp_is_constant_or_literal psi ys
       · exact h1_right
       · exact ys_mem
       · exact a2
@@ -226,12 +222,12 @@ example
 
     cases a1_left
     case inl a1_left =>
-      apply aux_5 phi l
+      apply mem_list_mem_pure_dnf_of_nnf_imp_is_constant_or_literal phi l
       · exact h1_left
       · exact a1_left
       · exact a2
     case inr a1_left =>
-      apply aux_5 psi l
+      apply mem_list_mem_pure_dnf_of_nnf_imp_is_constant_or_literal psi l
       · exact h1_right
       · exact a1_left
       · exact a2
