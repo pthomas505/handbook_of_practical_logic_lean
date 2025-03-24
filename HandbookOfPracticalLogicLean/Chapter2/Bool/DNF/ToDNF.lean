@@ -72,7 +72,7 @@ lemma eval_eq_true_imp_eval_to_dnf_eq_true
       · simp only [Bool.decide_eq_true]
         exact h2
     · rfl
-  · apply eval_mk_lits_eq_true
+  · apply eval_of_mk_lits_with_same_valuation_eq_true
 
 
 lemma eval_to_dnf_eq_true_imp_eval_eq_true
