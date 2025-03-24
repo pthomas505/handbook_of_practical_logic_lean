@@ -27,8 +27,9 @@ lemma mk_lits_is_conj_ind
   is_conj_ind (mk_lits atoms V) :=
   by
   unfold mk_lits
-  apply list_conj_of_is_literal_ind_is_conj_ind
+  apply list_conj_of_is_constant_ind_or_is_literal_ind_is_conj_ind
   intro F a1
+  right
   simp only [List.mem_map] at a1
   obtain ⟨X, ⟨a1_left, a1_right⟩⟩ := a1
   split_ifs at a1_right
