@@ -13,7 +13,7 @@ open Formula_
 
 def pure_dnf :
   Formula_ → List (List Formula_)
-  | and_ p q => all_pairs_alt_alt List.union (pure_dnf p) (pure_dnf q)
+  | and_ p q => all_pairs_v4 List.union (pure_dnf p) (pure_dnf q)
   | or_ p q => (pure_dnf p) ∪ (pure_dnf q)
   | F => [[F]]
 
@@ -94,7 +94,7 @@ lemma aux_5
 
     unfold pure_dnf at h2
 
-    obtain s1 := mem_all_pairs_alt_alt_imp_eq_union (pure_dnf phi) (pure_dnf psi) l h2
+    obtain s1 := mem_all_pairs_v4_union_imp_eq_union (pure_dnf phi) (pure_dnf psi) l h2
     obtain ⟨xs, ys, xs_mem, ys_mem, eq⟩ := s1
     rewrite [← eq] at h3
 
@@ -194,7 +194,7 @@ example
     apply list_conj_of_is_constant_ind_or_is_literal_ind_is_conj_ind
     intro P a2
 
-    obtain s1 := mem_all_pairs_alt_alt_imp_eq_union (pure_dnf phi) (pure_dnf psi) l a1_left
+    obtain s1 := mem_all_pairs_v4_union_imp_eq_union (pure_dnf phi) (pure_dnf psi) l a1_left
     obtain ⟨xs, ys, xs_mem, ys_mem, eq⟩ := s1
     rewrite [← eq] at a2
     simp only [List.mem_union_iff] at a2
@@ -284,7 +284,7 @@ example
     rewrite [← psi_ih]
     simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
     simp only [List.mem_map]
-    simp only [mem_all_pairs_alt_alt_iff_eq_union]
+    simp only [mem_all_pairs_v4_union_iff_eq_union]
     constructor
     · intro a1
       obtain ⟨F, ⟨P, ⟨xs, ys, ⟨xs_mem, ys_mem, eq⟩⟩, a1_left⟩, a1_right⟩ := a1
