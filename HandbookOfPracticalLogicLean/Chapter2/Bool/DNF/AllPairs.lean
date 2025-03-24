@@ -72,6 +72,9 @@ def all_pairs_v1
   | [] => []
 
 
+-------------------------------------------------------------------------------
+
+
 def all_pairs_v2
   {α : Type}
   (f : List α → List α → List α)
@@ -119,32 +122,7 @@ example
 -- a * c + a * d + b * c + b * d
 
 
-lemma all_pairs_v2_nil_right
-  {α : Type}
-  (f : List α → List α → List α)
-  (l : List (List α)) :
-  all_pairs_v2 f l [] = [] :=
-  by
-  induction l
-  case nil =>
-    unfold all_pairs_v2
-    rfl
-  case cons hd tl ih =>
-    unfold all_pairs_v2
-    simp only [List.foldr_nil]
-    exact ih
-
-
-lemma all_pairs_v2_singleton_left_cons_right
-  {α : Type}
-  (f : List α → List α → List α)
-  (xs : List α)
-  (ys : List α)
-  (yss : List (List α)) :
-  all_pairs_v2 f [xs] (ys :: yss) = all_pairs_v2 f [xs] [ys] ++ all_pairs_v2 f [xs] yss :=
-  by
-  simp only [all_pairs_v2]
-  simp only [List.foldr_cons, List.foldr_nil, List.singleton_append]
+-------------------------------------------------------------------------------
 
 
 def distrib_one
@@ -169,23 +147,6 @@ def all_pairs_v3
   | hd :: tl => distrib_one f hd l2 ++ all_pairs_v3 f tl l2
 
 
-lemma all_pairs_v3_nil_right
-  {α : Type}
-  (f : List α → List α → List α)
-  (l : List (List α)) :
-  all_pairs_v3 f l [] = [] :=
-  by
-  induction l
-  case nil =>
-    unfold all_pairs_v3
-    rfl
-  case cons hd tl ih =>
-    unfold all_pairs_v3
-    unfold distrib_one
-    simp only [List.foldr_nil, List.nil_append]
-    exact ih
-
-
 example
   {α : Type}
   (f : List α → List α → List α)
@@ -206,6 +167,9 @@ example
     obtain s1 := List.foldr_cons_append_init (f l1_hd) [] (all_pairs_v3 f l1_tl l2) l2
     simp only [List.nil_append] at s1
     exact s1
+
+
+-------------------------------------------------------------------------------
 
 
 def all_pairs_v4
@@ -238,7 +202,41 @@ example
     rfl
 
 
-lemma mem_all_pairs_v4_imp_eq_union
+-------------------------------------------------------------------------------
+
+
+lemma all_pairs_v4_nil_right
+  {α : Type}
+  (f : List α → List α → List α)
+  (l : List (List α)) :
+  all_pairs_v4 f l [] = [] :=
+  by
+  induction l
+  case nil =>
+    unfold all_pairs_v4
+    rfl
+  case cons hd tl ih =>
+    unfold all_pairs_v4
+    simp only [List.map_nil, List.nil_append]
+    exact ih
+
+
+lemma all_pairs_v4_singleton_left_cons_right
+  {α : Type}
+  (f : List α → List α → List α)
+  (xs : List α)
+  (ys : List α)
+  (yss : List (List α)) :
+  all_pairs_v4 f [xs] (ys :: yss) = all_pairs_v4 f [xs] [ys] ++ all_pairs_v4 f [xs] yss :=
+  by
+  simp only [all_pairs_v4]
+  simp only [List.map_cons, List.append_nil, List.map_nil, List.singleton_append]
+
+
+-------------------------------------------------------------------------------
+
+
+lemma mem_all_pairs_v4_union_imp_eq_union
   {α : Type}
   [DecidableEq α]
   (l1 l2 : List (List α))
@@ -275,7 +273,7 @@ lemma mem_all_pairs_v4_imp_eq_union
       · exact ih_right
 
 
-lemma eq_union_imp_mem_all_pairs_v4
+lemma eq_union_imp_mem_all_pairs_v4_union
   {α : Type}
   [DecidableEq α]
   (l1 l2 : List (List α))
@@ -306,7 +304,7 @@ lemma eq_union_imp_mem_all_pairs_v4
       exact xs_mem
 
 
-lemma mem_all_pairs_v4_iff_eq_union
+lemma mem_all_pairs_v4_union_iff_eq_union
   {α : Type}
   [DecidableEq α]
   (l1 l2 : List (List α))
@@ -315,5 +313,5 @@ lemma mem_all_pairs_v4_iff_eq_union
     ∃ (xs : List α) (ys : List α), xs ∈ l1 ∧ ys ∈ l2 ∧ xs ∪ ys = l :=
   by
   constructor
-  · apply mem_all_pairs_v4_imp_eq_union
-  · apply eq_union_imp_mem_all_pairs_v4
+  · apply mem_all_pairs_v4_union_imp_eq_union
+  · apply eq_union_imp_mem_all_pairs_v4_union
