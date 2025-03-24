@@ -41,6 +41,9 @@ lemma mk_lits_is_conj_ind
     apply is_literal_ind.rule_2
 
 
+-------------------------------------------------------------------------------
+
+
 lemma eval_mk_lits_eq_true_imp_valuations_eq_on_atom_list
   (V_1 V_2 : ValuationAsTotalFunction)
   (atom_list : List String)
@@ -196,6 +199,9 @@ lemma eval_mk_lits_eq_true_iff_valuations_eq_on_atom_list
   · apply valuations_eq_on_atom_list_imp_eval_mk_lits_eq_true
 
 
+-------------------------------------------------------------------------------
+
+
 theorem eval_mk_lits_eq_true
   (V : ValuationAsTotalFunction)
   (atom_list : List String) :
@@ -204,6 +210,9 @@ theorem eval_mk_lits_eq_true
   apply valuations_eq_on_atom_list_imp_eval_mk_lits_eq_true
   intro X a1
   rfl
+
+
+-------------------------------------------------------------------------------
 
 
 lemma eq_on_mem_imp_mk_lits_eq
@@ -221,7 +230,7 @@ lemma eq_on_mem_imp_mk_lits_eq
   rfl
 
 
-example
+lemma mk_lits_eq_imp_eq_on_mem
   (V_1 V_2 : ValuationAsTotalFunction)
   (atom_list : List String)
   (h1 : mk_lits atom_list V_1 = mk_lits atom_list V_2) :
