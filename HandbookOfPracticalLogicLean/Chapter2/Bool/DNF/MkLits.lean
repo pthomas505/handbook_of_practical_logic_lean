@@ -292,3 +292,14 @@ lemma mk_lits_eq_imp_eq_on_mem
         apply ih
         · exact h1_right
         · exact c1
+
+
+lemma eq_on_mem_iff_mk_lits_eq
+  (V_1 V_2 : ValuationAsTotalFunction)
+  (atom_list : List String) :
+  (∀ (X : String), X ∈ atom_list → V_1 X = V_2 X) ↔
+    mk_lits atom_list V_1 = mk_lits atom_list V_2 :=
+  by
+  constructor
+  · apply eq_on_mem_imp_mk_lits_eq
+  · apply mk_lits_eq_imp_eq_on_mem
