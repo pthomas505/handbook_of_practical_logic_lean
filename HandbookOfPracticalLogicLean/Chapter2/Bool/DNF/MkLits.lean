@@ -202,7 +202,7 @@ lemma eval_mk_lits_eq_true_iff_valuations_eq_on_atom_list
 -------------------------------------------------------------------------------
 
 
-theorem eval_mk_lits_eq_true
+theorem eval_of_mk_lits_with_same_valuation_eq_true
   (V : ValuationAsTotalFunction)
   (atom_list : List String) :
   eval V (mk_lits atom_list V) = true :=
