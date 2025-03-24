@@ -51,6 +51,9 @@ lemma list_disj_of_is_conj_ind_is_dnf_ind
         exact a1
 
 
+-------------------------------------------------------------------------------
+
+
 lemma eval_exists_eq_true_imp_eval_list_disj_eq_true
   (V : ValuationAsTotalFunction)
   (l : List Formula_)
