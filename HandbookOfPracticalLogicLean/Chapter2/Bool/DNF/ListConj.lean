@@ -17,39 +17,6 @@ def list_conj :
   | hd :: tl => and_ hd (list_conj tl)
 
 
-lemma list_conj_of_is_literal_ind_is_conj_ind
-  (l : List Formula_)
-  (h1 : ∀ (F : Formula_), F ∈ l → is_literal_ind F) :
-  is_conj_ind (list_conj l) :=
-  by
-  induction l
-  case nil =>
-    unfold list_conj
-    apply is_conj_ind.rule_3
-    apply is_constant_ind.rule_2
-  case cons hd tl ih =>
-    cases tl
-    case nil =>
-      unfold list_conj
-      apply is_conj_ind.rule_4
-      apply h1
-      simp only [List.mem_singleton]
-    case cons tl_hd tl_tl =>
-      unfold list_conj
-      apply is_conj_ind.rule_2
-      · apply h1
-        simp only [List.mem_cons]
-        left
-        exact trivial
-      · apply ih
-        intro F a1
-        simp only [List.mem_cons] at a1
-        apply h1
-        simp only [List.mem_cons]
-        right
-        exact a1
-
-
 lemma list_conj_of_is_constant_ind_or_is_literal_ind_is_conj_ind
   (l : List Formula_)
   (h1 : ∀ (F : Formula_), F ∈ l → (is_constant_ind F ∨ is_literal_ind F)) :
@@ -107,6 +74,9 @@ lemma list_conj_of_is_constant_ind_or_is_literal_ind_is_conj_ind
           apply h1
           right
           exact a1
+
+
+-------------------------------------------------------------------------------
 
 
 lemma eval_all_eq_true_imp_eval_list_conj_eq_true
@@ -186,6 +156,9 @@ lemma eval_all_eq_true_iff_eval_list_conj_eq_true
   constructor
   · apply eval_all_eq_true_imp_eval_list_conj_eq_true
   · apply eval_list_conj_eq_true_imp_eval_all_eq_true
+
+
+-------------------------------------------------------------------------------
 
 
 lemma eval_list_conj_union
