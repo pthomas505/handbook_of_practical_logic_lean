@@ -32,7 +32,7 @@ def itlist
   | h :: t => f h (itlist f t b)
 
 
-example
+lemma itlist_eq_foldr
   {α β : Type}
   (f : α → β → β)
   (l : List α)
@@ -60,6 +60,18 @@ let rec allpairs f l1 l2 =
   | [] -> [];;
 -/
 
+def all_pairs_v1
+  {α : Type}
+  (f : List α → List α → List α)
+  (l1 l2 : List (List α)) :
+  List (List α) :=
+  match l1 with
+  | h1 :: t1 =>
+    itlist (fun (x : List α) (a : List (List α)) => (f h1 x) :: a)
+      l2 (all_pairs_v1 f t1 l2)
+  | [] => []
+
+
 def all_pairs_v2
   {α : Type}
   (f : List α → List α → List α)
@@ -72,6 +84,25 @@ def all_pairs_v2
       (fun (next : List α) (prev : List (List α)) => (f hd next) :: prev)
         (all_pairs_v2 f tl l2)
           l2
+
+
+example
+  {α : Type}
+  (f : List α → List α → List α)
+  (l1 l2 : List (List α)) :
+  all_pairs_v1 f l1 l2 = all_pairs_v2 f l1 l2 :=
+  by
+  induction l1
+  case nil =>
+    unfold all_pairs_v1
+    unfold all_pairs_v2
+    rfl
+  case cons hd tl ih =>
+    unfold all_pairs_v1
+    unfold all_pairs_v2
+    rewrite [itlist_eq_foldr]
+    rewrite [ih]
+    rfl
 
 
 #eval all_pairs_v2 List.append [[1]] []
