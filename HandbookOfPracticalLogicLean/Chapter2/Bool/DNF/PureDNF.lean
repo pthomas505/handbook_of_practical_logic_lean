@@ -386,3 +386,5 @@ def has_complementary
   ¬ (pos ∩ (List.map negate_literal neg)) = []
 
 #eval has_complementary [atom_ "P", atom_ "Q", not_ (atom_ "P")]
+
+#eval (List.filter (fun (l : List Formula_) => b_not (has_complementary l)) (pure_dnf (Formula_| ((P \/ (Q /\ R)) /\ (~P \/ ~R))))).toString
