@@ -374,3 +374,15 @@ example
   all_goals
     unfold is_nnf at h1
     contradiction
+
+
+-------------------------------------------------------------------------------
+
+
+def has_complementary
+  (l : List Formula_) :
+  Bool :=
+  let (pos, neg) := List.partition is_positive_literal l
+  ¬ (pos ∩ (List.map negate_literal neg)) = []
+
+#eval has_complementary [atom_ "P", atom_ "Q", not_ (atom_ "P")]
