@@ -89,6 +89,55 @@ def negate_literal :
   | phi => phi
 
 
+lemma negate_literal_not_eq_self
+  (F : Formula_)
+  (h1 : is_literal F) :
+  ¬ negate_literal F = F :=
+  by
+  cases F
+  case atom_ X =>
+    simp only [negate_literal]
+    intro contra
+    contradiction
+  case not_ phi =>
+    cases phi
+    case atom_ X =>
+      simp only [negate_literal]
+      intro contra
+      contradiction
+    all_goals
+      simp only [is_literal] at h1
+  all_goals
+    simp only [is_literal] at h1
+
+
+lemma eval_negate_literal
+  (V : ValuationAsTotalFunction)
+  (F : Formula_)
+  (h1 : F.is_literal) :
+  eval V (negate_literal F) = b_not (eval V F) :=
+  by
+  cases F
+  case atom_ X =>
+    simp only [negate_literal]
+    simp only [eval]
+  case not_ phi =>
+    cases phi
+    case atom_ X =>
+      simp only [negate_literal]
+      simp only [eval]
+
+      cases c1 : V X
+      case false =>
+        simp only [b_not]
+      case true =>
+        simp only [b_not]
+    all_goals
+      simp only [is_literal] at h1
+  all_goals
+    simp only [is_literal] at h1
+
+
 /--
   `Formula_.is_nnf F` := True if and only if the formula `F` is in negation normal form.
 -/

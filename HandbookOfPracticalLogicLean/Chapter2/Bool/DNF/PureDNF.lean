@@ -378,13 +378,143 @@ example
 
 -------------------------------------------------------------------------------
 
+/-
+def has_complementary :
+  List Formula_ → Prop
+  | [] => False
+  | (P :: tl) =>
+      (P.is_literal ∧ ∃ (Q : Formula_), Q ∈ tl ∧ Q.is_literal ∧ negate_literal Q = P) ∨
+      has_complementary tl
+-/
+
 
 def has_complementary
   (l : List Formula_) :
-  Bool :=
-  let (pos, neg) := List.partition is_positive_literal l
-  ¬ (pos ∩ (List.map negate_literal neg)) = []
+  Prop :=
+  ∃ (P : Formula_), P ∈ l ∧ P.is_literal ∧ ∃ (Q : Formula_), Q ∈ l ∧ Q.is_literal ∧ negate_literal Q = P
+
+instance
+  (l : List Formula_) :
+  Decidable (has_complementary l) :=
+  by
+  induction l
+  all_goals
+    unfold has_complementary
+    infer_instance
+
+
+#eval has_complementary []
+
+#eval has_complementary [atom_ "P"]
+#eval has_complementary [not_ (atom_ "P")]
+
+#eval has_complementary [atom_ "P", not_ (atom_ "P")]
+#eval has_complementary [not_ (atom_ "P"), atom_ "P"]
 
 #eval has_complementary [atom_ "P", atom_ "Q", not_ (atom_ "P")]
+#eval has_complementary [not_ (atom_ "P"), atom_ "Q", atom_ "P"]
 
-#eval (List.filter (fun (l : List Formula_) => b_not (has_complementary l)) (pure_dnf (Formula_| ((P \/ (Q /\ R)) /\ (~P \/ ~R))))).toString
+#eval has_complementary [atom_ "P", atom_ "Q", not_ (atom_ "Q")]
+#eval has_complementary [atom_ "P", not_ (atom_ "Q"), atom_ "Q"]
+
+#eval has_complementary [atom_ "P", not_ (atom_ "P"), atom_ "Q"]
+#eval has_complementary [not_ (atom_ "P"), atom_ "P", atom_ "Q"]
+
+
+#eval (List.filter (fun (l : List Formula_) => ¬ (has_complementary l)) (pure_dnf (Formula_| ((P \/ (Q /\ R)) /\ (~P \/ ~R))))).toString
+
+
+example
+  (V : ValuationAsTotalFunction)
+  (l : List Formula_)
+  (h1 : has_complementary l) :
+  eval V (list_conj l) = false :=
+  by
+  induction l
+  case nil =>
+    unfold has_complementary at h1
+    contradiction
+  case cons hd tl ih =>
+    cases tl
+    case nil =>
+      unfold list_conj at ih
+
+      unfold has_complementary at h1
+      obtain ⟨P, P_mem, P_lit, ⟨Q, Q_mem, Q_lit, eq⟩⟩ := h1
+
+      simp only [List.mem_singleton] at P_mem
+      simp only [List.mem_singleton] at Q_mem
+
+      rewrite [P_mem] at eq
+      rewrite [Q_mem] at eq
+
+      rewrite [P_mem] at P_lit
+
+      obtain s1 := negate_literal_not_eq_self hd P_lit
+      contradiction
+    case cons tl_hd tl_tl =>
+      unfold has_complementary at ih
+
+      unfold has_complementary at h1
+      obtain ⟨P, P_mem, P_lit, ⟨Q, Q_mem, Q_lit, eq⟩⟩ := h1
+
+      simp only [List.mem_cons] at P_mem
+      simp only [List.mem_cons] at Q_mem
+
+      unfold list_conj
+      unfold eval
+      apply Bool.bool_eq_false
+      simp only [bool_iff_prop_and]
+      simp only [not_and]
+
+      cases P_mem
+      case inl P_mem =>
+        cases Q_mem
+        case inl Q_mem =>
+          rewrite [P_mem] at eq
+          rewrite [Q_mem] at eq
+
+          rewrite [P_mem] at P_lit
+
+          obtain s1 := negate_literal_not_eq_self hd P_lit
+          contradiction
+        case inr Q_mem =>
+          simp only [← eval_all_eq_true_iff_eval_list_conj_eq_true]
+          intro a1
+
+          rewrite [← P_mem] at a1
+          rewrite [← eq] at a1
+          rewrite [eval_negate_literal V Q Q_lit] at a1
+          simp only [bool_iff_prop_not] at a1
+
+          intro contra
+          apply a1
+          apply contra
+          simp only [List.mem_cons]
+          exact Q_mem
+      case inr P_mem =>
+        cases Q_mem
+        case inl Q_mem =>
+          simp only [← eval_all_eq_true_iff_eval_list_conj_eq_true]
+          intro a1
+
+          rewrite [← Q_mem] at a1
+          have s1 : ¬ eval V P = true :=
+          by
+            rewrite [← eq]
+            rewrite [eval_negate_literal V Q Q_lit]
+            simp only [bool_iff_prop_not]
+            intro contra
+            contradiction
+
+          intro contra
+          apply s1
+          apply contra
+          simp only [List.mem_cons]
+          exact P_mem
+        case inr Q_mem =>
+          intro a1
+          simp only [Bool.bool_iff_false]
+          apply ih
+          simp only [List.mem_cons]
+          exact ⟨P, P_mem, P_lit, Q, Q_mem, Q_lit, eq⟩
