@@ -29,6 +29,17 @@ def dnf_list_of_list_to_formula
 #eval (dnf_list_of_list_to_formula [[atom_ "P", atom_ "Q"], [not_ (atom_ "P"), atom_ "R"]]).toString
 
 
+lemma dnf_list_of_list_to_formula_singleton
+  (F : Formula_) :
+  dnf_list_of_list_to_formula [[F]] = F :=
+  by
+  unfold dnf_list_of_list_to_formula
+  simp only [List.map_cons, List.map_nil]
+  unfold list_conj
+  unfold list_disj
+  rfl
+
+
 lemma mem_list_mem_pure_dnf_of_nnf_imp_is_constant_or_literal
   (F : Formula_)
   (l : List Formula_)
@@ -137,39 +148,27 @@ example
   cases F
   case false_ =>
     unfold pure_dnf
-    unfold dnf_list_of_list_to_formula
-    simp only [List.map_cons, List.map_nil]
-    unfold list_conj
-    unfold list_disj
+    simp only [dnf_list_of_list_to_formula_singleton]
     apply is_dnf_ind.rule_2
     apply is_conj_ind.rule_3
     apply is_constant_ind.rule_1
   case true_ =>
     unfold pure_dnf
-    unfold dnf_list_of_list_to_formula
-    simp only [List.map_cons, List.map_nil]
-    unfold list_conj
-    unfold list_disj
+    simp only [dnf_list_of_list_to_formula_singleton]
     apply is_dnf_ind.rule_2
     apply is_conj_ind.rule_3
     apply is_constant_ind.rule_2
   case atom_ X =>
     unfold pure_dnf
-    unfold dnf_list_of_list_to_formula
-    simp only [List.map_cons, List.map_nil]
-    unfold list_conj
-    unfold list_disj
+    simp only [dnf_list_of_list_to_formula_singleton]
     apply is_dnf_ind.rule_2
     apply is_conj_ind.rule_4
     apply is_literal_ind.rule_1
   case not_ phi =>
+    unfold pure_dnf
+    simp only [dnf_list_of_list_to_formula_singleton]
     cases phi
     case atom_ X =>
-      unfold pure_dnf
-      unfold dnf_list_of_list_to_formula
-      simp only [List.map_cons, List.map_nil]
-      unfold list_conj
-      unfold list_disj
       apply is_dnf_ind.rule_2
       apply is_conj_ind.rule_4
       apply is_literal_ind.rule_2
@@ -238,39 +237,13 @@ example
 
 example
   (V : ValuationAsTotalFunction)
-  (F : Formula_)
-  (h1 : is_nnf F) :
+  (F : Formula_) :
   eval V (dnf_list_of_list_to_formula (pure_dnf F)) = true ↔ eval V F = true :=
   by
   induction F
-  case false_ | true_ | atom_ X =>
-    unfold pure_dnf
-    unfold dnf_list_of_list_to_formula
-    simp only [List.map_cons, List.map_nil]
-    unfold list_conj
-    unfold list_disj
-    rfl
-  case not_ phi ih =>
-    cases phi
-    case atom_ X =>
-      unfold pure_dnf
-      unfold dnf_list_of_list_to_formula
-      simp only [List.map_cons, List.map_nil]
-      unfold list_conj
-      unfold list_disj
-      rfl
-    all_goals
-      unfold is_nnf at h1
-      contradiction
   case and_ phi psi phi_ih psi_ih =>
     unfold dnf_list_of_list_to_formula at phi_ih
     unfold dnf_list_of_list_to_formula at psi_ih
-
-    unfold is_nnf at h1
-    obtain ⟨h1_left, h1_right⟩ := h1
-
-    specialize phi_ih h1_left
-    specialize psi_ih h1_right
 
     unfold pure_dnf
     unfold dnf_list_of_list_to_formula
@@ -316,12 +289,6 @@ example
   case or_ phi psi phi_ih psi_ih =>
     unfold dnf_list_of_list_to_formula at phi_ih
     unfold dnf_list_of_list_to_formula at psi_ih
-
-    unfold is_nnf at h1
-    obtain ⟨h1_left, h1_right⟩ := h1
-
-    specialize phi_ih h1_left
-    specialize psi_ih h1_right
 
     unfold pure_dnf
     unfold dnf_list_of_list_to_formula
@@ -372,8 +339,7 @@ example
           · exact a1_left_right
         · exact a1_right
   all_goals
-    unfold is_nnf at h1
-    contradiction
+    rfl
 
 
 -------------------------------------------------------------------------------
@@ -439,6 +405,17 @@ lemma not_has_complementary_singleton
   · rewrite [← mem_P]
     exact lit_P
   · exact eq
+
+
+lemma filter_not_has_complementary_singleton
+  (F : Formula_) :
+  List.filter (fun (l : List Formula_) => ¬ has_complementary l) [[F]] = [[F]] :=
+  by
+  simp only [List.filter_eq_self, List.mem_singleton]
+  intro l a1
+  rewrite [a1]
+  apply decide_eq_true
+  apply not_has_complementary_singleton
 
 
 lemma has_complementary_imp_eval_list_conj_false
@@ -543,63 +520,12 @@ example
   eval V (dnf_list_of_list_to_formula (List.filter (fun (l : List Formula_) => ¬ (has_complementary l)) (pure_dnf F))) = true ↔ eval V F = true :=
   by
   induction F
-  case false_ =>
+  case false_ | true_ | atom_ X =>
+    rfl
+  case not_ phi ih =>
     unfold pure_dnf
-    unfold dnf_list_of_list_to_formula
-    simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
-    simp only [List.mem_map, List.mem_filter, List.mem_singleton]
-    constructor
-    · intro a1
-      obtain ⟨F, ⟨a, ⟨a1_left_left_left, a1_left_left_right⟩, a1_left_right⟩, a1_right⟩ := a1
-      rewrite [a1_left_left_left] at a1_left_right
-      unfold list_conj at a1_left_right
-      rewrite [← a1_left_right] at a1_right
-      exact a1_right
-    · intro a1
-      apply Exists.intro false_
-      constructor
-      · apply Exists.intro [false_]
-        constructor
-        · constructor
-          · rfl
-          · rfl
-        · unfold list_conj
-          rfl
-      · exact a1
-  case true_ =>
-    unfold pure_dnf
-    unfold dnf_list_of_list_to_formula
-    simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
-    simp only [List.mem_map, List.mem_filter, List.mem_singleton]
-    constructor
-    · intro a1
-      obtain ⟨F, ⟨a, ⟨a1_left_left_left, a1_left_left_right⟩, a1_left_right⟩, a1_right⟩ := a1
-      rewrite [a1_left_left_left] at a1_left_right
-      unfold list_conj at a1_left_right
-      rewrite [← a1_left_right] at a1_right
-      exact a1_right
-    · intro a1
-      apply Exists.intro true_
-      constructor
-      · apply Exists.intro [true_]
-        constructor
-        · constructor
-          · rfl
-          · rfl
-        · unfold list_conj
-          rfl
-      · exact a1
-  case or_ phi psi phi_ih psi_ih =>
-    simp only [eval]
-    simp only [bool_iff_prop_or]
-    rewrite [← phi_ih]
-    rewrite [← psi_ih]
-
-    simp only [pure_dnf]
-    unfold dnf_list_of_list_to_formula
-    simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
-    simp only [List.mem_map, List.mem_filter, List.mem_union_iff]
-    sorry
+    simp only [filter_not_has_complementary_singleton]
+    simp only [dnf_list_of_list_to_formula_singleton]
   case and_ phi psi phi_ih psi_ih =>
     simp only [eval]
     simp only [bool_iff_prop_and]
@@ -612,5 +538,16 @@ example
     simp only [List.mem_map, List.mem_filter]
     simp only [mem_all_pairs_v4_union_iff_eq_union]
     sorry
-  all_goals
+  case or_ phi psi phi_ih psi_ih =>
+    simp only [eval]
+    simp only [bool_iff_prop_or]
+    rewrite [← phi_ih]
+    rewrite [← psi_ih]
+
+    simp only [pure_dnf]
+    unfold dnf_list_of_list_to_formula
+    simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
+    simp only [List.mem_map, List.mem_filter, List.mem_union_iff]
     sorry
+  all_goals
+    rfl
