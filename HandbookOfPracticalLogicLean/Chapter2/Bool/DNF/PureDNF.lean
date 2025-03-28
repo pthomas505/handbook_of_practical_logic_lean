@@ -424,6 +424,23 @@ instance
 #eval (List.filter (fun (l : List Formula_) => ¬ (has_complementary l)) (pure_dnf (Formula_| ((P \/ (Q /\ R)) /\ (~P \/ ~R))))).toString
 
 
+lemma not_has_complementary_singleton
+  (F : Formula_) :
+  ¬ has_complementary [F] :=
+  by
+  unfold has_complementary
+  intro contra
+  obtain ⟨P, mem_P, lit_P, Q, mem_Q, lit_Q, eq⟩ := contra
+  simp only [List.mem_singleton] at mem_P
+  simp only [List.mem_singleton] at mem_Q
+  rewrite [mem_Q] at eq
+  rewrite [mem_P] at eq
+  apply negate_literal_not_eq_self F
+  · rewrite [← mem_P]
+    exact lit_P
+  · exact eq
+
+
 lemma has_complementary_imp_eval_list_conj_false
   (V : ValuationAsTotalFunction)
   (l : List Formula_)
@@ -545,7 +562,30 @@ example
         constructor
         · constructor
           · rfl
-          · sorry
+          · rfl
+        · unfold list_conj
+          rfl
+      · exact a1
+  case true_ =>
+    unfold pure_dnf
+    unfold dnf_list_of_list_to_formula
+    simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
+    simp only [List.mem_map, List.mem_filter, List.mem_singleton]
+    constructor
+    · intro a1
+      obtain ⟨F, ⟨a, ⟨a1_left_left_left, a1_left_left_right⟩, a1_left_right⟩, a1_right⟩ := a1
+      rewrite [a1_left_left_left] at a1_left_right
+      unfold list_conj at a1_left_right
+      rewrite [← a1_left_right] at a1_right
+      exact a1_right
+    · intro a1
+      apply Exists.intro true_
+      constructor
+      · apply Exists.intro [true_]
+        constructor
+        · constructor
+          · rfl
+          · rfl
         · unfold list_conj
           rfl
       · exact a1
