@@ -537,7 +537,26 @@ example
     simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
     simp only [List.mem_map, List.mem_filter]
     simp only [mem_all_pairs_v4_union_iff_eq_union]
-    sorry
+    constructor
+    · intro a1
+      obtain ⟨F, ⟨l, ⟨⟨xs, ys, xs_mem, ys_mem, eq⟩, a1_left_left_right⟩, a1_left_right⟩, a1_right⟩ := a1
+      rewrite [← a1_left_right] at a1_right
+      rewrite [← eq] at a1_right
+      simp only [eval_list_conj_union] at a1_right
+      obtain ⟨a1_right_left, a1_right_right⟩ := a1_right
+      constructor
+      · apply Exists.intro (list_conj xs)
+        constructor
+        · apply Exists.intro xs
+          sorry
+        · exact a1_right_left
+      · apply Exists.intro (list_conj ys)
+        constructor
+        · apply Exists.intro ys
+          sorry
+        · exact a1_right_right
+    · intro a1
+      sorry
   case or_ phi psi phi_ih psi_ih =>
     simp only [eval]
     simp only [bool_iff_prop_or]
