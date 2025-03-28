@@ -424,7 +424,7 @@ instance
 #eval (List.filter (fun (l : List Formula_) => ¬ (has_complementary l)) (pure_dnf (Formula_| ((P \/ (Q /\ R)) /\ (~P \/ ~R))))).toString
 
 
-example
+lemma has_complementary_imp_eval_list_conj_false
   (V : ValuationAsTotalFunction)
   (l : List Formula_)
   (h1 : has_complementary l) :
@@ -518,3 +518,59 @@ example
           apply ih
           simp only [List.mem_cons]
           exact ⟨P, P_mem, P_lit, Q, Q_mem, Q_lit, eq⟩
+
+
+example
+  (V : ValuationAsTotalFunction)
+  (F : Formula_) :
+  eval V (dnf_list_of_list_to_formula (List.filter (fun (l : List Formula_) => ¬ (has_complementary l)) (pure_dnf F))) = true ↔ eval V F = true :=
+  by
+  induction F
+  case false_ =>
+    unfold pure_dnf
+    unfold dnf_list_of_list_to_formula
+    simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
+    simp only [List.mem_map, List.mem_filter, List.mem_singleton]
+    constructor
+    · intro a1
+      obtain ⟨F, ⟨a, ⟨a1_left_left_left, a1_left_left_right⟩, a1_left_right⟩, a1_right⟩ := a1
+      rewrite [a1_left_left_left] at a1_left_right
+      unfold list_conj at a1_left_right
+      rewrite [← a1_left_right] at a1_right
+      exact a1_right
+    · intro a1
+      apply Exists.intro false_
+      constructor
+      · apply Exists.intro [false_]
+        constructor
+        · constructor
+          · rfl
+          · sorry
+        · unfold list_conj
+          rfl
+      · exact a1
+  case or_ phi psi phi_ih psi_ih =>
+    simp only [eval]
+    simp only [bool_iff_prop_or]
+    rewrite [← phi_ih]
+    rewrite [← psi_ih]
+
+    simp only [pure_dnf]
+    unfold dnf_list_of_list_to_formula
+    simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
+    simp only [List.mem_map, List.mem_filter, List.mem_union_iff]
+    sorry
+  case and_ phi psi phi_ih psi_ih =>
+    simp only [eval]
+    simp only [bool_iff_prop_and]
+    rewrite [← phi_ih]
+    rewrite [← psi_ih]
+
+    simp only [pure_dnf]
+    unfold dnf_list_of_list_to_formula
+    simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
+    simp only [List.mem_map, List.mem_filter]
+    simp only [mem_all_pairs_v4_union_iff_eq_union]
+    sorry
+  all_goals
+    sorry
