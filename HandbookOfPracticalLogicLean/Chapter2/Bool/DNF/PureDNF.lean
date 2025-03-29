@@ -235,7 +235,7 @@ example
     contradiction
 
 
-example
+lemma eval_dnf_list_of_list_to_formula_pure_dnf_eq_eval
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V (dnf_list_of_list_to_formula (pure_dnf F)) = true ↔ eval V F = true :=
@@ -539,59 +539,39 @@ lemma has_complementary_imp_eval_list_conj_false
           exact ⟨P, P_mem, P_lit, Q, Q_mem, Q_lit, eq⟩
 
 
+
+
+lemma eval_dnf_list_of_list_to_formula_filter_not_has_complementary
+  (V : ValuationAsTotalFunction)
+  (ll : List (List Formula_)) :
+  eval V (dnf_list_of_list_to_formula (List.filter (fun (l : List Formula_) => ¬ (has_complementary l)) ll)) = true ↔
+    eval V (dnf_list_of_list_to_formula ll) :=
+  by
+  unfold dnf_list_of_list_to_formula
+  simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
+  simp only [List.mem_map, List.mem_filter]
+  constructor
+  · intro a1
+    obtain ⟨F, ⟨l, ⟨s3, s4⟩, s2⟩, s1⟩ := a1
+    exact ⟨F, ⟨l, s3, s2⟩, s1⟩
+  · intro a1
+    obtain ⟨F, ⟨l, s3, s2⟩, s1⟩ := a1
+
+    have s4 : ¬ has_complementary l :=
+    by
+      rewrite [← s2] at s1
+      intro contra
+      rewrite [has_complementary_imp_eval_list_conj_false V l contra] at s1
+      contradiction
+
+    simp only [decide_eq_true_iff]
+    exact ⟨F, ⟨l, ⟨s3, s4⟩, s2⟩, s1⟩
+
+
 example
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V (dnf_list_of_list_to_formula (List.filter (fun (l : List Formula_) => ¬ (has_complementary l)) (pure_dnf F))) = true ↔ eval V F = true :=
   by
-  induction F
-  case false_ | true_ | atom_ X =>
-    rfl
-  case not_ phi ih =>
-    unfold pure_dnf
-    simp only [filter_not_has_complementary_singleton]
-    simp only [dnf_list_of_list_to_formula_singleton]
-  case and_ phi psi phi_ih psi_ih =>
-    simp only [eval]
-    simp only [bool_iff_prop_and]
-    rewrite [← phi_ih]
-    rewrite [← psi_ih]
-
-    simp only [pure_dnf]
-    unfold dnf_list_of_list_to_formula
-    simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
-    simp only [List.mem_map, List.mem_filter]
-    simp only [mem_all_pairs_v4_union_iff_eq_union]
-    constructor
-    · intro a1
-      obtain ⟨F, ⟨l, ⟨⟨xs, ys, xs_mem, ys_mem, eq⟩, a1_left_left⟩, a1_left_right⟩, a1_right⟩ := a1
-
-      rewrite [← a1_left_right] at a1_right
-      rewrite [← eq] at a1_right
-      simp only [eval_list_conj_union] at a1_right
-      obtain ⟨a1_right_left, a1_right_right⟩ := a1_right
-
-      rewrite [← eq] at a1_left_left
-      simp only [decide_eq_true_iff] at a1_left_left
-      obtain ⟨s1_left, s1_right⟩ := not_has_complementary_union xs ys a1_left_left
-
-      simp only [decide_eq_true_iff]
-      constructor
-      · exact ⟨list_conj xs, ⟨⟨xs, ⟨xs_mem, s1_left⟩, rfl⟩, a1_right_left⟩⟩
-      · exact ⟨list_conj ys, ⟨⟨ys, ⟨ys_mem, s1_right⟩, rfl⟩, a1_right_right⟩⟩
-    · intro a1
-      obtain ⟨⟨P, ⟨xs, ⟨xs_mem, P_eq⟩, xs_list_conj⟩, eval_P⟩, ⟨Q, ⟨ys, ⟨ys_mem, Q_eq⟩, ys_list_conj⟩, eval_Q⟩⟩ := a1
-      sorry
-  case or_ phi psi phi_ih psi_ih =>
-    simp only [eval]
-    simp only [bool_iff_prop_or]
-    rewrite [← phi_ih]
-    rewrite [← psi_ih]
-
-    simp only [pure_dnf]
-    unfold dnf_list_of_list_to_formula
-    simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
-    simp only [List.mem_map, List.mem_filter, List.mem_union_iff]
-    sorry
-  all_goals
-    rfl
+  simp only [← eval_dnf_list_of_list_to_formula_pure_dnf_eq_eval V F]
+  apply eval_dnf_list_of_list_to_formula_filter_not_has_complementary
