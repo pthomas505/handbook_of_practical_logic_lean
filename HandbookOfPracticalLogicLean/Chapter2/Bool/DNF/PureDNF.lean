@@ -539,8 +539,6 @@ lemma has_complementary_imp_eval_list_conj_false
           exact ⟨P, P_mem, P_lit, Q, Q_mem, Q_lit, eq⟩
 
 
-
-
 lemma eval_dnf_list_of_list_to_formula_filter_not_has_complementary
   (V : ValuationAsTotalFunction)
   (ll : List (List Formula_)) :
