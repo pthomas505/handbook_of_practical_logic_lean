@@ -418,6 +418,31 @@ lemma filter_not_has_complementary_singleton
   apply not_has_complementary_singleton
 
 
+lemma not_has_complementary_union
+  (xs ys : List Formula_)
+  (h1 : ¬ has_complementary (xs ∪ ys)) :
+  ¬ has_complementary xs ∧ ¬ has_complementary ys :=
+  by
+  unfold has_complementary at h1
+  simp only [List.mem_union_iff] at h1
+
+  unfold has_complementary
+  constructor
+  all_goals
+    intro contra
+    obtain ⟨P, P_mem, P_lit, Q, Q_mem, Q_lit, eq⟩ := contra
+    apply h1
+    apply Exists.intro P
+    constructor
+    · first | left; exact P_mem | right; exact P_mem
+    · constructor
+      · exact P_lit
+      · apply Exists.intro Q
+        constructor
+        · first | left; exact Q_mem | right; exact Q_mem
+        · exact ⟨Q_lit, eq⟩
+
+
 lemma has_complementary_imp_eval_list_conj_false
   (V : ValuationAsTotalFunction)
   (l : List Formula_)
@@ -539,23 +564,23 @@ example
     simp only [mem_all_pairs_v4_union_iff_eq_union]
     constructor
     · intro a1
-      obtain ⟨F, ⟨l, ⟨⟨xs, ys, xs_mem, ys_mem, eq⟩, a1_left_left_right⟩, a1_left_right⟩, a1_right⟩ := a1
+      obtain ⟨F, ⟨l, ⟨⟨xs, ys, xs_mem, ys_mem, eq⟩, a1_left_left⟩, a1_left_right⟩, a1_right⟩ := a1
+
       rewrite [← a1_left_right] at a1_right
       rewrite [← eq] at a1_right
       simp only [eval_list_conj_union] at a1_right
       obtain ⟨a1_right_left, a1_right_right⟩ := a1_right
+
+      rewrite [← eq] at a1_left_left
+      simp only [decide_eq_true_iff] at a1_left_left
+      obtain ⟨s1_left, s1_right⟩ := not_has_complementary_union xs ys a1_left_left
+
+      simp only [decide_eq_true_iff]
       constructor
-      · apply Exists.intro (list_conj xs)
-        constructor
-        · apply Exists.intro xs
-          sorry
-        · exact a1_right_left
-      · apply Exists.intro (list_conj ys)
-        constructor
-        · apply Exists.intro ys
-          sorry
-        · exact a1_right_right
+      · exact ⟨list_conj xs, ⟨⟨xs, ⟨xs_mem, s1_left⟩, rfl⟩, a1_right_left⟩⟩
+      · exact ⟨list_conj ys, ⟨⟨ys, ⟨ys_mem, s1_right⟩, rfl⟩, a1_right_right⟩⟩
     · intro a1
+      obtain ⟨⟨P, ⟨xs, ⟨xs_mem, P_eq⟩, xs_list_conj⟩, eval_P⟩, ⟨Q, ⟨ys, ⟨ys_mem, Q_eq⟩, ys_list_conj⟩, eval_Q⟩⟩ := a1
       sorry
   case or_ phi psi phi_ih psi_ih =>
     simp only [eval]
