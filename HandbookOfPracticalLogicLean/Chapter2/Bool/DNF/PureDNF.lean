@@ -573,3 +573,98 @@ example
   by
   simp only [← eval_dnf_list_of_list_to_formula_pure_dnf_eq_eval V F]
   apply eval_dnf_list_of_list_to_formula_filter_not_has_complementary
+
+
+-------------------------------------------------------------------------------
+
+
+def has_superset
+  {α : Type}
+  (zs : List α)
+  (xss : List (List α)) :
+  Prop :=
+  ∃ (xs : List α), xs ∈ xss ∧ zs ⊆ xs
+
+instance
+  {α : Type}
+  [DecidableEq α]
+  (zs : List α)
+  (xss : List (List α)) :
+  Decidable (has_superset zs xss) :=
+  by
+  induction xss
+  all_goals
+    unfold has_superset
+    infer_instance
+
+
+lemma has_superset_cons
+  {α : Type}
+  [DecidableEq α]
+  (zs : List α)
+  (xs : List α)
+  (xss : List (List α)) :
+  has_superset zs (xs :: xss) ↔ zs ⊆ xs ∨ has_superset zs xss :=
+  by
+  cases xss
+  case nil =>
+    unfold has_superset
+    simp only [List.mem_singleton, List.not_mem_nil]
+    constructor
+    · intro a1
+      obtain ⟨ys, a1_left, a1_right⟩ := a1
+      rewrite [← a1_left]
+      left
+      exact a1_right
+    · intro a1
+      cases a1
+      case inl a1 =>
+        exact ⟨xs, rfl, a1⟩
+      case inr a1 =>
+        obtain ⟨ys, a1_left, a1_right⟩ := a1
+        contradiction
+  case cons hd tl =>
+    unfold has_superset
+    simp only [List.mem_cons]
+    constructor
+    · intro a1
+      obtain ⟨ys, a1_left, a1_right⟩ := a1
+      cases a1_left
+      case inl a1_left =>
+        rewrite [← a1_left]
+        left
+        exact a1_right
+      case inr a1_left =>
+        right
+        apply Exists.intro ys
+        exact ⟨a1_left, a1_right⟩
+    · intro a1
+      cases a1
+      case inl a1 =>
+        apply Exists.intro xs
+        constructor
+        · left
+          rfl
+        · exact a1
+      case inr a1 =>
+        obtain ⟨ys, a1_left, a1_right⟩ := a1
+        apply Exists.intro ys
+        constructor
+        · right
+          exact a1_left
+        · exact a1_right
+
+
+example
+  (V : ValuationAsTotalFunction)
+  (xs ys : List Formula_)
+  (h1 : xs ⊆ ys)
+  (h2 : eval V (list_conj ys) = true) :
+  eval V (list_conj xs) = true :=
+  by
+  simp only [← eval_all_eq_true_iff_eval_list_conj_eq_true] at h2
+
+  simp only [← eval_all_eq_true_iff_eval_list_conj_eq_true]
+  intro F a1
+  apply h2
+  exact h1 a1
