@@ -566,11 +566,18 @@ lemma eval_dnf_list_of_list_to_formula_filter_not_has_complementary
     exact ⟨F, ⟨l, ⟨s3, s4⟩, s2⟩, s1⟩
 
 
+def pure_dnf_simp_1
+  (F : Formula_) :
+  List (List Formula_) :=
+  List.filter (fun (l : List Formula_) => ¬ (has_complementary l)) (pure_dnf F)
+
+
 example
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V (dnf_list_of_list_to_formula (List.filter (fun (l : List Formula_) => ¬ (has_complementary l)) (pure_dnf F))) = true ↔ eval V F = true :=
+  eval V (dnf_list_of_list_to_formula (pure_dnf_simp_1 F)) = true ↔ eval V F = true :=
   by
+  unfold pure_dnf_simp_1
   simp only [← eval_dnf_list_of_list_to_formula_pure_dnf_eq_eval V F]
   apply eval_dnf_list_of_list_to_formula_filter_not_has_complementary
 
@@ -655,7 +662,7 @@ lemma has_superset_cons
         · exact a1_right
 
 
-example
+lemma list_conj_subset
   (V : ValuationAsTotalFunction)
   (xs ys : List Formula_)
   (h1 : xs ⊆ ys)
@@ -668,3 +675,86 @@ example
   intro F a1
   apply h2
   exact h1 a1
+
+
+example
+  (V : ValuationAsTotalFunction)
+  (xs ys : List Formula_)
+  (h1 : xs ⊆ ys) :
+  eval V (or_ (list_conj xs) (list_conj ys)) = true ↔ eval V (list_conj xs) = true :=
+  by
+  simp only [eval]
+  simp only [bool_iff_prop_or]
+  constructor
+  · intro a1
+    cases a1
+    case inl a1 =>
+      exact a1
+    case inr a1 =>
+      exact list_conj_subset V xs ys h1 a1
+  · intro a1
+    left
+    exact a1
+
+
+def List.SSubset
+  {α : Type}
+  (l₁ l₂ : List α) :
+  Prop :=
+  l₁ ⊆ l₂ ∧ ¬ l₂ ⊆ l₁
+
+instance
+  {α : Type}
+  [DecidableEq α]
+  (l₁ l₂ : List α) :
+  Decidable (List.SSubset l₁ l₂) :=
+  by
+  unfold List.SSubset
+  infer_instance
+
+
+example
+  (V : ValuationAsTotalFunction)
+  (xs : List Formula_)
+  (zss : List (List Formula_))
+  (h1 : xs ∈ zss) :
+  eval V (dnf_list_of_list_to_formula zss) = true ↔
+    eval V (dnf_list_of_list_to_formula (List.filter (fun (zs : List Formula_) => ¬ List.SSubset xs zs) zss)) = true :=
+  by
+  unfold dnf_list_of_list_to_formula
+  simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
+  simp only [List.mem_map, List.mem_filter]
+  simp only [decide_eq_true_iff]
+  constructor
+  · intro a1
+    obtain ⟨F, ⟨zs, a1_left_left, a1_left_right⟩, a1_right⟩ := a1
+    by_cases c1 : List.SSubset xs zs
+    case pos =>
+      apply Exists.intro (list_conj xs)
+      constructor
+      · apply Exists.intro xs
+        constructor
+        · constructor
+          · exact h1
+          · unfold List.SSubset
+            intro ⟨contra_left, contra_right⟩
+            contradiction
+        · rfl
+      · unfold List.SSubset at c1
+        obtain ⟨c1_left, c1_right⟩ := c1
+        rewrite [← a1_left_right] at a1_right
+        apply list_conj_subset V xs zs c1_left a1_right
+    case neg =>
+      exact ⟨F, ⟨zs, ⟨a1_left_left, c1⟩, a1_left_right⟩, a1_right⟩
+  · intro a1
+    obtain ⟨F, ⟨zs, ⟨a1_left_left_left, a1_left_left_right⟩, a1_left_right⟩, a1_right⟩ := a1
+    exact ⟨F, ⟨zs, a1_left_left_left, a1_left_right⟩, a1_right⟩
+
+
+example
+  (V : ValuationAsTotalFunction)
+  (xss : List (List Formula_)) :
+  eval V (dnf_list_of_list_to_formula xss) = true ↔
+    eval V (dnf_list_of_list_to_formula (List.filter (fun (zs : List Formula_) => ¬ ∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs) xss)) = true :=
+  by
+  sorry
