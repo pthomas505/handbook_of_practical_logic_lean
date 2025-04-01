@@ -585,83 +585,6 @@ example
 -------------------------------------------------------------------------------
 
 
-def has_superset
-  {α : Type}
-  (zs : List α)
-  (xss : List (List α)) :
-  Prop :=
-  ∃ (xs : List α), xs ∈ xss ∧ zs ⊆ xs
-
-instance
-  {α : Type}
-  [DecidableEq α]
-  (zs : List α)
-  (xss : List (List α)) :
-  Decidable (has_superset zs xss) :=
-  by
-  induction xss
-  all_goals
-    unfold has_superset
-    infer_instance
-
-
-lemma has_superset_cons
-  {α : Type}
-  [DecidableEq α]
-  (zs : List α)
-  (xs : List α)
-  (xss : List (List α)) :
-  has_superset zs (xs :: xss) ↔ zs ⊆ xs ∨ has_superset zs xss :=
-  by
-  cases xss
-  case nil =>
-    unfold has_superset
-    simp only [List.mem_singleton, List.not_mem_nil]
-    constructor
-    · intro a1
-      obtain ⟨ys, a1_left, a1_right⟩ := a1
-      rewrite [← a1_left]
-      left
-      exact a1_right
-    · intro a1
-      cases a1
-      case inl a1 =>
-        exact ⟨xs, rfl, a1⟩
-      case inr a1 =>
-        obtain ⟨ys, a1_left, a1_right⟩ := a1
-        contradiction
-  case cons hd tl =>
-    unfold has_superset
-    simp only [List.mem_cons]
-    constructor
-    · intro a1
-      obtain ⟨ys, a1_left, a1_right⟩ := a1
-      cases a1_left
-      case inl a1_left =>
-        rewrite [← a1_left]
-        left
-        exact a1_right
-      case inr a1_left =>
-        right
-        apply Exists.intro ys
-        exact ⟨a1_left, a1_right⟩
-    · intro a1
-      cases a1
-      case inl a1 =>
-        apply Exists.intro xs
-        constructor
-        · left
-          rfl
-        · exact a1
-      case inr a1 =>
-        obtain ⟨ys, a1_left, a1_right⟩ := a1
-        apply Exists.intro ys
-        constructor
-        · right
-          exact a1_left
-        · exact a1_right
-
-
 lemma list_conj_subset
   (V : ValuationAsTotalFunction)
   (xs ys : List Formula_)
@@ -675,6 +598,27 @@ lemma list_conj_subset
   intro F a1
   apply h2
   exact h1 a1
+
+
+example
+  (V : ValuationAsTotalFunction)
+  (P Q : Formula_)
+  (h1 : eval V Q = true → eval V P = true) :
+  eval V (or_ P Q) = true ↔ eval V P = true :=
+  by
+  simp only [eval]
+  simp only [bool_iff_prop_or]
+  constructor
+  · intro a1
+    cases a1
+    case inl a1 =>
+      exact a1
+    case inr a1 =>
+      apply h1
+      exact a1
+  · intro a1
+    left
+    exact a1
 
 
 example
@@ -697,6 +641,44 @@ example
     exact a1
 
 
+example
+  (V : ValuationAsTotalFunction)
+  (P : Formula_)
+  (xs : List Formula_)
+  (h1 : P ∈ xs) :
+  eval V (list_disj xs) = true ↔
+    eval V (list_disj (List.filter (fun (Q : Formula_) => Q = P ∨ ¬ (eval V Q = true → eval V P = true) ) xs)) = true :=
+  by
+  simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
+  simp only [List.mem_filter]
+  simp only [decide_eq_true_iff]
+  constructor
+  · intro a1
+    obtain ⟨F, a1_left, a1_right⟩ := a1
+    by_cases c1 : eval V F = true → eval V P = true
+    case pos =>
+      apply Exists.intro P
+      constructor
+      · constructor
+        · exact h1
+        · left
+          rfl
+      · apply c1
+        exact a1_right
+    case neg =>
+      apply Exists.intro F
+      constructor
+      · constructor
+        · exact a1_left
+        · right
+          exact c1
+      · exact a1_right
+  · intro a1
+    obtain ⟨F, ⟨a1_left_left, a1_left_right⟩, a1_right⟩ := a1
+    apply Exists.intro F
+    exact ⟨a1_left_left, a1_right⟩
+
+
 def List.SSubset
   {α : Type}
   (l₁ l₂ : List α) :
@@ -713,7 +695,7 @@ instance
   infer_instance
 
 
-example
+lemma aux_1
   (V : ValuationAsTotalFunction)
   (xs : List Formula_)
   (zss : List (List Formula_))
@@ -751,10 +733,18 @@ example
     exact ⟨F, ⟨zs, a1_left_left_left, a1_left_right⟩, a1_right⟩
 
 
-example
+lemma aux_2
   (V : ValuationAsTotalFunction)
-  (xss : List (List Formula_)) :
-  eval V (dnf_list_of_list_to_formula xss) = true ↔
-    eval V (dnf_list_of_list_to_formula (List.filter (fun (zs : List Formula_) => ¬ ∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs) xss)) = true :=
+  (xs : List Formula_)
+  (h1 : eval V (list_disj xs) = true) :
+  eval V (list_disj
+    (List.filter (fun (P : Formula_) =>
+      ¬ ∃ (Q : Formula_), Q ∈ xs ∧ (¬ Q = P) ∧ (eval V P = true → eval V Q = true)) xs)) = true :=
   by
-  sorry
+    simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true] at h1
+    obtain ⟨F, h1_left, h1_right⟩ := h1
+
+    simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
+    simp only [List.mem_filter]
+    simp only [decide_eq_true_iff]
+    sorry
