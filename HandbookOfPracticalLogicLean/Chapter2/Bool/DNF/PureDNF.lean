@@ -738,8 +738,8 @@ lemma aux_2
   (xs : List Formula_)
   (h1 : eval V (list_disj xs) = true) :
   eval V (list_disj
-    (List.filter (fun (P : Formula_) =>
-      ¬ ∃ (Q : Formula_), Q ∈ xs ∧ (¬ Q = P) ∧ (eval V P = true → eval V Q = true)) xs)) = true :=
+    (List.filter (fun (Q : Formula_) =>
+      ¬ ∃ (P : Formula_), P ∈ xs ∧ (¬ P = Q) ∧ (eval V Q = true → eval V P = true)) xs)) = true :=
   by
     simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true] at h1
     obtain ⟨F, h1_left, h1_right⟩ := h1
