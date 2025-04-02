@@ -647,7 +647,7 @@ example
   (xs : List Formula_)
   (h1 : P ∈ xs) :
   eval V (list_disj xs) = true ↔
-    eval V (list_disj (List.filter (fun (Q : Formula_) => Q = P ∨ ¬ (eval V Q = true → eval V P = true) ) xs)) = true :=
+    eval V (list_disj (List.filter (fun (Q : Formula_) => Q = P ∨ ¬ (eval V Q = true → eval V P = true)) xs)) = true :=
   by
   simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
   simp only [List.mem_filter]
