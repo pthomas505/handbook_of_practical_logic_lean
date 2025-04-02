@@ -733,18 +733,52 @@ lemma aux_1
     exact ⟨F, ⟨zs, a1_left_left_left, a1_left_right⟩, a1_right⟩
 
 
-lemma aux_2
+example
   (V : ValuationAsTotalFunction)
+  (P Q : Formula_)
   (xs : List Formula_)
-  (h1 : eval V (list_disj xs) = true) :
-  eval V (list_disj
-    (List.filter (fun (Q : Formula_) =>
-      ¬ ∃ (P : Formula_), P ∈ xs ∧ (¬ P = Q) ∧ (eval V Q = true → eval V P = true)) xs)) = true :=
+  (h1 : P ∈ xs)
+  (h2 : Q ∈ xs) :
+  eval V (list_disj xs) = true ↔
+    eval V (list_disj (List.filter (fun (R : Formula_) => R = P ∨ R = Q ∨ (¬ (eval V R = true → eval V P = true) ∧ ¬ (eval V R = true → eval V Q = true))) xs)) = true :=
   by
-    simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true] at h1
-    obtain ⟨F, h1_left, h1_right⟩ := h1
-
-    simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
-    simp only [List.mem_filter]
-    simp only [decide_eq_true_iff]
-    sorry
+  simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
+  simp only [List.mem_filter]
+  simp only [decide_eq_true_iff]
+  constructor
+  · intro a1
+    obtain ⟨F, a1_left, a1_right⟩ := a1
+    by_cases c1 : eval V F = true → eval V P = true
+    case pos =>
+      apply Exists.intro P
+      constructor
+      · constructor
+        · exact h1
+        · left
+          rfl
+      · apply c1
+        exact a1_right
+    case neg =>
+      by_cases c2 : eval V F = true → eval V Q = true
+      case pos =>
+        apply Exists.intro Q
+        constructor
+        · constructor
+          · exact h2
+          · right
+            left
+            rfl
+        · apply c2
+          exact a1_right
+      case neg =>
+        apply Exists.intro F
+        constructor
+        · constructor
+          · exact a1_left
+          · right
+            right
+            exact ⟨c1, c2⟩
+        · exact a1_right
+  · intro a1
+    obtain ⟨F, ⟨a1_left_left, a1_left_right⟩ , a1_right⟩ := a1
+    exact ⟨F, a1_left_left, a1_right⟩
