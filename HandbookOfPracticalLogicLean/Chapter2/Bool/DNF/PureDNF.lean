@@ -876,3 +876,26 @@ example
       right
       left
       exact a1
+
+
+example
+  (V : ValuationAsTotalFunction)
+  (P Q : Formula_)
+  (h1 : eval V Q = true → eval V P = true) :
+  eval V (list_disj [P, Q]) = true ↔
+  eval V (list_disj [P]) = true :=
+  by
+  simp only [list_disj]
+  simp only [eval]
+  simp only [bool_iff_prop_or]
+  constructor
+  · intro a1
+    cases a1
+    case inl a1 =>
+      exact a1
+    case inr a1 =>
+      apply h1
+      exact a1
+  · intro a1
+    left
+    exact a1
