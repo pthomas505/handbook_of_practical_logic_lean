@@ -782,3 +782,97 @@ example
   · intro a1
     obtain ⟨F, ⟨a1_left_left, a1_left_right⟩ , a1_right⟩ := a1
     exact ⟨F, a1_left_left, a1_right⟩
+
+
+example
+  (V : ValuationAsTotalFunction)
+  (xs ys : List Formula_)
+  (h1 : xs ⊆ ys) :
+  eval V (dnf_list_of_list_to_formula [xs, ys]) = true ↔
+  eval V (dnf_list_of_list_to_formula [xs]) = true :=
+  by
+  unfold dnf_list_of_list_to_formula
+  simp only [List.map_cons, List.map_nil]
+  simp only [list_disj]
+  simp only [eval]
+  simp only [bool_iff_prop_or]
+  constructor
+  · intro a1
+    cases a1
+    case inl a1 =>
+      exact a1
+    case inr a1 =>
+      exact list_conj_subset V xs ys h1 a1
+  · intro a1
+    left
+    exact a1
+
+
+example
+  (V : ValuationAsTotalFunction)
+  (xs ys zs : List Formula_)
+  (h1 : xs ⊆ ys)
+  (h2 : ys ⊆ zs) :
+  eval V (dnf_list_of_list_to_formula [xs, ys, zs]) = true ↔
+  eval V (dnf_list_of_list_to_formula [xs]) = true :=
+  by
+  unfold dnf_list_of_list_to_formula
+  simp only [List.map_cons, List.map_nil]
+  simp only [list_disj]
+  simp only [eval]
+  simp only [bool_iff_prop_or]
+  constructor
+  · intro a1
+    cases a1
+    case inl a1 =>
+      exact a1
+    case inr a1 =>
+      cases a1
+      case inl a1 =>
+        exact list_conj_subset V xs ys h1 a1
+      case inr a1 =>
+        apply list_conj_subset V xs zs
+        · trans ys
+          · exact h1
+          · exact h2
+        · exact a1
+  · intro a1
+    left
+    exact a1
+
+
+example
+  (V : ValuationAsTotalFunction)
+  (xs ys zs : List Formula_)
+  (h1 : xs ⊆ zs) :
+  eval V (dnf_list_of_list_to_formula [xs, ys, zs]) = true ↔
+  eval V (dnf_list_of_list_to_formula [xs, ys]) = true :=
+  by
+  unfold dnf_list_of_list_to_formula
+  simp only [List.map_cons, List.map_nil]
+  simp only [list_disj]
+  simp only [eval]
+  simp only [bool_iff_prop_or]
+  constructor
+  · intro a1
+    cases a1
+    case inl a1 =>
+      left
+      exact a1
+    case inr a1 =>
+      cases a1
+      case inl a1 =>
+        right
+        exact a1
+      case inr a1 =>
+        left
+        exact list_conj_subset V xs zs h1 a1
+  · intro a1
+    cases a1
+    case inl a1 =>
+      left
+      exact a1
+    case inr a1 =>
+      right
+      left
+      exact a1
