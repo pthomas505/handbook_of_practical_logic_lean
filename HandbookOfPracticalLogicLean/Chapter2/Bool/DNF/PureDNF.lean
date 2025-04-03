@@ -901,10 +901,13 @@ example
     exact a1
 
 
+#eval let xss := [[atom_ "P"], [atom_ "P", atom_ "Q"], [atom_ "Q", atom_ "R", atom_ "S"]]; (List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs)) xss).toString
+
+
 example
   (V : ValuationAsTotalFunction)
-  (xs : List Formula_)
-  (h1 : eval V (list_disj xs) = true) :
-  eval V (list_disj (List.filter (fun (Q : Formula_) => ¬ ∃ (P : Formula_), P ∈ xs ∧ ¬ P = Q ∧ (eval V Q = true → eval V P = true)) xs)) = true :=
+  (xss : List (List Formula_))
+  (h1 : eval V (dnf_list_of_list_to_formula xss) = true) :
+  eval V (dnf_list_of_list_to_formula (List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs)) xss)) = true :=
   by
   sorry
