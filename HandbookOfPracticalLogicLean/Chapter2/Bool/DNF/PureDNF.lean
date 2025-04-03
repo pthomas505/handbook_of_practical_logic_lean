@@ -901,6 +901,15 @@ example
     exact a1
 
 
+example
+  (V : ValuationAsTotalFunction)
+  (xs : List Formula_) :
+  (eval V (list_disj xs) = true) ↔ eval V (list_disj (List.dedup xs)) = true :=
+  by
+  simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
+  simp only [List.mem_dedup]
+
+
 #eval let xss := [[atom_ "P"], [atom_ "P", atom_ "Q"], [atom_ "Q", atom_ "R", atom_ "S"]]; (List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs)) xss).toString
 
 
