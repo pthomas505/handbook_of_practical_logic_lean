@@ -923,6 +923,16 @@ example
 
 example
   (V : ValuationAsTotalFunction)
+  (xss yss : List (List Formula_))
+  (h1 : eval V (dnf_list_of_list_to_formula xss) = true)
+  (h2 : ∀ (zs : List Formula_), zs ∈ yss ↔ (zs ∈ xss ∧ ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs))) :
+  eval V (dnf_list_of_list_to_formula yss) = true :=
+  by
+  sorry
+
+
+example
+  (V : ValuationAsTotalFunction)
   (xss : List (List Formula_))
   (h1 : eval V (dnf_list_of_list_to_formula xss) = true) :
   eval V (dnf_list_of_list_to_formula (List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs)) xss)) = true :=
