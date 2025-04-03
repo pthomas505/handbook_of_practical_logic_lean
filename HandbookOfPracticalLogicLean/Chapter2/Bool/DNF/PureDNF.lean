@@ -899,3 +899,12 @@ example
   · intro a1
     left
     exact a1
+
+
+example
+  (V : ValuationAsTotalFunction)
+  (xs : List Formula_)
+  (h1 : eval V (list_disj xs) = true) :
+  eval V (list_disj (List.filter (fun (Q : Formula_) => ¬ ∃ (P : Formula_), P ∈ xs ∧ ¬ P = Q ∧ (eval V Q = true → eval V P = true)) xs)) = true :=
+  by
+  sorry
