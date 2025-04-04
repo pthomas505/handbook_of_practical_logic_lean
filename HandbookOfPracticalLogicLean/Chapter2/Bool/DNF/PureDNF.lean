@@ -930,11 +930,58 @@ lemma aux
   ∃ (ys : List α), ys ∈ xss ∧ ys ⊆ xs ∧
     ∀ (zs : List α), (zs ∈ xss ∧ zs ⊆ ys) → ys ⊆ zs :=
   by
-  obtain ⟨ys, hys, hall⟩ := (xss.finite_toSet.inter_of_left {ys | ys ⊆ xs}).exists_minimal_wrt List.toFinset _  ⟨xs, h1, fun _ => id⟩
-  use ys, hys.left, hys.right
-  intro zs hzs x hx
-  specialize hall zs ⟨hzs.left, hzs.right.trans hys.right⟩ fun x hx => List.mem_toFinset.mpr (hzs.right (List.mem_toFinset.mp hx))
-  rwa [← List.mem_toFinset, ← hall, List.mem_toFinset]
+  have s1 : ({x | x ∈ xss} ∩ {ys | ys ⊆ xs}).Finite :=
+  by
+    apply Set.Finite.inter_of_left
+    exact List.finite_toSet xss
+
+  have s2 : ∃ (ys : List α), ys ∈ {x | x ∈ xss} ∩ {ys | ys ⊆ xs} ∧ ∀ zs ∈ {x | x ∈ xss} ∩ {ys | ys ⊆ xs}, zs.toFinset ≤ ys.toFinset → ys.toFinset = zs.toFinset :=
+  by
+    apply Set.Finite.exists_minimal_wrt
+    · exact s1
+    · unfold Set.Nonempty
+      apply Exists.intro xs
+      apply Set.mem_inter
+      · exact h1
+      · exact List.Subset.refl xs
+
+  obtain ⟨ys, ⟨s2_left_left, s2_left_right⟩, s2_right⟩ := s2
+  simp only [Set.mem_setOf_eq] at s2_left_left
+  simp only [Set.mem_setOf_eq] at s2_left_right
+
+  apply Exists.intro ys
+  constructor
+  · exact s2_left_left
+  · constructor
+    · exact s2_left_right
+    · intro zs a1
+      obtain ⟨a1_left, a1_right⟩ := a1
+
+      have s3 : zs ∈ {x | x ∈ xss} ∩ {ys | ys ⊆ xs} :=
+      by
+        simp only [Set.mem_inter_iff]
+        simp only [Set.mem_setOf_eq]
+        constructor
+        · exact a1_left
+        · trans ys
+          · exact a1_right
+          · exact s2_left_right
+
+      have s4 : zs.toFinset ≤ ys.toFinset :=
+      by
+        simp only [Finset.le_eq_subset]
+        simp only [Finset.subset_iff]
+        simp only [List.mem_toFinset]
+        intro x a2
+        exact a1_right a2
+
+      specialize s2_right zs s3 s4
+      simp only [List.subset_def]
+      intro xs a2
+      simp only [← List.mem_toFinset]
+      rewrite [← s2_right]
+      simp only [List.mem_toFinset]
+      exact a2
 
 
 example
