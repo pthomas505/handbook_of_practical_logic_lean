@@ -921,6 +921,16 @@ example
 #eval let xss := [[atom_ "P"], [atom_ "P", atom_ "Q"]]; (List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs)) xss).toString
 
 
+lemma blah
+  {α : Type}
+  (xss : List (List α))
+  (xs : List α)
+  (h1 : xs ∈ xss) :
+  ∃ (ys : List α), ys ∈ xss ∧ ys ⊆ xs ∧ ∀ (zs : List α), (zs ∈ xss ∧ zs ⊆ ys) → zs = ys :=
+  by
+  sorry
+
+
 example
   (V : ValuationAsTotalFunction)
   (xss yss : List (List Formula_))
@@ -928,7 +938,35 @@ example
   (h2 : ∀ (zs : List Formula_), zs ∈ yss ↔ (zs ∈ xss ∧ ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs))) :
   eval V (dnf_list_of_list_to_formula yss) = true :=
   by
-  sorry
+  unfold dnf_list_of_list_to_formula at h1
+  simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true] at h1
+  obtain ⟨F, h1_left, h1_right⟩ := h1
+  simp only [List.mem_map] at h1_left
+  obtain ⟨zs, h1_left_left, h1_left_right⟩ := h1_left
+  rewrite [← h1_left_right] at h1_right
+
+  unfold dnf_list_of_list_to_formula
+  simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
+  simp only [List.mem_map]
+
+  obtain s1 := blah xss zs h1_left_left
+  obtain ⟨ys, s1_left, ⟨s1_right_left, s1_right_right⟩⟩ := s1
+
+  have s1 : ys ∈ yss :=
+  by
+    rewrite [h2]
+    constructor
+    · exact s1_left
+    · unfold List.SSubset
+      aesop
+
+  apply Exists.intro (list_conj ys)
+  constructor
+  · apply Exists.intro ys
+    constructor
+    · exact s1
+    · rfl
+  · exact list_conj_subset V ys zs s1_right_left h1_right
 
 
 example
