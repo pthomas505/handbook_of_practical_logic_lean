@@ -955,22 +955,24 @@ example
   simp only [List.mem_map, List.mem_filter]
   simp only [decide_eq_true_iff]
 
-  simp
+  simp only [not_exists]
+  simp only [not_and]
 
-  obtain s1 := aux xss zs h1_left_left
-
-  obtain ⟨xs, s1_left, ⟨s1_right_left, s1_right_right⟩⟩ := s1
-  apply Exists.intro xs
+  obtain ⟨xs, s1_left, ⟨s1_right_left, s1_right_right⟩⟩ := aux xss zs h1_left_left
+  apply Exists.intro (list_conj xs)
   constructor
-  · constructor
-    · exact s1_left
-    · intro ys a1
-      intro contra
-      unfold List.SSubset at contra
-      obtain ⟨contra_left, contra_right⟩ := contra
-      apply contra_right
-      apply s1_right_right
-      constructor
-      · exact a1
-      · exact contra_left
-  · apply list_conj_subset V xs zs s1_right_left h1_right
+  · apply Exists.intro xs
+    constructor
+    · constructor
+      · exact s1_left
+      · intro ys a1
+        intro contra
+        unfold List.SSubset at contra
+        obtain ⟨contra_left, contra_right⟩ := contra
+        apply contra_right
+        apply s1_right_right
+        constructor
+        · exact a1
+        · exact contra_left
+    · rfl
+  · exact list_conj_subset V xs zs s1_right_left h1_right
