@@ -923,13 +923,14 @@ example
 
 lemma aux
   {α : Type}
+  [DecidableEq α]
   (xss : List (List α))
   (xs : List α)
   (h1 : xs ∈ xss) :
   ∃ (ys : List α), ys ∈ xss ∧ ys ⊆ xs ∧
     ∀ (zs : List α), (zs ∈ xss ∧ zs ⊆ ys) → ys ⊆ zs :=
   by
-  classical
+  obtain s1 := (xss.finite_toSet.inter_of_left {ys | ys ⊆ xs})
   obtain ⟨ys, hys, hall⟩ := (xss.finite_toSet.inter_of_left {ys | ys ⊆ xs}).exists_minimal_wrt List.toFinset _  ⟨xs, h1, fun _ => id⟩
   use ys, hys.left, hys.right
   intro zs hzs x hx
