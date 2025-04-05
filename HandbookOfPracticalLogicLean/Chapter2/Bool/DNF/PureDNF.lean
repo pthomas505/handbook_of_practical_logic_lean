@@ -585,21 +585,6 @@ example
 -------------------------------------------------------------------------------
 
 
-lemma list_conj_subset
-  (V : ValuationAsTotalFunction)
-  (xs ys : List Formula_)
-  (h1 : xs ⊆ ys)
-  (h2 : eval V (list_conj ys) = true) :
-  eval V (list_conj xs) = true :=
-  by
-  simp only [← eval_all_eq_true_iff_eval_list_conj_eq_true] at h2
-
-  simp only [← eval_all_eq_true_iff_eval_list_conj_eq_true]
-  intro F a1
-  apply h2
-  exact h1 a1
-
-
 example
   (V : ValuationAsTotalFunction)
   (P Q : Formula_)
@@ -635,7 +620,7 @@ example
     case inl a1 =>
       exact a1
     case inr a1 =>
-      exact list_conj_subset V xs ys h1 a1
+      exact eval_list_conj_subset V xs ys h1 a1
   · intro a1
     left
     exact a1
@@ -725,7 +710,7 @@ lemma aux_1
       · unfold List.SSubset at c1
         obtain ⟨c1_left, c1_right⟩ := c1
         rewrite [← a1_left_right] at a1_right
-        apply list_conj_subset V xs zs c1_left a1_right
+        apply eval_list_conj_subset V xs zs c1_left a1_right
     case neg =>
       exact ⟨F, ⟨zs, ⟨a1_left_left, c1⟩, a1_left_right⟩, a1_right⟩
   · intro a1
@@ -802,7 +787,7 @@ example
     case inl a1 =>
       exact a1
     case inr a1 =>
-      exact list_conj_subset V xs ys h1 a1
+      exact eval_list_conj_subset V xs ys h1 a1
   · intro a1
     left
     exact a1
@@ -829,9 +814,9 @@ example
     case inr a1 =>
       cases a1
       case inl a1 =>
-        exact list_conj_subset V xs ys h1 a1
+        exact eval_list_conj_subset V xs ys h1 a1
       case inr a1 =>
-        apply list_conj_subset V xs zs
+        apply eval_list_conj_subset V xs zs
         · trans ys
           · exact h1
           · exact h2
@@ -866,7 +851,7 @@ example
         exact a1
       case inr a1 =>
         left
-        exact list_conj_subset V xs zs h1 a1
+        exact eval_list_conj_subset V xs zs h1 a1
   · intro a1
     cases a1
     case inl a1 =>
@@ -1022,4 +1007,4 @@ example
         · exact a1
         · exact contra_left
     · rfl
-  · exact list_conj_subset V xs zs s1_right_left h1_right
+  · exact eval_list_conj_subset V xs zs s1_right_left h1_right

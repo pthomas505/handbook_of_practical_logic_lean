@@ -188,3 +188,18 @@ lemma eval_list_conj_union
     case inr a2 =>
       apply a1_right
       exact a2
+
+
+lemma eval_list_conj_subset
+  (V : ValuationAsTotalFunction)
+  (xs ys : List Formula_)
+  (h1 : xs ⊆ ys)
+  (h2 : eval V (list_conj ys) = true) :
+  eval V (list_conj xs) = true :=
+  by
+  simp only [← eval_all_eq_true_iff_eval_list_conj_eq_true] at h2
+
+  simp only [← eval_all_eq_true_iff_eval_list_conj_eq_true]
+  intro F a1
+  apply h2
+  exact h1 a1
