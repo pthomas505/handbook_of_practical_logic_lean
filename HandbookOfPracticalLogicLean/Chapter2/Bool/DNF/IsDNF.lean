@@ -411,3 +411,69 @@ lemma is_dnf_rec_iff_is_dnf_ind
   constructor
   · apply is_dnf_rec_imp_is_dnf_ind
   · apply is_dnf_ind_imp_is_dnf_rec
+
+
+-------------------------------------------------------------------------------
+
+
+lemma is_conj_ind_and_imp
+  (P Q : Formula_)
+  (h1 : is_conj_ind (and_ P Q)) :
+  is_conj_ind P ∧ is_conj_ind Q :=
+  by
+  cases h1
+  case rule_1 ih_1 ih_2 =>
+    constructor
+    · apply is_conj_ind.rule_3
+      exact ih_1
+    · exact ih_2
+  case rule_2 ih_1 ih_2 =>
+    constructor
+    · apply is_conj_ind.rule_4
+      exact ih_1
+    · exact ih_2
+  case rule_3 ih =>
+    contradiction
+  case rule_4 ih =>
+    contradiction
+
+
+lemma not_is_conj_ind_or
+  (P Q : Formula_) :
+  ¬ is_conj_ind (or_ P Q) :=
+  by
+  intro contra
+  cases contra
+  case rule_3 ih =>
+    contradiction
+  case rule_4 ih =>
+    contradiction
+
+
+lemma is_dnf_ind_or_iff
+  (P Q : Formula_) :
+  is_dnf_ind (or_ P Q) ↔ (is_conj_ind P ∧ is_dnf_ind Q) :=
+  by
+  constructor
+  · intro a1
+    cases a1
+    case rule_1 ih_1 ih_2 =>
+      exact ⟨ih_1, ih_2⟩
+    case rule_2 ih =>
+      simp only [not_is_conj_ind_or] at ih
+  · intro a1
+    obtain ⟨a1_left, a1_right⟩ := a1
+    apply is_dnf_ind.rule_1
+    · exact a1_left
+    · exact a1_right
+
+
+lemma is_dnf_ind_and_imp
+  (P Q : Formula_)
+  (h1 : is_dnf_ind (and_ P Q)) :
+  is_conj_ind P ∧ is_conj_ind Q :=
+  by
+  cases h1
+  case rule_2 ih =>
+    apply is_conj_ind_and_imp
+    exact ih

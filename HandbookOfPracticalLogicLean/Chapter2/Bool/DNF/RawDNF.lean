@@ -1,4 +1,4 @@
-import HandbookOfPracticalLogicLean.Chapter2.Bool.Semantics
+import HandbookOfPracticalLogicLean.Chapter2.Bool.DNF.IsDNF
 
 
 set_option autoImplicit false
@@ -25,6 +25,7 @@ def raw_dnf :
 
 
 #eval (raw_dnf (Formula_| ((p \/ (q /\ r)) /\ (~p \/ ~ r)))).toString
+#eval is_dnf_rec (raw_dnf (Formula_| ((p \/ (q /\ r)) /\ (~p \/ ~ r))))
 
 
 example
