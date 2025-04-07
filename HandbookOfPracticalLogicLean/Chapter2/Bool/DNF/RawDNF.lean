@@ -1,4 +1,4 @@
-import HandbookOfPracticalLogicLean.Chapter2.Bool.DNF.IsDNF_1
+import HandbookOfPracticalLogicLean.Chapter2.Bool.DNF.IsDNF_2
 
 
 set_option autoImplicit false
@@ -25,7 +25,67 @@ def raw_dnf :
 
 
 #eval (raw_dnf (Formula_| ((p \/ (q /\ r)) /\ (~p \/ ~ r)))).toString
-#eval is_dnf_rec (raw_dnf (Formula_| ((p \/ (q /\ r)) /\ (~p \/ ~ r))))
+
+
+-------------------------------------------------------------------------------
+
+
+example
+  (P Q : Formula_)
+  (P_ih : is_dnf_ind P)
+  (Q_ih : is_dnf_ind Q) :
+  is_dnf_ind (distrib (and_ P Q)) := sorry
+
+
+example
+  (F : Formula_)
+  (h1 : is_nnf F) :
+  is_dnf_ind (raw_dnf F) :=
+  by
+  induction F
+  case false_ =>
+    unfold raw_dnf
+    apply is_dnf_ind.rule_2
+    apply is_conj_ind.rule_2
+    exact is_constant_ind.rule_1
+  case true_ =>
+    unfold raw_dnf
+    apply is_dnf_ind.rule_2
+    apply is_conj_ind.rule_2
+    exact is_constant_ind.rule_2
+  case atom_ X =>
+    unfold raw_dnf
+    apply is_dnf_ind.rule_2
+    apply is_conj_ind.rule_3
+    apply is_literal_ind.rule_1
+  case not_ phi ih =>
+    unfold raw_dnf
+    cases phi
+    case atom_ X =>
+      apply is_dnf_ind.rule_2
+      apply is_conj_ind.rule_3
+      apply is_literal_ind.rule_2
+    all_goals
+      unfold is_nnf at h1
+      contradiction
+  case and_ P Q P_ih Q_ih =>
+    unfold raw_dnf
+    sorry
+  case or_ P Q P_ih Q_ih =>
+    unfold is_nnf at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
+    unfold raw_dnf
+    apply is_dnf_ind.rule_1
+    · apply P_ih
+      exact h1_left
+    · apply Q_ih
+      exact h1_right
+  all_goals
+    simp only [is_nnf] at h1
+
+
+-------------------------------------------------------------------------------
 
 
 example
