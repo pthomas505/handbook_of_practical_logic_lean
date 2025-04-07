@@ -1,4 +1,4 @@
-import HandbookOfPracticalLogicLean.Chapter2.Bool.DNF.IsDNF
+import HandbookOfPracticalLogicLean.Chapter2.Bool.DNF.IsDNF_1
 
 
 set_option autoImplicit false
