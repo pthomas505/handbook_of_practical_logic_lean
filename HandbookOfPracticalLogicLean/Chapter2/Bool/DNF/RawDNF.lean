@@ -32,8 +32,8 @@ def raw_dnf :
 
 example
   (P Q : Formula_)
-  (P_ih : is_dnf_ind P)
-  (Q_ih : is_dnf_ind Q) :
+  (h1 : is_dnf_ind P)
+  (h2 : is_dnf_ind Q) :
   is_dnf_ind (distrib (and_ P Q)) := sorry
 
 
