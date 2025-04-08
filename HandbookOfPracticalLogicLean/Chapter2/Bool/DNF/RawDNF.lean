@@ -32,38 +32,61 @@ def raw_dnf :
 
 example
   (P Q : Formula_)
-  (h1 : is_dnf_ind P)
-  (h2 : is_dnf_ind Q) :
+  (h1 : is_nnf P)
+  (h2 : is_nnf Q)
+  (h3 : is_dnf_ind P)
+  (h4 : is_dnf_ind Q) :
   is_dnf_ind (distrib (and_ P Q)) :=
   by
   induction Q generalizing P
   case or_ T U T_ih U_ih =>
-    cases h2
-    case rule_1 h2_ih_1 h2_ih_2 =>
-      simp only [distrib]
-      apply is_dnf_ind.rule_1
-      · apply T_ih
-        · exact h1
-        · exact h2_ih_1
-      · apply U_ih
-        · exact h1
-        · exact h2_ih_2
-    case rule_2 h2_ih =>
-      contradiction
+    unfold is_nnf at h2
+    obtain ⟨h2_left, h2_right⟩ := h2
+
+    simp only [distrib]
+    apply is_dnf_ind.rule_1
+    · apply T_ih
+      · exact h1
+      · exact h2_left
+      · exact h3
+      · cases h4
+        case rule_1 h4_ih_1 h4_ih_2 =>
+          exact h4_ih_1
+        case rule_2 h4_ih =>
+          contradiction
+    · apply U_ih
+      · exact h1
+      · exact h2_right
+      · exact h3
+      · cases h4
+        case rule_1 h4_ih_1 h4_ih_2 =>
+          exact h4_ih_2
+        case rule_2 h4_ih =>
+          contradiction
   all_goals
     induction P
     case or_ R S R_ih S_ih =>
+      unfold is_nnf at h1
+      obtain ⟨h1_left, h1_right⟩ := h1
+
       simp only [distrib]
-      cases h1
-      case rule_1 h1_ih_1 h1_ih_2 =>
-        apply is_dnf_ind.rule_1
-        · apply R_ih
-          exact h1_ih_1
-        · apply S_ih
-          exact h1_ih_2
-      case rule_2 h1_ih =>
-        contradiction
+      apply is_dnf_ind.rule_1
+      · apply R_ih
+        · exact h1_left
+        · cases h3
+          case rule_1 h3_ih_1 h3_ih_2 =>
+            exact h3_ih_1
+          case rule_2 h3_ih =>
+            contradiction
+      · apply S_ih
+        · exact h1_right
+        · cases h3
+          case rule_1 h3_ih_1 h3_ih_2 =>
+            exact h3_ih_2
+          case rule_2 h3_ih =>
+            contradiction
     all_goals
+      simp only [distrib]
       sorry
 
 
