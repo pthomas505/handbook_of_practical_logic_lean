@@ -101,7 +101,37 @@ lemma is_nnf_distrib_and
   (h2 : is_nnf Q) :
   is_nnf (distrib (and_ P Q)) :=
   by
-  sorry
+  induction Q generalizing P
+  case or_ T U T_ih U_ih =>
+    unfold is_nnf at h2
+    obtain ⟨h2_left, h2_right⟩ := h2
+
+    simp only [distrib]
+    unfold is_nnf
+    constructor
+    · apply T_ih
+      · exact h1
+      · exact h2_left
+    · apply U_ih
+      · exact h1
+      · exact h2_right
+  case and_ T U T_ih Q_ih =>
+    induction P
+    case or_ R S R_ih S_ih =>
+      unfold is_nnf at h1
+      obtain ⟨h1_left, h1_right⟩ := h1
+
+      simp only [distrib]
+      unfold is_nnf
+      constructor
+      · apply R_ih
+        exact h1_left
+      · apply S_ih
+        exact h1_right
+    all_goals
+      sorry
+  all_goals
+    sorry
 
 
 lemma is_nnf_raw_dnf
