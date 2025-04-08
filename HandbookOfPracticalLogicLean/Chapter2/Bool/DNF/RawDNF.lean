@@ -34,7 +34,39 @@ example
   (P Q : Formula_)
   (h1 : is_dnf_ind P)
   (h2 : is_dnf_ind Q) :
-  is_dnf_ind (distrib (and_ P Q)) := sorry
+  is_dnf_ind (distrib (and_ P Q)) :=
+  by
+  induction Q generalizing P
+  case and_ T U T_ih U_ih =>
+    induction P
+    case or_ R S R_ih S_ih =>
+      simp only [distrib]
+      cases h1
+      case rule_1 h1_ih_1 h1_ih_2 =>
+        apply is_dnf_ind.rule_1
+        · apply R_ih
+          exact h1_ih_1
+        · apply S_ih
+          exact h1_ih_2
+      case rule_2 h1_ih =>
+        contradiction
+    all_goals
+      sorry
+  case or_ T U T_ih U_ih =>
+    cases h2
+    case rule_1 h2_ih_1 h2_ih_2 =>
+      simp only [distrib]
+      apply is_dnf_ind.rule_1
+      · apply T_ih
+        · exact h1
+        · exact h2_ih_1
+      · apply U_ih
+        · exact h1
+        · exact h2_ih_2
+    case rule_2 h2_ih =>
+      contradiction
+  all_goals
+    sorry
 
 
 example
