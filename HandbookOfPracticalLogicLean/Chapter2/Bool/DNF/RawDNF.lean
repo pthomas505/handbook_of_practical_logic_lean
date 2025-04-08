@@ -30,7 +30,7 @@ def raw_dnf :
 -------------------------------------------------------------------------------
 
 
-example
+lemma is_dnf_ind_distrib_and
   (P Q : Formula_)
   (h1 : is_nnf P)
   (h2 : is_nnf Q)
@@ -85,9 +85,55 @@ example
             exact h3_ih_2
           case rule_2 h3_ih =>
             contradiction
-    all_goals
+    any_goals
       simp only [distrib]
-      sorry
+      apply is_dnf_ind.rule_2
+      apply is_conj_ind.rule_1
+    any_goals
+      cases h3
+      cases h4
+      assumption
+
+
+lemma is_nnf_distrib_and
+  (P Q : Formula_)
+  (h1 : is_nnf P)
+  (h2 : is_nnf Q) :
+  is_nnf (distrib (and_ P Q)) :=
+  by
+  sorry
+
+
+lemma is_nnf_raw_dnf
+  (F : Formula_)
+  (h1 : is_nnf F) :
+  is_nnf (raw_dnf F) :=
+  by
+  induction F
+  case and_ phi psi phi_ih psi_ih =>
+    unfold is_nnf at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
+    unfold raw_dnf
+    apply is_nnf_distrib_and
+    · apply phi_ih
+      exact h1_left
+    · apply psi_ih
+      exact h1_right
+  case or_ phi psi phi_ih psi_ih =>
+    unfold is_nnf at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
+    unfold raw_dnf
+    unfold is_nnf
+    constructor
+    · apply phi_ih
+      exact h1_left
+    · apply psi_ih
+      exact h1_right
+  all_goals
+    unfold raw_dnf
+    exact h1
 
 
 example
@@ -122,8 +168,19 @@ example
       unfold is_nnf at h1
       contradiction
   case and_ P Q P_ih Q_ih =>
+    unfold is_nnf at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
     unfold raw_dnf
-    sorry
+    specialize P_ih h1_left
+    specialize Q_ih h1_right
+    apply is_dnf_ind_distrib_and
+    · apply is_nnf_raw_dnf
+      exact h1_left
+    · apply is_nnf_raw_dnf
+      exact h1_right
+    · exact P_ih
+    · exact Q_ih
   case or_ P Q P_ih Q_ih =>
     unfold is_nnf at h1
     obtain ⟨h1_left, h1_right⟩ := h1
