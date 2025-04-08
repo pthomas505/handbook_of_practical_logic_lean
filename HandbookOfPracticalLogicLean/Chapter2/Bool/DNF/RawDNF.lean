@@ -115,7 +115,7 @@ lemma is_nnf_distrib_and
     · apply U_ih
       · exact h1
       · exact h2_right
-  case and_ T U T_ih Q_ih =>
+  all_goals
     induction P
     case or_ R S R_ih S_ih =>
       unfold is_nnf at h1
@@ -129,9 +129,9 @@ lemma is_nnf_distrib_and
       · apply S_ih
         exact h1_right
     all_goals
-      sorry
-  all_goals
-    sorry
+      simp only [distrib]
+      unfold is_nnf
+      exact ⟨h1, h2⟩
 
 
 lemma is_nnf_raw_dnf
