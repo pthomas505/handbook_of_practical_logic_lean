@@ -1031,4 +1031,20 @@ example
   (F : Formula_) :
   eval V F = true ↔ eval V (dnf_list_of_list_to_formula (simp_dnf F)) = true :=
   by
-  sorry
+  unfold simp_dnf
+  split_ifs
+  case pos c1 =>
+    rewrite [c1]
+    unfold dnf_list_of_list_to_formula
+    simp only [List.map_nil]
+    unfold list_disj
+    rfl
+  case pos c1 c2 =>
+    rewrite [c2]
+    unfold dnf_list_of_list_to_formula
+    simp only [List.map_cons, List.map_nil]
+    unfold list_conj
+    unfold list_disj
+    rfl
+  case neg c1 c2 =>
+    sorry
