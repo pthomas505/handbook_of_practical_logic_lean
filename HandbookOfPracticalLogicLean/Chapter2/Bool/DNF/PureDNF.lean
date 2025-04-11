@@ -572,7 +572,7 @@ def pure_dnf_simp_1
   List.filter (fun (l : List Formula_) => ¬ (has_complementary l)) (pure_dnf F)
 
 
-example
+lemma eval_pure_dnf_simp_1
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V (dnf_list_of_list_to_formula (pure_dnf_simp_1 F)) = true ↔ eval V F = true :=
@@ -680,7 +680,7 @@ instance
   infer_instance
 
 
-lemma aux_1
+example
   (V : ValuationAsTotalFunction)
   (xs : List Formula_)
   (zss : List (List Formula_))
@@ -969,7 +969,7 @@ lemma aux
       exact a2
 
 
-example
+lemma eval_pure_dnf_simp_2_left
   (V : ValuationAsTotalFunction)
   (xss : List (List Formula_))
   (h1 : eval V (dnf_list_of_list_to_formula xss) = true) :
@@ -1010,6 +1010,52 @@ example
   · exact eval_list_conj_subset V xs zs s1_right_left h1_right
 
 
+lemma eval_dnf_list_of_list_to_formula_subset
+  (V : ValuationAsTotalFunction)
+  (xss yss : List (List Formula_))
+  (h1 : xss ⊆ yss)
+  (h2 : eval V (dnf_list_of_list_to_formula xss) = true) :
+  eval V (dnf_list_of_list_to_formula yss) = true :=
+  by
+  unfold dnf_list_of_list_to_formula at h2
+  simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true] at h2
+  simp only [List.mem_map] at h2
+  obtain ⟨F, ⟨xs, h2_left_left, h2_left_right⟩, h2_right⟩ := h2
+
+  unfold dnf_list_of_list_to_formula
+  simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
+  simp only [List.mem_map]
+  apply Exists.intro F
+  constructor
+  · apply Exists.intro xs
+    constructor
+    · exact h1 h2_left_left
+    · exact h2_left_right
+  · exact h2_right
+
+
+lemma eval_pure_dnf_simp_2_right
+  (V : ValuationAsTotalFunction)
+  (xss : List (List Formula_))
+  (h1 : eval V (dnf_list_of_list_to_formula (List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs)) xss)) = true) :
+  eval V (dnf_list_of_list_to_formula xss) = true :=
+  by
+  apply eval_dnf_list_of_list_to_formula_subset V (List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs)) xss)
+  · simp only [List.filter_subset']
+  · exact h1
+
+
+lemma eval_pure_dnf_simp_2
+  (V : ValuationAsTotalFunction)
+  (xss : List (List Formula_)) :
+  eval V (dnf_list_of_list_to_formula xss) = true ↔
+    eval V (dnf_list_of_list_to_formula (List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs)) xss)) = true :=
+  by
+  constructor
+  · apply eval_pure_dnf_simp_2_left
+  · apply eval_pure_dnf_simp_2_right
+
+
 -------------------------------------------------------------------------------
 
 
@@ -1047,4 +1093,7 @@ example
     unfold list_disj
     rfl
   case neg c1 c2 =>
-    sorry
+    simp only
+    simp only [← eval_pure_dnf_simp_2]
+    simp only [eval_pure_dnf_simp_1]
+    simp only [← eval_to_nnf_v1]

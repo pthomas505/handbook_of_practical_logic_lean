@@ -241,7 +241,7 @@ theorem eval_to_nnf_neg_iff_not_eval_to_nnf_v1
     tauto
 
 
-example
+lemma eval_to_nnf_v1
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V F = eval V (to_nnf_v1 F) :=
