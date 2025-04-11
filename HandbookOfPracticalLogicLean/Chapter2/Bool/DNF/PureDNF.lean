@@ -1008,3 +1008,27 @@ example
         · exact contra_left
     · rfl
   · exact eval_list_conj_subset V xs zs s1_right_left h1_right
+
+
+-------------------------------------------------------------------------------
+
+
+def simp_dnf
+  (F : Formula_) :
+  List (List Formula_) :=
+  if F = false_
+  then []
+  else
+    if F = true_
+    then [[]]
+    else
+      let djs : List (List Formula_) := pure_dnf_simp_1 (to_nnf_v1 F)
+      (List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ djs ∧ List.SSubset xs zs)) djs)
+
+
+example
+  (V : ValuationAsTotalFunction)
+  (F : Formula_) :
+  eval V F = true ↔ eval V (dnf_list_of_list_to_formula (simp_dnf F)) = true :=
+  by
+  sorry
