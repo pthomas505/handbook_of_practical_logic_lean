@@ -54,6 +54,43 @@ lemma list_disj_of_is_conj_ind_is_dnf_ind
 -------------------------------------------------------------------------------
 
 
+lemma eval_list_disj_eq_true_imp_eval_exists_eq_true
+  (V : ValuationAsTotalFunction)
+  (l : List Formula_)
+  (h1 : eval V (list_disj l) = true) :
+  ∃ (F : Formula_), F ∈ l ∧ eval V F = true :=
+  by
+  induction l
+  case nil =>
+    unfold list_disj at h1
+    unfold eval at h1
+    contradiction
+  case cons hd tl ih =>
+    cases tl
+    case nil =>
+      unfold list_disj at h1
+      apply Exists.intro hd
+      simp only [List.mem_singleton]
+      tauto
+    case cons tl_hd tl_tl =>
+      unfold list_disj at h1
+      unfold eval at h1
+      simp only [bool_iff_prop_or] at h1
+      cases h1
+      case inl h1_left =>
+        apply Exists.intro hd
+        simp only [List.mem_cons]
+        tauto
+      case inr h1_right =>
+        specialize ih h1_right
+        obtain ⟨F, ⟨ih_left, ih_right⟩⟩ := ih
+        simp only [List.mem_cons] at ih_left
+
+        apply Exists.intro F
+        simp only [List.mem_cons]
+        tauto
+
+
 lemma eval_exists_eq_true_imp_eval_list_disj_eq_true
   (V : ValuationAsTotalFunction)
   (l : List Formula_)
@@ -92,48 +129,11 @@ lemma eval_exists_eq_true_imp_eval_list_disj_eq_true
         tauto
 
 
-lemma eval_list_disj_eq_true_imp_eval_exists_eq_true
-  (V : ValuationAsTotalFunction)
-  (l : List Formula_)
-  (h1 : eval V (list_disj l) = true) :
-  ∃ (F : Formula_), F ∈ l ∧ eval V F = true :=
-  by
-  induction l
-  case nil =>
-    unfold list_disj at h1
-    unfold eval at h1
-    contradiction
-  case cons hd tl ih =>
-    cases tl
-    case nil =>
-      unfold list_disj at h1
-      apply Exists.intro hd
-      simp only [List.mem_singleton]
-      tauto
-    case cons tl_hd tl_tl =>
-      unfold list_disj at h1
-      unfold eval at h1
-      simp only [bool_iff_prop_or] at h1
-      cases h1
-      case inl h1_left =>
-        apply Exists.intro hd
-        simp only [List.mem_cons]
-        tauto
-      case inr h1_right =>
-        specialize ih h1_right
-        obtain ⟨F, ⟨ih_left, ih_right⟩⟩ := ih
-        simp only [List.mem_cons] at ih_left
-
-        apply Exists.intro F
-        simp only [List.mem_cons]
-        tauto
-
-
-lemma eval_exists_eq_true_iff_eval_list_disj_eq_true
+lemma eval_list_disj_eq_true_iff_eval_exists_eq_true
   (V : ValuationAsTotalFunction)
   (l : List Formula_) :
-  (∃ (F : Formula_), F ∈ l ∧ eval V F = true) ↔ eval V (list_disj l) = true :=
+  eval V (list_disj l) = true ↔ (∃ (F : Formula_), F ∈ l ∧ eval V F = true) :=
   by
   constructor
-  · apply eval_exists_eq_true_imp_eval_list_disj_eq_true
   · apply eval_list_disj_eq_true_imp_eval_exists_eq_true
+  · apply eval_exists_eq_true_imp_eval_list_disj_eq_true

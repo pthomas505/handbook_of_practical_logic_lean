@@ -251,7 +251,7 @@ lemma eval_dnf_list_of_list_to_formula_pure_dnf_eq_eval
     simp only [bool_iff_prop_and]
     rewrite [← phi_ih]
     rewrite [← psi_ih]
-    simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
+    simp only [eval_list_disj_eq_true_iff_eval_exists_eq_true]
     simp only [List.mem_map]
     simp only [mem_all_pairs_v4_union_iff_eq_union]
     constructor
@@ -296,7 +296,7 @@ lemma eval_dnf_list_of_list_to_formula_pure_dnf_eq_eval
     simp only [bool_iff_prop_or]
     rewrite [← phi_ih]
     rewrite [← psi_ih]
-    simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
+    simp only [eval_list_disj_eq_true_iff_eval_exists_eq_true]
     simp only [List.mem_map, List.mem_union_iff]
     constructor
     · intro a1
@@ -498,7 +498,7 @@ lemma has_complementary_imp_eval_list_conj_false
           obtain s1 := negate_literal_not_eq_self hd P_lit
           contradiction
         case inr Q_mem =>
-          simp only [← eval_all_eq_true_iff_eval_list_conj_eq_true]
+          simp only [eval_list_conj_eq_true_iff_eval_all_eq_true]
           intro a1
 
           rewrite [← P_mem] at a1
@@ -514,7 +514,7 @@ lemma has_complementary_imp_eval_list_conj_false
       case inr P_mem =>
         cases Q_mem
         case inl Q_mem =>
-          simp only [← eval_all_eq_true_iff_eval_list_conj_eq_true]
+          simp only [eval_list_conj_eq_true_iff_eval_all_eq_true]
           intro a1
 
           rewrite [← Q_mem] at a1
@@ -546,7 +546,7 @@ lemma eval_dnf_list_of_list_to_formula_filter_not_has_complementary
     eval V (dnf_list_of_list_to_formula ll) :=
   by
   unfold dnf_list_of_list_to_formula
-  simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
+  simp only [eval_list_disj_eq_true_iff_eval_exists_eq_true]
   simp only [List.mem_map, List.mem_filter]
   constructor
   · intro a1
@@ -634,7 +634,7 @@ example
   eval V (list_disj xs) = true ↔
     eval V (list_disj (List.filter (fun (Q : Formula_) => Q = P ∨ ¬ (eval V Q = true → eval V P = true)) xs)) = true :=
   by
-  simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
+  simp only [eval_list_disj_eq_true_iff_eval_exists_eq_true]
   simp only [List.mem_filter]
   simp only [decide_eq_true_iff]
   constructor
@@ -689,7 +689,7 @@ example
     eval V (dnf_list_of_list_to_formula (List.filter (fun (zs : List Formula_) => ¬ List.SSubset xs zs) zss)) = true :=
   by
   unfold dnf_list_of_list_to_formula
-  simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
+  simp only [eval_list_disj_eq_true_iff_eval_exists_eq_true]
   simp only [List.mem_map, List.mem_filter]
   simp only [decide_eq_true_iff]
   constructor
@@ -727,7 +727,7 @@ example
   eval V (list_disj xs) = true ↔
     eval V (list_disj (List.filter (fun (R : Formula_) => R = P ∨ R = Q ∨ (¬ (eval V R = true → eval V P = true) ∧ ¬ (eval V R = true → eval V Q = true))) xs)) = true :=
   by
-  simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
+  simp only [eval_list_disj_eq_true_iff_eval_exists_eq_true]
   simp only [List.mem_filter]
   simp only [decide_eq_true_iff]
   constructor
@@ -891,7 +891,7 @@ example
   (xs : List Formula_) :
   (eval V (list_disj xs) = true) ↔ eval V (list_disj (List.dedup xs)) = true :=
   by
-  simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
+  simp only [eval_list_disj_eq_true_iff_eval_exists_eq_true]
   simp only [List.mem_dedup]
 
 
@@ -976,14 +976,14 @@ lemma eval_pure_dnf_simp_2_left
   eval V (dnf_list_of_list_to_formula (List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs)) xss)) = true :=
   by
   unfold dnf_list_of_list_to_formula at h1
-  simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true] at h1
+  simp only [eval_list_disj_eq_true_iff_eval_exists_eq_true] at h1
   obtain ⟨F, h1_left, h1_right⟩ := h1
   simp only [List.mem_map] at h1_left
   obtain ⟨zs, h1_left_left, h1_left_right⟩ := h1_left
   rewrite [← h1_left_right] at h1_right
 
   unfold dnf_list_of_list_to_formula
-  simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
+  simp only [eval_list_disj_eq_true_iff_eval_exists_eq_true]
   simp only [List.mem_map, List.mem_filter]
   simp only [decide_eq_true_iff]
 
@@ -1018,12 +1018,12 @@ lemma eval_dnf_list_of_list_to_formula_subset
   eval V (dnf_list_of_list_to_formula yss) = true :=
   by
   unfold dnf_list_of_list_to_formula at h2
-  simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true] at h2
+  simp only [eval_list_disj_eq_true_iff_eval_exists_eq_true] at h2
   simp only [List.mem_map] at h2
   obtain ⟨F, ⟨xs, h2_left_left, h2_left_right⟩, h2_right⟩ := h2
 
   unfold dnf_list_of_list_to_formula
-  simp only [← eval_exists_eq_true_iff_eval_list_disj_eq_true]
+  simp only [eval_list_disj_eq_true_iff_eval_exists_eq_true]
   simp only [List.mem_map]
   apply Exists.intro F
   constructor

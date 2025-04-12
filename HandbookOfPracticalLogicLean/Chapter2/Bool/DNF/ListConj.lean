@@ -79,6 +79,40 @@ lemma list_conj_of_is_constant_ind_or_is_literal_ind_is_conj_ind
 -------------------------------------------------------------------------------
 
 
+lemma eval_list_conj_eq_true_imp_eval_all_eq_true
+  (V : ValuationAsTotalFunction)
+  (l : List Formula_)
+  (h1 : eval V (list_conj l) = true) :
+  ∀ (F : Formula_), F ∈ l → eval V F = true :=
+  by
+  intro F a1
+  induction l
+  case nil =>
+    simp only [List.not_mem_nil] at a1
+  case cons hd tl ih =>
+    cases tl
+    case nil =>
+      unfold list_conj at h1
+      simp only [List.mem_singleton] at a1
+      rewrite [a1]
+      exact h1
+    case cons tl_hd tl_tl =>
+      unfold list_conj at h1
+      unfold eval at h1
+      simp only [bool_iff_prop_and] at h1
+
+      simp only [List.mem_cons] at a1
+      cases a1
+      case inl a1_left =>
+        rewrite [a1_left]
+        tauto
+      case inr a1_right =>
+        apply ih
+        · tauto
+        · simp only [List.mem_cons]
+          exact a1_right
+
+
 lemma eval_all_eq_true_imp_eval_list_conj_eq_true
   (V : ValuationAsTotalFunction)
   (l : List Formula_)
@@ -114,48 +148,14 @@ lemma eval_all_eq_true_imp_eval_list_conj_eq_true
         exact a1
 
 
-lemma eval_list_conj_eq_true_imp_eval_all_eq_true
-  (V : ValuationAsTotalFunction)
-  (l : List Formula_)
-  (h1 : eval V (list_conj l) = true) :
-  ∀ (F : Formula_), F ∈ l → eval V F = true :=
-  by
-  intro F a1
-  induction l
-  case nil =>
-    simp only [List.not_mem_nil] at a1
-  case cons hd tl ih =>
-    cases tl
-    case nil =>
-      unfold list_conj at h1
-      simp only [List.mem_singleton] at a1
-      rewrite [a1]
-      exact h1
-    case cons tl_hd tl_tl =>
-      unfold list_conj at h1
-      unfold eval at h1
-      simp only [bool_iff_prop_and] at h1
-
-      simp only [List.mem_cons] at a1
-      cases a1
-      case inl a1_left =>
-        rewrite [a1_left]
-        tauto
-      case inr a1_right =>
-        apply ih
-        · tauto
-        · simp only [List.mem_cons]
-          exact a1_right
-
-
-lemma eval_all_eq_true_iff_eval_list_conj_eq_true
+lemma eval_list_conj_eq_true_iff_eval_all_eq_true
   (V : ValuationAsTotalFunction)
   (l : List Formula_) :
-  (∀ (F : Formula_), F ∈ l → eval V F = true) ↔ eval V (list_conj l) = true :=
+  eval V (list_conj l) = true ↔ (∀ (F : Formula_), F ∈ l → eval V F = true) :=
   by
   constructor
-  · apply eval_all_eq_true_imp_eval_list_conj_eq_true
   · apply eval_list_conj_eq_true_imp_eval_all_eq_true
+  · apply eval_all_eq_true_imp_eval_list_conj_eq_true
 
 
 -------------------------------------------------------------------------------
@@ -166,7 +166,7 @@ lemma eval_list_conj_union
   (l1 l2 : List Formula_) :
   eval V (list_conj (l1 ∪ l2)) = true ↔ (eval V (list_conj l1) = true ∧ eval V (list_conj l2) = true) :=
   by
-  simp only [← eval_all_eq_true_iff_eval_list_conj_eq_true]
+  simp only [eval_list_conj_eq_true_iff_eval_all_eq_true]
   simp only [List.mem_union_iff]
   constructor
   · intro a1
@@ -197,9 +197,9 @@ lemma eval_list_conj_subset
   (h2 : eval V (list_conj ys) = true) :
   eval V (list_conj xs) = true :=
   by
-  simp only [← eval_all_eq_true_iff_eval_list_conj_eq_true] at h2
+  simp only [eval_list_conj_eq_true_iff_eval_all_eq_true] at h2
 
-  simp only [← eval_all_eq_true_iff_eval_list_conj_eq_true]
+  simp only [eval_list_conj_eq_true_iff_eval_all_eq_true]
   intro F a1
   apply h2
   exact h1 a1

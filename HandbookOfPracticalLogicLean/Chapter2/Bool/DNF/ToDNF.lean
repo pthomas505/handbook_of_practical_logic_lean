@@ -83,7 +83,7 @@ lemma eval_to_dnf_eq_true_imp_eval_eq_true
   eval V F = true :=
   by
   unfold to_dnf at h1
-  rewrite [← eval_exists_eq_true_iff_eval_list_disj_eq_true] at h1
+  rewrite [eval_list_disj_eq_true_iff_eval_exists_eq_true] at h1
   obtain ⟨F', ⟨h1_left, h1_right⟩⟩ := h1
   unfold gen_all_satisfying_valuations_as_list_of_total_functions at h1_left
   simp only [Bool.decide_eq_true, List.mem_map, List.mem_filter] at h1_left
