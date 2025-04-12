@@ -1,10 +1,7 @@
-import HandbookOfPracticalLogicLean.Chapter2.Bool.DNF.MkLits
+import HandbookOfPracticalLogicLean.Chapter2.DNF.MkLits
 
 
 set_option autoImplicit false
-
-
-namespace Bool_
 
 
 open Formula_

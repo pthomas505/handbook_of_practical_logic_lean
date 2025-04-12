@@ -5,9 +5,6 @@ import Mathlib.Util.CompileInductive
 set_option autoImplicit false
 
 
-namespace Bool_
-
-
 /--
   The type of formulas.
 -/

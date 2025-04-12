@@ -4,9 +4,6 @@ import Mathlib.Tactic
 set_option autoImplicit false
 
 
-namespace Bool_
-
-
 /--
   The truth table definition of boolean `not`.
 -/

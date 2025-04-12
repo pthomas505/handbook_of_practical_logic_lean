@@ -1,10 +1,7 @@
-import HandbookOfPracticalLogicLean.Chapter2.Bool.NNF
+import HandbookOfPracticalLogicLean.Chapter2.NNF
 
 
 set_option autoImplicit false
-
-
-namespace Bool_
 
 
 open Formula_

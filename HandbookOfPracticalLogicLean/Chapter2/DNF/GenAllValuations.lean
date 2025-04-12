@@ -1,15 +1,12 @@
 import MathlibExtraLean.FunctionUpdateFromListOfPairsITE
 
-import HandbookOfPracticalLogicLean.Chapter2.Bool.Semantics
+import HandbookOfPracticalLogicLean.Chapter2.Semantics
 
 
 import Mathlib.Tactic
 
 
 set_option autoImplicit false
-
-
-namespace Bool_
 
 
 open Formula_

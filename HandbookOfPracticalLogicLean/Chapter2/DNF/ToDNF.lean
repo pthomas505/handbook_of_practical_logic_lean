@@ -1,13 +1,10 @@
 import MathlibExtraLean.List
 
-import HandbookOfPracticalLogicLean.Chapter2.Bool.DNF.ListDisj
-import HandbookOfPracticalLogicLean.Chapter2.Bool.DNF.GenAllValuations
+import HandbookOfPracticalLogicLean.Chapter2.DNF.ListDisj
+import HandbookOfPracticalLogicLean.Chapter2.DNF.GenAllValuations
 
 
 set_option autoImplicit false
-
-
-namespace Bool_
 
 
 open Formula_

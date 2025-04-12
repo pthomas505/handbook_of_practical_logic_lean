@@ -1,10 +1,7 @@
-import HandbookOfPracticalLogicLean.Chapter2.Bool.DNF.ListConj
+import HandbookOfPracticalLogicLean.Chapter2.DNF.ListConj
 
 
 set_option autoImplicit false
-
-
-namespace Bool_
 
 
 open Formula_

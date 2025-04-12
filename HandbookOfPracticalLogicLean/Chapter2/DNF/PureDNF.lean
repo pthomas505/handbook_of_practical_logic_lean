@@ -1,11 +1,8 @@
-import HandbookOfPracticalLogicLean.Chapter2.Bool.DNF.ToDNF
-import HandbookOfPracticalLogicLean.Chapter2.Bool.DNF.AllPairs
+import HandbookOfPracticalLogicLean.Chapter2.DNF.ToDNF
+import HandbookOfPracticalLogicLean.Chapter2.DNF.AllPairs
 
 
 set_option autoImplicit false
-
-
-namespace Bool_
 
 
 open Formula_

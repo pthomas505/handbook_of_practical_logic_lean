@@ -1,14 +1,11 @@
-import HandbookOfPracticalLogicLean.Chapter2.Bool.Replace
-import HandbookOfPracticalLogicLean.Chapter2.Bool.Semantics
-import HandbookOfPracticalLogicLean.Chapter2.Bool.SubFormula
+import HandbookOfPracticalLogicLean.Chapter2.Replace
+import HandbookOfPracticalLogicLean.Chapter2.Semantics
+import HandbookOfPracticalLogicLean.Chapter2.SubFormula
 
 import Mathlib.Tactic
 
 
 set_option autoImplicit false
-
-
-namespace Bool_
 
 
 open Formula_
