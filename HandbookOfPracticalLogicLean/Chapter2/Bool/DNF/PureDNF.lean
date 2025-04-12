@@ -969,11 +969,17 @@ lemma aux
       exact a2
 
 
+def pure_dnf_simp_2
+  (xss : List (List Formula_)) :
+  List (List Formula_) :=
+  List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs)) xss
+
+
 lemma eval_pure_dnf_simp_2_left
   (V : ValuationAsTotalFunction)
   (xss : List (List Formula_))
   (h1 : eval V (dnf_list_of_list_to_formula xss) = true) :
-  eval V (dnf_list_of_list_to_formula (List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs)) xss)) = true :=
+  eval V (dnf_list_of_list_to_formula (pure_dnf_simp_2 xss)) = true :=
   by
   unfold dnf_list_of_list_to_formula at h1
   simp only [eval_list_disj_eq_true_iff_eval_exists_eq_true] at h1
@@ -982,6 +988,7 @@ lemma eval_pure_dnf_simp_2_left
   obtain ⟨zs, h1_left_left, h1_left_right⟩ := h1_left
   rewrite [← h1_left_right] at h1_right
 
+  unfold pure_dnf_simp_2
   unfold dnf_list_of_list_to_formula
   simp only [eval_list_disj_eq_true_iff_eval_exists_eq_true]
   simp only [List.mem_map, List.mem_filter]
@@ -1037,11 +1044,12 @@ lemma eval_dnf_list_of_list_to_formula_subset
 lemma eval_pure_dnf_simp_2_right
   (V : ValuationAsTotalFunction)
   (xss : List (List Formula_))
-  (h1 : eval V (dnf_list_of_list_to_formula (List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs)) xss)) = true) :
+  (h1 : eval V (dnf_list_of_list_to_formula (pure_dnf_simp_2 xss)) = true) :
   eval V (dnf_list_of_list_to_formula xss) = true :=
   by
-  apply eval_dnf_list_of_list_to_formula_subset V (List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs)) xss)
-  · simp only [List.filter_subset']
+  apply eval_dnf_list_of_list_to_formula_subset V (pure_dnf_simp_2 xss)
+  · unfold pure_dnf_simp_2
+    simp only [List.filter_subset']
   · exact h1
 
 
@@ -1049,7 +1057,7 @@ lemma eval_pure_dnf_simp_2
   (V : ValuationAsTotalFunction)
   (xss : List (List Formula_)) :
   eval V (dnf_list_of_list_to_formula xss) = true ↔
-    eval V (dnf_list_of_list_to_formula (List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs)) xss)) = true :=
+    eval V (dnf_list_of_list_to_formula (pure_dnf_simp_2 xss)) = true :=
   by
   constructor
   · apply eval_pure_dnf_simp_2_left
@@ -1069,7 +1077,7 @@ def simp_dnf
     then [[]]
     else
       let djs : List (List Formula_) := pure_dnf_simp_1 (to_nnf_v1 F)
-      (List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ djs ∧ List.SSubset xs zs)) djs)
+      (pure_dnf_simp_2 djs)
 
 
 example
