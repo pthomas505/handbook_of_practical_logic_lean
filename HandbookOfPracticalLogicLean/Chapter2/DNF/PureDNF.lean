@@ -137,7 +137,7 @@ lemma mem_list_mem_pure_dnf_of_nnf_imp_is_constant_or_literal
     contradiction
 
 
-example
+lemma is_nnf_imp_pure_dnf_is_ind
   (F : Formula_)
   (h1 : is_nnf F) :
   is_dnf_ind (dnf_list_of_list_to_formula (pure_dnf F)) :=
@@ -579,6 +579,198 @@ lemma eval_pure_dnf_simp_1
   apply eval_dnf_list_of_list_to_formula_filter_not_has_complementary
 
 
+example
+  (xs ys : List Formula_)
+  (h1 : is_dnf_ind (dnf_list_of_list_to_formula [xs, ys])) :
+  is_dnf_ind (dnf_list_of_list_to_formula [xs]) :=
+  by
+  unfold dnf_list_of_list_to_formula at h1
+  simp only [List.map_cons, List.map_nil] at h1
+  unfold list_disj at h1
+  cases h1
+  case rule_1 ih_1 ih_2 =>
+    unfold dnf_list_of_list_to_formula
+    simp only [List.map_cons, List.map_nil]
+    unfold list_disj
+    apply is_dnf_ind.rule_2
+    exact ih_1
+  case rule_2 ih =>
+    contradiction
+
+
+example
+  (xs ys : List Formula_)
+  (h1 : is_dnf_ind (dnf_list_of_list_to_formula [xs, ys])) :
+  is_dnf_ind (dnf_list_of_list_to_formula [ys]) :=
+  by
+  unfold dnf_list_of_list_to_formula at h1
+  simp only [List.map_cons, List.map_nil] at h1
+  unfold list_disj at h1
+  cases h1
+  case rule_1 ih_1 ih_2 =>
+    unfold dnf_list_of_list_to_formula
+    simp only [List.map_cons, List.map_nil]
+    exact ih_2
+  case rule_2 ih =>
+    contradiction
+
+
+lemma aux_1
+  (xs : List Formula_)
+  (xss : List (List Formula_))
+  (h1 : is_dnf_ind (dnf_list_of_list_to_formula (xs :: xss))) :
+  is_dnf_ind (dnf_list_of_list_to_formula xss) :=
+  by
+  induction xss
+  case nil =>
+    unfold dnf_list_of_list_to_formula
+    simp only [List.map_nil]
+    unfold list_disj
+    apply is_dnf_ind.rule_2
+    apply is_conj_ind.rule_3
+    exact is_constant_ind.rule_1
+  case cons hd tl ih =>
+    cases tl
+    case nil =>
+      cases h1
+      case rule_1 ih_1 ih_2 =>
+        simp only [List.map_nil] at ih_2
+        unfold dnf_list_of_list_to_formula
+        simp only [List.map_cons, List.map_nil]
+        exact ih_2
+      case rule_2 ih_1 =>
+        unfold dnf_list_of_list_to_formula at ih_1
+        simp only [List.map_cons, List.map_nil] at ih_1
+        unfold list_disj at ih_1
+        contradiction
+    case cons tl_hd tl_tl =>
+      unfold dnf_list_of_list_to_formula at h1
+      simp only [List.map_cons] at h1
+      simp only [list_disj] at h1
+      unfold dnf_list_of_list_to_formula
+      simp only [List.map_cons]
+      cases h1
+      case rule_1 ih_1 ih_2 =>
+        simp only [list_disj]
+        exact ih_2
+      case rule_2 ih_1 =>
+        contradiction
+
+
+lemma aux_2
+  (xs : List Formula_)
+  (xss : List (List Formula_))
+  (h1 : is_conj_ind (list_conj xs))
+  (h2 : is_dnf_ind (dnf_list_of_list_to_formula xss)) :
+  is_dnf_ind (dnf_list_of_list_to_formula (xs :: xss)) :=
+  by
+  unfold dnf_list_of_list_to_formula at h2
+
+  unfold dnf_list_of_list_to_formula
+
+  induction xss
+  case nil =>
+    simp only [List.map_cons, List.map_nil]
+    unfold list_disj
+    apply is_dnf_ind.rule_2
+    exact h1
+  case cons hd tl ih =>
+    cases tl
+    case nil =>
+      simp only [List.map_cons, List.map_nil] at h2
+      simp only [List.map_cons, List.map_nil]
+      unfold list_disj
+      apply is_dnf_ind.rule_1
+      · exact h1
+      · exact h2
+    case cons tl_hd tl_tl =>
+      simp only [List.map_cons] at h2
+      simp only [List.map_cons]
+      unfold list_disj
+      apply is_dnf_ind.rule_1
+      · exact h1
+      · exact h2
+
+
+lemma aux_3
+  (xss : List (List Formula_))
+  (pred : List Formula_ → Bool)
+  (h1 : is_dnf_ind (dnf_list_of_list_to_formula xss)) :
+  is_dnf_ind (dnf_list_of_list_to_formula (List.filter pred xss)) :=
+  by
+  unfold dnf_list_of_list_to_formula at h1
+
+  unfold dnf_list_of_list_to_formula
+
+  induction xss
+  case nil =>
+    simp only [List.filter_nil]
+    exact h1
+  case cons hd tl ih =>
+    obtain s1 := aux_1 hd tl h1
+    specialize ih s1
+    clear s1
+
+    cases tl
+    case nil =>
+      simp only [List.map_cons, List.map_nil] at h1
+      simp only [List.filter_cons]
+      split_ifs
+      case pos c1 =>
+        simp only [List.filter_nil, List.map_cons, List.map_nil]
+        exact h1
+      case neg c1 =>
+        simp only [List.filter_nil, List.map_nil]
+        unfold list_disj
+        apply is_dnf_ind.rule_2
+        apply is_conj_ind.rule_3
+        exact is_constant_ind.rule_1
+    case cons tl_hd tl_tl =>
+      simp only [List.map_cons] at h1
+      unfold list_disj at h1
+      cases h1
+      case rule_1 ih_1 ih_2 =>
+        simp only [List.filter_cons]
+        split_ifs
+        case pos c1 c2 =>
+          simp only [List.map_cons]
+          unfold list_disj
+          apply is_dnf_ind.rule_1
+          · exact ih_1
+          · simp only [List.filter_cons] at ih
+            split_ifs at ih
+            simp only [List.map_cons] at ih
+            exact ih
+        case neg c1 c2 =>
+          simp only [List.map_cons]
+          simp only [List.filter_cons] at ih
+          split_ifs at ih
+          apply aux_2
+          · exact ih_1
+          · unfold dnf_list_of_list_to_formula
+            exact ih
+        case pos c1 c2 =>
+          simp only [List.filter_cons] at ih
+          split_ifs at ih
+          exact ih
+        case neg c1 c2 =>
+          simp only [List.filter_cons] at ih
+          split_ifs at ih
+          exact ih
+      case rule_2 ih_1 =>
+        contradiction
+
+
+example
+  (F : Formula_)
+  (h1 : is_nnf F) :
+  is_dnf_ind (dnf_list_of_list_to_formula (pure_dnf_simp_1 F)) :=
+  by
+  unfold pure_dnf_simp_1
+  apply aux_3
+  exact is_nnf_imp_pure_dnf_is_ind F h1
+
+
 -------------------------------------------------------------------------------
 
 
@@ -903,6 +1095,7 @@ example
 #eval let xss := [[atom_ "P"], [atom_ "P", atom_ "Q"]]; (List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs)) xss).toString
 
 
+-- xs has a subset in xss that is minimal
 lemma aux
   {α : Type}
   [DecidableEq α]
@@ -1102,3 +1295,29 @@ example
     simp only [← eval_pure_dnf_simp_2]
     simp only [eval_pure_dnf_simp_1]
     simp only [← eval_to_nnf_v1]
+
+
+example
+  (F : Formula_) :
+  is_dnf_ind (dnf_list_of_list_to_formula (simp_dnf F)) :=
+  by
+  unfold simp_dnf
+  split_ifs
+  case pos c1 =>
+    unfold dnf_list_of_list_to_formula
+    simp only [List.map_nil]
+    unfold list_disj
+    apply is_dnf_ind.rule_2
+    apply is_conj_ind.rule_3
+    exact is_constant_ind.rule_1
+  case pos c1 c2 =>
+    unfold dnf_list_of_list_to_formula
+    simp only [List.map_cons, List.map_nil]
+    unfold list_conj
+    unfold list_disj
+    apply is_dnf_ind.rule_2
+    apply is_conj_ind.rule_3
+    exact is_constant_ind.rule_2
+  case neg c1 c2 =>
+    simp only
+    sorry

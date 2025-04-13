@@ -73,6 +73,56 @@ lemma list_conj_of_is_constant_ind_or_is_literal_ind_is_conj_ind
           exact a1
 
 
+lemma mem_is_conj_ind_list_conj_is_conj_ind
+  (F : Formula_)
+  (xs : List Formula_)
+  (h1 : is_conj_ind (list_conj xs))
+  (h2 : F ∈ xs) :
+  is_conj_ind F :=
+  by
+  induction xs
+  case nil =>
+    simp only [List.not_mem_nil] at h2
+  case cons hd tl ih =>
+    simp only [List.mem_cons] at h2
+    cases tl
+    case nil =>
+      simp only [list_conj] at h1
+      cases h2
+      case inl h2 =>
+        rewrite [h2]
+        exact h1
+      case inr h2 =>
+        simp only [List.not_mem_nil] at h2
+    case cons tl_hd tl_tl =>
+      simp only [list_conj] at h1
+      cases h1
+      case rule_1 ih_1 ih_2 =>
+        cases h2
+        case inl h2 =>
+          rewrite [h2]
+          apply is_conj_ind.rule_3
+          exact ih_1
+        case inr h2 =>
+          apply ih
+          · exact ih_2
+          · exact h2
+      case rule_2 ih_1 ih_2 =>
+        cases h2
+        case inl h2 =>
+          rewrite [h2]
+          apply is_conj_ind.rule_4
+          exact ih_1
+        case inr h2 =>
+          apply ih
+          · exact ih_2
+          · exact h2
+      case rule_3 ih_1 =>
+        contradiction
+      case rule_4 ih_1 =>
+        contradiction
+
+
 -------------------------------------------------------------------------------
 
 
