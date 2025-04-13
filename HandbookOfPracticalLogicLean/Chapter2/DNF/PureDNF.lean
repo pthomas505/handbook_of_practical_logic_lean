@@ -615,7 +615,7 @@ example
     contradiction
 
 
-lemma aux_1
+lemma aux_5
   (xs : List Formula_)
   (xss : List (List Formula_))
   (h1 : is_dnf_ind (dnf_list_of_list_to_formula (xs :: xss))) :
@@ -657,7 +657,7 @@ lemma aux_1
         contradiction
 
 
-lemma aux_2
+lemma aux_6
   (xs : List Formula_)
   (xss : List (List Formula_))
   (h1 : is_conj_ind (list_conj xs))
@@ -692,7 +692,7 @@ lemma aux_2
       · exact h2
 
 
-lemma aux_3
+lemma aux_7
   (xss : List (List Formula_))
   (pred : List Formula_ → Bool)
   (h1 : is_dnf_ind (dnf_list_of_list_to_formula xss)) :
@@ -707,7 +707,7 @@ lemma aux_3
     simp only [List.filter_nil]
     exact h1
   case cons hd tl ih =>
-    obtain s1 := aux_1 hd tl h1
+    obtain s1 := aux_5 hd tl h1
     specialize ih s1
     clear s1
 
@@ -745,7 +745,7 @@ lemma aux_3
           simp only [List.map_cons]
           simp only [List.filter_cons] at ih
           split_ifs at ih
-          apply aux_2
+          apply aux_6
           · exact ih_1
           · unfold dnf_list_of_list_to_formula
             exact ih
@@ -767,7 +767,7 @@ example
   is_dnf_ind (dnf_list_of_list_to_formula (pure_dnf_simp_1 F)) :=
   by
   unfold pure_dnf_simp_1
-  apply aux_3
+  apply aux_7
   exact is_nnf_imp_pure_dnf_is_ind F h1
 
 

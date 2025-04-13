@@ -48,6 +48,79 @@ lemma list_disj_of_is_conj_ind_is_dnf_ind
         exact a1
 
 
+lemma aux_1
+  (F : Formula_)
+  (l : List Formula_)
+  (h1 : is_dnf_ind (list_disj (F :: l))) :
+  is_dnf_ind (list_disj l) :=
+  by
+  cases l
+  case nil =>
+    unfold list_disj
+    apply is_dnf_ind.rule_2
+    apply is_conj_ind.rule_3
+    exact is_constant_ind.rule_1
+  case cons hd tl =>
+    unfold list_disj at h1
+    cases h1
+    case rule_1 ih_1 ih_2 =>
+      exact ih_2
+    case rule_2 ih_1 =>
+      contradiction
+
+
+lemma aux_2
+  (F : Formula_)
+  (l : List Formula_)
+  (h1 : is_conj_ind F)
+  (h2 : is_dnf_ind (list_disj l)) :
+  is_dnf_ind (list_disj (F :: l)) :=
+  by
+  cases l
+  case nil =>
+    unfold list_disj
+    apply is_dnf_ind.rule_2
+    exact h1
+  case cons hd tl =>
+    unfold list_disj
+    apply is_dnf_ind.rule_1
+    · exact h1
+    · exact h2
+
+
+lemma aux_3
+  (l : List Formula_)
+  (pred : Formula_ → Bool)
+  (h1 : is_dnf_ind (list_disj l)) :
+  is_dnf_ind (list_disj (List.filter pred l)) :=
+  by
+  induction l
+  case nil =>
+    simp only [List.filter_nil]
+    exact h1
+  case cons hd tl ih =>
+    simp only [List.filter_cons]
+    split_ifs
+    case pos c1 =>
+      cases tl
+      case nil =>
+        simp only [List.filter_nil]
+        exact h1
+      case cons tl_hd tl_tl =>
+        unfold list_disj at h1
+        cases h1
+        case rule_1 ih_1 ih_2 =>
+          apply aux_2
+          · exact ih_1
+          · apply ih
+            exact ih_2
+        case rule_2 ih_1 =>
+          contradiction
+    case neg c1 =>
+      apply ih
+      exact aux_1 hd tl h1
+
+
 -------------------------------------------------------------------------------
 
 
