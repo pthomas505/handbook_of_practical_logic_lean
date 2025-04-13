@@ -621,40 +621,11 @@ lemma aux_5
   (h1 : is_dnf_ind (dnf_list_of_list_to_formula (xs :: xss))) :
   is_dnf_ind (dnf_list_of_list_to_formula xss) :=
   by
-  induction xss
-  case nil =>
-    unfold dnf_list_of_list_to_formula
-    simp only [List.map_nil]
-    unfold list_disj
-    apply is_dnf_ind.rule_2
-    apply is_conj_ind.rule_3
-    exact is_constant_ind.rule_1
-  case cons hd tl ih =>
-    cases tl
-    case nil =>
-      cases h1
-      case rule_1 ih_1 ih_2 =>
-        simp only [List.map_nil] at ih_2
-        unfold dnf_list_of_list_to_formula
-        simp only [List.map_cons, List.map_nil]
-        exact ih_2
-      case rule_2 ih_1 =>
-        unfold dnf_list_of_list_to_formula at ih_1
-        simp only [List.map_cons, List.map_nil] at ih_1
-        unfold list_disj at ih_1
-        contradiction
-    case cons tl_hd tl_tl =>
-      unfold dnf_list_of_list_to_formula at h1
-      simp only [List.map_cons] at h1
-      simp only [list_disj] at h1
-      unfold dnf_list_of_list_to_formula
-      simp only [List.map_cons]
-      cases h1
-      case rule_1 ih_1 ih_2 =>
-        simp only [list_disj]
-        exact ih_2
-      case rule_2 ih_1 =>
-        contradiction
+  unfold dnf_list_of_list_to_formula at h1
+  simp only [List.map_cons] at h1
+  unfold dnf_list_of_list_to_formula
+  apply aux_1 (list_conj xs)
+  exact h1
 
 
 lemma aux_6
@@ -667,29 +638,9 @@ lemma aux_6
   unfold dnf_list_of_list_to_formula at h2
 
   unfold dnf_list_of_list_to_formula
-
-  induction xss
-  case nil =>
-    simp only [List.map_cons, List.map_nil]
-    unfold list_disj
-    apply is_dnf_ind.rule_2
-    exact h1
-  case cons hd tl ih =>
-    cases tl
-    case nil =>
-      simp only [List.map_cons, List.map_nil] at h2
-      simp only [List.map_cons, List.map_nil]
-      unfold list_disj
-      apply is_dnf_ind.rule_1
-      · exact h1
-      · exact h2
-    case cons tl_hd tl_tl =>
-      simp only [List.map_cons] at h2
-      simp only [List.map_cons]
-      unfold list_disj
-      apply is_dnf_ind.rule_1
-      · exact h1
-      · exact h2
+  apply aux_2
+  · exact h1
+  · exact h2
 
 
 lemma aux_7
@@ -701,64 +652,35 @@ lemma aux_7
   unfold dnf_list_of_list_to_formula at h1
 
   unfold dnf_list_of_list_to_formula
-
   induction xss
   case nil =>
     simp only [List.filter_nil]
     exact h1
   case cons hd tl ih =>
-    obtain s1 := aux_5 hd tl h1
-    specialize ih s1
-    clear s1
-
-    cases tl
-    case nil =>
-      simp only [List.map_cons, List.map_nil] at h1
-      simp only [List.filter_cons]
-      split_ifs
-      case pos c1 =>
+    simp only [List.filter_cons]
+    split_ifs
+    case pos c1 =>
+      cases tl
+      case nil =>
+        simp only [List.map_cons, List.map_nil] at h1
         simp only [List.filter_nil, List.map_cons, List.map_nil]
         exact h1
-      case neg c1 =>
-        simp only [List.filter_nil, List.map_nil]
-        unfold list_disj
-        apply is_dnf_ind.rule_2
-        apply is_conj_ind.rule_3
-        exact is_constant_ind.rule_1
-    case cons tl_hd tl_tl =>
-      simp only [List.map_cons] at h1
-      unfold list_disj at h1
-      cases h1
-      case rule_1 ih_1 ih_2 =>
-        simp only [List.filter_cons]
-        split_ifs
-        case pos c1 c2 =>
+      case cons tl_hd tl_tl =>
+        simp only [List.map_cons] at h1
+        unfold list_disj at h1
+        cases h1
+        case rule_1 ih_1 ih_2 =>
           simp only [List.map_cons]
-          unfold list_disj
-          apply is_dnf_ind.rule_1
-          · exact ih_1
-          · simp only [List.filter_cons] at ih
-            split_ifs at ih
-            simp only [List.map_cons] at ih
-            exact ih
-        case neg c1 c2 =>
-          simp only [List.map_cons]
-          simp only [List.filter_cons] at ih
-          split_ifs at ih
           apply aux_6
           · exact ih_1
-          · unfold dnf_list_of_list_to_formula
-            exact ih
-        case pos c1 c2 =>
-          simp only [List.filter_cons] at ih
-          split_ifs at ih
-          exact ih
-        case neg c1 c2 =>
-          simp only [List.filter_cons] at ih
-          split_ifs at ih
-          exact ih
-      case rule_2 ih_1 =>
-        contradiction
+          · apply ih
+            simp only [List.map_cons]
+            exact ih_2
+        case rule_2 ih_1 =>
+          contradiction
+    case neg c1 =>
+      apply ih
+      exact aux_5 hd tl h1
 
 
 example
