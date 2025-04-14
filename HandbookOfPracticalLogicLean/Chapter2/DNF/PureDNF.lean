@@ -44,7 +44,7 @@ lemma mem_list_mem_pure_dnf_of_nnf_imp_is_constant_or_literal
   (h1 : is_nnf F)
   (h2 : l ∈ pure_dnf F)
   (h3 : P ∈ l) :
-  is_constant_ind P ∨ is_literal_ind P :=
+  is_constant_ind_v1 P ∨ is_literal_ind_v1 P :=
   by
   induction F generalizing l
   case false_ =>
@@ -56,7 +56,7 @@ lemma mem_list_mem_pure_dnf_of_nnf_imp_is_constant_or_literal
     rewrite [h3]
 
     left
-    apply is_constant_ind.rule_1
+    apply is_constant_ind_v1.rule_1
   case true_ =>
     unfold pure_dnf at h2
     simp only [List.mem_singleton] at h2
@@ -66,7 +66,7 @@ lemma mem_list_mem_pure_dnf_of_nnf_imp_is_constant_or_literal
     rewrite [h3]
 
     left
-    apply is_constant_ind.rule_2
+    apply is_constant_ind_v1.rule_2
   case atom_ X =>
     unfold pure_dnf at h2
     simp only [List.mem_singleton] at h2
@@ -76,7 +76,7 @@ lemma mem_list_mem_pure_dnf_of_nnf_imp_is_constant_or_literal
     rewrite [h3]
 
     right
-    apply is_literal_ind.rule_1
+    apply is_literal_ind_v1.rule_1
   case not_ phi ih =>
     unfold pure_dnf at h2
     simp only [List.mem_singleton] at h2
@@ -88,7 +88,7 @@ lemma mem_list_mem_pure_dnf_of_nnf_imp_is_constant_or_literal
     cases phi
     case atom_ X =>
       right
-      apply is_literal_ind.rule_2
+      apply is_literal_ind_v1.rule_2
     all_goals
       unfold is_nnf at h1
       contradiction
@@ -140,35 +140,35 @@ lemma mem_list_mem_pure_dnf_of_nnf_imp_is_constant_or_literal
 lemma is_nnf_imp_pure_dnf_is_ind
   (F : Formula_)
   (h1 : is_nnf F) :
-  is_dnf_ind (dnf_list_of_list_to_formula (pure_dnf F)) :=
+  is_dnf_ind_v1 (dnf_list_of_list_to_formula (pure_dnf F)) :=
   by
   cases F
   case false_ =>
     unfold pure_dnf
     simp only [dnf_list_of_list_to_formula_singleton]
-    apply is_dnf_ind.rule_2
-    apply is_conj_ind.rule_3
-    apply is_constant_ind.rule_1
+    apply is_dnf_ind_v1.rule_2
+    apply is_conj_ind_v1.rule_3
+    apply is_constant_ind_v1.rule_1
   case true_ =>
     unfold pure_dnf
     simp only [dnf_list_of_list_to_formula_singleton]
-    apply is_dnf_ind.rule_2
-    apply is_conj_ind.rule_3
-    apply is_constant_ind.rule_2
+    apply is_dnf_ind_v1.rule_2
+    apply is_conj_ind_v1.rule_3
+    apply is_constant_ind_v1.rule_2
   case atom_ X =>
     unfold pure_dnf
     simp only [dnf_list_of_list_to_formula_singleton]
-    apply is_dnf_ind.rule_2
-    apply is_conj_ind.rule_4
-    apply is_literal_ind.rule_1
+    apply is_dnf_ind_v1.rule_2
+    apply is_conj_ind_v1.rule_4
+    apply is_literal_ind_v1.rule_1
   case not_ phi =>
     unfold pure_dnf
     simp only [dnf_list_of_list_to_formula_singleton]
     cases phi
     case atom_ X =>
-      apply is_dnf_ind.rule_2
-      apply is_conj_ind.rule_4
-      apply is_literal_ind.rule_2
+      apply is_dnf_ind_v1.rule_2
+      apply is_conj_ind_v1.rule_4
+      apply is_literal_ind_v1.rule_2
     all_goals
       unfold is_nnf at h1
       contradiction
@@ -178,12 +178,12 @@ lemma is_nnf_imp_pure_dnf_is_ind
 
     unfold pure_dnf
     unfold dnf_list_of_list_to_formula
-    apply list_disj_of_is_conj_ind_is_dnf_ind
+    apply list_disj_of_is_conj_ind_v1_is_dnf_ind_v1
     intro F a1
     simp only [List.mem_map] at a1
     obtain ⟨l, a1_left, a1_right⟩ := a1
     rewrite [← a1_right]
-    apply list_conj_of_is_constant_ind_or_is_literal_ind_is_conj_ind
+    apply list_conj_of_is_constant_ind_v1_or_is_literal_ind_v1_is_conj_ind_v1
     intro P a2
 
     obtain s1 := mem_all_pairs_v4_union_imp_eq_union (pure_dnf phi) (pure_dnf psi) l a1_left
@@ -208,12 +208,12 @@ lemma is_nnf_imp_pure_dnf_is_ind
 
     unfold pure_dnf
     unfold dnf_list_of_list_to_formula
-    apply list_disj_of_is_conj_ind_is_dnf_ind
+    apply list_disj_of_is_conj_ind_v1_is_dnf_ind_v1
     intro F a1
     simp only [List.mem_map, List.mem_union_iff] at a1
     obtain ⟨l, a1_left, a1_right⟩ := a1
     rewrite [← a1_right]
-    apply list_conj_of_is_constant_ind_or_is_literal_ind_is_conj_ind
+    apply list_conj_of_is_constant_ind_v1_or_is_literal_ind_v1_is_conj_ind_v1
     intro P a2
 
     cases a1_left
@@ -581,8 +581,8 @@ lemma eval_pure_dnf_simp_1
 
 example
   (xs ys : List Formula_)
-  (h1 : is_dnf_ind (dnf_list_of_list_to_formula [xs, ys])) :
-  is_dnf_ind (dnf_list_of_list_to_formula [xs]) :=
+  (h1 : is_dnf_ind_v1 (dnf_list_of_list_to_formula [xs, ys])) :
+  is_dnf_ind_v1 (dnf_list_of_list_to_formula [xs]) :=
   by
   unfold dnf_list_of_list_to_formula at h1
   simp only [List.map_cons, List.map_nil] at h1
@@ -592,7 +592,7 @@ example
     unfold dnf_list_of_list_to_formula
     simp only [List.map_cons, List.map_nil]
     unfold list_disj
-    apply is_dnf_ind.rule_2
+    apply is_dnf_ind_v1.rule_2
     exact ih_1
   case rule_2 ih =>
     contradiction
@@ -600,8 +600,8 @@ example
 
 example
   (xs ys : List Formula_)
-  (h1 : is_dnf_ind (dnf_list_of_list_to_formula [xs, ys])) :
-  is_dnf_ind (dnf_list_of_list_to_formula [ys]) :=
+  (h1 : is_dnf_ind_v1 (dnf_list_of_list_to_formula [xs, ys])) :
+  is_dnf_ind_v1 (dnf_list_of_list_to_formula [ys]) :=
   by
   unfold dnf_list_of_list_to_formula at h1
   simp only [List.map_cons, List.map_nil] at h1
@@ -618,8 +618,8 @@ example
 lemma aux_5
   (xs : List Formula_)
   (xss : List (List Formula_))
-  (h1 : is_dnf_ind (dnf_list_of_list_to_formula (xs :: xss))) :
-  is_dnf_ind (dnf_list_of_list_to_formula xss) :=
+  (h1 : is_dnf_ind_v1 (dnf_list_of_list_to_formula (xs :: xss))) :
+  is_dnf_ind_v1 (dnf_list_of_list_to_formula xss) :=
   by
   unfold dnf_list_of_list_to_formula at h1
   simp only [List.map_cons] at h1
@@ -631,9 +631,9 @@ lemma aux_5
 lemma aux_6
   (xs : List Formula_)
   (xss : List (List Formula_))
-  (h1 : is_conj_ind (list_conj xs))
-  (h2 : is_dnf_ind (dnf_list_of_list_to_formula xss)) :
-  is_dnf_ind (dnf_list_of_list_to_formula (xs :: xss)) :=
+  (h1 : is_conj_ind_v1 (list_conj xs))
+  (h2 : is_dnf_ind_v1 (dnf_list_of_list_to_formula xss)) :
+  is_dnf_ind_v1 (dnf_list_of_list_to_formula (xs :: xss)) :=
   by
   unfold dnf_list_of_list_to_formula at h2
 
@@ -646,8 +646,8 @@ lemma aux_6
 lemma aux_7
   (xss : List (List Formula_))
   (pred : List Formula_ → Bool)
-  (h1 : is_dnf_ind (dnf_list_of_list_to_formula xss)) :
-  is_dnf_ind (dnf_list_of_list_to_formula (List.filter pred xss)) :=
+  (h1 : is_dnf_ind_v1 (dnf_list_of_list_to_formula xss)) :
+  is_dnf_ind_v1 (dnf_list_of_list_to_formula (List.filter pred xss)) :=
   by
   unfold dnf_list_of_list_to_formula at h1
 
@@ -686,7 +686,7 @@ lemma aux_7
 example
   (F : Formula_)
   (h1 : is_nnf F) :
-  is_dnf_ind (dnf_list_of_list_to_formula (pure_dnf_simp_1 F)) :=
+  is_dnf_ind_v1 (dnf_list_of_list_to_formula (pure_dnf_simp_1 F)) :=
   by
   unfold pure_dnf_simp_1
   apply aux_7
@@ -1221,7 +1221,7 @@ example
 
 example
   (F : Formula_) :
-  is_dnf_ind (dnf_list_of_list_to_formula (simp_dnf F)) :=
+  is_dnf_ind_v1 (dnf_list_of_list_to_formula (simp_dnf F)) :=
   by
   unfold simp_dnf
   split_ifs
@@ -1229,17 +1229,17 @@ example
     unfold dnf_list_of_list_to_formula
     simp only [List.map_nil]
     unfold list_disj
-    apply is_dnf_ind.rule_2
-    apply is_conj_ind.rule_3
-    exact is_constant_ind.rule_1
+    apply is_dnf_ind_v1.rule_2
+    apply is_conj_ind_v1.rule_3
+    exact is_constant_ind_v1.rule_1
   case pos c1 c2 =>
     unfold dnf_list_of_list_to_formula
     simp only [List.map_cons, List.map_nil]
     unfold list_conj
     unfold list_disj
-    apply is_dnf_ind.rule_2
-    apply is_conj_ind.rule_3
-    exact is_constant_ind.rule_2
+    apply is_dnf_ind_v1.rule_2
+    apply is_conj_ind_v1.rule_3
+    exact is_constant_ind_v1.rule_2
   case neg c1 c2 =>
     simp only
     sorry

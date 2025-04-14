@@ -14,27 +14,27 @@ def list_disj :
   | hd :: tl => or_ hd (list_disj tl)
 
 
-lemma list_disj_of_is_conj_ind_is_dnf_ind
+lemma list_disj_of_is_conj_ind_v1_is_dnf_ind_v1
   (xs : List Formula_)
-  (h1 : ∀ (F : Formula_), F ∈ xs → is_conj_ind F) :
-  is_dnf_ind (list_disj xs) :=
+  (h1 : ∀ (F : Formula_), F ∈ xs → is_conj_ind_v1 F) :
+  is_dnf_ind_v1 (list_disj xs) :=
   by
   induction xs
   case nil =>
     unfold list_disj
-    apply is_dnf_ind.rule_2 false_
-    apply is_conj_ind.rule_3 false_
-    exact is_constant_ind.rule_1
+    apply is_dnf_ind_v1.rule_2 false_
+    apply is_conj_ind_v1.rule_3 false_
+    exact is_constant_ind_v1.rule_1
   case cons hd tl ih =>
     cases tl
     case nil =>
       unfold list_disj
-      apply is_dnf_ind.rule_2 hd
+      apply is_dnf_ind_v1.rule_2 hd
       apply h1
       simp
     case cons tl_hd tl_tl =>
       unfold list_disj
-      apply is_dnf_ind.rule_1
+      apply is_dnf_ind_v1.rule_1
       · apply h1
         simp only [List.mem_cons]
         left
@@ -51,15 +51,15 @@ lemma list_disj_of_is_conj_ind_is_dnf_ind
 lemma aux_1
   (F : Formula_)
   (l : List Formula_)
-  (h1 : is_dnf_ind (list_disj (F :: l))) :
-  is_dnf_ind (list_disj l) :=
+  (h1 : is_dnf_ind_v1 (list_disj (F :: l))) :
+  is_dnf_ind_v1 (list_disj l) :=
   by
   cases l
   case nil =>
     unfold list_disj
-    apply is_dnf_ind.rule_2
-    apply is_conj_ind.rule_3
-    exact is_constant_ind.rule_1
+    apply is_dnf_ind_v1.rule_2
+    apply is_conj_ind_v1.rule_3
+    exact is_constant_ind_v1.rule_1
   case cons hd tl =>
     unfold list_disj at h1
     cases h1
@@ -72,18 +72,18 @@ lemma aux_1
 lemma aux_2
   (F : Formula_)
   (l : List Formula_)
-  (h1 : is_conj_ind F)
-  (h2 : is_dnf_ind (list_disj l)) :
-  is_dnf_ind (list_disj (F :: l)) :=
+  (h1 : is_conj_ind_v1 F)
+  (h2 : is_dnf_ind_v1 (list_disj l)) :
+  is_dnf_ind_v1 (list_disj (F :: l)) :=
   by
   cases l
   case nil =>
     unfold list_disj
-    apply is_dnf_ind.rule_2
+    apply is_dnf_ind_v1.rule_2
     exact h1
   case cons hd tl =>
     unfold list_disj
-    apply is_dnf_ind.rule_1
+    apply is_dnf_ind_v1.rule_1
     · exact h1
     · exact h2
 
@@ -91,8 +91,8 @@ lemma aux_2
 lemma aux_3
   (l : List Formula_)
   (pred : Formula_ → Bool)
-  (h1 : is_dnf_ind (list_disj l)) :
-  is_dnf_ind (list_disj (List.filter pred l)) :=
+  (h1 : is_dnf_ind_v1 (list_disj l)) :
+  is_dnf_ind_v1 (list_disj (List.filter pred l)) :=
   by
   induction l
   case nil =>

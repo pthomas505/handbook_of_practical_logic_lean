@@ -14,38 +14,38 @@ def list_conj :
   | hd :: tl => and_ hd (list_conj tl)
 
 
-lemma list_conj_of_is_constant_ind_or_is_literal_ind_is_conj_ind
+lemma list_conj_of_is_constant_ind_v1_or_is_literal_ind_v1_is_conj_ind_v1
   (l : List Formula_)
-  (h1 : ∀ (F : Formula_), F ∈ l → (is_constant_ind F ∨ is_literal_ind F)) :
-  is_conj_ind (list_conj l) :=
+  (h1 : ∀ (F : Formula_), F ∈ l → (is_constant_ind_v1 F ∨ is_literal_ind_v1 F)) :
+  is_conj_ind_v1 (list_conj l) :=
   by
   induction l
   case nil =>
     unfold list_conj
-    apply is_conj_ind.rule_3
-    apply is_constant_ind.rule_2
+    apply is_conj_ind_v1.rule_3
+    apply is_constant_ind_v1.rule_2
   case cons hd tl ih =>
     cases tl
     case nil =>
       unfold list_conj
       simp only [List.mem_singleton] at h1
 
-      have s1 : is_constant_ind hd ∨ is_literal_ind hd :=
+      have s1 : is_constant_ind_v1 hd ∨ is_literal_ind_v1 hd :=
       by
         apply h1
         rfl
 
       cases s1
       case inl s1 =>
-        apply is_conj_ind.rule_3
+        apply is_conj_ind_v1.rule_3
         exact s1
       case inr s1 =>
-        apply is_conj_ind.rule_4
+        apply is_conj_ind_v1.rule_4
         exact s1
     case cons tl_hd tl_tl =>
       simp only [List.mem_cons] at h1
 
-      have s1 : is_constant_ind hd ∨ is_literal_ind hd :=
+      have s1 : is_constant_ind_v1 hd ∨ is_literal_ind_v1 hd :=
       by
         apply h1
         left
@@ -54,7 +54,7 @@ lemma list_conj_of_is_constant_ind_or_is_literal_ind_is_conj_ind
       unfold list_conj
       cases s1
       case inl s1 =>
-        apply is_conj_ind.rule_1
+        apply is_conj_ind_v1.rule_1
         · exact s1
         · apply ih
           intro F a1
@@ -63,7 +63,7 @@ lemma list_conj_of_is_constant_ind_or_is_literal_ind_is_conj_ind
           right
           exact a1
       case inr s1 =>
-        apply is_conj_ind.rule_2
+        apply is_conj_ind_v1.rule_2
         · exact s1
         · apply ih
           intro F a1
@@ -73,12 +73,12 @@ lemma list_conj_of_is_constant_ind_or_is_literal_ind_is_conj_ind
           exact a1
 
 
-lemma mem_is_conj_ind_list_conj_is_conj_ind
+lemma mem_is_conj_ind_v1_list_conj_is_conj_ind_v1
   (F : Formula_)
   (xs : List Formula_)
-  (h1 : is_conj_ind (list_conj xs))
+  (h1 : is_conj_ind_v1 (list_conj xs))
   (h2 : F ∈ xs) :
-  is_conj_ind F :=
+  is_conj_ind_v1 F :=
   by
   induction xs
   case nil =>
@@ -101,7 +101,7 @@ lemma mem_is_conj_ind_list_conj_is_conj_ind
         cases h2
         case inl h2 =>
           rewrite [h2]
-          apply is_conj_ind.rule_3
+          apply is_conj_ind_v1.rule_3
           exact ih_1
         case inr h2 =>
           apply ih
@@ -111,7 +111,7 @@ lemma mem_is_conj_ind_list_conj_is_conj_ind
         cases h2
         case inl h2 =>
           rewrite [h2]
-          apply is_conj_ind.rule_4
+          apply is_conj_ind_v1.rule_4
           exact ih_1
         case inr h2 =>
           apply ih
