@@ -31,9 +31,9 @@ lemma is_dnf_ind_distrib_and
   (P Q : Formula_)
   (h1 : is_nnf P)
   (h2 : is_nnf Q)
-  (h3 : is_dnf_ind P)
-  (h4 : is_dnf_ind Q) :
-  is_dnf_ind (distrib (and_ P Q)) :=
+  (h3 : is_dnf_ind_v2 P)
+  (h4 : is_dnf_ind_v2 Q) :
+  is_dnf_ind_v2 (distrib (and_ P Q)) :=
   by
   induction Q generalizing P
   case or_ T U T_ih U_ih =>
@@ -41,7 +41,7 @@ lemma is_dnf_ind_distrib_and
     obtain ⟨h2_left, h2_right⟩ := h2
 
     simp only [distrib]
-    apply is_dnf_ind.rule_1
+    apply is_dnf_ind_v2.rule_1
     · apply T_ih
       · exact h1
       · exact h2_left
@@ -67,7 +67,7 @@ lemma is_dnf_ind_distrib_and
       obtain ⟨h1_left, h1_right⟩ := h1
 
       simp only [distrib]
-      apply is_dnf_ind.rule_1
+      apply is_dnf_ind_v2.rule_1
       · apply R_ih
         · exact h1_left
         · cases h3
@@ -84,8 +84,8 @@ lemma is_dnf_ind_distrib_and
             contradiction
     any_goals
       simp only [distrib]
-      apply is_dnf_ind.rule_2
-      apply is_conj_ind.rule_1
+      apply is_dnf_ind_v2.rule_2
+      apply is_conj_ind_v2.rule_1
     any_goals
       cases h3
       cases h4
@@ -166,31 +166,31 @@ lemma is_nnf_raw_dnf
 example
   (F : Formula_)
   (h1 : is_nnf F) :
-  is_dnf_ind (raw_dnf F) :=
+  is_dnf_ind_v2 (raw_dnf F) :=
   by
   induction F
   case false_ =>
     unfold raw_dnf
-    apply is_dnf_ind.rule_2
-    apply is_conj_ind.rule_2
-    exact is_constant_ind.rule_1
+    apply is_dnf_ind_v2.rule_2
+    apply is_conj_ind_v2.rule_2
+    exact is_constant_ind_v2.rule_1
   case true_ =>
     unfold raw_dnf
-    apply is_dnf_ind.rule_2
-    apply is_conj_ind.rule_2
-    exact is_constant_ind.rule_2
+    apply is_dnf_ind_v2.rule_2
+    apply is_conj_ind_v2.rule_2
+    exact is_constant_ind_v2.rule_2
   case atom_ X =>
     unfold raw_dnf
-    apply is_dnf_ind.rule_2
-    apply is_conj_ind.rule_3
-    apply is_literal_ind.rule_1
+    apply is_dnf_ind_v2.rule_2
+    apply is_conj_ind_v2.rule_3
+    apply is_literal_ind_v2.rule_1
   case not_ phi ih =>
     unfold raw_dnf
     cases phi
     case atom_ X =>
-      apply is_dnf_ind.rule_2
-      apply is_conj_ind.rule_3
-      apply is_literal_ind.rule_2
+      apply is_dnf_ind_v2.rule_2
+      apply is_conj_ind_v2.rule_3
+      apply is_literal_ind_v2.rule_2
     all_goals
       unfold is_nnf at h1
       contradiction
@@ -213,7 +213,7 @@ example
     obtain ⟨h1_left, h1_right⟩ := h1
 
     unfold raw_dnf
-    apply is_dnf_ind.rule_1
+    apply is_dnf_ind_v2.rule_1
     · apply P_ih
       exact h1_left
     · apply Q_ih
