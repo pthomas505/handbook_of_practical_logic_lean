@@ -487,6 +487,16 @@ lemma eval_pure_dnf_simp_2
   · apply eval_pure_dnf_simp_2_right
 
 
+example
+  (xss : List (List Formula_))
+  (h1 : is_dnf_ind_v1 (dnf_list_of_list_to_formula xss)) :
+  is_dnf_ind_v1 (dnf_list_of_list_to_formula (pure_dnf_simp_2 xss)) :=
+  by
+  unfold pure_dnf_simp_2
+  apply aux_7
+  exact h1
+
+
 -------------------------------------------------------------------------------
 
 
