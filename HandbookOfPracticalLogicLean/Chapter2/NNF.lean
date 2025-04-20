@@ -314,7 +314,7 @@ lemma to_nnf_neg_is_nnf_iff_to_nnf_is_nnf_v1
     rfl
 
 
-example
+lemma to_nnf_v1_is_nnf
   (F : Formula_) :
   (to_nnf_v1 F).is_nnf :=
   by

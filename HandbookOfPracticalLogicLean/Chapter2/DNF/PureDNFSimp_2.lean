@@ -654,7 +654,7 @@ lemma eval_pure_dnf_simp_2
   · apply eval_pure_dnf_simp_2_right
 
 
-example
+lemma pure_dnf_simp_2_is_dnf_ind_v1
   (xss : List (List Formula_))
   (h1 : is_dnf_ind_v1 (dnf_list_of_list_to_formula xss)) :
   is_dnf_ind_v1 (dnf_list_of_list_to_formula (pure_dnf_simp_2 xss)) :=
@@ -730,4 +730,6 @@ example
     exact is_constant_ind_v1.rule_2
   case neg c1 c2 =>
     simp only
-    sorry
+    apply pure_dnf_simp_2_is_dnf_ind_v1
+    apply pure_dnf_simp_1_is_dnf_ind_v1
+    apply to_nnf_v1_is_nnf

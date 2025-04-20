@@ -349,7 +349,7 @@ lemma aux_7
       exact aux_5 hd tl h1
 
 
-example
+lemma pure_dnf_simp_1_is_dnf_ind_v1
   (F : Formula_)
   (h1 : is_nnf F) :
   is_dnf_ind_v1 (dnf_list_of_list_to_formula (pure_dnf_simp_1 F)) :=
