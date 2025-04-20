@@ -469,9 +469,28 @@ example
   ∃ (xs : List α), xs ∈ ll ∧ xs ⊆ l ∧
     ∀ (ys : List α), (ys ∈ ll ∧ ys ⊆ xs) → xs ⊆ ys :=
   by
-  sorry
+  let ll' : List (List α) := sorry
+  have s10 : ∀ (zs : List α), (zs ∈ ll ∧ zs ⊆ l) → zs ∈ ll' := sorry
+  have s11 : ∀ (zs : List α), zs ∈ ll' → zs ∈ ll ∧ zs ⊆ l := sorry
 
-
+  obtain s1 := List.exists_minimal_subset ll' sorry
+  obtain ⟨xs, s1_left, s1_right⟩ := s1
+  apply Exists.intro xs
+  constructor
+  · aesop
+  · constructor
+    · aesop
+    · intro ys a1
+      obtain ⟨a1_left, a1_right⟩ := a1
+      apply s1_right
+      constructor
+      · apply s10
+        constructor
+        · exact a1_left
+        · trans xs
+          · exact a1_right
+          · aesop
+      · exact a1_right
 
 
 -- xs has a subset in xss that is a minimal subset of xs
