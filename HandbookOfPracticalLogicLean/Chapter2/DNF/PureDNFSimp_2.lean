@@ -328,6 +328,69 @@ example
 #eval let xss := [[atom_ "P"], [atom_ "P", atom_ "Q"]]; (List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs)) xss).toString
 
 
+example
+  {α : Type}
+  [DecidableEq α]
+  (l : List (List α))
+  (h1 : ¬ l = [])
+  (h2 : ∀ (xs ys : List α), xs ⊆ ys ∨ ys ⊆ xs) :
+  ∃ (xs : List α), xs ∈ l ∧ ∀ (ys : List α), ys ∈ l → ys ⊆ xs :=
+  by
+  induction l
+  case nil =>
+    contradiction
+  case cons hd tl ih =>
+    by_cases c1 : tl = []
+    case pos =>
+      rewrite [c1]
+      apply Exists.intro hd
+      constructor
+      · simp only [List.mem_singleton]
+      · intro ys a1
+        simp only [List.mem_singleton] at a1
+        rewrite [a1]
+        apply List.Subset.refl
+    case neg =>
+      specialize ih c1
+      obtain ⟨xs, ih_left, ih_right⟩ := ih
+      by_cases c2 : xs ⊆ hd
+      case pos =>
+        simp only [List.mem_cons]
+        apply Exists.intro hd
+        constructor
+        · left
+          rfl
+        · intro ys a1
+          cases a1
+          case inl a1 =>
+            rewrite [a1]
+            apply List.Subset.refl
+          case inr a1 =>
+            trans xs
+            · apply ih_right
+              exact a1
+            · exact c2
+      case neg =>
+        simp only [List.mem_cons]
+        apply Exists.intro xs
+        constructor
+        · right
+          exact ih_left
+        · intro ys a1
+          cases a1
+          case inl a1 =>
+            rewrite [← a1] at c2
+            specialize h2 xs ys
+            cases h2
+            case inl h2 =>
+              contradiction
+            case inr h2 =>
+              exact h2
+          case inr a1 =>
+            apply ih_right
+            exact a1
+
+
 lemma List.exists_maximal_subset
   {α : Type}
   [DecidableEq α]
@@ -419,8 +482,43 @@ lemma List.exists_minimal_subset
       specialize ih c1
       obtain ⟨xs, ih_left, ih_right⟩ := ih
 
-      simp only [mem_cons]
-      sorry
+      by_cases c2 : hd ⊆ xs
+      case pos =>
+        simp only [List.mem_cons]
+        apply Exists.intro hd
+        constructor
+        · left
+          rfl
+        · intro ys a1
+          obtain ⟨a1_left, a1_right⟩ := a1
+          cases a1_left
+          case inl a1_left =>
+            rewrite [a1_left]
+            apply List.Subset.refl
+          case inr a1_left =>
+            trans xs
+            · exact c2
+            · apply ih_right
+              constructor
+              · exact a1_left
+              · trans hd
+                · exact a1_right
+                · exact c2
+      case neg =>
+        simp only [List.mem_cons]
+        apply Exists.intro xs
+        constructor
+        · right
+          exact ih_left
+        · intro ys a1
+          obtain ⟨a1_left, a1_right⟩ := a1
+          cases a1_left
+          case inl a1_left =>
+            rewrite [a1_left] at a1_right
+            contradiction
+          case inr a1_left =>
+            apply ih_right
+            exact ⟨a1_left, a1_right⟩
 
 
 -- xs has a subset in xss that is minimal
