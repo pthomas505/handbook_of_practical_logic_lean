@@ -328,12 +328,12 @@ example
 #eval let xss := [[atom_ "P"], [atom_ "P", atom_ "Q"]]; (List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs)) xss).toString
 
 
-example
+lemma List.exists_maximal_subset
   {α : Type}
   [DecidableEq α]
   (l : List (List α))
   (h1 : ¬ l = []) :
-  ∃ (xs : List α), xs ∈ l ∧ ∀ (ys : List α), (ys ∈ l ∧ xs ⊆ ys) → xs.toFinset = ys.toFinset :=
+  ∃ (xs : List α), xs ∈ l ∧ ∀ (ys : List α), (ys ∈ l ∧ xs ⊆ ys) → ys ⊆ xs :=
   by
   induction l
   case nil =>
@@ -349,7 +349,7 @@ example
         obtain ⟨a1_left, a1_right⟩ := a1
         simp only [List.mem_singleton] at a1_left
         rewrite [a1_left]
-        rfl
+        apply List.Subset.refl
     case neg =>
       specialize ih c1
       obtain ⟨xs, ih_left, ih_right⟩ := ih
@@ -365,28 +365,16 @@ example
           cases a1_left
           case inl a1_left =>
             rewrite [a1_left]
-            rfl
+            apply List.Subset.refl
           case inr a1_left =>
-            have s1 : xs.toFinset = ys.toFinset :=
-            by
-              apply ih_right
+            trans xs
+            · apply ih_right
               constructor
               · exact a1_left
               · trans hd
                 · exact c2
                 · exact a1_right
-
-            simp only [List.subset_def] at c2
-            simp only [← List.mem_toFinset] at c2
-
-            simp only [List.subset_def] at a1_right
-            simp only [← List.mem_toFinset] at a1_right
-
-            ext a
-            constructor
-            · apply a1_right
-            · rewrite [← s1]
-              apply c2
+            · exact c2
       case neg =>
         simp only [List.mem_cons]
         apply Exists.intro xs
@@ -404,12 +392,12 @@ example
             exact ⟨a1_left, a1_right⟩
 
 
-lemma List.Finite.exists_minimal_subset
+lemma List.exists_minimal_subset
   {α : Type}
   [DecidableEq α]
   (l : List (List α))
   (h1 : ¬ l = []) :
-  ∃ (xs : List α), xs ∈ l ∧ ∀ (ys : List α), (ys ∈ l ∧ ys ⊆ xs) → xs.toFinset = ys.toFinset :=
+  ∃ (xs : List α), xs ∈ l ∧ ∀ (ys : List α), (ys ∈ l ∧ ys ⊆ xs) → xs ⊆ ys :=
   by
   induction l
   case nil =>
@@ -425,7 +413,7 @@ lemma List.Finite.exists_minimal_subset
         obtain ⟨a1_left, a1_right⟩ := a1
         simp only [mem_singleton] at a1_left
         rewrite [a1_left]
-        rfl
+        apply List.Subset.refl
     case neg =>
       specialize ih c1
       obtain ⟨xs, ih_left, ih_right⟩ := ih
