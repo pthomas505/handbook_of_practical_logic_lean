@@ -469,11 +469,12 @@ example
   ∃ (xs : List α), xs ∈ ll ∧ xs ⊆ l ∧
     ∀ (ys : List α), (ys ∈ ll ∧ ys ⊆ xs) → xs ⊆ ys :=
   by
-  let ll' : List (List α) := sorry
-  have s10 : ∀ (zs : List α), (zs ∈ ll ∧ zs ⊆ l) → zs ∈ ll' := sorry
-  have s11 : ∀ (zs : List α), zs ∈ ll' → zs ∈ ll ∧ zs ⊆ l := sorry
+  let ll' : List (List α) := List.filter (fun (zs : List α) => zs ⊆ l) ll
+  have s9 : ¬ ll' = [] := by aesop
+  have s10 : ∀ (zs : List α), (zs ∈ ll ∧ zs ⊆ l) → zs ∈ ll' := by aesop
+  have s11 : ∀ (zs : List α), zs ∈ ll' → zs ∈ ll ∧ zs ⊆ l := by aesop
 
-  obtain s1 := List.exists_minimal_subset ll' sorry
+  obtain s1 := List.exists_minimal_subset ll' s9
   obtain ⟨xs, s1_left, s1_right⟩ := s1
   apply Exists.intro xs
   constructor
