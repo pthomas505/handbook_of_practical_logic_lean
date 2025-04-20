@@ -353,6 +353,7 @@ lemma List.exists_maximal_subset
     case neg =>
       specialize ih c1
       obtain ⟨xs, ih_left, ih_right⟩ := ih
+
       by_cases c2 : xs ⊆ hd
       case pos =>
         simp only [List.mem_cons]
