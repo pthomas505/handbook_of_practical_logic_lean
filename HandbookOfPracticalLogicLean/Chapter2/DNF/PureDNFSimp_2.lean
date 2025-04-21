@@ -328,71 +328,6 @@ example
 #eval let xss := [[atom_ "P"], [atom_ "P", atom_ "Q"]]; (List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs)) xss).toString
 
 
--- xs has a subset in xss that is a minimal subset of xs
-
-lemma aux
-  {α : Type}
-  [DecidableEq α]
-  (xss : List (List α))
-  (xs : List α)
-  (h1 : xs ∈ xss) :
-  ∃ (ys : List α), ys ∈ xss ∧ ys ⊆ xs ∧
-    ∀ (zs : List α), (zs ∈ xss ∧ zs ⊆ ys) → ys ⊆ zs :=
-  by
-  have s1 : ({x | x ∈ xss} ∩ {ys | ys ⊆ xs}).Finite :=
-  by
-    apply Set.Finite.inter_of_left
-    exact List.finite_toSet xss
-
-  have s2 : ∃ (ys : List α), ys ∈ {x | x ∈ xss} ∩ {ys | ys ⊆ xs} ∧ ∀ zs ∈ {x | x ∈ xss} ∩ {ys | ys ⊆ xs}, zs.toFinset ≤ ys.toFinset → ys.toFinset = zs.toFinset :=
-  by
-    apply Set.Finite.exists_minimal_wrt
-    · exact s1
-    · unfold Set.Nonempty
-      apply Exists.intro xs
-      apply Set.mem_inter
-      · exact h1
-      · exact List.Subset.refl xs
-
-  obtain ⟨ys, ⟨s2_left_left, s2_left_right⟩, s2_right⟩ := s2
-  simp only [Set.mem_setOf_eq] at s2_left_left
-  simp only [Set.mem_setOf_eq] at s2_left_right
-
-  apply Exists.intro ys
-  constructor
-  · exact s2_left_left
-  · constructor
-    · exact s2_left_right
-    · intro zs a1
-      obtain ⟨a1_left, a1_right⟩ := a1
-
-      have s3 : zs ∈ {x | x ∈ xss} ∩ {ys | ys ⊆ xs} :=
-      by
-        simp only [Set.mem_inter_iff]
-        simp only [Set.mem_setOf_eq]
-        constructor
-        · exact a1_left
-        · trans ys
-          · exact a1_right
-          · exact s2_left_right
-
-      have s4 : zs.toFinset ≤ ys.toFinset :=
-      by
-        simp only [Finset.le_eq_subset]
-        simp only [Finset.subset_iff]
-        simp only [List.mem_toFinset]
-        intro x a2
-        exact a1_right a2
-
-      specialize s2_right zs s3 s4
-      simp only [List.subset_def]
-      intro xs a2
-      simp only [← List.mem_toFinset]
-      rewrite [← s2_right]
-      simp only [List.mem_toFinset]
-      exact a2
-
-
 def pure_dnf_simp_2
   (xss : List (List Formula_)) :
   List (List Formula_) :=
@@ -421,7 +356,7 @@ lemma eval_pure_dnf_simp_2_left
   simp only [not_exists]
   simp only [not_and]
 
-  obtain ⟨xs, s1_left, ⟨s1_right_left, s1_right_right⟩⟩ := aux xss zs h1_left_left
+  obtain ⟨xs, s1_left, ⟨s1_right_left, s1_right_right⟩⟩ := List.exists_minimal_subset_of_mem xss zs h1_left_left
   apply Exists.intro (list_conj xs)
   constructor
   · apply Exists.intro xs
