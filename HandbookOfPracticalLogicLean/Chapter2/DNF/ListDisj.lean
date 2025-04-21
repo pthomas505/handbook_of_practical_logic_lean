@@ -86,6 +86,9 @@ example
         contradiction
 
 
+-------------------------------------------------------------------------------
+
+
 lemma aux_1
   (F : Formula_)
   (l : List Formula_)
