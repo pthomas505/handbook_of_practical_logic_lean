@@ -7,16 +7,6 @@ set_option autoImplicit false
 open Formula_
 
 
-/-
-def has_complementary :
-  List Formula_ → Prop
-  | [] => False
-  | (P :: tl) =>
-      (P.is_literal ∧ ∃ (Q : Formula_), Q ∈ tl ∧ Q.is_literal ∧ negate_literal Q = P) ∨
-      has_complementary tl
--/
-
-
 def has_complementary
   (l : List Formula_) :
   Prop :=
