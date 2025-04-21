@@ -48,6 +48,44 @@ lemma list_disj_of_is_conj_ind_v1_is_dnf_ind_v1
         exact a1
 
 
+example
+  (F : Formula_)
+  (xs : List Formula_)
+  (h1 : is_dnf_ind_v1 (list_disj xs))
+  (h2 : F ∈ xs) :
+  is_dnf_ind_v1 F :=
+  by
+  induction xs
+  case nil =>
+    simp only [List.not_mem_nil] at h2
+  case cons hd tl ih =>
+    simp only [List.mem_cons] at h2
+    cases tl
+    case nil =>
+      simp only [list_disj] at h1
+      cases h2
+      case inl h2 =>
+        rewrite [h2]
+        exact h1
+      case inr h2 =>
+        simp only [List.not_mem_nil] at h2
+    case cons tl_hd tl_tl =>
+      simp only [list_disj] at h1
+      cases h1
+      case rule_1 ih_1 ih_2 =>
+        cases h2
+        case inl h2 =>
+          rewrite [h2]
+          apply is_dnf_ind_v1.rule_2
+          exact ih_1
+        case inr h2 =>
+          apply ih
+          · exact ih_2
+          · exact h2
+      case rule_2 ih_1 =>
+        contradiction
+
+
 lemma aux_1
   (F : Formula_)
   (l : List Formula_)

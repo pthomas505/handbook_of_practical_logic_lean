@@ -73,7 +73,7 @@ lemma list_conj_of_is_constant_ind_v1_or_is_literal_ind_v1_is_conj_ind_v1
           exact a1
 
 
-lemma mem_is_conj_ind_v1_list_conj_is_conj_ind_v1
+example
   (F : Formula_)
   (xs : List Formula_)
   (h1 : is_conj_ind_v1 (list_conj xs))
