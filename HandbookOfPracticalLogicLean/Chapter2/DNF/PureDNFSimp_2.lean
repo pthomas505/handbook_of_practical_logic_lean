@@ -429,7 +429,7 @@ lemma pure_dnf_simp_2_is_dnf_ind_v1
   is_dnf_ind_v1 (dnf_list_of_list_to_formula (pure_dnf_simp_2 xss)) :=
   by
   unfold pure_dnf_simp_2
-  apply aux_7
+  apply is_dnf_ind_v1_dnf_list_of_list_to_formula_filter
   exact h1
 
 
