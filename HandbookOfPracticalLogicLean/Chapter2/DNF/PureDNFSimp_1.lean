@@ -290,7 +290,7 @@ lemma aux_5
   unfold dnf_list_of_list_to_formula at h1
   simp only [List.map_cons] at h1
   unfold dnf_list_of_list_to_formula
-  apply aux_1 (list_conj xs)
+  apply is_dnf_ind_v1_list_disj_cons_left (list_conj xs)
   exact h1
 
 
@@ -304,7 +304,7 @@ lemma aux_6
   unfold dnf_list_of_list_to_formula at h2
 
   unfold dnf_list_of_list_to_formula
-  apply aux_2
+  apply is_dnf_ind_v1_list_disj_cons_right
   · exact h1
   · exact h2
 

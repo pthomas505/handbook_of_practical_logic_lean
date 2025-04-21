@@ -89,7 +89,7 @@ example
 -------------------------------------------------------------------------------
 
 
-lemma aux_1
+lemma is_dnf_ind_v1_list_disj_cons_left
   (F : Formula_)
   (l : List Formula_)
   (h1 : is_dnf_ind_v1 (list_disj (F :: l))) :
@@ -110,7 +110,7 @@ lemma aux_1
       contradiction
 
 
-lemma aux_2
+lemma is_dnf_ind_v1_list_disj_cons_right
   (F : Formula_)
   (l : List Formula_)
   (h1 : is_conj_ind_v1 F)
@@ -129,7 +129,7 @@ lemma aux_2
     · exact h2
 
 
-lemma aux_3
+lemma is_dnf_ind_v1_list_disj_filter
   (l : List Formula_)
   (pred : Formula_ → Bool)
   (h1 : is_dnf_ind_v1 (list_disj l)) :
@@ -151,7 +151,7 @@ lemma aux_3
         unfold list_disj at h1
         cases h1
         case rule_1 ih_1 ih_2 =>
-          apply aux_2
+          apply is_dnf_ind_v1_list_disj_cons_right
           · exact ih_1
           · apply ih
             exact ih_2
@@ -159,7 +159,7 @@ lemma aux_3
           contradiction
     case neg c1 =>
       apply ih
-      exact aux_1 hd tl h1
+      exact is_dnf_ind_v1_list_disj_cons_left hd tl h1
 
 
 -------------------------------------------------------------------------------
