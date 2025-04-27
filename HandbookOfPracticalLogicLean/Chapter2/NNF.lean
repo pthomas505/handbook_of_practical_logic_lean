@@ -12,6 +12,25 @@ open Formula_
 
 
 /--
+  `Formula_.is_constant F` := True if and only if the formula `F` is `false_` or `true_`.
+-/
+def Formula_.is_constant :
+  Formula_ → Prop
+  | false_ => True
+  | true_ => True
+  | _ => False
+
+instance
+  (F : Formula_) :
+  Decidable (Formula_.is_constant F) :=
+  by
+  cases F
+  all_goals
+    unfold is_constant
+    infer_instance
+
+
+/--
   `Formula_.is_literal F` := True if and only if the formula `F` is an atomic formula or the negation of an atomic formula.
 -/
 def Formula_.is_literal :
@@ -24,8 +43,8 @@ instance
   (F : Formula_) :
   Decidable (Formula_.is_literal F) :=
   by
-  induction F
-  case not_ phi ih =>
+  cases F
+  case not_ phi =>
     unfold is_literal
     split
     all_goals
@@ -47,8 +66,8 @@ instance
   (F : Formula_) :
   Decidable (Formula_.is_negative_literal F) :=
   by
-  induction F
-  case not_ phi ih =>
+  cases F
+  case not_ phi =>
     unfold is_negative_literal
     split
     all_goals
@@ -70,7 +89,7 @@ instance
   (F : Formula_) :
   Decidable (Formula_.is_positive_literal F) :=
   by
-  induction F
+  cases F
   all_goals
     simp only [is_positive_literal]
     infer_instance

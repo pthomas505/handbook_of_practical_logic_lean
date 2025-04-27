@@ -81,16 +81,45 @@ def Formula_.is_unsatisfiable
 
 
 /--
-  `set_is_satisfiable Γ` := True if and only if there exists a valuation that simultaneously satisfies every formula in the set of formulas `Γ`.
+  `satisfies_set V F` := True if and only if the valuation `V` satisfies every formula in the set of formulas `Γ`.
+-/
+def satisfies_set
+  (V : ValuationAsTotalFunction)
+  (Γ : Set Formula_) :
+  Prop :=
+  ∀ (F : Formula_), F ∈ Γ → satisfies V F
+
+
+/--
+  `set_is_satisfiable Γ` := True if and only if the set of formulas `Γ` is satisfiable.
 -/
 def set_is_satisfiable
   (Γ : Set Formula_) :
   Prop :=
-  ∃ (V : ValuationAsTotalFunction), ∀ (F : Formula_), F ∈ Γ → satisfies V F
+  ∃ (V : ValuationAsTotalFunction), satisfies_set V Γ
 
 
 /--
-  `is_logical_consequence P Q` := True if and only if `Q` is a logical consequence of `P`.
+  `set_is_unsatisfiable Γ` := True if and only if the set of formulas `Γ` is not satisfiable.
+-/
+def set_is_unsatisfiable
+  (Γ : Set Formula_) :
+  Prop :=
+  ¬ ∃ (V : ValuationAsTotalFunction), satisfies_set V Γ
+
+
+/--
+  `entails Γ F` := True if and only if the set of formulas `Γ` entails the formula `F`.
+-/
+def entails
+  (Γ : Set Formula_)
+  (F : Formula_) :
+  Prop :=
+  ∀ (V : ValuationAsTotalFunction), satisfies_set V Γ → satisfies V F
+
+
+/--
+  `is_logical_consequence P Q` := True if and only if the formula `Q` is a logical consequence of the formula `P`.
 -/
 def is_logical_consequence
   (P Q : Formula_) :
@@ -99,12 +128,30 @@ def is_logical_consequence
 
 
 /--
-  `are_logically_equivalent P Q` := True if and only if `P` and `Q` are logically equivalent.
+  `are_logically_equivalent P Q` := True if and only if the formulas `P` and `Q` are logically equivalent.
 -/
 def are_logically_equivalent
   (P Q : Formula_) :
   Prop :=
   (P.iff_ Q).is_tautology
+
+
+/--
+  `are_equisatisfiable P Q` := True if and only if the formulas `P` and `Q` are equisatisfiable.
+-/
+def are_equisatisfiable
+  (P Q : Formula_) :
+  Prop :=
+  P.is_satisfiable ↔ Q.is_satisfiable
+
+
+/--
+  `are_equivalid P Q` := True if and only if the formulas `P` and `Q` are equivalid.
+-/
+def are_equivalid
+  (P Q : Formula_) :
+  Prop :=
+  P.is_tautology ↔ Q.is_tautology
 
 
 -------------------------------------------------------------------------------

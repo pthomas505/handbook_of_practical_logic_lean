@@ -17,7 +17,7 @@ inductive Formula_ : Type
   | or_ : Formula_ → Formula_ → Formula_
   | imp_ : Formula_ → Formula_ → Formula_
   | iff_ : Formula_ → Formula_ → Formula_
-  deriving Inhabited, DecidableEq, Repr
+  deriving Inhabited, DecidableEq, Hashable, Repr
 
 compile_inductive% Formula_
 
