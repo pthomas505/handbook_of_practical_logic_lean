@@ -473,7 +473,7 @@ example
     simp only
     simp only [← eval_pure_dnf_simp_2]
     simp only [eval_pure_dnf_simp_1]
-    simp only [← eval_to_nnf_v1]
+    simp only [← eval_eq_eval_to_nnf_v1]
 
 
 example
@@ -501,4 +501,4 @@ example
     simp only
     apply pure_dnf_simp_2_is_dnf_ind_v1
     apply pure_dnf_simp_1_is_dnf_ind_v1
-    apply to_nnf_v1_is_nnf
+    apply to_nnf_v1_is_nnf_v1

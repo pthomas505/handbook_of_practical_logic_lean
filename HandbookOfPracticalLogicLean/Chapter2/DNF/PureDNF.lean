@@ -37,11 +37,11 @@ lemma dnf_list_of_list_to_formula_singleton
   rfl
 
 
-lemma mem_list_mem_pure_dnf_of_nnf_imp_is_constant_or_literal
+lemma mem_list_mem_pure_dnf_of_nnf_v1_imp_is_constant_or_literal
   (F : Formula_)
   (l : List Formula_)
   (P : Formula_)
-  (h1 : is_nnf F)
+  (h1 : is_nnf_v1 F)
   (h2 : l ∈ pure_dnf F)
   (h3 : P ∈ l) :
   is_constant_ind_v1 P ∨ is_literal_ind_v1 P :=
@@ -90,10 +90,10 @@ lemma mem_list_mem_pure_dnf_of_nnf_imp_is_constant_or_literal
       right
       apply is_literal_ind_v1.rule_2
     all_goals
-      unfold is_nnf at h1
+      unfold is_nnf_v1 at h1
       contradiction
   case and_ phi psi phi_ih psi_ih =>
-    unfold is_nnf at h1
+    unfold is_nnf_v1 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
     unfold pure_dnf at h2
@@ -115,7 +115,7 @@ lemma mem_list_mem_pure_dnf_of_nnf_imp_is_constant_or_literal
       · exact ys_mem
       · exact h3
   case or_ phi psi phi_ih psi_ih =>
-    unfold is_nnf at h1
+    unfold is_nnf_v1 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
     unfold pure_dnf at h2
@@ -133,13 +133,13 @@ lemma mem_list_mem_pure_dnf_of_nnf_imp_is_constant_or_literal
       · exact h2
       · exact h3
   all_goals
-    unfold is_nnf at h1
+    unfold is_nnf_v1 at h1
     contradiction
 
 
-lemma is_nnf_imp_pure_dnf_is_ind
+lemma is_nnf_v1_imp_pure_dnf_is_ind
   (F : Formula_)
-  (h1 : is_nnf F) :
+  (h1 : is_nnf_v1 F) :
   is_dnf_ind_v1 (dnf_list_of_list_to_formula (pure_dnf F)) :=
   by
   cases F
@@ -170,10 +170,10 @@ lemma is_nnf_imp_pure_dnf_is_ind
       apply is_conj_ind_v1.rule_4
       apply is_literal_ind_v1.rule_2
     all_goals
-      unfold is_nnf at h1
+      unfold is_nnf_v1 at h1
       contradiction
   case and_ phi psi =>
-    unfold is_nnf at h1
+    unfold is_nnf_v1 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
     unfold pure_dnf
@@ -193,17 +193,17 @@ lemma is_nnf_imp_pure_dnf_is_ind
 
     cases a2
     case inl a2 =>
-      apply mem_list_mem_pure_dnf_of_nnf_imp_is_constant_or_literal phi xs
+      apply mem_list_mem_pure_dnf_of_nnf_v1_imp_is_constant_or_literal phi xs
       · exact h1_left
       · exact xs_mem
       · exact a2
     case inr a2 =>
-      apply mem_list_mem_pure_dnf_of_nnf_imp_is_constant_or_literal psi ys
+      apply mem_list_mem_pure_dnf_of_nnf_v1_imp_is_constant_or_literal psi ys
       · exact h1_right
       · exact ys_mem
       · exact a2
   case or_ phi psi =>
-    unfold is_nnf at h1
+    unfold is_nnf_v1 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
     unfold pure_dnf
@@ -218,17 +218,17 @@ lemma is_nnf_imp_pure_dnf_is_ind
 
     cases a1_left
     case inl a1_left =>
-      apply mem_list_mem_pure_dnf_of_nnf_imp_is_constant_or_literal phi l
+      apply mem_list_mem_pure_dnf_of_nnf_v1_imp_is_constant_or_literal phi l
       · exact h1_left
       · exact a1_left
       · exact a2
     case inr a1_left =>
-      apply mem_list_mem_pure_dnf_of_nnf_imp_is_constant_or_literal psi l
+      apply mem_list_mem_pure_dnf_of_nnf_v1_imp_is_constant_or_literal psi l
       · exact h1_right
       · exact a1_left
       · exact a2
   all_goals
-    unfold is_nnf at h1
+    unfold is_nnf_v1 at h1
     contradiction
 
 

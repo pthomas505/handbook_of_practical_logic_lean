@@ -341,9 +341,9 @@ lemma is_dnf_ind_v1_dnf_list_of_list_to_formula_filter
 
 lemma pure_dnf_simp_1_is_dnf_ind_v1
   (F : Formula_)
-  (h1 : is_nnf F) :
+  (h1 : is_nnf_v1 F) :
   is_dnf_ind_v1 (dnf_list_of_list_to_formula (pure_dnf_simp_1 F)) :=
   by
   unfold pure_dnf_simp_1
   apply is_dnf_ind_v1_dnf_list_of_list_to_formula_filter
-  exact is_nnf_imp_pure_dnf_is_ind F h1
+  exact is_nnf_v1_imp_pure_dnf_is_ind F h1

@@ -29,15 +29,15 @@ def raw_dnf :
 
 lemma is_dnf_ind_distrib_and
   (P Q : Formula_)
-  (h1 : is_nnf P)
-  (h2 : is_nnf Q)
+  (h1 : is_nnf_v1 P)
+  (h2 : is_nnf_v1 Q)
   (h3 : is_dnf_ind_v2 P)
   (h4 : is_dnf_ind_v2 Q) :
   is_dnf_ind_v2 (distrib (and_ P Q)) :=
   by
   induction Q generalizing P
   case or_ T U T_ih U_ih =>
-    unfold is_nnf at h2
+    unfold is_nnf_v1 at h2
     obtain ⟨h2_left, h2_right⟩ := h2
 
     simp only [distrib]
@@ -63,7 +63,7 @@ lemma is_dnf_ind_distrib_and
   all_goals
     induction P
     case or_ R S R_ih S_ih =>
-      unfold is_nnf at h1
+      unfold is_nnf_v1 at h1
       obtain ⟨h1_left, h1_right⟩ := h1
 
       simp only [distrib]
@@ -92,19 +92,19 @@ lemma is_dnf_ind_distrib_and
       assumption
 
 
-lemma is_nnf_distrib_and
+lemma is_nnf_v1_distrib_and
   (P Q : Formula_)
-  (h1 : is_nnf P)
-  (h2 : is_nnf Q) :
-  is_nnf (distrib (and_ P Q)) :=
+  (h1 : is_nnf_v1 P)
+  (h2 : is_nnf_v1 Q) :
+  is_nnf_v1 (distrib (and_ P Q)) :=
   by
   induction Q generalizing P
   case or_ T U T_ih U_ih =>
-    unfold is_nnf at h2
+    unfold is_nnf_v1 at h2
     obtain ⟨h2_left, h2_right⟩ := h2
 
     simp only [distrib]
-    unfold is_nnf
+    unfold is_nnf_v1
     constructor
     · apply T_ih
       · exact h1
@@ -115,11 +115,11 @@ lemma is_nnf_distrib_and
   all_goals
     induction P
     case or_ R S R_ih S_ih =>
-      unfold is_nnf at h1
+      unfold is_nnf_v1 at h1
       obtain ⟨h1_left, h1_right⟩ := h1
 
       simp only [distrib]
-      unfold is_nnf
+      unfold is_nnf_v1
       constructor
       · apply R_ih
         exact h1_left
@@ -127,32 +127,32 @@ lemma is_nnf_distrib_and
         exact h1_right
     all_goals
       simp only [distrib]
-      unfold is_nnf
+      unfold is_nnf_v1
       exact ⟨h1, h2⟩
 
 
-lemma is_nnf_raw_dnf
+lemma is_nnf_v1_raw_dnf
   (F : Formula_)
-  (h1 : is_nnf F) :
-  is_nnf (raw_dnf F) :=
+  (h1 : is_nnf_v1 F) :
+  is_nnf_v1 (raw_dnf F) :=
   by
   induction F
   case and_ phi psi phi_ih psi_ih =>
-    unfold is_nnf at h1
+    unfold is_nnf_v1 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
     unfold raw_dnf
-    apply is_nnf_distrib_and
+    apply is_nnf_v1_distrib_and
     · apply phi_ih
       exact h1_left
     · apply psi_ih
       exact h1_right
   case or_ phi psi phi_ih psi_ih =>
-    unfold is_nnf at h1
+    unfold is_nnf_v1 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
     unfold raw_dnf
-    unfold is_nnf
+    unfold is_nnf_v1
     constructor
     · apply phi_ih
       exact h1_left
@@ -165,7 +165,7 @@ lemma is_nnf_raw_dnf
 
 example
   (F : Formula_)
-  (h1 : is_nnf F) :
+  (h1 : is_nnf_v1 F) :
   is_dnf_ind_v2 (raw_dnf F) :=
   by
   induction F
@@ -192,24 +192,24 @@ example
       apply is_conj_ind_v2.rule_3
       apply is_literal_ind_v2.rule_2
     all_goals
-      unfold is_nnf at h1
+      unfold is_nnf_v1 at h1
       contradiction
   case and_ P Q P_ih Q_ih =>
-    unfold is_nnf at h1
+    unfold is_nnf_v1 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
     unfold raw_dnf
     specialize P_ih h1_left
     specialize Q_ih h1_right
     apply is_dnf_ind_distrib_and
-    · apply is_nnf_raw_dnf
+    · apply is_nnf_v1_raw_dnf
       exact h1_left
-    · apply is_nnf_raw_dnf
+    · apply is_nnf_v1_raw_dnf
       exact h1_right
     · exact P_ih
     · exact Q_ih
   case or_ P Q P_ih Q_ih =>
-    unfold is_nnf at h1
+    unfold is_nnf_v1 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
     unfold raw_dnf
@@ -219,7 +219,7 @@ example
     · apply Q_ih
       exact h1_right
   all_goals
-    simp only [is_nnf] at h1
+    simp only [is_nnf_v1] at h1
 
 
 -------------------------------------------------------------------------------

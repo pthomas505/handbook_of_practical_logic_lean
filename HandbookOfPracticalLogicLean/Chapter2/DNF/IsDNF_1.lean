@@ -145,30 +145,30 @@ instance
     infer_instance
 
 
-lemma is_conj_rec_v1_imp_is_nnf
+lemma is_conj_rec_v1_imp_is_nnf_v1
   (F : Formula_)
   (h1 : F.is_conj_rec_v1) :
-  F.is_nnf :=
+  F.is_nnf_v1 :=
   by
   induction F
   case false_ | true_ | atom_ X =>
-    unfold is_nnf
+    unfold is_nnf_v1
     exact trivial
   case not_ phi ih =>
     cases phi
     case atom_ X =>
-      unfold is_nnf
+      unfold is_nnf_v1
       exact trivial
     all_goals
       unfold is_conj_rec_v1 at h1
       contradiction
   case and_ phi psi phi_ih psi_ih =>
-    unfold is_nnf
+    unfold is_nnf_v1
     cases phi
     case false_ | true_ | atom_ X =>
       unfold is_conj_rec_v1 at h1
       constructor
-      · unfold is_nnf
+      · unfold is_nnf_v1
         exact trivial
       · apply psi_ih
         exact h1
@@ -177,7 +177,7 @@ lemma is_conj_rec_v1_imp_is_nnf
       case atom_ X =>
         unfold is_conj_rec_v1 at h1
         constructor
-        · unfold is_nnf
+        · unfold is_nnf_v1
           exact trivial
         · apply psi_ih
           exact h1
