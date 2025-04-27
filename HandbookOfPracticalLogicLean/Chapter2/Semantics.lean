@@ -277,6 +277,64 @@ lemma are_logically_equivalent_to_true_iff_is_tautology
 -------------------------------------------------------------------------------
 
 
+example
+  (P Q : Formula_) :
+  entails {P} Q ↔ is_logical_consequence P Q :=
+  by
+  unfold entails
+  unfold satisfies_set
+  unfold is_logical_consequence
+  unfold is_tautology
+  unfold satisfies
+  simp only [eval]
+  simp only [bool_iff_prop_imp]
+  simp only [Set.mem_singleton_iff]
+  constructor
+  · intro a1 V a2
+    apply a1
+    intro F a3
+    rewrite [a3]
+    exact a2
+  · intro a1 V a2
+    apply a1
+    apply a2
+    rfl
+
+
+example
+  (P Q : Formula_) :
+  are_logically_equivalent P Q ↔ (is_logical_consequence P Q ∧ is_logical_consequence Q P) :=
+  by
+  unfold are_logically_equivalent
+  unfold is_logical_consequence
+  unfold is_tautology
+  unfold satisfies
+  unfold eval
+  simp only [bool_iff_prop_iff]
+  simp only [bool_iff_prop_imp]
+  constructor
+  · intro a1
+    constructor
+    · intro V a2
+      rewrite [← a1]
+      exact a2
+    · intro V a2
+      rewrite [a1]
+      exact a2
+  · intro a1 V
+    obtain ⟨a1_left, a1_right⟩ := a1
+    constructor
+    · intro a2
+      apply a1_left
+      exact a2
+    · intro a2
+      apply a1_right
+      exact a2
+
+
+-------------------------------------------------------------------------------
+
+
 theorem theorem_2_2
   (V V' : ValuationAsTotalFunction)
   (F : Formula_)
