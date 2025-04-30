@@ -397,3 +397,61 @@ lemma mem_zip_gen_all_valuations_as_list_of_total_functions_imp_eval_eq
   · simp only [List.mem_dedup]
     rewrite [← atom_occurs_in_iff_mem_atom_list]
     exact a1
+
+
+-------------------------------------------------------------------------------
+
+
+def find_valuation (f : ValuationAsListOfPairs → Bool) :
+  List String → ValuationAsListOfPairs → Option ValuationAsListOfPairs
+| [], v => if f v then some v else none
+| hd :: tl, v =>
+  find_valuation f tl ((hd, false) :: v) <|>
+  find_valuation f tl ((hd, true) :: v)
+
+#eval find_valuation (fun (v : List _) => ("P", true) ∈ v ∧ ("Q", false) ∈ v) ["P", "Q"] []
+
+
+def find_satisfying_valuation
+  (F : Formula_) :
+  Option ValuationAsListOfPairs :=
+  let pred := fun (v : List (String × Bool)) => eval (valuation_as_list_of_pairs_to_valuation_as_total_function (fun _ => false) v) F
+
+  find_valuation pred F.atom_list.dedup []
+
+
+def find_non_satisfying_valuation
+  (F : Formula_) :
+  Option ValuationAsListOfPairs :=
+  let pred := fun (v : List (String × Bool)) => b_not (eval (valuation_as_list_of_pairs_to_valuation_as_total_function (fun _ => false) v) F)
+
+  find_valuation pred F.atom_list.dedup []
+
+
+def check_tautology
+  (F : Formula_) :
+  Prop :=
+  (find_non_satisfying_valuation F).isNone
+
+instance
+  (F : Formula_) :
+  Decidable (check_tautology F) :=
+  by
+  unfold check_tautology
+  infer_instance
+
+
+#eval find_satisfying_valuation (atom_ "P")
+#eval find_satisfying_valuation (not_ (atom_ "P"))
+#eval find_satisfying_valuation (and_ (atom_ "P") (not_ (atom_ "P")))
+#eval find_satisfying_valuation (or_ (atom_ "P") (not_ (atom_ "P")))
+#eval find_satisfying_valuation (imp_ (atom_ "P") (atom_ "Q"))
+
+#eval find_non_satisfying_valuation (atom_ "P")
+#eval find_non_satisfying_valuation (not_ (atom_ "P"))
+#eval find_non_satisfying_valuation (and_ (atom_ "P") (not_ (atom_ "P")))
+#eval find_non_satisfying_valuation (or_ (atom_ "P") (not_ (atom_ "P")))
+#eval find_non_satisfying_valuation (imp_ (atom_ "P") (atom_ "Q"))
+
+#eval check_tautology (or_ (atom_ "P") (not_ (atom_ "P")))
+#eval check_tautology (imp_ (atom_ "P") (atom_ "Q"))
