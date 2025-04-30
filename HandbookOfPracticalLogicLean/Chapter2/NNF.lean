@@ -185,6 +185,39 @@ instance
 -------------------------------------------------------------------------------
 
 
+/--
+  `Formula_.is_nnf_v2 F` := True if and only if the formula `F` is in negation normal form.
+-/
+def Formula_.is_nnf_v2 :
+  Formula_ → Prop
+  | false_ => True
+  | not_ false_ => True
+  | true_ => True
+  | not_ true_ => True
+  | atom_ _ => True
+  | not_ (atom_ _) => True
+  | and_ phi psi => phi.is_nnf_v2 ∧ psi.is_nnf_v2
+  | or_ phi psi => phi.is_nnf_v2 ∧ psi.is_nnf_v2
+  | _ => False
+
+instance
+  (F : Formula_) :
+  Decidable (Formula_.is_nnf_v2 F) :=
+  by
+  induction F
+  case not_ phi ih =>
+    cases phi
+    all_goals
+      unfold is_nnf_v2
+      infer_instance
+  all_goals
+    unfold is_nnf_v2
+    infer_instance
+
+
+-------------------------------------------------------------------------------
+
+
 mutual
 /--
   `to_nnf_v1 F` := The result of translating the formula `F` to a logically equivalent formula in negation normal form.

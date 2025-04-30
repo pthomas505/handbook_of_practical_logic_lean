@@ -1,7 +1,7 @@
 import MathlibExtraLean.List
 
+import HandbookOfPracticalLogicLean.Chapter2.TruthTable
 import HandbookOfPracticalLogicLean.Chapter2.DNF.ListDisj
-import HandbookOfPracticalLogicLean.Chapter2.DNF.GenAllValuations
 
 
 set_option autoImplicit false

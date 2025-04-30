@@ -20,9 +20,10 @@ def gen_all_valuations_as_list_of_list_of_pairs :
   List String → List (ValuationAsListOfPairs)
 | [] => [[]]
 | hd :: tl =>
-  let left := List.map (fun (l : ValuationAsListOfPairs) => (hd, false) :: l) (gen_all_valuations_as_list_of_list_of_pairs tl)
+  let prev := gen_all_valuations_as_list_of_list_of_pairs tl
 
-  let right := List.map (fun (l : ValuationAsListOfPairs) => (hd, true) :: l) (gen_all_valuations_as_list_of_list_of_pairs tl)
+  let left := List.map (fun (l : ValuationAsListOfPairs) => (hd, false) :: l) prev
+  let right := List.map (fun (l : ValuationAsListOfPairs) => (hd, true) :: l) prev
 
   left ++ right
 
