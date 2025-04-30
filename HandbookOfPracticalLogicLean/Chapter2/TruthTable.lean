@@ -420,18 +420,10 @@ def find_satisfying_valuation
   find_valuation pred F.atom_list.dedup []
 
 
-def find_non_satisfying_valuation
-  (F : Formula_) :
-  Option ValuationAsListOfPairs :=
-  let pred := fun (v : List (String × Bool)) => b_not (eval (valuation_as_list_of_pairs_to_valuation_as_total_function (fun _ => false) v) F)
-
-  find_valuation pred F.atom_list.dedup []
-
-
 def check_tautology
   (F : Formula_) :
   Prop :=
-  (find_non_satisfying_valuation F).isNone
+  (find_satisfying_valuation (not_ F)).isNone
 
 instance
   (F : Formula_) :
@@ -446,12 +438,6 @@ instance
 #eval find_satisfying_valuation (and_ (atom_ "P") (not_ (atom_ "P")))
 #eval find_satisfying_valuation (or_ (atom_ "P") (not_ (atom_ "P")))
 #eval find_satisfying_valuation (imp_ (atom_ "P") (atom_ "Q"))
-
-#eval find_non_satisfying_valuation (atom_ "P")
-#eval find_non_satisfying_valuation (not_ (atom_ "P"))
-#eval find_non_satisfying_valuation (and_ (atom_ "P") (not_ (atom_ "P")))
-#eval find_non_satisfying_valuation (or_ (atom_ "P") (not_ (atom_ "P")))
-#eval find_non_satisfying_valuation (imp_ (atom_ "P") (atom_ "Q"))
 
 #eval check_tautology (or_ (atom_ "P") (not_ (atom_ "P")))
 #eval check_tautology (imp_ (atom_ "P") (atom_ "Q"))
