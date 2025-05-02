@@ -441,3 +441,15 @@ instance
 
 #eval check_tautology (or_ (atom_ "P") (not_ (atom_ "P")))
 #eval check_tautology (imp_ (atom_ "P") (atom_ "Q"))
+
+
+def cartesian_product
+  {α : Type} :
+  List (List α) → List (List α)
+| [] => [[]]
+| xs :: xss =>
+  let sub_products := cartesian_product xss
+  (xs.map (fun val => sub_products.map (fun sub => val :: sub))).flatten
+
+#eval cartesian_product [[0, 1]]
+#eval cartesian_product [[0, 1], [0, 1], [0, 1]]
