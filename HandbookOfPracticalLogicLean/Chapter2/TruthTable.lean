@@ -453,3 +453,16 @@ def cartesian_product
 
 #eval cartesian_product [[0, 1]]
 #eval cartesian_product [[0, 1], [0, 1], [0, 1]]
+
+
+def all_sublists
+  {α : Type} :
+  List α → List (List α)
+  | [] => [[]]
+  | (a :: as) =>
+      let recval := all_sublists as
+      recval.map (a :: .) ++ recval
+
+#eval all_sublists [0, 1, 2]
+#eval [0, 1, 2].sublists
+#eval [0, 1, 2].sublistsFast
