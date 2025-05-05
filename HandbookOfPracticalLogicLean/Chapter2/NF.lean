@@ -10,9 +10,9 @@ open Formula_
 
 
 /--
-  `Formula_.is_constant F` := True if and only if the formula `F` is `false_` or `true_`.
+  `Formula_.is_constant_rec F` := True if and only if the formula `F` is `false_` or `true_`.
 -/
-def Formula_.is_constant :
+def Formula_.is_constant_rec :
   Formula_ → Prop
   | false_ => True
   | true_ => True
@@ -20,18 +20,18 @@ def Formula_.is_constant :
 
 instance
   (F : Formula_) :
-  Decidable (Formula_.is_constant F) :=
+  Decidable (Formula_.is_constant_rec F) :=
   by
   cases F
   all_goals
-    unfold is_constant
+    unfold is_constant_rec
     infer_instance
 
 
 /--
-  `Formula_.is_literal F` := True if and only if the formula `F` is an atomic formula or the negation of an atomic formula.
+  `Formula_.is_literal_rec F` := True if and only if the formula `F` is an atomic formula or the negation of an atomic formula.
 -/
-def Formula_.is_literal :
+def Formula_.is_literal_rec :
   Formula_ → Prop
   | atom_ _ => True
   | not_ (atom_ _) => True
@@ -39,85 +39,85 @@ def Formula_.is_literal :
 
 instance
   (F : Formula_) :
-  Decidable (Formula_.is_literal F) :=
+  Decidable (Formula_.is_literal_rec F) :=
   by
   cases F
   case not_ phi =>
-    unfold is_literal
+    unfold is_literal_rec
     split
     all_goals
       infer_instance
   all_goals
-    simp only [is_literal]
+    simp only [is_literal_rec]
     infer_instance
 
 
 /--
-  `Formula_.is_negative_literal F` := True if and only if the formula `F` is a negative literal.
+  `Formula_.is_negative_literal_rec F` := True if and only if the formula `F` is a negative literal.
 -/
-def Formula_.is_negative_literal :
+def Formula_.is_negative_literal_rec :
   Formula_ → Prop
   | not_ (atom_ _) => True
   | _ => False
 
 instance
   (F : Formula_) :
-  Decidable (Formula_.is_negative_literal F) :=
+  Decidable (Formula_.is_negative_literal_rec F) :=
   by
   cases F
   case not_ phi =>
-    unfold is_negative_literal
+    unfold is_negative_literal_rec
     split
     all_goals
       infer_instance
   all_goals
-    simp only [is_negative_literal]
+    simp only [is_negative_literal_rec]
     infer_instance
 
 
 /--
-  `Formula_.is_positive_literal F` := True if and only if the formula `F` is a positive literal.
+  `Formula_.is_positive_literal_rec F` := True if and only if the formula `F` is a positive literal.
 -/
-def Formula_.is_positive_literal :
+def Formula_.is_positive_literal_rec :
   Formula_ → Prop
   | atom_ _ => True
   | _ => False
 
 instance
   (F : Formula_) :
-  Decidable (Formula_.is_positive_literal F) :=
+  Decidable (Formula_.is_positive_literal_rec F) :=
   by
   cases F
   all_goals
-    simp only [is_positive_literal]
+    simp only [is_positive_literal_rec]
     infer_instance
 
 
 /--
-  `Formula_.is_nnf_v1 F` := True if and only if the formula `F` is in negation normal form.
+  `Formula_.is_nnf_rec_v1 F` := True if and only if the formula `F` is in negation normal form.
 -/
-def Formula_.is_nnf_v1 :
+def Formula_.is_nnf_rec_v1 :
   Formula_ → Prop
   | false_ => True
   | true_ => True
   | atom_ _ => True
   | not_ (atom_ _) => True
-  | and_ phi psi => phi.is_nnf_v1 ∧ psi.is_nnf_v1
-  | or_ phi psi => phi.is_nnf_v1 ∧ psi.is_nnf_v1
+  | and_ phi psi => phi.is_nnf_rec_v1 ∧ psi.is_nnf_rec_v1
+  | or_ phi psi => phi.is_nnf_rec_v1 ∧ psi.is_nnf_rec_v1
   | _ => False
 
 instance
   (F : Formula_) :
-  Decidable (Formula_.is_nnf_v1 F) :=
+  Decidable (Formula_.is_nnf_rec_v1 F) :=
   by
   induction F
   case not_ phi ih =>
     cases phi
     all_goals
-      unfold is_nnf_v1
+      unfold is_nnf_rec_v1
       infer_instance
   all_goals
-    unfold is_nnf_v1
+    unfold is_nnf_rec_v1
     infer_instance
 
 
@@ -125,9 +125,9 @@ instance
 
 
 /--
-  `Formula_.is_nnf_v2 F` := True if and only if the formula `F` is in negation normal form.
+  `Formula_.is_nnf_rec_v2 F` := True if and only if the formula `F` is in negation normal form.
 -/
-def Formula_.is_nnf_v2 :
+def Formula_.is_nnf_rec_v2 :
   Formula_ → Prop
   | false_ => True
   | not_ false_ => True
@@ -135,22 +135,22 @@ def Formula_.is_nnf_v2 :
   | not_ true_ => True
   | atom_ _ => True
   | not_ (atom_ _) => True
-  | and_ phi psi => phi.is_nnf_v2 ∧ psi.is_nnf_v2
-  | or_ phi psi => phi.is_nnf_v2 ∧ psi.is_nnf_v2
+  | and_ phi psi => phi.is_nnf_rec_v2 ∧ psi.is_nnf_rec_v2
+  | or_ phi psi => phi.is_nnf_rec_v2 ∧ psi.is_nnf_rec_v2
   | _ => False
 
 instance
   (F : Formula_) :
-  Decidable (Formula_.is_nnf_v2 F) :=
+  Decidable (Formula_.is_nnf_rec_v2 F) :=
   by
   induction F
   case not_ phi ih =>
     cases phi
     all_goals
-      unfold is_nnf_v2
+      unfold is_nnf_rec_v2
       infer_instance
   all_goals
-    unfold is_nnf_v2
+    unfold is_nnf_rec_v2
     infer_instance
 
 
@@ -158,30 +158,30 @@ instance
 
 
 /--
-  `Formula_.is_pos_nnf F` := True if and only if the formula `F` is in negation normal form and every atom in `F` occurs unnegated.
+  `Formula_.is_pos_nnf_rec F` := True if and only if the formula `F` is in negation normal form and every atom in `F` occurs unnegated.
 -/
-def Formula_.is_pos_nnf :
+def Formula_.is_pos_nnf_rec :
   Formula_ → Prop
   | false_ => True
   | true_ => True
   | atom_ _ => True
   | not_ (atom_ _) => False
-  | and_ phi psi => phi.is_pos_nnf ∧ psi.is_pos_nnf
-  | or_ phi psi => phi.is_pos_nnf ∧ psi.is_pos_nnf
+  | and_ phi psi => phi.is_pos_nnf_rec ∧ psi.is_pos_nnf_rec
+  | or_ phi psi => phi.is_pos_nnf_rec ∧ psi.is_pos_nnf_rec
   | _ => False
 
 instance
   (F : Formula_) :
-  Decidable (Formula_.is_pos_nnf F) :=
+  Decidable (Formula_.is_pos_nnf_rec F) :=
   by
   induction F
   case not_ phi ih =>
     cases phi
     all_goals
-      unfold is_pos_nnf
+      unfold is_pos_nnf_rec
       infer_instance
   all_goals
-    unfold is_pos_nnf
+    unfold is_pos_nnf_rec
     infer_instance
 
 
@@ -189,30 +189,30 @@ instance
 
 
 /--
-  `Formula_.is_neg_nnf F` := True if and only if the formula `F` is in negation normal form and every atom in `F` occurs negated.
+  `Formula_.is_neg_nnf_rec F` := True if and only if the formula `F` is in negation normal form and every atom in `F` occurs negated.
 -/
-def Formula_.is_neg_nnf :
+def Formula_.is_neg_nnf_rec :
   Formula_ → Prop
   | false_ => True
   | true_ => True
   | atom_ _ => False
   | not_ (atom_ _) => True
-  | and_ phi psi => phi.is_neg_nnf ∧ psi.is_neg_nnf
-  | or_ phi psi => phi.is_neg_nnf ∧ psi.is_neg_nnf
+  | and_ phi psi => phi.is_neg_nnf_rec ∧ psi.is_neg_nnf_rec
+  | or_ phi psi => phi.is_neg_nnf_rec ∧ psi.is_neg_nnf_rec
   | _ => False
 
 instance
   (F : Formula_) :
-  Decidable (Formula_.is_neg_nnf F) :=
+  Decidable (Formula_.is_neg_nnf_rec F) :=
   by
   induction F
   case not_ phi ih =>
     cases phi
     all_goals
-      unfold is_neg_nnf
+      unfold is_neg_nnf_rec
       infer_instance
   all_goals
-    unfold is_neg_nnf
+    unfold is_neg_nnf_rec
     infer_instance
 
 
