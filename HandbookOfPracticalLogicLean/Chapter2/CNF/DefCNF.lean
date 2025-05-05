@@ -105,3 +105,19 @@ def print_defs
 
 
 #eval print_defs (Formula_| ((((p /\ q) /\ ~ r) \/ (r /\ (~ p \/ ~ q))) /\ (~ s \/ (p /\ t))))
+
+
+def defs_to_cnf_aux :
+  List Formula_ → Nat → List Formula_
+  | [], _ => []
+  | hd :: tl, n => (or_ hd (not_ (atom_ s!"def_{n}"))) :: defs_to_cnf_aux tl (n + 1)
+
+
+def to_cnf
+  (F : Formula_) :
+  Formula_ :=
+  let ⟨last, defs⟩ := mk_defs F
+  list_conj (last :: defs_to_cnf_aux defs.toList 0)
+
+
+#eval (to_cnf (Formula_| ((((p /\ q) /\ ~ r) \/ (r /\ (~ p \/ ~ q))) /\ (~ s \/ (p /\ t))))).toString
