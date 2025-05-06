@@ -287,6 +287,17 @@ inductive is_constant_ind_v1 : Formula_ → Prop
   is_constant_ind_v1 true_
 
 
+inductive is_constant_ind_v2 : Formula_ → Prop
+| rule_1 :
+  is_constant_ind_v2 false_
+
+| rule_2 :
+  is_constant_ind_v2 true_
+
+
+-------------------------------------------------------------------------------
+
+
 inductive is_literal_ind_v1 : Formula_ → Prop
 | rule_1
   (X : String) :
@@ -295,54 +306,6 @@ inductive is_literal_ind_v1 : Formula_ → Prop
 | rule_2
   (X : String) :
   is_literal_ind_v1 (not_ (atom_ X))
-
-
-inductive is_conj_ind_v1 : Formula_ → Prop
-| rule_1
-  (phi psi : Formula_) :
-  is_constant_ind_v1 phi →
-  is_conj_ind_v1 psi →
-  is_conj_ind_v1 (and_ phi psi)
-
-| rule_2
-  (phi psi : Formula_) :
-  is_literal_ind_v1 phi →
-  is_conj_ind_v1 psi →
-  is_conj_ind_v1 (and_ phi psi)
-
-| rule_3
-  (F : Formula_) :
-  is_constant_ind_v1 F →
-  is_conj_ind_v1 F
-
-| rule_4
-  (F : Formula_) :
-  is_literal_ind_v1 F →
-  is_conj_ind_v1 F
-
-
-inductive is_dnf_ind_v1 : Formula_ → Prop
-| rule_1
-  (phi psi : Formula_) :
-  is_conj_ind_v1 phi →
-  is_dnf_ind_v1 psi →
-  is_dnf_ind_v1 (or_ phi psi)
-
-| rule_2
-  (F : Formula_) :
-  is_conj_ind_v1 F →
-  is_dnf_ind_v1 F
-
-
--------------------------------------------------------------------------------
-
-
-inductive is_constant_ind_v2 : Formula_ → Prop
-| rule_1 :
-  is_constant_ind_v2 false_
-
-| rule_2 :
-  is_constant_ind_v2 true_
 
 
 inductive is_literal_ind_v2 : Formula_ → Prop
@@ -355,37 +318,7 @@ inductive is_literal_ind_v2 : Formula_ → Prop
   is_literal_ind_v2 (not_ (atom_ X))
 
 
-inductive is_conj_ind_v2 : Formula_ → Prop
-| rule_1
-  (phi psi : Formula_) :
-  is_conj_ind_v2 phi →
-  is_conj_ind_v2 psi →
-  is_conj_ind_v2 (and_ phi psi)
-
-| rule_2
-  (F : Formula_) :
-  is_constant_ind_v2 F →
-  is_conj_ind_v2 F
-
-| rule_3
-  (F : Formula_) :
-  is_literal_ind_v2 F →
-  is_conj_ind_v2 F
-
-
-inductive is_dnf_ind_v2 : Formula_ → Prop
-| rule_1
-  (phi psi : Formula_) :
-  is_dnf_ind_v2 phi →
-  is_dnf_ind_v2 psi →
-  is_dnf_ind_v2 (or_ phi psi)
-
-| rule_2
-  (F : Formula_) :
-  is_conj_ind_v2 F →
-  is_dnf_ind_v2 F
-
-
+-------------------------------------------------------------------------------
 
 
 inductive is_disj_ind_v1 : Formula_ → Prop
@@ -412,22 +345,6 @@ inductive is_disj_ind_v1 : Formula_ → Prop
   is_disj_ind_v1 F
 
 
-inductive is_cnf_ind_v1 : Formula_ → Prop
-| rule_1
-  (phi psi : Formula_) :
-  is_disj_ind_v1 phi →
-  is_cnf_ind_v1 psi →
-  is_cnf_ind_v1 (and_ phi psi)
-
-| rule_2
-  (F : Formula_) :
-  is_disj_ind_v1 F →
-  is_cnf_ind_v1 F
-
-
--------------------------------------------------------------------------------
-
-
 inductive is_disj_ind_v2 : Formula_ → Prop
 | rule_1
   (phi psi : Formula_) :
@@ -446,6 +363,96 @@ inductive is_disj_ind_v2 : Formula_ → Prop
   is_disj_ind_v2 F
 
 
+-------------------------------------------------------------------------------
+
+
+inductive is_conj_ind_v1 : Formula_ → Prop
+| rule_1
+  (phi psi : Formula_) :
+  is_constant_ind_v1 phi →
+  is_conj_ind_v1 psi →
+  is_conj_ind_v1 (and_ phi psi)
+
+| rule_2
+  (phi psi : Formula_) :
+  is_literal_ind_v1 phi →
+  is_conj_ind_v1 psi →
+  is_conj_ind_v1 (and_ phi psi)
+
+| rule_3
+  (F : Formula_) :
+  is_constant_ind_v1 F →
+  is_conj_ind_v1 F
+
+| rule_4
+  (F : Formula_) :
+  is_literal_ind_v1 F →
+  is_conj_ind_v1 F
+
+
+inductive is_conj_ind_v2 : Formula_ → Prop
+| rule_1
+  (phi psi : Formula_) :
+  is_conj_ind_v2 phi →
+  is_conj_ind_v2 psi →
+  is_conj_ind_v2 (and_ phi psi)
+
+| rule_2
+  (F : Formula_) :
+  is_constant_ind_v2 F →
+  is_conj_ind_v2 F
+
+| rule_3
+  (F : Formula_) :
+  is_literal_ind_v2 F →
+  is_conj_ind_v2 F
+
+
+-------------------------------------------------------------------------------
+
+
+inductive is_dnf_ind_v1 : Formula_ → Prop
+| rule_1
+  (phi psi : Formula_) :
+  is_conj_ind_v1 phi →
+  is_dnf_ind_v1 psi →
+  is_dnf_ind_v1 (or_ phi psi)
+
+| rule_2
+  (F : Formula_) :
+  is_conj_ind_v1 F →
+  is_dnf_ind_v1 F
+
+
+inductive is_dnf_ind_v2 : Formula_ → Prop
+| rule_1
+  (phi psi : Formula_) :
+  is_dnf_ind_v2 phi →
+  is_dnf_ind_v2 psi →
+  is_dnf_ind_v2 (or_ phi psi)
+
+| rule_2
+  (F : Formula_) :
+  is_conj_ind_v2 F →
+  is_dnf_ind_v2 F
+
+
+-------------------------------------------------------------------------------
+
+
+inductive is_cnf_ind_v1 : Formula_ → Prop
+| rule_1
+  (phi psi : Formula_) :
+  is_disj_ind_v1 phi →
+  is_cnf_ind_v1 psi →
+  is_cnf_ind_v1 (and_ phi psi)
+
+| rule_2
+  (F : Formula_) :
+  is_disj_ind_v1 F →
+  is_cnf_ind_v1 F
+
+
 inductive is_cnf_ind_v2 : Formula_ → Prop
 | rule_1
   (phi psi : Formula_) :
@@ -457,3 +464,6 @@ inductive is_cnf_ind_v2 : Formula_ → Prop
   (F : Formula_) :
   is_disj_ind_v2 F →
   is_cnf_ind_v2 F
+
+
+-------------------------------------------------------------------------------
