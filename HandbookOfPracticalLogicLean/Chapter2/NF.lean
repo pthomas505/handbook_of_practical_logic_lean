@@ -638,6 +638,110 @@ lemma is_disj_rec_v1_imp_is_nnf_rec_v1
     contradiction
 
 
+lemma is_disj_rec_v1_imp_is_disj_ind_v1
+  (F : Formula_)
+  (h1 : is_disj_rec_v1 F) :
+  is_disj_ind_v1 F :=
+  by
+  induction F
+  case false_ =>
+    apply is_disj_ind_v1.rule_3
+    apply is_constant_ind.rule_1
+  case true_ =>
+    apply is_disj_ind_v1.rule_3
+    apply is_constant_ind.rule_2
+  case atom_ X =>
+    apply is_disj_ind_v1.rule_4
+    apply is_literal_ind.rule_1
+  case not_ phi ih =>
+    cases phi
+    case atom_ X =>
+      apply is_disj_ind_v1.rule_4
+      apply is_literal_ind.rule_2
+    all_goals
+      simp only [is_disj_rec_v1] at h1
+  case or_ phi psi phi_ih psi_ih =>
+    cases phi
+    case false_ =>
+      simp only [is_disj_rec_v1] at h1
+      apply is_disj_ind_v1.rule_1
+      · apply is_constant_ind.rule_1
+      · apply psi_ih
+        exact h1
+    case true_ =>
+      simp only [is_disj_rec_v1] at h1
+      apply is_disj_ind_v1.rule_1
+      · apply is_constant_ind.rule_2
+      · apply psi_ih
+        exact h1
+    case atom_ X =>
+      simp only [is_disj_rec_v1] at h1
+      apply is_disj_ind_v1.rule_2
+      · apply is_literal_ind.rule_1
+      · apply psi_ih
+        exact h1
+    case not_ phi =>
+      cases phi
+      case atom_ X =>
+        simp only [is_disj_rec_v1] at h1
+        simp only [is_disj_rec_v1] at phi_ih
+        apply is_disj_ind_v1.rule_2
+        · apply is_literal_ind.rule_2
+        · apply psi_ih
+          exact h1
+      all_goals
+        simp only [is_disj_rec_v1] at h1
+    all_goals
+      simp only [is_disj_rec_v1] at h1
+  all_goals
+    simp only [is_disj_rec_v1] at h1
+
+
+lemma is_disj_ind_v1_imp_is_disj_rec_v1
+  (F : Formula_)
+  (h1 : is_disj_ind_v1 F) :
+  is_disj_rec_v1 F :=
+  by
+  induction h1
+  case rule_1 phi psi ih_1 ih_2 ih_3 =>
+    cases ih_1
+    case rule_1 =>
+      simp only [is_disj_rec_v1]
+      exact ih_3
+    case rule_2 =>
+      simp only [is_disj_rec_v1]
+      exact ih_3
+  case rule_2 phi psi ih_1 ih_2 ih_3 =>
+    cases ih_1
+    case rule_1 X =>
+      simp only [is_disj_rec_v1]
+      exact ih_3
+    case rule_2 X =>
+      simp only [is_disj_rec_v1]
+      exact ih_3
+  case rule_3 phi ih_1 =>
+    cases ih_1
+    case rule_1 =>
+      simp only [is_disj_rec_v1]
+    case rule_2 =>
+      simp only [is_disj_rec_v1]
+  case rule_4 phi ih_1 =>
+    cases ih_1
+    case rule_1 X =>
+      simp only [is_disj_rec_v1]
+    case rule_2 X =>
+      simp only [is_disj_rec_v1]
+
+
+lemma is_disj_rec_v1_iff_is_disj_ind_v1
+  (F : Formula_) :
+  is_disj_rec_v1 F ↔ is_disj_ind_v1 F :=
+  by
+  constructor
+  · apply is_disj_rec_v1_imp_is_disj_ind_v1
+  · apply is_disj_ind_v1_imp_is_disj_rec_v1
+
+
 -------------------------------------------------------------------------------
 
 
