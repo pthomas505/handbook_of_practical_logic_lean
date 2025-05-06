@@ -509,3 +509,83 @@ inductive is_cnf_ind_v2 : Formula_ → Prop
 
 
 -------------------------------------------------------------------------------
+
+
+lemma is_constant_ind_imp_is_constant_rec
+  (F : Formula_)
+  (h1 : is_constant_ind F) :
+  F.is_constant_rec :=
+  by
+  cases h1
+  all_goals
+    simp only [is_constant_rec]
+
+
+lemma is_constant_rec_imp_is_constant_ind
+  (F : Formula_)
+  (h1 : F.is_constant_rec) :
+  is_constant_ind F :=
+  by
+  cases F
+  case false_ =>
+    apply is_constant_ind.rule_1
+  case true_ =>
+    apply is_constant_ind.rule_2
+  all_goals
+    simp only [is_constant_rec] at h1
+
+
+lemma is_constant_ind_iff_is_constant_rec
+  (F : Formula_) :
+  is_constant_ind F ↔ F.is_constant_rec :=
+  by
+  constructor
+  · intro a1
+    exact is_constant_ind_imp_is_constant_rec F a1
+  · intro a1
+    exact is_constant_rec_imp_is_constant_ind F a1
+
+
+-------------------------------------------------------------------------------
+
+
+lemma is_literal_ind_imp_is_literal_rec
+  (F : Formula_)
+  (h1 : is_literal_ind F) :
+  F.is_literal_rec :=
+  by
+  cases h1
+  all_goals
+    simp only [is_literal_rec]
+
+
+lemma is_literal_rec_imp_is_literal_ind
+  (F : Formula_)
+  (h1 : F.is_literal_rec) :
+  is_literal_ind F :=
+  by
+  cases F
+  case atom_ X =>
+    apply is_literal_ind.rule_1
+  case not_ phi =>
+    cases phi
+    case atom_ X =>
+      apply is_literal_ind.rule_2
+    all_goals
+      simp only [is_literal_rec] at h1
+  all_goals
+    simp only [is_literal_rec] at h1
+
+
+lemma is_literal_ind_iff_is_literal_rec
+  (F : Formula_) :
+  is_literal_ind F ↔ F.is_literal_rec :=
+  by
+  constructor
+  · intro a1
+    exact is_literal_ind_imp_is_literal_rec F a1
+  · intro a1
+    exact is_literal_rec_imp_is_literal_ind F a1
+
+
+-------------------------------------------------------------------------------
