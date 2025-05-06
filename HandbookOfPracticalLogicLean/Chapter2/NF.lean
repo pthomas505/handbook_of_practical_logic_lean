@@ -591,6 +591,56 @@ lemma is_literal_ind_iff_is_literal_rec
 -------------------------------------------------------------------------------
 
 
+lemma is_disj_rec_v1_imp_is_nnf_rec_v1
+  (F : Formula_)
+  (h1 : F.is_disj_rec_v1) :
+  F.is_nnf_rec_v1 :=
+  by
+  induction F
+  case false_ | true_ | atom_ X =>
+    unfold is_nnf_rec_v1
+    exact trivial
+  case not_ phi ih =>
+    cases phi
+    case atom_ X =>
+      unfold is_nnf_rec_v1
+      exact trivial
+    all_goals
+      unfold is_disj_rec_v1 at h1
+      contradiction
+  case or_ phi psi phi_ih psi_ih =>
+    unfold is_nnf_rec_v1
+    cases phi
+    case false_ | true_ | atom_ X =>
+      unfold is_disj_rec_v1 at h1
+      constructor
+      · unfold is_nnf_rec_v1
+        exact trivial
+      · apply psi_ih
+        exact h1
+    case not_ phi =>
+      cases phi
+      case atom_ X =>
+        unfold is_disj_rec_v1 at h1
+        constructor
+        · unfold is_nnf_rec_v1
+          exact trivial
+        · apply psi_ih
+          exact h1
+      all_goals
+        unfold is_disj_rec_v1 at h1
+        contradiction
+    all_goals
+      unfold is_disj_rec_v1 at h1
+      contradiction
+  all_goals
+    unfold is_disj_rec_v1 at h1
+    contradiction
+
+
+-------------------------------------------------------------------------------
+
+
 lemma is_conj_rec_v1_imp_is_nnf_rec_v1
   (F : Formula_)
   (h1 : F.is_conj_rec_v1) :
