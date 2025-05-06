@@ -279,43 +279,25 @@ instance
 -------------------------------------------------------------------------------
 
 
-inductive is_constant_ind_v1 : Formula_ → Prop
+inductive is_constant_ind : Formula_ → Prop
 | rule_1 :
-  is_constant_ind_v1 false_
+  is_constant_ind false_
 
 | rule_2 :
-  is_constant_ind_v1 true_
-
-
-inductive is_constant_ind_v2 : Formula_ → Prop
-| rule_1 :
-  is_constant_ind_v2 false_
-
-| rule_2 :
-  is_constant_ind_v2 true_
+  is_constant_ind true_
 
 
 -------------------------------------------------------------------------------
 
 
-inductive is_literal_ind_v1 : Formula_ → Prop
+inductive is_literal_ind : Formula_ → Prop
 | rule_1
   (X : String) :
-  is_literal_ind_v1 (atom_ X)
+  is_literal_ind (atom_ X)
 
 | rule_2
   (X : String) :
-  is_literal_ind_v1 (not_ (atom_ X))
-
-
-inductive is_literal_ind_v2 : Formula_ → Prop
-| rule_1
-  (X : String) :
-  is_literal_ind_v2 (atom_ X)
-
-| rule_2
-  (X : String) :
-  is_literal_ind_v2 (not_ (atom_ X))
+  is_literal_ind (not_ (atom_ X))
 
 
 -------------------------------------------------------------------------------
@@ -324,24 +306,24 @@ inductive is_literal_ind_v2 : Formula_ → Prop
 inductive is_disj_ind_v1 : Formula_ → Prop
 | rule_1
   (phi psi : Formula_) :
-  is_constant_ind_v1 phi →
+  is_constant_ind phi →
   is_disj_ind_v1 psi →
   is_disj_ind_v1 (or_ phi psi)
 
 | rule_2
   (phi psi : Formula_) :
-  is_literal_ind_v1 phi →
+  is_literal_ind phi →
   is_disj_ind_v1 psi →
   is_disj_ind_v1 (or_ phi psi)
 
 | rule_3
   (F : Formula_) :
-  is_constant_ind_v1 F →
+  is_constant_ind F →
   is_disj_ind_v1 F
 
 | rule_4
   (F : Formula_) :
-  is_literal_ind_v1 F →
+  is_literal_ind F →
   is_disj_ind_v1 F
 
 
@@ -354,12 +336,12 @@ inductive is_disj_ind_v2 : Formula_ → Prop
 
 | rule_2
   (F : Formula_) :
-  is_constant_ind_v2 F →
+  is_constant_ind F →
   is_disj_ind_v2 F
 
 | rule_3
   (F : Formula_) :
-  is_literal_ind_v2 F →
+  is_literal_ind F →
   is_disj_ind_v2 F
 
 
@@ -369,24 +351,24 @@ inductive is_disj_ind_v2 : Formula_ → Prop
 inductive is_conj_ind_v1 : Formula_ → Prop
 | rule_1
   (phi psi : Formula_) :
-  is_constant_ind_v1 phi →
+  is_constant_ind phi →
   is_conj_ind_v1 psi →
   is_conj_ind_v1 (and_ phi psi)
 
 | rule_2
   (phi psi : Formula_) :
-  is_literal_ind_v1 phi →
+  is_literal_ind phi →
   is_conj_ind_v1 psi →
   is_conj_ind_v1 (and_ phi psi)
 
 | rule_3
   (F : Formula_) :
-  is_constant_ind_v1 F →
+  is_constant_ind F →
   is_conj_ind_v1 F
 
 | rule_4
   (F : Formula_) :
-  is_literal_ind_v1 F →
+  is_literal_ind F →
   is_conj_ind_v1 F
 
 
@@ -399,12 +381,12 @@ inductive is_conj_ind_v2 : Formula_ → Prop
 
 | rule_2
   (F : Formula_) :
-  is_constant_ind_v2 F →
+  is_constant_ind F →
   is_conj_ind_v2 F
 
 | rule_3
   (F : Formula_) :
-  is_literal_ind_v2 F →
+  is_literal_ind F →
   is_conj_ind_v2 F
 
 
