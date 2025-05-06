@@ -219,6 +219,47 @@ instance
 -------------------------------------------------------------------------------
 
 
+def Formula_.is_disj_rec_v1 :
+  Formula_ → Prop
+  | false_ => True
+  | true_ => True
+  | atom_ _ => True
+  | not_ (atom_ _) => True
+  | or_ (false_) psi => psi.is_disj_rec_v1
+  | or_ (true_) psi => psi.is_disj_rec_v1
+  | or_ (atom_ _) psi => psi.is_disj_rec_v1
+  | or_ (not_ (atom_ _)) psi => psi.is_disj_rec_v1
+  | _ => False
+
+
+instance
+  (F : Formula_) :
+  Decidable (Formula_.is_disj_rec_v1 F) :=
+  by
+  induction F
+  case not_ phi ih =>
+    cases phi
+    all_goals
+      simp only [is_disj_rec_v1]
+      infer_instance
+  case or_ phi psi phi_ih psi_ih =>
+    cases phi
+    case not_ phi =>
+      cases phi
+      all_goals
+        simp only [is_disj_rec_v1]
+        infer_instance
+    all_goals
+      simp only [is_disj_rec_v1]
+      infer_instance
+  all_goals
+    simp only [is_disj_rec_v1]
+    infer_instance
+
+
+-------------------------------------------------------------------------------
+
+
 def Formula_.is_conj_rec_v1 :
   Formula_ → Prop
   | false_ => True
@@ -273,6 +314,25 @@ instance
   induction F
   all_goals
     simp only [is_dnf_rec_v1]
+    infer_instance
+
+
+-------------------------------------------------------------------------------
+
+
+def Formula_.is_cnf_rec_v1 :
+  Formula_ → Prop
+  | or_ phi psi => phi.is_disj_rec_v1 ∧ psi.is_cnf_rec_v1
+  | F => is_disj_rec_v1 F
+
+
+instance
+  (F : Formula_) :
+  Decidable (Formula_.is_cnf_rec_v1 F) :=
+  by
+  induction F
+  all_goals
+    simp only [is_cnf_rec_v1]
     infer_instance
 
 
