@@ -28,6 +28,9 @@ instance
     infer_instance
 
 
+-------------------------------------------------------------------------------
+
+
 /--
   `Formula_.is_literal_rec F` := True if and only if the formula `F` is an atomic formula or the negation of an atomic formula.
 -/
@@ -93,6 +96,9 @@ instance
     infer_instance
 
 
+-------------------------------------------------------------------------------
+
+
 /--
   `Formula_.is_nnf_rec_v1 F` := True if and only if the formula `F` is in negation normal form.
 -/
@@ -119,9 +125,6 @@ instance
   all_goals
     unfold is_nnf_rec_v1
     infer_instance
-
-
--------------------------------------------------------------------------------
 
 
 /--
@@ -158,7 +161,7 @@ instance
 
 
 /--
-  `Formula_.is_pos_nnf_rec F` := True if and only if the formula `F` is in negation normal form and every atom in `F` occurs unnegated.
+  `Formula_.is_pos_nnf_rec F` := True if and only if the formula `F` is in negation normal form and every atom in `F` is positive.
 -/
 def Formula_.is_pos_nnf_rec :
   Formula_ → Prop
@@ -189,7 +192,7 @@ instance
 
 
 /--
-  `Formula_.is_neg_nnf_rec F` := True if and only if the formula `F` is in negation normal form and every atom in `F` occurs negated.
+  `Formula_.is_neg_nnf_rec F` := True if and only if the formula `F` is in negation normal form and every atom in `F` is negative.
 -/
 def Formula_.is_neg_nnf_rec :
   Formula_ → Prop
