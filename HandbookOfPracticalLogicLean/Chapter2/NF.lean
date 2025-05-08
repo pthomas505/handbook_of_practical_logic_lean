@@ -53,6 +53,24 @@ instance
 
 
 /--
+  `Formula_.is_positive_literal_rec F` := True if and only if the formula `F` is a positive literal.
+-/
+def Formula_.is_positive_literal_rec :
+  Formula_ → Prop
+  | atom_ _ => True
+  | _ => False
+
+instance
+  (F : Formula_) :
+  Decidable (Formula_.is_positive_literal_rec F) :=
+  by
+  cases F
+  all_goals
+    simp only [is_positive_literal_rec]
+    infer_instance
+
+
+/--
   `Formula_.is_negative_literal_rec F` := True if and only if the formula `F` is a negative literal.
 -/
 def Formula_.is_negative_literal_rec :
@@ -72,24 +90,6 @@ instance
       infer_instance
   all_goals
     simp only [is_negative_literal_rec]
-    infer_instance
-
-
-/--
-  `Formula_.is_positive_literal_rec F` := True if and only if the formula `F` is a positive literal.
--/
-def Formula_.is_positive_literal_rec :
-  Formula_ → Prop
-  | atom_ _ => True
-  | _ => False
-
-instance
-  (F : Formula_) :
-  Decidable (Formula_.is_positive_literal_rec F) :=
-  by
-  cases F
-  all_goals
-    simp only [is_positive_literal_rec]
     infer_instance
 
 
