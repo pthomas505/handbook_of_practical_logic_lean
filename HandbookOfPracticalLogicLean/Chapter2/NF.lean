@@ -219,14 +219,17 @@ instance
 -------------------------------------------------------------------------------
 
 
+/--
+  `Formula_.is_disj_rec_v1 F` := True if and only if the formula `F` is a disjunction of an arbitrary number of elements and every disjunct on the left is a constant or a literal.
+-/
 def Formula_.is_disj_rec_v1 :
   Formula_ → Prop
   | false_ => True
   | true_ => True
   | atom_ _ => True
   | not_ (atom_ _) => True
-  | or_ (false_) psi => psi.is_disj_rec_v1
-  | or_ (true_) psi => psi.is_disj_rec_v1
+  | or_ false_ psi => psi.is_disj_rec_v1
+  | or_ true_ psi => psi.is_disj_rec_v1
   | or_ (atom_ _) psi => psi.is_disj_rec_v1
   | or_ (not_ (atom_ _)) psi => psi.is_disj_rec_v1
   | _ => False
@@ -260,14 +263,17 @@ instance
 -------------------------------------------------------------------------------
 
 
+/--
+  `Formula_.is_conj_rec_v1 F` := True if and only if the formula `F` is a conjunction of an arbitrary number of elements and every conjunct on the left is a constant or a literal.
+-/
 def Formula_.is_conj_rec_v1 :
   Formula_ → Prop
   | false_ => True
   | true_ => True
   | atom_ _ => True
   | not_ (atom_ _) => True
-  | and_ (false_) psi => psi.is_conj_rec_v1
-  | and_ (true_) psi => psi.is_conj_rec_v1
+  | and_ false_ psi => psi.is_conj_rec_v1
+  | and_ true_ psi => psi.is_conj_rec_v1
   | and_ (atom_ _) psi => psi.is_conj_rec_v1
   | and_ (not_ (atom_ _)) psi => psi.is_conj_rec_v1
   | _ => False
@@ -301,6 +307,9 @@ instance
 -------------------------------------------------------------------------------
 
 
+/--
+  `Formula_.is_dnf_rec_v1 F` := True if and only if the formula `F` is in disjunction normal form.
+-/
 def Formula_.is_dnf_rec_v1 :
   Formula_ → Prop
   | or_ phi psi => phi.is_conj_rec_v1 ∧ psi.is_dnf_rec_v1
@@ -320,6 +329,9 @@ instance
 -------------------------------------------------------------------------------
 
 
+/--
+  `Formula_.is_cnf_rec_v1 F` := True if and only if the formula `F` is in conjunction normal form.
+-/
 def Formula_.is_cnf_rec_v1 :
   Formula_ → Prop
   | and_ phi psi => phi.is_disj_rec_v1 ∧ psi.is_cnf_rec_v1
@@ -339,6 +351,9 @@ instance
 -------------------------------------------------------------------------------
 
 
+/--
+  `is_constant_ind F` := True if and only if the formula `F` is `false_` or `true_`.
+-/
 inductive is_constant_ind : Formula_ → Prop
 | rule_1 :
   is_constant_ind false_
@@ -350,6 +365,9 @@ inductive is_constant_ind : Formula_ → Prop
 -------------------------------------------------------------------------------
 
 
+/--
+  `is_literal_ind F` := True if and only if the formula `F` is an atomic formula or the negation of an atomic formula.
+-/
 inductive is_literal_ind : Formula_ → Prop
 | rule_1
   (X : String) :
@@ -363,6 +381,9 @@ inductive is_literal_ind : Formula_ → Prop
 -------------------------------------------------------------------------------
 
 
+/--
+  `is_disj_ind_v1 F` := True if and only if the formula `F` is a disjunction of an arbitrary number of elements and every disjunct on the left is a constant or a literal.
+-/
 inductive is_disj_ind_v1 : Formula_ → Prop
 | rule_1
   (phi psi : Formula_) :
@@ -387,6 +408,9 @@ inductive is_disj_ind_v1 : Formula_ → Prop
   is_disj_ind_v1 F
 
 
+/--
+  `is_disj_ind_v2 F` := True if and only if the formula `F` is a disjunction of an arbitrary number of elements.
+-/
 inductive is_disj_ind_v2 : Formula_ → Prop
 | rule_1
   (phi psi : Formula_) :
@@ -408,6 +432,9 @@ inductive is_disj_ind_v2 : Formula_ → Prop
 -------------------------------------------------------------------------------
 
 
+/--
+  `is_conj_ind_v1 F` := True if and only if the formula `F` is a conjunction of an arbitrary number of elements and every conjunct on the left is a constant or a literal.
+-/
 inductive is_conj_ind_v1 : Formula_ → Prop
 | rule_1
   (phi psi : Formula_) :
@@ -432,6 +459,9 @@ inductive is_conj_ind_v1 : Formula_ → Prop
   is_conj_ind_v1 F
 
 
+/--
+  `is_conj_ind_v2 F` := True if and only if the formula `F` is a conjunction of an arbitrary number of elements.
+-/
 inductive is_conj_ind_v2 : Formula_ → Prop
 | rule_1
   (phi psi : Formula_) :
@@ -453,6 +483,9 @@ inductive is_conj_ind_v2 : Formula_ → Prop
 -------------------------------------------------------------------------------
 
 
+/--
+  `is_dnf_ind_v1 F` := True if and only if the formula `F` is in disjunction normal form.
+-/
 inductive is_dnf_ind_v1 : Formula_ → Prop
 | rule_1
   (phi psi : Formula_) :
@@ -466,6 +499,9 @@ inductive is_dnf_ind_v1 : Formula_ → Prop
   is_dnf_ind_v1 F
 
 
+/--
+  `is_dnf_ind_v2 F` := True if and only if the formula `F` is in disjunction normal form.
+-/
 inductive is_dnf_ind_v2 : Formula_ → Prop
 | rule_1
   (phi psi : Formula_) :
@@ -482,6 +518,9 @@ inductive is_dnf_ind_v2 : Formula_ → Prop
 -------------------------------------------------------------------------------
 
 
+/--
+  `is_cnf_ind_v1 F` := True if and only if the formula `F` is in conjunction normal form.
+-/
 inductive is_cnf_ind_v1 : Formula_ → Prop
 | rule_1
   (phi psi : Formula_) :
@@ -495,6 +534,9 @@ inductive is_cnf_ind_v1 : Formula_ → Prop
   is_cnf_ind_v1 F
 
 
+/--
+  `is_cnf_ind_v2 F` := True if and only if the formula `F` is in conjunction normal form.
+-/
 inductive is_cnf_ind_v2 : Formula_ → Prop
 | rule_1
   (phi psi : Formula_) :
@@ -1090,3 +1132,6 @@ lemma is_cnf_rec_v1_iff_is_cnf_ind_v1
   constructor
   · apply is_cnf_rec_v1_imp_is_cnf_ind_v1
   · apply is_cnf_ind_v1_imp_is_cnf_rec_v1
+
+
+#lint
