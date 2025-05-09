@@ -263,6 +263,34 @@ instance
     infer_instance
 
 
+/--
+  `Formula_.is_disj_rec_v2 F` := True if and only if the formula `F` is a disjunction of an arbitrary number of elements.
+-/
+def Formula_.is_disj_rec_v2 :
+  Formula_ → Prop
+  | false_ => True
+  | true_ => True
+  | atom_ _ => True
+  | not_ (atom_ _) => True
+  | or_ phi psi => phi.is_disj_rec_v2 ∧ psi.is_disj_rec_v2
+  | _ => False
+
+
+instance
+  (F : Formula_) :
+  Decidable (Formula_.is_disj_rec_v2 F) :=
+  by
+  induction F
+  case not_ phi ih =>
+    cases phi
+    all_goals
+      unfold is_disj_rec_v2
+      infer_instance
+  all_goals
+    unfold is_disj_rec_v2
+    infer_instance
+
+
 -------------------------------------------------------------------------------
 
 
@@ -304,6 +332,34 @@ instance
       infer_instance
   all_goals
     unfold is_conj_rec_v1
+    infer_instance
+
+
+/--
+  `Formula_.is_conj_rec_v2 F` := True if and only if the formula `F` is a conjunction of an arbitrary number of elements.
+-/
+def Formula_.is_conj_rec_v2 :
+  Formula_ → Prop
+  | false_ => True
+  | true_ => True
+  | atom_ _ => True
+  | not_ (atom_ _) => True
+  | and_ phi psi => phi.is_conj_rec_v2 ∧ psi.is_conj_rec_v2
+  | _ => False
+
+
+instance
+  (F : Formula_) :
+  Decidable (Formula_.is_conj_rec_v2 F) :=
+  by
+  induction F
+  case not_ phi ih =>
+    cases phi
+    all_goals
+      unfold is_conj_rec_v2
+      infer_instance
+  all_goals
+    unfold is_conj_rec_v2
     infer_instance
 
 
