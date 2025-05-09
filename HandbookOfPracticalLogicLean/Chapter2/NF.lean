@@ -24,7 +24,7 @@ instance
   by
   cases F
   all_goals
-    unfold is_constant_rec
+    simp only [is_constant_rec]
     infer_instance
 
 
@@ -46,9 +46,9 @@ instance
   by
   cases F
   case not_ phi =>
-    unfold is_literal_rec
-    split
+    cases phi
     all_goals
+      simp only [is_literal_rec]
       infer_instance
   all_goals
     simp only [is_literal_rec]
@@ -87,9 +87,9 @@ instance
   by
   cases F
   case not_ phi =>
-    unfold is_negative_literal_rec
-    split
+    cases phi
     all_goals
+      simp only [is_negative_literal_rec]
       infer_instance
   all_goals
     simp only [is_negative_literal_rec]
@@ -223,7 +223,7 @@ instance
 
 
 /--
-  `Formula_.is_disj_rec_v1 F` := True if and only if the formula `F` is a disjunction of an arbitrary number of elements and every disjunct on the left is a constant or a literal.
+  `Formula_.is_disj_rec_v1 F` := True if and only if the formula `F` is a disjunction of an arbitrary number of elements and every left disjunct is a constant or a literal.
 -/
 def Formula_.is_disj_rec_v1 :
   Formula_ → Prop
@@ -246,20 +246,20 @@ instance
   case not_ phi ih =>
     cases phi
     all_goals
-      simp only [is_disj_rec_v1]
+      unfold is_disj_rec_v1
       infer_instance
   case or_ phi psi phi_ih psi_ih =>
     cases phi
     case not_ phi =>
       cases phi
       all_goals
-        simp only [is_disj_rec_v1]
+        unfold is_disj_rec_v1
         infer_instance
     all_goals
-      simp only [is_disj_rec_v1]
+      unfold is_disj_rec_v1
       infer_instance
   all_goals
-    simp only [is_disj_rec_v1]
+    unfold is_disj_rec_v1
     infer_instance
 
 
@@ -267,7 +267,7 @@ instance
 
 
 /--
-  `Formula_.is_conj_rec_v1 F` := True if and only if the formula `F` is a conjunction of an arbitrary number of elements and every conjunct on the left is a constant or a literal.
+  `Formula_.is_conj_rec_v1 F` := True if and only if the formula `F` is a conjunction of an arbitrary number of elements and every left conjunct is a constant or a literal.
 -/
 def Formula_.is_conj_rec_v1 :
   Formula_ → Prop
@@ -290,20 +290,20 @@ instance
   case not_ phi ih =>
     cases phi
     all_goals
-      simp only [is_conj_rec_v1]
+      unfold is_conj_rec_v1
       infer_instance
   case and_ phi psi phi_ih psi_ih =>
     cases phi
     case not_ phi =>
       cases phi
       all_goals
-        simp only [is_conj_rec_v1]
+        unfold is_conj_rec_v1
         infer_instance
     all_goals
-      simp only [is_conj_rec_v1]
+      unfold is_conj_rec_v1
       infer_instance
   all_goals
-    simp only [is_conj_rec_v1]
+    unfold is_conj_rec_v1
     infer_instance
 
 
@@ -325,7 +325,7 @@ instance
   by
   induction F
   all_goals
-    simp only [is_dnf_rec_v1]
+    unfold is_dnf_rec_v1
     infer_instance
 
 
@@ -347,7 +347,7 @@ instance
   by
   induction F
   all_goals
-    simp only [is_cnf_rec_v1]
+    unfold is_cnf_rec_v1
     infer_instance
 
 
@@ -385,7 +385,7 @@ inductive is_literal_ind : Formula_ → Prop
 
 
 /--
-  `is_disj_ind_v1 F` := True if and only if the formula `F` is a disjunction of an arbitrary number of elements and every disjunct on the left is a constant or a literal.
+  `is_disj_ind_v1 F` := True if and only if the formula `F` is a disjunction of an arbitrary number of elements and every left disjunct is a constant or a literal.
 -/
 inductive is_disj_ind_v1 : Formula_ → Prop
 | rule_1
@@ -436,7 +436,7 @@ inductive is_disj_ind_v2 : Formula_ → Prop
 
 
 /--
-  `is_conj_ind_v1 F` := True if and only if the formula `F` is a conjunction of an arbitrary number of elements and every conjunct on the left is a constant or a literal.
+  `is_conj_ind_v1 F` := True if and only if the formula `F` is a conjunction of an arbitrary number of elements and every left conjunct is a constant or a literal.
 -/
 inductive is_conj_ind_v1 : Formula_ → Prop
 | rule_1
