@@ -32,7 +32,7 @@ instance
 
 
 /--
-  `Formula_.is_literal_rec F` := True if and only if the formula `F` is an atomic formula or the negation of an atomic formula.
+  `Formula_.is_literal_rec F` := True if and only if the formula `F` is an atom or the negation of an atom.
 -/
 def Formula_.is_literal_rec :
   Formula_ → Prop
@@ -369,7 +369,7 @@ inductive is_constant_ind : Formula_ → Prop
 
 
 /--
-  `is_literal_ind F` := True if and only if the formula `F` is an atomic formula or the negation of an atomic formula.
+  `is_literal_ind F` := True if and only if the formula `F` is an atom or the negation of an atom.
 -/
 inductive is_literal_ind : Formula_ → Prop
 | rule_1
