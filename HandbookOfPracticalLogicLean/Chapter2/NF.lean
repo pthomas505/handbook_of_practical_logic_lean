@@ -385,6 +385,25 @@ instance
     infer_instance
 
 
+/--
+  `Formula_.is_dnf_rec_v2 F` := True if and only if the formula `F` is in disjunction normal form.
+-/
+def Formula_.is_dnf_rec_v2 :
+  Formula_ → Prop
+  | or_ phi psi => phi.is_dnf_rec_v2 ∧ psi.is_dnf_rec_v2
+  | F => is_conj_rec_v2 F
+
+
+instance
+  (F : Formula_) :
+  Decidable (Formula_.is_dnf_rec_v2 F) :=
+  by
+  induction F
+  all_goals
+    unfold is_dnf_rec_v2
+    infer_instance
+
+
 -------------------------------------------------------------------------------
 
 
@@ -404,6 +423,25 @@ instance
   induction F
   all_goals
     unfold is_cnf_rec_v1
+    infer_instance
+
+
+/--
+  `Formula_.is_cnf_rec_v2 F` := True if and only if the formula `F` is in conjunction normal form.
+-/
+def Formula_.is_cnf_rec_v2 :
+  Formula_ → Prop
+  | and_ phi psi => phi.is_cnf_rec_v2 ∧ psi.is_cnf_rec_v2
+  | F => is_disj_rec_v2 F
+
+
+instance
+  (F : Formula_) :
+  Decidable (Formula_.is_cnf_rec_v2 F) :=
+  by
+  induction F
+  all_goals
+    unfold is_cnf_rec_v2
     infer_instance
 
 
