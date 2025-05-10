@@ -642,16 +642,6 @@ inductive is_cnf_ind_v2 : Formula_ → Prop
 -------------------------------------------------------------------------------
 
 
-lemma is_constant_ind_imp_is_constant_rec
-  (F : Formula_)
-  (h1 : is_constant_ind F) :
-  F.is_constant_rec :=
-  by
-  cases h1
-  all_goals
-    simp only [is_constant_rec]
-
-
 lemma is_constant_rec_imp_is_constant_ind
   (F : Formula_)
   (h1 : F.is_constant_rec) :
@@ -666,26 +656,26 @@ lemma is_constant_rec_imp_is_constant_ind
     simp only [is_constant_rec] at h1
 
 
-lemma is_constant_ind_iff_is_constant_rec
-  (F : Formula_) :
-  is_constant_ind F ↔ F.is_constant_rec :=
-  by
-  constructor
-  · apply is_constant_ind_imp_is_constant_rec
-  · apply is_constant_rec_imp_is_constant_ind
-
-
--------------------------------------------------------------------------------
-
-
-lemma is_literal_ind_imp_is_literal_rec
+lemma is_constant_ind_imp_is_constant_rec
   (F : Formula_)
-  (h1 : is_literal_ind F) :
-  F.is_literal_rec :=
+  (h1 : is_constant_ind F) :
+  F.is_constant_rec :=
   by
   cases h1
   all_goals
-    simp only [is_literal_rec]
+    simp only [is_constant_rec]
+
+
+lemma is_constant_rec_iff_is_constant_ind
+  (F : Formula_) :
+  F.is_constant_rec ↔ is_constant_ind F :=
+  by
+  constructor
+  · apply is_constant_rec_imp_is_constant_ind
+  · apply is_constant_ind_imp_is_constant_rec
+
+
+-------------------------------------------------------------------------------
 
 
 lemma is_literal_rec_imp_is_literal_ind
@@ -706,13 +696,23 @@ lemma is_literal_rec_imp_is_literal_ind
     simp only [is_literal_rec] at h1
 
 
-lemma is_literal_ind_iff_is_literal_rec
+lemma is_literal_ind_imp_is_literal_rec
+  (F : Formula_)
+  (h1 : is_literal_ind F) :
+  F.is_literal_rec :=
+  by
+  cases h1
+  all_goals
+    simp only [is_literal_rec]
+
+
+lemma is_literal_rec_iff_is_literal_ind
   (F : Formula_) :
-  is_literal_ind F ↔ F.is_literal_rec :=
+  F.is_literal_rec ↔ is_literal_ind F :=
   by
   constructor
-  · apply is_literal_ind_imp_is_literal_rec
   · apply is_literal_rec_imp_is_literal_ind
+  · apply is_literal_ind_imp_is_literal_rec
 
 
 -------------------------------------------------------------------------------
