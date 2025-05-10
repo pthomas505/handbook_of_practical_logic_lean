@@ -237,7 +237,6 @@ def Formula_.is_disj_rec_v1 :
   | or_ (not_ (atom_ _)) psi => psi.is_disj_rec_v1
   | _ => False
 
-
 instance
   (F : Formula_) :
   Decidable (Formula_.is_disj_rec_v1 F) :=
@@ -275,7 +274,6 @@ def Formula_.is_disj_rec_v2 :
   | or_ phi psi => phi.is_disj_rec_v2 ∧ psi.is_disj_rec_v2
   | _ => False
 
-
 instance
   (F : Formula_) :
   Decidable (Formula_.is_disj_rec_v2 F) :=
@@ -308,7 +306,6 @@ def Formula_.is_conj_rec_v1 :
   | and_ (atom_ _) psi => psi.is_conj_rec_v1
   | and_ (not_ (atom_ _)) psi => psi.is_conj_rec_v1
   | _ => False
-
 
 instance
   (F : Formula_) :
@@ -347,7 +344,6 @@ def Formula_.is_conj_rec_v2 :
   | and_ phi psi => phi.is_conj_rec_v2 ∧ psi.is_conj_rec_v2
   | _ => False
 
-
 instance
   (F : Formula_) :
   Decidable (Formula_.is_conj_rec_v2 F) :=
@@ -374,7 +370,6 @@ def Formula_.is_dnf_rec_v1 :
   | or_ phi psi => phi.is_conj_rec_v1 ∧ psi.is_dnf_rec_v1
   | F => is_conj_rec_v1 F
 
-
 instance
   (F : Formula_) :
   Decidable (Formula_.is_dnf_rec_v1 F) :=
@@ -392,7 +387,6 @@ def Formula_.is_dnf_rec_v2 :
   Formula_ → Prop
   | or_ phi psi => phi.is_dnf_rec_v2 ∧ psi.is_dnf_rec_v2
   | F => is_conj_rec_v2 F
-
 
 instance
   (F : Formula_) :
@@ -415,7 +409,6 @@ def Formula_.is_cnf_rec_v1 :
   | and_ phi psi => phi.is_disj_rec_v1 ∧ psi.is_cnf_rec_v1
   | F => is_disj_rec_v1 F
 
-
 instance
   (F : Formula_) :
   Decidable (Formula_.is_cnf_rec_v1 F) :=
@@ -433,7 +426,6 @@ def Formula_.is_cnf_rec_v2 :
   Formula_ → Prop
   | and_ phi psi => phi.is_cnf_rec_v2 ∧ psi.is_cnf_rec_v2
   | F => is_disj_rec_v2 F
-
 
 instance
   (F : Formula_) :
