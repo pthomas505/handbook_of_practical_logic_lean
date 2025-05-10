@@ -748,6 +748,7 @@ lemma is_disj_rec_v1_imp_is_nnf_rec_v1
     cases phi
     case false_ | true_ | atom_ X =>
       unfold is_disj_rec_v1 at h1
+
       constructor
       · unfold is_nnf_rec_v1
         exact trivial
@@ -757,6 +758,7 @@ lemma is_disj_rec_v1_imp_is_nnf_rec_v1
       cases phi
       case atom_ X =>
         unfold is_disj_rec_v1 at h1
+
         constructor
         · unfold is_nnf_rec_v1
           exact trivial
@@ -802,18 +804,21 @@ lemma is_disj_rec_v1_imp_is_disj_ind_v1
     cases phi
     case false_ =>
       simp only [is_disj_rec_v1] at h1
+
       apply is_disj_ind_v1.rule_1
       · apply is_constant_ind.rule_1
       · apply psi_ih
         exact h1
     case true_ =>
       simp only [is_disj_rec_v1] at h1
+
       apply is_disj_ind_v1.rule_1
       · apply is_constant_ind.rule_2
       · apply psi_ih
         exact h1
     case atom_ X =>
       simp only [is_disj_rec_v1] at h1
+
       apply is_disj_ind_v1.rule_2
       · apply is_literal_ind.rule_1
       · apply psi_ih
@@ -822,7 +827,9 @@ lemma is_disj_rec_v1_imp_is_disj_ind_v1
       cases phi
       case atom_ X =>
         simp only [is_disj_rec_v1] at h1
+
         simp only [is_disj_rec_v1] at phi_ih
+
         apply is_disj_ind_v1.rule_2
         · apply is_literal_ind.rule_2
         · apply psi_ih
@@ -975,6 +982,7 @@ lemma is_conj_rec_v1_imp_is_nnf_rec_v1
     cases phi
     case false_ | true_ | atom_ X =>
       unfold is_conj_rec_v1 at h1
+
       constructor
       · unfold is_nnf_rec_v1
         exact trivial
@@ -984,6 +992,7 @@ lemma is_conj_rec_v1_imp_is_nnf_rec_v1
       cases phi
       case atom_ X =>
         unfold is_conj_rec_v1 at h1
+
         constructor
         · unfold is_nnf_rec_v1
           exact trivial
@@ -1029,18 +1038,21 @@ lemma is_conj_rec_v1_imp_is_conj_ind_v1
     cases phi
     case false_ =>
       simp only [is_conj_rec_v1] at h1
+
       apply is_conj_ind_v1.rule_1
       · apply is_constant_ind.rule_1
       · apply psi_ih
         exact h1
     case true_ =>
       simp only [is_conj_rec_v1] at h1
+
       apply is_conj_ind_v1.rule_1
       · apply is_constant_ind.rule_2
       · apply psi_ih
         exact h1
     case atom_ X =>
       simp only [is_conj_rec_v1] at h1
+
       apply is_conj_ind_v1.rule_2
       · apply is_literal_ind.rule_1
       · apply psi_ih
@@ -1049,7 +1061,9 @@ lemma is_conj_rec_v1_imp_is_conj_ind_v1
       cases phi
       case atom_ X =>
         simp only [is_conj_rec_v1] at h1
+
         simp only [is_conj_rec_v1] at phi_ih
+
         apply is_conj_ind_v1.rule_2
         · apply is_literal_ind.rule_2
         · apply psi_ih
@@ -1209,6 +1223,7 @@ lemma is_dnf_rec_v1_imp_is_dnf_ind_v1
       simp only [is_conj_rec_v1] at h1
   case and_ phi psi phi_ih psi_ih =>
     unfold is_dnf_rec_v1 at h1
+
     apply is_dnf_ind_v1.rule_2
     apply is_conj_rec_v1_imp_is_conj_ind_v1
     exact h1
@@ -1307,6 +1322,7 @@ lemma is_dnf_rec_v2_imp_is_dnf_ind_v2
       simp only [is_conj_rec_v2] at h1
   case and_ phi psi phi_ih psi_ih =>
     unfold is_dnf_rec_v2 at h1
+
     apply is_dnf_ind_v2.rule_2
     apply is_conj_rec_v2_imp_is_conj_ind_v2
     exact h1
@@ -1405,6 +1421,7 @@ lemma is_cnf_rec_v1_imp_is_cnf_ind_v1
       exact h1_right
   case or_ phi psi phi_ih psi_ih =>
     unfold is_cnf_rec_v1 at h1
+
     apply is_cnf_ind_v1.rule_2
     apply is_disj_rec_v1_imp_is_disj_ind_v1
     exact h1
@@ -1503,6 +1520,7 @@ lemma is_cnf_rec_v2_imp_is_cnf_ind_v2
       exact h1_right
   case or_ phi psi phi_ih psi_ih =>
     unfold is_cnf_rec_v2 at h1
+
     apply is_cnf_ind_v2.rule_2
     apply is_disj_rec_v2_imp_is_disj_ind_v2
     exact h1
