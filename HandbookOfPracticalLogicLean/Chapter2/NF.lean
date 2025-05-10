@@ -1000,6 +1000,9 @@ lemma is_conj_rec_v1_imp_is_nnf_rec_v1
     contradiction
 
 
+-------------------------------------------------------------------------------
+
+
 lemma is_conj_rec_v1_imp_is_conj_ind_v1
   (F : Formula_)
   (h1 : is_conj_rec_v1 F) :
@@ -1102,6 +1105,76 @@ lemma is_conj_rec_v1_iff_is_conj_ind_v1
   constructor
   · apply is_conj_rec_v1_imp_is_conj_ind_v1
   · apply is_conj_ind_v1_imp_is_conj_rec_v1
+
+
+-------------------------------------------------------------------------------
+
+
+lemma is_conj_rec_v2_imp_is_conj_ind_v2
+  (F : Formula_)
+  (h1 : is_conj_rec_v2 F) :
+  is_conj_ind_v2 F :=
+  by
+  induction F
+  case false_ =>
+    apply is_conj_ind_v2.rule_2
+    apply is_constant_ind.rule_1
+  case true_ =>
+    apply is_conj_ind_v2.rule_2
+    apply is_constant_ind.rule_2
+  case atom_ X =>
+    apply is_conj_ind_v2.rule_3
+    apply is_literal_ind.rule_1
+  case not_ phi ih =>
+    cases phi
+    case atom_ X =>
+      apply is_conj_ind_v2.rule_3
+      apply is_literal_ind.rule_2
+    all_goals
+      simp only [is_conj_rec_v2] at h1
+  case and_ phi psi phi_ih psi_ih =>
+    unfold is_conj_rec_v2 at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
+    apply is_conj_ind_v2.rule_1
+    · apply phi_ih
+      exact h1_left
+    · apply psi_ih
+      exact h1_right
+  all_goals
+    simp only [is_conj_rec_v2] at h1
+
+
+lemma is_conj_ind_v2_imp_is_conj_rec_v2
+  (F : Formula_)
+  (h1 : is_conj_ind_v2 F) :
+  is_conj_rec_v2 F :=
+  by
+  induction h1
+  case rule_1 phi psi ih_1 ih_2 ih_3 ih_4 =>
+    unfold is_conj_rec_v2
+    exact ⟨ih_3, ih_4⟩
+  case rule_2 phi ih_1 =>
+    cases ih_1
+    case rule_1 =>
+      simp only [is_conj_rec_v2]
+    case rule_2 =>
+      simp only [is_conj_rec_v2]
+  case rule_3 phi ih_1 =>
+    cases ih_1
+    case rule_1 X =>
+      simp only [is_conj_rec_v2]
+    case rule_2 X =>
+      simp only [is_conj_rec_v2]
+
+
+lemma is_conj_rec_v2_iff_is_conj_ind_v2
+  (F : Formula_) :
+  is_conj_rec_v2 F ↔ is_conj_ind_v2 F :=
+  by
+  constructor
+  · apply is_conj_rec_v2_imp_is_conj_ind_v2
+  · apply is_conj_ind_v2_imp_is_conj_rec_v2
 
 
 -------------------------------------------------------------------------------
