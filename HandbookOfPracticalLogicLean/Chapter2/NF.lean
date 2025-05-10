@@ -840,7 +840,13 @@ lemma is_disj_ind_v1_imp_is_disj_rec_v1
   is_disj_rec_v1 F :=
   by
   induction h1
-  case rule_3 phi psi ih_1 ih_2 ih_3 =>
+  case rule_1 phi ih_1 | rule_2 phi ih_1 =>
+    cases ih_1
+    case rule_1 =>
+      simp only [is_disj_rec_v1]
+    case rule_2 =>
+      simp only [is_disj_rec_v1]
+  case rule_3 phi psi ih_1 ih_2 ih_3 | rule_4 phi psi ih_1 ih_2 ih_3 =>
     cases ih_1
     case rule_1 =>
       simp only [is_disj_rec_v1]
@@ -848,26 +854,6 @@ lemma is_disj_ind_v1_imp_is_disj_rec_v1
     case rule_2 =>
       simp only [is_disj_rec_v1]
       exact ih_3
-  case rule_4 phi psi ih_1 ih_2 ih_3 =>
-    cases ih_1
-    case rule_1 X =>
-      simp only [is_disj_rec_v1]
-      exact ih_3
-    case rule_2 X =>
-      simp only [is_disj_rec_v1]
-      exact ih_3
-  case rule_1 phi ih_1 =>
-    cases ih_1
-    case rule_1 =>
-      simp only [is_disj_rec_v1]
-    case rule_2 =>
-      simp only [is_disj_rec_v1]
-  case rule_2 phi ih_1 =>
-    cases ih_1
-    case rule_1 X =>
-      simp only [is_disj_rec_v1]
-    case rule_2 X =>
-      simp only [is_disj_rec_v1]
 
 
 lemma is_disj_rec_v1_iff_is_disj_ind_v1
@@ -923,21 +909,15 @@ lemma is_disj_ind_v2_imp_is_disj_rec_v2
   is_disj_rec_v2 F :=
   by
   induction h1
-  case rule_3 phi psi ih_1 ih_2 ih_3 ih_4 =>
-    unfold is_disj_rec_v2
-    exact ⟨ih_3, ih_4⟩
-  case rule_1 phi ih_1 =>
+  case rule_1 phi ih_1 | rule_2 phi ih_1 =>
     cases ih_1
     case rule_1 =>
       simp only [is_disj_rec_v2]
     case rule_2 =>
       simp only [is_disj_rec_v2]
-  case rule_2 phi ih_1 =>
-    cases ih_1
-    case rule_1 X =>
-      simp only [is_disj_rec_v2]
-    case rule_2 X =>
-      simp only [is_disj_rec_v2]
+  case rule_3 phi psi ih_1 ih_2 ih_3 ih_4 =>
+    unfold is_disj_rec_v2
+    exact ⟨ih_3, ih_4⟩
 
 
 lemma is_disj_rec_v2_iff_is_disj_ind_v2
@@ -1074,7 +1054,13 @@ lemma is_conj_ind_v1_imp_is_conj_rec_v1
   is_conj_rec_v1 F :=
   by
   induction h1
-  case rule_3 phi psi ih_1 ih_2 ih_3 =>
+  case rule_1 phi ih_1 | rule_2 phi ih_1 =>
+    cases ih_1
+    case rule_1 =>
+      simp only [is_conj_rec_v1]
+    case rule_2 =>
+      simp only [is_conj_rec_v1]
+  case rule_3 phi psi ih_1 ih_2 ih_3 | rule_4 phi psi ih_1 ih_2 ih_3 =>
     cases ih_1
     case rule_1 =>
       simp only [is_conj_rec_v1]
@@ -1082,26 +1068,6 @@ lemma is_conj_ind_v1_imp_is_conj_rec_v1
     case rule_2 =>
       simp only [is_conj_rec_v1]
       exact ih_3
-  case rule_4 phi psi ih_1 ih_2 ih_3 =>
-    cases ih_1
-    case rule_1 X =>
-      simp only [is_conj_rec_v1]
-      exact ih_3
-    case rule_2 X =>
-      simp only [is_conj_rec_v1]
-      exact ih_3
-  case rule_1 phi ih_1 =>
-    cases ih_1
-    case rule_1 =>
-      simp only [is_conj_rec_v1]
-    case rule_2 =>
-      simp only [is_conj_rec_v1]
-  case rule_2 phi ih_1 =>
-    cases ih_1
-    case rule_1 X =>
-      simp only [is_conj_rec_v1]
-    case rule_2 X =>
-      simp only [is_conj_rec_v1]
 
 
 lemma is_conj_rec_v1_iff_is_conj_ind_v1
@@ -1157,21 +1123,15 @@ lemma is_conj_ind_v2_imp_is_conj_rec_v2
   is_conj_rec_v2 F :=
   by
   induction h1
-  case rule_3 phi psi ih_1 ih_2 ih_3 ih_4 =>
-    unfold is_conj_rec_v2
-    exact ⟨ih_3, ih_4⟩
-  case rule_1 phi ih_1 =>
+  case rule_1 phi ih_1 | rule_2 phi ih_1 =>
     cases ih_1
     case rule_1 =>
       simp only [is_conj_rec_v2]
     case rule_2 =>
       simp only [is_conj_rec_v2]
-  case rule_2 phi ih_1 =>
-    cases ih_1
-    case rule_1 X =>
-      simp only [is_conj_rec_v2]
-    case rule_2 X =>
-      simp only [is_conj_rec_v2]
+  case rule_3 phi psi ih_1 ih_2 ih_3 ih_4 =>
+    unfold is_conj_rec_v2
+    exact ⟨ih_3, ih_4⟩
 
 
 lemma is_conj_rec_v2_iff_is_conj_ind_v2
@@ -1239,14 +1199,14 @@ lemma is_dnf_ind_v1_imp_is_dnf_rec_v1
   is_dnf_rec_v1 F :=
   by
   induction h1
-  case rule_2 phi psi ih_1 ih_2 ih_3 =>
-    unfold is_dnf_rec_v1
-    constructor
-    · apply is_conj_ind_v1_imp_is_conj_rec_v1
-      exact ih_1
-    · exact ih_3
   case rule_1 phi ih_1 =>
     cases ih_1
+    case rule_1 ih | rule_2 ih =>
+      cases ih
+      all_goals
+        unfold is_dnf_rec_v1
+        unfold is_conj_rec_v1
+        exact trivial
     case rule_3 phi psi phi_ih psi_ih =>
       unfold is_dnf_rec_v1
       apply is_conj_ind_v1_imp_is_conj_rec_v1
@@ -1259,18 +1219,12 @@ lemma is_dnf_ind_v1_imp_is_dnf_rec_v1
       apply is_conj_ind_v1.rule_4
       · exact phi_ih
       · exact psi_ih
-    case rule_1 ih =>
-      cases ih
-      all_goals
-        unfold is_dnf_rec_v1
-        unfold is_conj_rec_v1
-        exact trivial
-    case rule_2 ih =>
-      cases ih
-      all_goals
-        unfold is_dnf_rec_v1
-        unfold is_conj_rec_v1
-        exact trivial
+  case rule_2 phi psi ih_1 ih_2 ih_3 =>
+    unfold is_dnf_rec_v1
+    constructor
+    · apply is_conj_ind_v1_imp_is_conj_rec_v1
+      exact ih_1
+    · exact ih_3
 
 
 lemma is_dnf_rec_v1_iff_is_dnf_ind_v1
@@ -1338,29 +1292,23 @@ lemma is_dnf_ind_v2_imp_is_dnf_rec_v2
   is_dnf_rec_v2 F :=
   by
   induction h1
-  case rule_2 phi psi ih_1 ih_2 ih_3 ih_4 =>
-    unfold is_dnf_rec_v2
-    exact ⟨ih_3, ih_4⟩
   case rule_1 phi ih_1 =>
     cases ih_1
+    case rule_1 ih | rule_2 ih =>
+      cases ih
+      all_goals
+        unfold is_dnf_rec_v2
+        unfold is_conj_rec_v2
+        exact trivial
     case rule_3 phi psi phi_ih psi_ih =>
       unfold is_dnf_rec_v2
       apply is_conj_ind_v2_imp_is_conj_rec_v2
       apply is_conj_ind_v2.rule_3
       · exact phi_ih
       · exact psi_ih
-    case rule_1 ih =>
-      cases ih
-      all_goals
-        unfold is_dnf_rec_v2
-        unfold is_conj_rec_v2
-        exact trivial
-    case rule_2 ih =>
-      cases ih
-      all_goals
-        unfold is_dnf_rec_v2
-        unfold is_conj_rec_v2
-        exact trivial
+  case rule_2 phi psi ih_1 ih_2 ih_3 ih_4 =>
+    unfold is_dnf_rec_v2
+    exact ⟨ih_3, ih_4⟩
 
 
 lemma is_dnf_rec_v2_iff_is_dnf_ind_v2
@@ -1428,14 +1376,14 @@ lemma is_cnf_ind_v1_imp_is_cnf_rec_v1
   is_cnf_rec_v1 F :=
   by
   induction h1
-  case rule_2 phi psi ih_1 ih_2 ih_3 =>
-    unfold is_cnf_rec_v1
-    constructor
-    · apply is_disj_ind_v1_imp_is_disj_rec_v1
-      exact ih_1
-    · exact ih_3
   case rule_1 phi ih_1 =>
     cases ih_1
+    case rule_1 ih | rule_2 ih =>
+      cases ih
+      all_goals
+        unfold is_cnf_rec_v1
+        unfold is_disj_rec_v1
+        exact trivial
     case rule_3 phi psi phi_ih psi_ih =>
       unfold is_cnf_rec_v1
       apply is_disj_ind_v1_imp_is_disj_rec_v1
@@ -1448,18 +1396,12 @@ lemma is_cnf_ind_v1_imp_is_cnf_rec_v1
       apply is_disj_ind_v1.rule_4
       · exact phi_ih
       · exact psi_ih
-    case rule_1 ih =>
-      cases ih
-      all_goals
-        unfold is_cnf_rec_v1
-        unfold is_disj_rec_v1
-        exact trivial
-    case rule_2 ih =>
-      cases ih
-      all_goals
-        unfold is_cnf_rec_v1
-        unfold is_disj_rec_v1
-        exact trivial
+  case rule_2 phi psi ih_1 ih_2 ih_3 =>
+    unfold is_cnf_rec_v1
+    constructor
+    · apply is_disj_ind_v1_imp_is_disj_rec_v1
+      exact ih_1
+    · exact ih_3
 
 
 lemma is_cnf_rec_v1_iff_is_cnf_ind_v1
@@ -1527,29 +1469,23 @@ lemma is_cnf_ind_v2_imp_is_cnf_rec_v2
   is_cnf_rec_v2 F :=
   by
   induction h1
-  case rule_2 phi psi ih_1 ih_2 ih_3 ih_4 =>
-    unfold is_cnf_rec_v2
-    exact ⟨ih_3, ih_4⟩
   case rule_1 phi ih_1 =>
     cases ih_1
+    case rule_1 ih | rule_2 ih =>
+      cases ih
+      all_goals
+        unfold is_cnf_rec_v2
+        unfold is_disj_rec_v2
+        exact trivial
     case rule_3 phi psi phi_ih psi_ih =>
       unfold is_cnf_rec_v2
       apply is_disj_ind_v2_imp_is_disj_rec_v2
       apply is_disj_ind_v2.rule_3
       · exact phi_ih
       · exact psi_ih
-    case rule_1 ih =>
-      cases ih
-      all_goals
-        unfold is_cnf_rec_v2
-        unfold is_disj_rec_v2
-        exact trivial
-    case rule_2 ih =>
-      cases ih
-      all_goals
-        unfold is_cnf_rec_v2
-        unfold is_disj_rec_v2
-        exact trivial
+  case rule_2 phi psi ih_1 ih_2 ih_3 ih_4 =>
+    unfold is_cnf_rec_v2
+    exact ⟨ih_3, ih_4⟩
 
 
 lemma is_cnf_rec_v2_iff_is_cnf_ind_v2
