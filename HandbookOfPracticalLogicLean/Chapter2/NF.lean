@@ -777,18 +777,18 @@ lemma is_disj_rec_v1_imp_is_disj_ind_v1
   by
   induction F
   case false_ =>
-    apply is_disj_ind_v1.rule_3
+    apply is_disj_ind_v1.rule_1
     apply is_constant_ind.rule_1
   case true_ =>
-    apply is_disj_ind_v1.rule_3
+    apply is_disj_ind_v1.rule_1
     apply is_constant_ind.rule_2
   case atom_ X =>
-    apply is_disj_ind_v1.rule_4
+    apply is_disj_ind_v1.rule_2
     apply is_literal_ind.rule_1
   case not_ phi ih =>
     cases phi
     case atom_ X =>
-      apply is_disj_ind_v1.rule_4
+      apply is_disj_ind_v1.rule_2
       apply is_literal_ind.rule_2
     all_goals
       simp only [is_disj_rec_v1] at h1
@@ -797,21 +797,21 @@ lemma is_disj_rec_v1_imp_is_disj_ind_v1
     case false_ =>
       simp only [is_disj_rec_v1] at h1
 
-      apply is_disj_ind_v1.rule_1
+      apply is_disj_ind_v1.rule_3
       · apply is_constant_ind.rule_1
       · apply psi_ih
         exact h1
     case true_ =>
       simp only [is_disj_rec_v1] at h1
 
-      apply is_disj_ind_v1.rule_1
+      apply is_disj_ind_v1.rule_3
       · apply is_constant_ind.rule_2
       · apply psi_ih
         exact h1
     case atom_ X =>
       simp only [is_disj_rec_v1] at h1
 
-      apply is_disj_ind_v1.rule_2
+      apply is_disj_ind_v1.rule_4
       · apply is_literal_ind.rule_1
       · apply psi_ih
         exact h1
@@ -822,7 +822,7 @@ lemma is_disj_rec_v1_imp_is_disj_ind_v1
 
         simp only [is_disj_rec_v1] at phi_ih
 
-        apply is_disj_ind_v1.rule_2
+        apply is_disj_ind_v1.rule_4
         · apply is_literal_ind.rule_2
         · apply psi_ih
           exact h1
@@ -840,7 +840,7 @@ lemma is_disj_ind_v1_imp_is_disj_rec_v1
   is_disj_rec_v1 F :=
   by
   induction h1
-  case rule_1 phi psi ih_1 ih_2 ih_3 =>
+  case rule_3 phi psi ih_1 ih_2 ih_3 =>
     cases ih_1
     case rule_1 =>
       simp only [is_disj_rec_v1]
@@ -848,7 +848,7 @@ lemma is_disj_ind_v1_imp_is_disj_rec_v1
     case rule_2 =>
       simp only [is_disj_rec_v1]
       exact ih_3
-  case rule_2 phi psi ih_1 ih_2 ih_3 =>
+  case rule_4 phi psi ih_1 ih_2 ih_3 =>
     cases ih_1
     case rule_1 X =>
       simp only [is_disj_rec_v1]
@@ -856,13 +856,13 @@ lemma is_disj_ind_v1_imp_is_disj_rec_v1
     case rule_2 X =>
       simp only [is_disj_rec_v1]
       exact ih_3
-  case rule_3 phi ih_1 =>
+  case rule_1 phi ih_1 =>
     cases ih_1
     case rule_1 =>
       simp only [is_disj_rec_v1]
     case rule_2 =>
       simp only [is_disj_rec_v1]
-  case rule_4 phi ih_1 =>
+  case rule_2 phi ih_1 =>
     cases ih_1
     case rule_1 X =>
       simp only [is_disj_rec_v1]
@@ -889,18 +889,18 @@ lemma is_disj_rec_v2_imp_is_disj_ind_v2
   by
   induction F
   case false_ =>
-    apply is_disj_ind_v2.rule_2
+    apply is_disj_ind_v2.rule_1
     apply is_constant_ind.rule_1
   case true_ =>
-    apply is_disj_ind_v2.rule_2
+    apply is_disj_ind_v2.rule_1
     apply is_constant_ind.rule_2
   case atom_ X =>
-    apply is_disj_ind_v2.rule_3
+    apply is_disj_ind_v2.rule_2
     apply is_literal_ind.rule_1
   case not_ phi ih =>
     cases phi
     case atom_ X =>
-      apply is_disj_ind_v2.rule_3
+      apply is_disj_ind_v2.rule_2
       apply is_literal_ind.rule_2
     all_goals
       simp only [is_disj_rec_v2] at h1
@@ -908,7 +908,7 @@ lemma is_disj_rec_v2_imp_is_disj_ind_v2
     unfold is_disj_rec_v2 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
-    apply is_disj_ind_v2.rule_1
+    apply is_disj_ind_v2.rule_3
     · apply phi_ih
       exact h1_left
     · apply psi_ih
@@ -923,16 +923,16 @@ lemma is_disj_ind_v2_imp_is_disj_rec_v2
   is_disj_rec_v2 F :=
   by
   induction h1
-  case rule_1 phi psi ih_1 ih_2 ih_3 ih_4 =>
+  case rule_3 phi psi ih_1 ih_2 ih_3 ih_4 =>
     unfold is_disj_rec_v2
     exact ⟨ih_3, ih_4⟩
-  case rule_2 phi ih_1 =>
+  case rule_1 phi ih_1 =>
     cases ih_1
     case rule_1 =>
       simp only [is_disj_rec_v2]
     case rule_2 =>
       simp only [is_disj_rec_v2]
-  case rule_3 phi ih_1 =>
+  case rule_2 phi ih_1 =>
     cases ih_1
     case rule_1 X =>
       simp only [is_disj_rec_v2]
@@ -1011,18 +1011,18 @@ lemma is_conj_rec_v1_imp_is_conj_ind_v1
   by
   induction F
   case false_ =>
-    apply is_conj_ind_v1.rule_3
+    apply is_conj_ind_v1.rule_1
     apply is_constant_ind.rule_1
   case true_ =>
-    apply is_conj_ind_v1.rule_3
+    apply is_conj_ind_v1.rule_1
     apply is_constant_ind.rule_2
   case atom_ X =>
-    apply is_conj_ind_v1.rule_4
+    apply is_conj_ind_v1.rule_2
     apply is_literal_ind.rule_1
   case not_ phi ih =>
     cases phi
     case atom_ X =>
-      apply is_conj_ind_v1.rule_4
+      apply is_conj_ind_v1.rule_2
       apply is_literal_ind.rule_2
     all_goals
       simp only [is_conj_rec_v1] at h1
@@ -1031,21 +1031,21 @@ lemma is_conj_rec_v1_imp_is_conj_ind_v1
     case false_ =>
       simp only [is_conj_rec_v1] at h1
 
-      apply is_conj_ind_v1.rule_1
+      apply is_conj_ind_v1.rule_3
       · apply is_constant_ind.rule_1
       · apply psi_ih
         exact h1
     case true_ =>
       simp only [is_conj_rec_v1] at h1
 
-      apply is_conj_ind_v1.rule_1
+      apply is_conj_ind_v1.rule_3
       · apply is_constant_ind.rule_2
       · apply psi_ih
         exact h1
     case atom_ X =>
       simp only [is_conj_rec_v1] at h1
 
-      apply is_conj_ind_v1.rule_2
+      apply is_conj_ind_v1.rule_4
       · apply is_literal_ind.rule_1
       · apply psi_ih
         exact h1
@@ -1056,7 +1056,7 @@ lemma is_conj_rec_v1_imp_is_conj_ind_v1
 
         simp only [is_conj_rec_v1] at phi_ih
 
-        apply is_conj_ind_v1.rule_2
+        apply is_conj_ind_v1.rule_4
         · apply is_literal_ind.rule_2
         · apply psi_ih
           exact h1
@@ -1074,7 +1074,7 @@ lemma is_conj_ind_v1_imp_is_conj_rec_v1
   is_conj_rec_v1 F :=
   by
   induction h1
-  case rule_1 phi psi ih_1 ih_2 ih_3 =>
+  case rule_3 phi psi ih_1 ih_2 ih_3 =>
     cases ih_1
     case rule_1 =>
       simp only [is_conj_rec_v1]
@@ -1082,7 +1082,7 @@ lemma is_conj_ind_v1_imp_is_conj_rec_v1
     case rule_2 =>
       simp only [is_conj_rec_v1]
       exact ih_3
-  case rule_2 phi psi ih_1 ih_2 ih_3 =>
+  case rule_4 phi psi ih_1 ih_2 ih_3 =>
     cases ih_1
     case rule_1 X =>
       simp only [is_conj_rec_v1]
@@ -1090,13 +1090,13 @@ lemma is_conj_ind_v1_imp_is_conj_rec_v1
     case rule_2 X =>
       simp only [is_conj_rec_v1]
       exact ih_3
-  case rule_3 phi ih_1 =>
+  case rule_1 phi ih_1 =>
     cases ih_1
     case rule_1 =>
       simp only [is_conj_rec_v1]
     case rule_2 =>
       simp only [is_conj_rec_v1]
-  case rule_4 phi ih_1 =>
+  case rule_2 phi ih_1 =>
     cases ih_1
     case rule_1 X =>
       simp only [is_conj_rec_v1]
@@ -1123,18 +1123,18 @@ lemma is_conj_rec_v2_imp_is_conj_ind_v2
   by
   induction F
   case false_ =>
-    apply is_conj_ind_v2.rule_2
+    apply is_conj_ind_v2.rule_1
     apply is_constant_ind.rule_1
   case true_ =>
-    apply is_conj_ind_v2.rule_2
+    apply is_conj_ind_v2.rule_1
     apply is_constant_ind.rule_2
   case atom_ X =>
-    apply is_conj_ind_v2.rule_3
+    apply is_conj_ind_v2.rule_2
     apply is_literal_ind.rule_1
   case not_ phi ih =>
     cases phi
     case atom_ X =>
-      apply is_conj_ind_v2.rule_3
+      apply is_conj_ind_v2.rule_2
       apply is_literal_ind.rule_2
     all_goals
       simp only [is_conj_rec_v2] at h1
@@ -1142,7 +1142,7 @@ lemma is_conj_rec_v2_imp_is_conj_ind_v2
     unfold is_conj_rec_v2 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
-    apply is_conj_ind_v2.rule_1
+    apply is_conj_ind_v2.rule_3
     · apply phi_ih
       exact h1_left
     · apply psi_ih
@@ -1157,16 +1157,16 @@ lemma is_conj_ind_v2_imp_is_conj_rec_v2
   is_conj_rec_v2 F :=
   by
   induction h1
-  case rule_1 phi psi ih_1 ih_2 ih_3 ih_4 =>
+  case rule_3 phi psi ih_1 ih_2 ih_3 ih_4 =>
     unfold is_conj_rec_v2
     exact ⟨ih_3, ih_4⟩
-  case rule_2 phi ih_1 =>
+  case rule_1 phi ih_1 =>
     cases ih_1
     case rule_1 =>
       simp only [is_conj_rec_v2]
     case rule_2 =>
       simp only [is_conj_rec_v2]
-  case rule_3 phi ih_1 =>
+  case rule_2 phi ih_1 =>
     cases ih_1
     case rule_1 X =>
       simp only [is_conj_rec_v2]
@@ -1193,22 +1193,22 @@ lemma is_dnf_rec_v1_imp_is_dnf_ind_v1
   by
   induction F
   case false_ =>
-    apply is_dnf_ind_v1.rule_2
-    apply is_conj_ind_v1.rule_3
+    apply is_dnf_ind_v1.rule_1
+    apply is_conj_ind_v1.rule_1
     apply is_constant_ind.rule_1
   case true_ =>
-    apply is_dnf_ind_v1.rule_2
-    apply is_conj_ind_v1.rule_3
+    apply is_dnf_ind_v1.rule_1
+    apply is_conj_ind_v1.rule_1
     apply is_constant_ind.rule_2
   case atom_ X =>
-    apply is_dnf_ind_v1.rule_2
-    apply is_conj_ind_v1.rule_4
+    apply is_dnf_ind_v1.rule_1
+    apply is_conj_ind_v1.rule_2
     apply is_literal_ind.rule_1
   case not_ phi ih =>
     cases phi
     case atom_ X =>
-      apply is_dnf_ind_v1.rule_2
-      apply is_conj_ind_v1.rule_4
+      apply is_dnf_ind_v1.rule_1
+      apply is_conj_ind_v1.rule_2
       apply is_literal_ind.rule_2
     all_goals
       simp only [is_dnf_rec_v1] at h1
@@ -1216,14 +1216,14 @@ lemma is_dnf_rec_v1_imp_is_dnf_ind_v1
   case and_ phi psi phi_ih psi_ih =>
     unfold is_dnf_rec_v1 at h1
 
-    apply is_dnf_ind_v1.rule_2
+    apply is_dnf_ind_v1.rule_1
     apply is_conj_rec_v1_imp_is_conj_ind_v1
     exact h1
   case or_ phi psi phi_ih psi_ih =>
     unfold is_dnf_rec_v1 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
-    apply is_dnf_ind_v1.rule_1
+    apply is_dnf_ind_v1.rule_2
     · apply is_conj_rec_v1_imp_is_conj_ind_v1
       exact h1_left
     · apply psi_ih
@@ -1239,33 +1239,33 @@ lemma is_dnf_ind_v1_imp_is_dnf_rec_v1
   is_dnf_rec_v1 F :=
   by
   induction h1
-  case rule_1 phi psi ih_1 ih_2 ih_3 =>
+  case rule_2 phi psi ih_1 ih_2 ih_3 =>
     unfold is_dnf_rec_v1
     constructor
     · apply is_conj_ind_v1_imp_is_conj_rec_v1
       exact ih_1
     · exact ih_3
-  case rule_2 phi ih_1 =>
+  case rule_1 phi ih_1 =>
     cases ih_1
-    case rule_1 phi psi phi_ih psi_ih =>
+    case rule_3 phi psi phi_ih psi_ih =>
       unfold is_dnf_rec_v1
       apply is_conj_ind_v1_imp_is_conj_rec_v1
-      apply is_conj_ind_v1.rule_1
+      apply is_conj_ind_v1.rule_3
       · exact phi_ih
       · exact psi_ih
-    case rule_2 phi psi phi_ih psi_ih =>
+    case rule_4 phi psi phi_ih psi_ih =>
       unfold is_dnf_rec_v1
       apply is_conj_ind_v1_imp_is_conj_rec_v1
-      apply is_conj_ind_v1.rule_2
+      apply is_conj_ind_v1.rule_4
       · exact phi_ih
       · exact psi_ih
-    case rule_3 ih =>
+    case rule_1 ih =>
       cases ih
       all_goals
         unfold is_dnf_rec_v1
         unfold is_conj_rec_v1
         exact trivial
-    case rule_4 ih =>
+    case rule_2 ih =>
       cases ih
       all_goals
         unfold is_dnf_rec_v1
@@ -1292,22 +1292,22 @@ lemma is_dnf_rec_v2_imp_is_dnf_ind_v2
   by
   induction F
   case false_ =>
-    apply is_dnf_ind_v2.rule_2
-    apply is_conj_ind_v2.rule_2
+    apply is_dnf_ind_v2.rule_1
+    apply is_conj_ind_v2.rule_1
     apply is_constant_ind.rule_1
   case true_ =>
-    apply is_dnf_ind_v2.rule_2
-    apply is_conj_ind_v2.rule_2
+    apply is_dnf_ind_v2.rule_1
+    apply is_conj_ind_v2.rule_1
     apply is_constant_ind.rule_2
   case atom_ X =>
-    apply is_dnf_ind_v2.rule_2
-    apply is_conj_ind_v2.rule_3
+    apply is_dnf_ind_v2.rule_1
+    apply is_conj_ind_v2.rule_2
     apply is_literal_ind.rule_1
   case not_ phi ih =>
     cases phi
     case atom_ X =>
-      apply is_dnf_ind_v2.rule_2
-      apply is_conj_ind_v2.rule_3
+      apply is_dnf_ind_v2.rule_1
+      apply is_conj_ind_v2.rule_2
       apply is_literal_ind.rule_2
     all_goals
       simp only [is_dnf_rec_v2] at h1
@@ -1315,14 +1315,14 @@ lemma is_dnf_rec_v2_imp_is_dnf_ind_v2
   case and_ phi psi phi_ih psi_ih =>
     unfold is_dnf_rec_v2 at h1
 
-    apply is_dnf_ind_v2.rule_2
+    apply is_dnf_ind_v2.rule_1
     apply is_conj_rec_v2_imp_is_conj_ind_v2
     exact h1
   case or_ phi psi phi_ih psi_ih =>
     unfold is_dnf_rec_v2 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
-    apply is_dnf_ind_v2.rule_1
+    apply is_dnf_ind_v2.rule_2
     · apply phi_ih
       exact h1_left
     · apply psi_ih
@@ -1338,24 +1338,24 @@ lemma is_dnf_ind_v2_imp_is_dnf_rec_v2
   is_dnf_rec_v2 F :=
   by
   induction h1
-  case rule_1 phi psi ih_1 ih_2 ih_3 ih_4 =>
+  case rule_2 phi psi ih_1 ih_2 ih_3 ih_4 =>
     unfold is_dnf_rec_v2
     exact ⟨ih_3, ih_4⟩
-  case rule_2 phi ih_1 =>
+  case rule_1 phi ih_1 =>
     cases ih_1
-    case rule_1 phi psi phi_ih psi_ih =>
+    case rule_3 phi psi phi_ih psi_ih =>
       unfold is_dnf_rec_v2
       apply is_conj_ind_v2_imp_is_conj_rec_v2
-      apply is_conj_ind_v2.rule_1
+      apply is_conj_ind_v2.rule_3
       · exact phi_ih
       · exact psi_ih
-    case rule_2 ih =>
+    case rule_1 ih =>
       cases ih
       all_goals
         unfold is_dnf_rec_v2
         unfold is_conj_rec_v2
         exact trivial
-    case rule_3 ih =>
+    case rule_2 ih =>
       cases ih
       all_goals
         unfold is_dnf_rec_v2
@@ -1382,22 +1382,22 @@ lemma is_cnf_rec_v1_imp_is_cnf_ind_v1
   by
   induction F
   case false_ =>
-    apply is_cnf_ind_v1.rule_2
-    apply is_disj_ind_v1.rule_3
+    apply is_cnf_ind_v1.rule_1
+    apply is_disj_ind_v1.rule_1
     apply is_constant_ind.rule_1
   case true_ =>
-    apply is_cnf_ind_v1.rule_2
-    apply is_disj_ind_v1.rule_3
+    apply is_cnf_ind_v1.rule_1
+    apply is_disj_ind_v1.rule_1
     apply is_constant_ind.rule_2
   case atom_ X =>
-    apply is_cnf_ind_v1.rule_2
-    apply is_disj_ind_v1.rule_4
+    apply is_cnf_ind_v1.rule_1
+    apply is_disj_ind_v1.rule_2
     apply is_literal_ind.rule_1
   case not_ phi ih =>
     cases phi
     case atom_ X =>
-      apply is_cnf_ind_v1.rule_2
-      apply is_disj_ind_v1.rule_4
+      apply is_cnf_ind_v1.rule_1
+      apply is_disj_ind_v1.rule_2
       apply is_literal_ind.rule_2
     all_goals
       simp only [is_cnf_rec_v1] at h1
@@ -1406,7 +1406,7 @@ lemma is_cnf_rec_v1_imp_is_cnf_ind_v1
     unfold is_cnf_rec_v1 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
-    apply is_cnf_ind_v1.rule_1
+    apply is_cnf_ind_v1.rule_2
     · apply is_disj_rec_v1_imp_is_disj_ind_v1
       exact h1_left
     · apply psi_ih
@@ -1414,7 +1414,7 @@ lemma is_cnf_rec_v1_imp_is_cnf_ind_v1
   case or_ phi psi phi_ih psi_ih =>
     unfold is_cnf_rec_v1 at h1
 
-    apply is_cnf_ind_v1.rule_2
+    apply is_cnf_ind_v1.rule_1
     apply is_disj_rec_v1_imp_is_disj_ind_v1
     exact h1
   all_goals
@@ -1428,33 +1428,33 @@ lemma is_cnf_ind_v1_imp_is_cnf_rec_v1
   is_cnf_rec_v1 F :=
   by
   induction h1
-  case rule_1 phi psi ih_1 ih_2 ih_3 =>
+  case rule_2 phi psi ih_1 ih_2 ih_3 =>
     unfold is_cnf_rec_v1
     constructor
     · apply is_disj_ind_v1_imp_is_disj_rec_v1
       exact ih_1
     · exact ih_3
-  case rule_2 phi ih_1 =>
+  case rule_1 phi ih_1 =>
     cases ih_1
-    case rule_1 phi psi phi_ih psi_ih =>
+    case rule_3 phi psi phi_ih psi_ih =>
       unfold is_cnf_rec_v1
       apply is_disj_ind_v1_imp_is_disj_rec_v1
-      apply is_disj_ind_v1.rule_1
+      apply is_disj_ind_v1.rule_3
       · exact phi_ih
       · exact psi_ih
-    case rule_2 phi psi phi_ih psi_ih =>
+    case rule_4 phi psi phi_ih psi_ih =>
       unfold is_cnf_rec_v1
       apply is_disj_ind_v1_imp_is_disj_rec_v1
-      apply is_disj_ind_v1.rule_2
+      apply is_disj_ind_v1.rule_4
       · exact phi_ih
       · exact psi_ih
-    case rule_3 ih =>
+    case rule_1 ih =>
       cases ih
       all_goals
         unfold is_cnf_rec_v1
         unfold is_disj_rec_v1
         exact trivial
-    case rule_4 ih =>
+    case rule_2 ih =>
       cases ih
       all_goals
         unfold is_cnf_rec_v1
@@ -1481,22 +1481,22 @@ lemma is_cnf_rec_v2_imp_is_cnf_ind_v2
   by
   induction F
   case false_ =>
-    apply is_cnf_ind_v2.rule_2
-    apply is_disj_ind_v2.rule_2
+    apply is_cnf_ind_v2.rule_1
+    apply is_disj_ind_v2.rule_1
     apply is_constant_ind.rule_1
   case true_ =>
-    apply is_cnf_ind_v2.rule_2
-    apply is_disj_ind_v2.rule_2
+    apply is_cnf_ind_v2.rule_1
+    apply is_disj_ind_v2.rule_1
     apply is_constant_ind.rule_2
   case atom_ X =>
-    apply is_cnf_ind_v2.rule_2
-    apply is_disj_ind_v2.rule_3
+    apply is_cnf_ind_v2.rule_1
+    apply is_disj_ind_v2.rule_2
     apply is_literal_ind.rule_1
   case not_ phi ih =>
     cases phi
     case atom_ X =>
-      apply is_cnf_ind_v2.rule_2
-      apply is_disj_ind_v2.rule_3
+      apply is_cnf_ind_v2.rule_1
+      apply is_disj_ind_v2.rule_2
       apply is_literal_ind.rule_2
     all_goals
       simp only [is_cnf_rec_v2] at h1
@@ -1505,7 +1505,7 @@ lemma is_cnf_rec_v2_imp_is_cnf_ind_v2
     unfold is_cnf_rec_v2 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
-    apply is_cnf_ind_v2.rule_1
+    apply is_cnf_ind_v2.rule_2
     · apply phi_ih
       exact h1_left
     · apply psi_ih
@@ -1513,7 +1513,7 @@ lemma is_cnf_rec_v2_imp_is_cnf_ind_v2
   case or_ phi psi phi_ih psi_ih =>
     unfold is_cnf_rec_v2 at h1
 
-    apply is_cnf_ind_v2.rule_2
+    apply is_cnf_ind_v2.rule_1
     apply is_disj_rec_v2_imp_is_disj_ind_v2
     exact h1
   all_goals
@@ -1527,24 +1527,24 @@ lemma is_cnf_ind_v2_imp_is_cnf_rec_v2
   is_cnf_rec_v2 F :=
   by
   induction h1
-  case rule_1 phi psi ih_1 ih_2 ih_3 ih_4 =>
+  case rule_2 phi psi ih_1 ih_2 ih_3 ih_4 =>
     unfold is_cnf_rec_v2
     exact ⟨ih_3, ih_4⟩
-  case rule_2 phi ih_1 =>
+  case rule_1 phi ih_1 =>
     cases ih_1
-    case rule_1 phi psi phi_ih psi_ih =>
+    case rule_3 phi psi phi_ih psi_ih =>
       unfold is_cnf_rec_v2
       apply is_disj_ind_v2_imp_is_disj_rec_v2
-      apply is_disj_ind_v2.rule_1
+      apply is_disj_ind_v2.rule_3
       · exact phi_ih
       · exact psi_ih
-    case rule_2 ih =>
+    case rule_1 ih =>
       cases ih
       all_goals
         unfold is_cnf_rec_v2
         unfold is_disj_rec_v2
         exact trivial
-    case rule_3 ih =>
+    case rule_2 ih =>
       cases ih
       all_goals
         unfold is_cnf_rec_v2
