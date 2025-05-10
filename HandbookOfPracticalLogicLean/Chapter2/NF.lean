@@ -474,6 +474,16 @@ inductive is_literal_ind : Formula_ → Prop
   `is_disj_ind_v1 F` := True if and only if the formula `F` is a disjunction of an arbitrary number of elements and every left disjunct is a constant or a literal.
 -/
 inductive is_disj_ind_v1 : Formula_ → Prop
+| rule_3
+  (F : Formula_) :
+  is_constant_ind F →
+  is_disj_ind_v1 F
+
+| rule_4
+  (F : Formula_) :
+  is_literal_ind F →
+  is_disj_ind_v1 F
+
 | rule_1
   (phi psi : Formula_) :
   is_constant_ind phi →
@@ -486,27 +496,11 @@ inductive is_disj_ind_v1 : Formula_ → Prop
   is_disj_ind_v1 psi →
   is_disj_ind_v1 (or_ phi psi)
 
-| rule_3
-  (F : Formula_) :
-  is_constant_ind F →
-  is_disj_ind_v1 F
-
-| rule_4
-  (F : Formula_) :
-  is_literal_ind F →
-  is_disj_ind_v1 F
-
 
 /--
   `is_disj_ind_v2 F` := True if and only if the formula `F` is a disjunction of an arbitrary number of elements.
 -/
 inductive is_disj_ind_v2 : Formula_ → Prop
-| rule_1
-  (phi psi : Formula_) :
-  is_disj_ind_v2 phi →
-  is_disj_ind_v2 psi →
-  is_disj_ind_v2 (or_ phi psi)
-
 | rule_2
   (F : Formula_) :
   is_constant_ind F →
@@ -516,6 +510,12 @@ inductive is_disj_ind_v2 : Formula_ → Prop
   (F : Formula_) :
   is_literal_ind F →
   is_disj_ind_v2 F
+
+| rule_1
+  (phi psi : Formula_) :
+  is_disj_ind_v2 phi →
+  is_disj_ind_v2 psi →
+  is_disj_ind_v2 (or_ phi psi)
 
 
 -------------------------------------------------------------------------------
@@ -525,6 +525,16 @@ inductive is_disj_ind_v2 : Formula_ → Prop
   `is_conj_ind_v1 F` := True if and only if the formula `F` is a conjunction of an arbitrary number of elements and every left conjunct is a constant or a literal.
 -/
 inductive is_conj_ind_v1 : Formula_ → Prop
+| rule_3
+  (F : Formula_) :
+  is_constant_ind F →
+  is_conj_ind_v1 F
+
+| rule_4
+  (F : Formula_) :
+  is_literal_ind F →
+  is_conj_ind_v1 F
+
 | rule_1
   (phi psi : Formula_) :
   is_constant_ind phi →
@@ -537,27 +547,11 @@ inductive is_conj_ind_v1 : Formula_ → Prop
   is_conj_ind_v1 psi →
   is_conj_ind_v1 (and_ phi psi)
 
-| rule_3
-  (F : Formula_) :
-  is_constant_ind F →
-  is_conj_ind_v1 F
-
-| rule_4
-  (F : Formula_) :
-  is_literal_ind F →
-  is_conj_ind_v1 F
-
 
 /--
   `is_conj_ind_v2 F` := True if and only if the formula `F` is a conjunction of an arbitrary number of elements.
 -/
 inductive is_conj_ind_v2 : Formula_ → Prop
-| rule_1
-  (phi psi : Formula_) :
-  is_conj_ind_v2 phi →
-  is_conj_ind_v2 psi →
-  is_conj_ind_v2 (and_ phi psi)
-
 | rule_2
   (F : Formula_) :
   is_constant_ind F →
@@ -567,6 +561,12 @@ inductive is_conj_ind_v2 : Formula_ → Prop
   (F : Formula_) :
   is_literal_ind F →
   is_conj_ind_v2 F
+
+| rule_1
+  (phi psi : Formula_) :
+  is_conj_ind_v2 phi →
+  is_conj_ind_v2 psi →
+  is_conj_ind_v2 (and_ phi psi)
 
 
 -------------------------------------------------------------------------------
@@ -576,32 +576,32 @@ inductive is_conj_ind_v2 : Formula_ → Prop
   `is_dnf_ind_v1 F` := True if and only if the formula `F` is in disjunction normal form, every left disjunct is a conjunction, and every left conjunct is a constant or a literal.
 -/
 inductive is_dnf_ind_v1 : Formula_ → Prop
+| rule_2
+  (F : Formula_) :
+  is_conj_ind_v1 F →
+  is_dnf_ind_v1 F
+
 | rule_1
   (phi psi : Formula_) :
   is_conj_ind_v1 phi →
   is_dnf_ind_v1 psi →
   is_dnf_ind_v1 (or_ phi psi)
 
-| rule_2
-  (F : Formula_) :
-  is_conj_ind_v1 F →
-  is_dnf_ind_v1 F
-
 
 /--
   `is_dnf_ind_v2 F` := True if and only if the formula `F` is in disjunction normal form.
 -/
 inductive is_dnf_ind_v2 : Formula_ → Prop
+| rule_2
+  (F : Formula_) :
+  is_conj_ind_v2 F →
+  is_dnf_ind_v2 F
+
 | rule_1
   (phi psi : Formula_) :
   is_dnf_ind_v2 phi →
   is_dnf_ind_v2 psi →
   is_dnf_ind_v2 (or_ phi psi)
-
-| rule_2
-  (F : Formula_) :
-  is_conj_ind_v2 F →
-  is_dnf_ind_v2 F
 
 
 -------------------------------------------------------------------------------
@@ -611,32 +611,32 @@ inductive is_dnf_ind_v2 : Formula_ → Prop
   `is_cnf_ind_v1 F` := True if and only if the formula `F` is in conjunction normal form, every left conjunct is a disjunction, and every left disjunct is a constant or a literal.
 -/
 inductive is_cnf_ind_v1 : Formula_ → Prop
+| rule_2
+  (F : Formula_) :
+  is_disj_ind_v1 F →
+  is_cnf_ind_v1 F
+
 | rule_1
   (phi psi : Formula_) :
   is_disj_ind_v1 phi →
   is_cnf_ind_v1 psi →
   is_cnf_ind_v1 (and_ phi psi)
 
-| rule_2
-  (F : Formula_) :
-  is_disj_ind_v1 F →
-  is_cnf_ind_v1 F
-
 
 /--
   `is_cnf_ind_v2 F` := True if and only if the formula `F` is in conjunction normal form.
 -/
 inductive is_cnf_ind_v2 : Formula_ → Prop
+| rule_2
+  (F : Formula_) :
+  is_disj_ind_v2 F →
+  is_cnf_ind_v2 F
+
 | rule_1
   (phi psi : Formula_) :
   is_cnf_ind_v2 phi →
   is_cnf_ind_v2 psi →
   is_cnf_ind_v2 (and_ phi psi)
-
-| rule_2
-  (F : Formula_) :
-  is_disj_ind_v2 F →
-  is_cnf_ind_v2 F
 
 
 -------------------------------------------------------------------------------
