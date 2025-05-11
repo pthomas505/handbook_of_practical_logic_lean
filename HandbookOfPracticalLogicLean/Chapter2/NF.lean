@@ -644,7 +644,7 @@ inductive is_cnf_ind_v2 : Formula_ → Prop
 
 lemma is_constant_rec_imp_is_constant_ind
   (F : Formula_)
-  (h1 : F.is_constant_rec) :
+  (h1 : is_constant_rec F) :
   is_constant_ind F :=
   by
   cases F
@@ -659,7 +659,7 @@ lemma is_constant_rec_imp_is_constant_ind
 lemma is_constant_ind_imp_is_constant_rec
   (F : Formula_)
   (h1 : is_constant_ind F) :
-  F.is_constant_rec :=
+  is_constant_rec F :=
   by
   cases h1
   all_goals
@@ -668,7 +668,7 @@ lemma is_constant_ind_imp_is_constant_rec
 
 lemma is_constant_rec_iff_is_constant_ind
   (F : Formula_) :
-  F.is_constant_rec ↔ is_constant_ind F :=
+  is_constant_rec F ↔ is_constant_ind F :=
   by
   constructor
   · apply is_constant_rec_imp_is_constant_ind
@@ -680,7 +680,7 @@ lemma is_constant_rec_iff_is_constant_ind
 
 lemma is_literal_rec_imp_is_literal_ind
   (F : Formula_)
-  (h1 : F.is_literal_rec) :
+  (h1 : is_literal_rec F) :
   is_literal_ind F :=
   by
   cases F
@@ -699,7 +699,7 @@ lemma is_literal_rec_imp_is_literal_ind
 lemma is_literal_ind_imp_is_literal_rec
   (F : Formula_)
   (h1 : is_literal_ind F) :
-  F.is_literal_rec :=
+  is_literal_rec F :=
   by
   cases h1
   all_goals
@@ -708,7 +708,7 @@ lemma is_literal_ind_imp_is_literal_rec
 
 lemma is_literal_rec_iff_is_literal_ind
   (F : Formula_) :
-  F.is_literal_rec ↔ is_literal_ind F :=
+  is_literal_rec F ↔ is_literal_ind F :=
   by
   constructor
   · apply is_literal_rec_imp_is_literal_ind
@@ -720,8 +720,8 @@ lemma is_literal_rec_iff_is_literal_ind
 
 lemma is_disj_rec_v1_imp_is_nnf_rec_v1
   (F : Formula_)
-  (h1 : F.is_disj_rec_v1) :
-  F.is_nnf_rec_v1 :=
+  (h1 : is_disj_rec_v1 F) :
+  is_nnf_rec_v1 F :=
   by
   induction F
   case false_ | true_ | atom_ X =>
@@ -932,10 +932,37 @@ lemma is_disj_rec_v2_iff_is_disj_ind_v2
 -------------------------------------------------------------------------------
 
 
+lemma is_disj_ind_v1_imp_is_disj_ind_v2
+  (F : Formula_)
+  (h1 : is_disj_ind_v1 F) :
+  is_disj_ind_v2 F :=
+  by
+  induction h1
+  case rule_1 phi ih_1 =>
+    apply is_disj_ind_v2.rule_1
+    exact ih_1
+  case rule_2 phi ih_1 =>
+    apply is_disj_ind_v2.rule_2
+    exact ih_1
+  case rule_3 phi psi ih_1 ih_2 ih_3 =>
+    apply is_disj_ind_v2.rule_3
+    · apply is_disj_ind_v2.rule_1
+      exact ih_1
+    · exact ih_3
+  case rule_4 phi psi ih_1 ih_2 ih_3 =>
+    apply is_disj_ind_v2.rule_3
+    · apply is_disj_ind_v2.rule_2
+      exact ih_1
+    · exact ih_3
+
+
+-------------------------------------------------------------------------------
+
+
 lemma is_conj_rec_v1_imp_is_nnf_rec_v1
   (F : Formula_)
-  (h1 : F.is_conj_rec_v1) :
-  F.is_nnf_rec_v1 :=
+  (h1 : is_conj_rec_v1 F) :
+  is_nnf_rec_v1 F :=
   by
   induction F
   case false_ | true_ | atom_ X =>
@@ -1146,6 +1173,33 @@ lemma is_conj_rec_v2_iff_is_conj_ind_v2
 -------------------------------------------------------------------------------
 
 
+lemma is_conj_ind_v1_imp_is_conj_ind_v2
+  (F : Formula_)
+  (h1 : is_conj_ind_v1 F) :
+  is_conj_ind_v2 F :=
+  by
+  induction h1
+  case rule_1 phi ih_1 =>
+    apply is_conj_ind_v2.rule_1
+    exact ih_1
+  case rule_2 phi ih_1 =>
+    apply is_conj_ind_v2.rule_2
+    exact ih_1
+  case rule_3 phi psi ih_1 ih_2 ih_3 =>
+    apply is_conj_ind_v2.rule_3
+    · apply is_conj_ind_v2.rule_1
+      exact ih_1
+    · exact ih_3
+  case rule_4 phi psi ih_1 ih_2 ih_3 =>
+    apply is_conj_ind_v2.rule_3
+    · apply is_conj_ind_v2.rule_2
+      exact ih_1
+    · exact ih_3
+
+
+-------------------------------------------------------------------------------
+
+
 lemma is_dnf_rec_v1_imp_is_dnf_ind_v1
   (F : Formula_)
   (h1 : is_dnf_rec_v1 F) :
@@ -1323,6 +1377,27 @@ lemma is_dnf_rec_v2_iff_is_dnf_ind_v2
 -------------------------------------------------------------------------------
 
 
+lemma is_dnf_ind_v1_imp_is_dnf_ind_v2
+  (F : Formula_)
+  (h1 : is_dnf_ind_v1 F) :
+  is_dnf_ind_v2 F :=
+  by
+  induction h1
+  case rule_1 phi ih_1 =>
+    apply is_dnf_ind_v2.rule_1
+    apply is_conj_ind_v1_imp_is_conj_ind_v2
+    exact ih_1
+  case rule_2 phi psi ih_1 ih_2 ih_3 =>
+    apply is_dnf_ind_v2.rule_2
+    · apply is_dnf_ind_v2.rule_1
+      apply is_conj_ind_v1_imp_is_conj_ind_v2
+      exact ih_1
+    · exact ih_3
+
+
+-------------------------------------------------------------------------------
+
+
 lemma is_cnf_rec_v1_imp_is_cnf_ind_v1
   (F : Formula_)
   (h1 : is_cnf_rec_v1 F) :
@@ -1495,6 +1570,27 @@ lemma is_cnf_rec_v2_iff_is_cnf_ind_v2
   constructor
   · apply is_cnf_rec_v2_imp_is_cnf_ind_v2
   · apply is_cnf_ind_v2_imp_is_cnf_rec_v2
+
+
+-------------------------------------------------------------------------------
+
+
+lemma is_cnf_ind_v1_imp_is_cnf_ind_v2
+  (F : Formula_)
+  (h1 : is_cnf_ind_v1 F) :
+  is_cnf_ind_v2 F :=
+  by
+  induction h1
+  case rule_1 phi ih_1 =>
+    apply is_cnf_ind_v2.rule_1
+    apply is_disj_ind_v1_imp_is_disj_ind_v2
+    exact ih_1
+  case rule_2 phi psi ih_1 ih_2 ih_3 =>
+    apply is_cnf_ind_v2.rule_2
+    · apply is_cnf_ind_v2.rule_1
+      apply is_disj_ind_v1_imp_is_disj_ind_v2
+      exact ih_1
+    · exact ih_3
 
 
 #lint
