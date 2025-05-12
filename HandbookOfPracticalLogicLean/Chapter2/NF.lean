@@ -306,7 +306,7 @@ instance
 
 
 /--
-  `Formula_.is_disj_rec_v1 F` := True if and only if the formula `F` is a disjunction of an arbitrary number of elements and every left disjunct is a constant or a literal.
+  `Formula_.is_disj_rec_v1 F` := True if and only if the formula `F` is a disjunction of an arbitrary number of constants and literals and every left disjunct is a constant or a literal.
 -/
 def Formula_.is_disj_rec_v1 :
   Formula_ → Prop
@@ -346,7 +346,7 @@ instance
 
 
 /--
-  `Formula_.is_disj_rec_v2 F` := True if and only if the formula `F` is a disjunction of an arbitrary number of elements.
+  `Formula_.is_disj_rec_v2 F` := True if and only if the formula `F` is a disjunction of an arbitrary number of constants and literals.
 -/
 def Formula_.is_disj_rec_v2 :
   Formula_ → Prop
@@ -376,7 +376,7 @@ instance
 
 
 /--
-  `Formula_.is_conj_rec_v1 F` := True if and only if the formula `F` is a conjunction of an arbitrary number of elements and every left conjunct is a constant or a literal.
+  `Formula_.is_conj_rec_v1 F` := True if and only if the formula `F` is a conjunction of an arbitrary number of constants and literals and every left conjunct is a constant or a literal.
 -/
 def Formula_.is_conj_rec_v1 :
   Formula_ → Prop
@@ -416,7 +416,7 @@ instance
 
 
 /--
-  `Formula_.is_conj_rec_v2 F` := True if and only if the formula `F` is a conjunction of an arbitrary number of elements.
+  `Formula_.is_conj_rec_v2 F` := True if and only if the formula `F` is a conjunction of an arbitrary number of constants and literals.
 -/
 def Formula_.is_conj_rec_v2 :
   Formula_ → Prop
@@ -554,7 +554,7 @@ inductive is_literal_ind : Formula_ → Prop
 
 
 /--
-  `is_disj_ind_v1 F` := True if and only if the formula `F` is a disjunction of an arbitrary number of elements and every left disjunct is a constant or a literal.
+  `is_disj_ind_v1 F` := True if and only if the formula `F` is a disjunction of an arbitrary number of constants and literals and every left disjunct is a constant or a literal.
 -/
 inductive is_disj_ind_v1 : Formula_ → Prop
 | rule_1
@@ -581,7 +581,7 @@ inductive is_disj_ind_v1 : Formula_ → Prop
 
 
 /--
-  `is_disj_ind_v2 F` := True if and only if the formula `F` is a disjunction of an arbitrary number of elements.
+  `is_disj_ind_v2 F` := True if and only if the formula `F` is a disjunction of an arbitrary number of constants and literals.
 -/
 inductive is_disj_ind_v2 : Formula_ → Prop
 | rule_1
@@ -605,7 +605,7 @@ inductive is_disj_ind_v2 : Formula_ → Prop
 
 
 /--
-  `is_conj_ind_v1 F` := True if and only if the formula `F` is a conjunction of an arbitrary number of elements and every left conjunct is a constant or a literal.
+  `is_conj_ind_v1 F` := True if and only if the formula `F` is a conjunction of an arbitrary number of constants and literals and every left conjunct is a constant or a literal.
 -/
 inductive is_conj_ind_v1 : Formula_ → Prop
 | rule_1
@@ -632,7 +632,7 @@ inductive is_conj_ind_v1 : Formula_ → Prop
 
 
 /--
-  `is_conj_ind_v2 F` := True if and only if the formula `F` is a conjunction of an arbitrary number of elements.
+  `is_conj_ind_v2 F` := True if and only if the formula `F` is a conjunction of an arbitrary number of constants and literals.
 -/
 inductive is_conj_ind_v2 : Formula_ → Prop
 | rule_1
