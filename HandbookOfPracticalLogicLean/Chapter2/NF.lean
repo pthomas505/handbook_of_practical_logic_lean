@@ -100,6 +100,89 @@ instance
 
 
 /--
+  `is_pos_literal_in_rec A F` := True if and only if there is an occurrence of the atom `A` as a positive literal in the formula `F`.
+-/
+def is_pos_literal_in_rec
+  (A : String) :
+  Formula_ → Prop
+  | false_ => False
+  | true_ => False
+  | atom_ X => A = X
+  | not_ (atom_ _) => False
+  | not_ phi => is_pos_literal_in_rec A phi
+  | and_ phi psi => is_pos_literal_in_rec A phi ∨ is_pos_literal_in_rec A psi
+  | or_ phi psi => is_pos_literal_in_rec A phi ∨ is_pos_literal_in_rec A psi
+  | imp_ phi psi => is_pos_literal_in_rec A phi ∨ is_pos_literal_in_rec A psi
+  | iff_ phi psi => is_pos_literal_in_rec A phi ∨ is_pos_literal_in_rec A psi
+
+instance
+  (A : String)
+  (F : Formula_) :
+  Decidable (is_pos_literal_in_rec A F) :=
+  by
+  induction F
+  case not_ phi ih =>
+    cases phi
+    case atom_ X =>
+      simp only [is_pos_literal_in_rec]
+      infer_instance
+    case not_ phi =>
+      simp only [is_pos_literal_in_rec]
+      exact ih
+    all_goals
+      simp only [is_pos_literal_in_rec] at ih
+
+      simp only [is_pos_literal_in_rec]
+      exact ih
+  all_goals
+    simp only [is_pos_literal_in_rec]
+    infer_instance
+
+
+/--
+  `is_neg_literal_in_rec A F` := True if and only if there is an occurrence of the atom `A` as a negative literal in the formula `F`.
+-/
+def is_neg_literal_in_rec
+  (A : String) :
+  Formula_ → Prop
+  | false_ => False
+  | true_ => False
+  | atom_ _ => False
+  | not_ (atom_ X) => A = X
+  | not_ phi => is_neg_literal_in_rec A phi
+  | and_ phi psi => is_neg_literal_in_rec A phi ∨ is_neg_literal_in_rec A psi
+  | or_ phi psi => is_neg_literal_in_rec A phi ∨ is_neg_literal_in_rec A psi
+  | imp_ phi psi => is_neg_literal_in_rec A phi ∨ is_neg_literal_in_rec A psi
+  | iff_ phi psi => is_neg_literal_in_rec A phi ∨ is_neg_literal_in_rec A psi
+
+instance
+  (A : String)
+  (F : Formula_) :
+  Decidable (is_neg_literal_in_rec A F) :=
+  by
+  induction F
+  case not_ phi ih =>
+    cases phi
+    case atom_ X =>
+      simp only [is_neg_literal_in_rec]
+      infer_instance
+    case not_ phi =>
+      simp only [is_neg_literal_in_rec]
+      exact ih
+    all_goals
+      simp only [is_neg_literal_in_rec] at ih
+
+      simp only [is_neg_literal_in_rec]
+      exact ih
+  all_goals
+    simp only [is_neg_literal_in_rec]
+    infer_instance
+
+
+-------------------------------------------------------------------------------
+
+
+/--
   `Formula_.is_nnf_rec_v1 F` := True if and only if the formula `F` is in negation normal form.
 -/
 def Formula_.is_nnf_rec_v1 :
