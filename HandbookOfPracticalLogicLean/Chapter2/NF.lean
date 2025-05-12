@@ -1676,4 +1676,51 @@ lemma is_cnf_ind_v1_imp_is_cnf_ind_v2
     · exact ih_3
 
 
+-------------------------------------------------------------------------------
+
+
+lemma is_conj_ind_v1_and_imp
+  (P Q : Formula_)
+  (h1 : is_conj_ind_v1 (and_ P Q)) :
+  is_conj_ind_v1 P ∧ is_conj_ind_v1 Q :=
+  by
+  cases h1
+  case rule_3 ih_1 ih_2 =>
+    constructor
+    · apply is_conj_ind_v1.rule_1
+      exact ih_1
+    · exact ih_2
+  case rule_4 ih_1 ih_2 =>
+    constructor
+    · apply is_conj_ind_v1.rule_2
+      exact ih_1
+    · exact ih_2
+  case rule_1 ih =>
+    contradiction
+  case rule_2 ih =>
+    contradiction
+
+
+lemma is_disj_ind_v1_or_imp
+  (P Q : Formula_)
+  (h1 : is_disj_ind_v1 (or_ P Q)) :
+  is_disj_ind_v1 P ∧ is_disj_ind_v1 Q :=
+  by
+  cases h1
+  case rule_3 ih_1 ih_2 =>
+    constructor
+    · apply is_disj_ind_v1.rule_1
+      exact ih_1
+    · exact ih_2
+  case rule_4 ih_1 ih_2 =>
+    constructor
+    · apply is_disj_ind_v1.rule_2
+      exact ih_1
+    · exact ih_2
+  case rule_1 ih =>
+    contradiction
+  case rule_2 ih =>
+    contradiction
+
+
 #lint
