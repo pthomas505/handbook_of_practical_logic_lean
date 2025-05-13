@@ -1,3 +1,4 @@
+import HandbookOfPracticalLogicLean.Chapter2.NF
 import HandbookOfPracticalLogicLean.Chapter2.Replace
 import HandbookOfPracticalLogicLean.Chapter2.Semantics
 import HandbookOfPracticalLogicLean.Chapter2.SubFormula
@@ -9,90 +10,6 @@ set_option autoImplicit false
 
 
 open Formula_
-
-
-/--
-  `Formula_.is_constant F` := True if and only if the formula `F` is `false_` or `true_`.
--/
-def Formula_.is_constant :
-  Formula_ → Prop
-  | false_ => True
-  | true_ => True
-  | _ => False
-
-instance
-  (F : Formula_) :
-  Decidable (Formula_.is_constant F) :=
-  by
-  cases F
-  all_goals
-    unfold is_constant
-    infer_instance
-
-
-/--
-  `Formula_.is_literal F` := True if and only if the formula `F` is an atomic formula or the negation of an atomic formula.
--/
-def Formula_.is_literal :
-  Formula_ → Prop
-  | atom_ _ => True
-  | not_ (atom_ _) => True
-  | _ => False
-
-instance
-  (F : Formula_) :
-  Decidable (Formula_.is_literal F) :=
-  by
-  cases F
-  case not_ phi =>
-    unfold is_literal
-    split
-    all_goals
-      infer_instance
-  all_goals
-    simp only [is_literal]
-    infer_instance
-
-
-/--
-  `Formula_.is_negative_literal F` := True if and only if the formula `F` is a negative literal.
--/
-def Formula_.is_negative_literal :
-  Formula_ → Prop
-  | not_ (atom_ _) => True
-  | _ => False
-
-instance
-  (F : Formula_) :
-  Decidable (Formula_.is_negative_literal F) :=
-  by
-  cases F
-  case not_ phi =>
-    unfold is_negative_literal
-    split
-    all_goals
-      infer_instance
-  all_goals
-    simp only [is_negative_literal]
-    infer_instance
-
-
-/--
-  `Formula_.is_positive_literal F` := True if and only if the formula `F` is a positive literal.
--/
-def Formula_.is_positive_literal :
-  Formula_ → Prop
-  | atom_ _ => True
-  | _ => False
-
-instance
-  (F : Formula_) :
-  Decidable (Formula_.is_positive_literal F) :=
-  by
-  cases F
-  all_goals
-    simp only [is_positive_literal]
-    infer_instance
 
 
 /--
@@ -152,67 +69,6 @@ lemma eval_negate_literal
       simp only [is_literal] at h1
   all_goals
     simp only [is_literal] at h1
-
-
-/--
-  `Formula_.is_nnf_v1 F` := True if and only if the formula `F` is in negation normal form.
--/
-def Formula_.is_nnf_v1 :
-  Formula_ → Prop
-  | false_ => True
-  | true_ => True
-  | atom_ _ => True
-  | not_ (atom_ _) => True
-  | and_ phi psi => phi.is_nnf_v1 ∧ psi.is_nnf_v1
-  | or_ phi psi => phi.is_nnf_v1 ∧ psi.is_nnf_v1
-  | _ => False
-
-instance
-  (F : Formula_) :
-  Decidable (Formula_.is_nnf_v1 F) :=
-  by
-  induction F
-  case not_ phi ih =>
-    cases phi
-    all_goals
-      unfold is_nnf_v1
-      infer_instance
-  all_goals
-    unfold is_nnf_v1
-    infer_instance
-
-
--------------------------------------------------------------------------------
-
-
-/--
-  `Formula_.is_nnf_v2 F` := True if and only if the formula `F` is in negation normal form.
--/
-def Formula_.is_nnf_v2 :
-  Formula_ → Prop
-  | false_ => True
-  | not_ false_ => True
-  | true_ => True
-  | not_ true_ => True
-  | atom_ _ => True
-  | not_ (atom_ _) => True
-  | and_ phi psi => phi.is_nnf_v2 ∧ psi.is_nnf_v2
-  | or_ phi psi => phi.is_nnf_v2 ∧ psi.is_nnf_v2
-  | _ => False
-
-instance
-  (F : Formula_) :
-  Decidable (Formula_.is_nnf_v2 F) :=
-  by
-  induction F
-  case not_ phi ih =>
-    cases phi
-    all_goals
-      unfold is_nnf_v2
-      infer_instance
-  all_goals
-    unfold is_nnf_v2
-    infer_instance
 
 
 -------------------------------------------------------------------------------
@@ -613,32 +469,6 @@ example
 -------------------------------------------------------------------------------
 
 
-/--
-  `Formula_.is_pos_nnf F` := True if and only if the formula `F` is in negation normal form and every atom in `F` occurs unnegated.
--/
-def Formula_.is_pos_nnf :
-  Formula_ → Prop
-  | false_ => True
-  | true_ => True
-  | atom_ _ => True
-  | not_ (atom_ _) => False
-  | and_ phi psi => phi.is_pos_nnf ∧ psi.is_pos_nnf
-  | or_ phi psi => phi.is_pos_nnf ∧ psi.is_pos_nnf
-  | _ => False
-
-instance
-  (F : Formula_) :
-  Decidable (Formula_.is_pos_nnf F) :=
-  by
-  induction F
-  case not_ phi ih =>
-    cases phi
-    all_goals
-      unfold is_pos_nnf
-      infer_instance
-  all_goals
-    unfold is_pos_nnf
-    infer_instance
 
 
 example
@@ -670,32 +500,6 @@ example
 -------------------------------------------------------------------------------
 
 
-/--
-  `Formula_.is_neg_nnf F` := True if and only if the formula `F` is in negation normal form and every atom in `F` occurs negated.
--/
-def Formula_.is_neg_nnf :
-  Formula_ → Prop
-  | false_ => True
-  | true_ => True
-  | atom_ _ => False
-  | not_ (atom_ _) => True
-  | and_ phi psi => phi.is_neg_nnf ∧ psi.is_neg_nnf
-  | or_ phi psi => phi.is_neg_nnf ∧ psi.is_neg_nnf
-  | _ => False
-
-instance
-  (F : Formula_) :
-  Decidable (Formula_.is_neg_nnf F) :=
-  by
-  induction F
-  case not_ phi ih =>
-    cases phi
-    all_goals
-      unfold is_neg_nnf
-      infer_instance
-  all_goals
-    unfold is_neg_nnf
-    infer_instance
 
 
 example
@@ -730,38 +534,6 @@ example
 -------------------------------------------------------------------------------
 
 
-/--
-  `is_pos_literal_in A F` := True if and only if there is an occurrence of the atom `A` as a positive literal in the formula `F`.
--/
-def is_pos_literal_in
-  (A : String) :
-  Formula_ → Prop
-  | false_ => False
-  | true_ => False
-  | atom_ X => A = X
-  | not_ (atom_ _) => False
-  | not_ phi => is_pos_literal_in A phi
-  | and_ phi psi => is_pos_literal_in A phi ∨ is_pos_literal_in A psi
-  | or_ phi psi => is_pos_literal_in A phi ∨ is_pos_literal_in A psi
-  | imp_ phi psi => is_pos_literal_in A phi ∨ is_pos_literal_in A psi
-  | iff_ phi psi => is_pos_literal_in A phi ∨ is_pos_literal_in A psi
-
-
-/--
-  `is_neg_literal_in A F` := True if and only if there is an occurrence of the atom `A` as a negative literal in the formula `F`.
--/
-def is_neg_literal_in
-  (A : String) :
-  Formula_ → Prop
-  | false_ => False
-  | true_ => False
-  | atom_ _ => False
-  | not_ (atom_ X) => A = X
-  | not_ phi => is_neg_literal_in A phi
-  | and_ phi psi => is_neg_literal_in A phi ∨ is_neg_literal_in A psi
-  | or_ phi psi => is_neg_literal_in A phi ∨ is_neg_literal_in A psi
-  | imp_ phi psi => is_neg_literal_in A phi ∨ is_neg_literal_in A psi
-  | iff_ phi psi => is_neg_literal_in A phi ∨ is_neg_literal_in A psi
 
 
 example
