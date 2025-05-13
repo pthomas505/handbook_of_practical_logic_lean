@@ -244,30 +244,30 @@ instance
 
 
 /--
-  `Formula_.is_pos_nnf_rec F` := True if and only if the formula `F` is in negation normal form and every atom in `F` is positive.
+  `Formula_.is_pos_nnf_rec_v1 F` := True if and only if the formula `F` is in negation normal form and every atom in `F` is positive.
 -/
-def Formula_.is_pos_nnf_rec :
+def Formula_.is_pos_nnf_rec_v1 :
   Formula_ → Prop
   | false_ => True
   | true_ => True
   | atom_ _ => True
   | not_ (atom_ _) => False
-  | and_ phi psi => phi.is_pos_nnf_rec ∧ psi.is_pos_nnf_rec
-  | or_ phi psi => phi.is_pos_nnf_rec ∧ psi.is_pos_nnf_rec
+  | and_ phi psi => phi.is_pos_nnf_rec_v1 ∧ psi.is_pos_nnf_rec_v1
+  | or_ phi psi => phi.is_pos_nnf_rec_v1 ∧ psi.is_pos_nnf_rec_v1
   | _ => False
 
 instance
   (F : Formula_) :
-  Decidable (Formula_.is_pos_nnf_rec F) :=
+  Decidable (Formula_.is_pos_nnf_rec_v1 F) :=
   by
   induction F
   case not_ phi ih =>
     cases phi
     all_goals
-      unfold is_pos_nnf_rec
+      unfold is_pos_nnf_rec_v1
       infer_instance
   all_goals
-    unfold is_pos_nnf_rec
+    unfold is_pos_nnf_rec_v1
     infer_instance
 
 
@@ -275,30 +275,30 @@ instance
 
 
 /--
-  `Formula_.is_neg_nnf_rec F` := True if and only if the formula `F` is in negation normal form and every atom in `F` is negative.
+  `Formula_.is_neg_nnf_rec_v1 F` := True if and only if the formula `F` is in negation normal form and every atom in `F` is negative.
 -/
-def Formula_.is_neg_nnf_rec :
+def Formula_.is_neg_nnf_rec_v1 :
   Formula_ → Prop
   | false_ => True
   | true_ => True
   | atom_ _ => False
   | not_ (atom_ _) => True
-  | and_ phi psi => phi.is_neg_nnf_rec ∧ psi.is_neg_nnf_rec
-  | or_ phi psi => phi.is_neg_nnf_rec ∧ psi.is_neg_nnf_rec
+  | and_ phi psi => phi.is_neg_nnf_rec_v1 ∧ psi.is_neg_nnf_rec_v1
+  | or_ phi psi => phi.is_neg_nnf_rec_v1 ∧ psi.is_neg_nnf_rec_v1
   | _ => False
 
 instance
   (F : Formula_) :
-  Decidable (Formula_.is_neg_nnf_rec F) :=
+  Decidable (Formula_.is_neg_nnf_rec_v1 F) :=
   by
   induction F
   case not_ phi ih =>
     cases phi
     all_goals
-      unfold is_neg_nnf_rec
+      unfold is_neg_nnf_rec_v1
       infer_instance
   all_goals
-    unfold is_neg_nnf_rec
+    unfold is_neg_nnf_rec_v1
     infer_instance
 
 
@@ -796,6 +796,74 @@ lemma is_literal_rec_iff_is_literal_ind
   constructor
   · apply is_literal_rec_imp_is_literal_ind
   · apply is_literal_ind_imp_is_literal_rec
+
+
+-------------------------------------------------------------------------------
+
+
+example
+  (F : Formula_)
+  (h1 : is_pos_nnf_rec_v1 F) :
+  is_nnf_rec_v1 F :=
+  by
+  induction F
+  case false_ | true_ | atom_ X =>
+    unfold is_nnf_rec_v1
+    exact trivial
+  case not_ phi ih =>
+    cases phi
+    all_goals
+      unfold is_pos_nnf_rec_v1 at h1
+      contradiction
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih =>
+    unfold is_pos_nnf_rec_v1 at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
+    unfold is_nnf_rec_v1
+    constructor
+    · apply phi_ih
+      exact h1_left
+    · apply psi_ih
+      exact h1_right
+  all_goals
+    unfold is_pos_nnf_rec_v1 at h1
+    contradiction
+
+
+example
+  (F : Formula_)
+  (h1 : is_neg_nnf_rec_v1 F) :
+  is_nnf_rec_v1 F :=
+  by
+  induction F
+  case false_ | true_ | atom_ X =>
+    unfold is_nnf_rec_v1
+    exact trivial
+  case not_ phi ih =>
+    cases phi
+    case atom_ X =>
+      unfold is_nnf_rec_v1
+      exact trivial
+    all_goals
+      unfold is_neg_nnf_rec_v1 at h1
+      contradiction
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih =>
+    unfold is_neg_nnf_rec_v1 at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
+    unfold is_nnf_rec_v1
+    constructor
+    · apply phi_ih
+      exact h1_left
+    · apply psi_ih
+      exact h1_right
+  all_goals
+    unfold is_neg_nnf_rec_v1 at h1
+    contradiction
 
 
 -------------------------------------------------------------------------------
