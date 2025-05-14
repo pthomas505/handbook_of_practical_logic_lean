@@ -801,7 +801,7 @@ lemma is_literal_rec_iff_is_literal_ind
 -------------------------------------------------------------------------------
 
 
-example
+lemma is_pos_nnf_rec_v1_imp_is_nnf_rec_v1
   (F : Formula_)
   (h1 : is_pos_nnf_rec_v1 F) :
   is_nnf_rec_v1 F :=
@@ -832,7 +832,7 @@ example
     contradiction
 
 
-example
+lemma is_neg_nnf_rec_v1_imp_is_nnf_rec_v1
   (F : Formula_)
   (h1 : is_neg_nnf_rec_v1 F) :
   is_nnf_rec_v1 F :=
