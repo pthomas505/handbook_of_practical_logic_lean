@@ -24,7 +24,7 @@ def negate_literal :
 
 lemma negate_literal_not_eq_self
   (F : Formula_)
-  (h1 : is_literal F) :
+  (h1 : is_literal_rec F) :
   ¬ negate_literal F = F :=
   by
   cases F
@@ -39,15 +39,15 @@ lemma negate_literal_not_eq_self
       intro contra
       contradiction
     all_goals
-      simp only [is_literal] at h1
+      simp only [is_literal_rec] at h1
   all_goals
-    simp only [is_literal] at h1
+    simp only [is_literal_rec] at h1
 
 
-lemma eval_negate_literal
+lemma eval_negate_literal_eq_not_eval_literal
   (V : ValuationAsTotalFunction)
   (F : Formula_)
-  (h1 : F.is_literal) :
+  (h1 : is_literal_rec F) :
   eval V (negate_literal F) = b_not (eval V F) :=
   by
   cases F
@@ -66,9 +66,9 @@ lemma eval_negate_literal
       case true =>
         simp only [b_not]
     all_goals
-      simp only [is_literal] at h1
+      simp only [is_literal_rec] at h1
   all_goals
-    simp only [is_literal] at h1
+    simp only [is_literal_rec] at h1
 
 
 -------------------------------------------------------------------------------
@@ -109,7 +109,7 @@ end
 #eval to_nnf_v1 (not_ (not_ (not_ (not_ false_))))
 
 
-theorem eval_to_nnf_neg_v1_eq_not_eval_to_nnf_v1
+lemma eval_to_nnf_neg_v1_eq_not_eval_to_nnf_v1
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V (to_nnf_neg_v1 F) = b_not (eval V (to_nnf_v1 F)) :=
@@ -194,15 +194,15 @@ lemma eval_eq_eval_to_nnf_v1
     tauto
 
 
-lemma to_nnf_neg_v1_is_nnf_v1_iff_to_nnf_v1_is_nnf_v1
+lemma to_nnf_neg_v1_is_nnf_rec_v1_iff_to_nnf_v1_is_nnf_rec_v1
   (F : Formula_) :
-  (to_nnf_neg_v1 F).is_nnf_v1 ↔ (to_nnf_v1 F).is_nnf_v1 :=
+  (to_nnf_neg_v1 F).is_nnf_rec_v1 ↔ (to_nnf_v1 F).is_nnf_rec_v1 :=
   by
   induction F
   case true_ | false_ | atom_ X =>
     unfold to_nnf_v1
     unfold to_nnf_neg_v1
-    unfold is_nnf_v1
+    unfold is_nnf_rec_v1
     rfl
   case not_ phi ih =>
     unfold to_nnf_v1
@@ -216,40 +216,40 @@ lemma to_nnf_neg_v1_is_nnf_v1_iff_to_nnf_v1_is_nnf_v1
     | iff_ phi psi phi_ih psi_ih =>
     unfold to_nnf_v1
     simp only [to_nnf_neg_v1]
-    simp only [is_nnf_v1]
+    simp only [is_nnf_rec_v1]
     rewrite [phi_ih]
     rewrite [psi_ih]
     rfl
 
 
-lemma to_nnf_v1_is_nnf_v1
+lemma to_nnf_v1_is_nnf_rec_v1
   (F : Formula_) :
-  (to_nnf_v1 F).is_nnf_v1 :=
+  (to_nnf_v1 F).is_nnf_rec_v1 :=
   by
   induction F
   case false_ | true_ | atom_ X =>
     unfold to_nnf_v1
-    unfold is_nnf_v1
+    unfold is_nnf_rec_v1
     exact trivial
   case not_ phi ih =>
     unfold to_nnf_v1
-    rewrite [to_nnf_neg_v1_is_nnf_v1_iff_to_nnf_v1_is_nnf_v1]
-    apply ih
+    rewrite [to_nnf_neg_v1_is_nnf_rec_v1_iff_to_nnf_v1_is_nnf_rec_v1]
+    exact ih
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih =>
     unfold to_nnf_v1
-    simp only [is_nnf_v1]
+    simp only [is_nnf_rec_v1]
     exact ⟨phi_ih, psi_ih⟩
   case imp_ phi psi phi_ih psi_ih =>
     unfold to_nnf_v1
-    simp only [is_nnf_v1]
-    rewrite [to_nnf_neg_v1_is_nnf_v1_iff_to_nnf_v1_is_nnf_v1]
+    simp only [is_nnf_rec_v1]
+    rewrite [to_nnf_neg_v1_is_nnf_rec_v1_iff_to_nnf_v1_is_nnf_rec_v1]
     exact ⟨phi_ih, psi_ih⟩
   case iff_ phi psi phi_ih psi_ih =>
     unfold to_nnf_v1
-    simp only [is_nnf_v1]
-    simp only [to_nnf_neg_v1_is_nnf_v1_iff_to_nnf_v1_is_nnf_v1]
+    simp only [is_nnf_rec_v1]
+    simp only [to_nnf_neg_v1_is_nnf_rec_v1_iff_to_nnf_v1_is_nnf_rec_v1]
     exact ⟨⟨phi_ih, psi_ih⟩, ⟨phi_ih, psi_ih⟩⟩
 
 
@@ -289,7 +289,7 @@ end
 #eval to_nnf_v2 (not_ (not_ (not_ (not_ false_))))
 
 
-theorem eval_to_nnf_neg_v2_eq_not_eval_to_nnf_v2
+lemma eval_to_nnf_neg_v2_eq_not_eval_to_nnf_v2
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V (to_nnf_neg_v2 F) = b_not (eval V (to_nnf_v2 F)) :=
@@ -325,7 +325,7 @@ theorem eval_to_nnf_neg_v2_eq_not_eval_to_nnf_v2
     tauto
 
 
-example
+lemma eval_eq_eval_to_nnf_v2
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V F = eval V (to_nnf_v2 F) :=
@@ -373,11 +373,11 @@ example
     tauto
 
 
-lemma to_nnf_neg_v2_is_nnf_v1_iff_to_nnf_v2_is_nnf_v1
+lemma to_nnf_neg_v2_is_nnf_rec_v1_iff_to_nnf_v2_is_nnf_rec_v1
   (F : Formula_)
   (h1 : ¬ is_subformula false_ F)
   (h2 : ¬ is_subformula true_ F) :
-  (to_nnf_neg_v2 F).is_nnf_v1 ↔ (to_nnf_v2 F).is_nnf_v1 :=
+  (to_nnf_neg_v2 F).is_nnf_rec_v1 ↔ (to_nnf_v2 F).is_nnf_rec_v1 :=
   by
   induction F
   case false_ =>
@@ -389,7 +389,7 @@ lemma to_nnf_neg_v2_is_nnf_v1_iff_to_nnf_v2_is_nnf_v1
   case atom_ X =>
     unfold to_nnf_v2
     simp only [to_nnf_neg_v2]
-    simp only [is_nnf_v1]
+    simp only [is_nnf_rec_v1]
   case not_ phi ih =>
     unfold is_subformula at h1
     unfold is_subformula at h2
@@ -407,31 +407,31 @@ lemma to_nnf_neg_v2_is_nnf_v1_iff_to_nnf_v2_is_nnf_v1
 
     unfold to_nnf_v2
     simp only [to_nnf_neg_v2]
-    simp only [is_nnf_v1]
+    simp only [is_nnf_rec_v1]
     tauto
 
 
-example
+lemma to_nnf_v2_is_nnf_rec_v1
   (F : Formula_)
-  (h2 : ¬ is_proper_subformula false_ F)
-  (h3 : ¬ is_proper_subformula true_ F) :
-  (to_nnf_v2 F).is_nnf_v1 :=
+  (h1 : ¬ is_proper_subformula false_ F)
+  (h2 : ¬ is_proper_subformula true_ F) :
+  (to_nnf_v2 F).is_nnf_rec_v1 :=
   by
   induction F
   case false_ | true_ | atom_ X =>
     unfold to_nnf_v2
-    unfold is_nnf_v1
+    unfold is_nnf_rec_v1
     exact trivial
   all_goals
+    unfold is_proper_subformula at h1
+    unfold is_subformula at h1
+
     unfold is_proper_subformula at h2
     unfold is_subformula at h2
 
-    unfold is_proper_subformula at h3
-    unfold is_subformula at h3
-
     unfold to_nnf_v2
   case not_ phi ih =>
-    rewrite [to_nnf_neg_v2_is_nnf_v1_iff_to_nnf_v2_is_nnf_v1]
+    rewrite [to_nnf_neg_v2_is_nnf_rec_v1_iff_to_nnf_v2_is_nnf_rec_v1]
     apply ih
     · unfold is_proper_subformula
       tauto
@@ -445,23 +445,23 @@ example
     unfold is_proper_subformula at phi_ih
     unfold is_proper_subformula at psi_ih
 
-    unfold is_nnf_v1
+    unfold is_nnf_rec_v1
     tauto
   case imp_ phi psi phi_ih psi_ih =>
     unfold is_proper_subformula at phi_ih
     unfold is_proper_subformula at psi_ih
 
-    unfold is_nnf_v1
-    rewrite [to_nnf_neg_v2_is_nnf_v1_iff_to_nnf_v2_is_nnf_v1]
+    unfold is_nnf_rec_v1
+    rewrite [to_nnf_neg_v2_is_nnf_rec_v1_iff_to_nnf_v2_is_nnf_rec_v1]
     all_goals
       tauto
   case iff_ phi psi phi_ih psi_ih =>
     unfold is_proper_subformula at phi_ih
     unfold is_proper_subformula at psi_ih
 
-    simp only [is_nnf_v1]
-    rewrite [to_nnf_neg_v2_is_nnf_v1_iff_to_nnf_v2_is_nnf_v1]
-    rewrite [to_nnf_neg_v2_is_nnf_v1_iff_to_nnf_v2_is_nnf_v1]
+    simp only [is_nnf_rec_v1]
+    rewrite [to_nnf_neg_v2_is_nnf_rec_v1_iff_to_nnf_v2_is_nnf_rec_v1]
+    rewrite [to_nnf_neg_v2_is_nnf_rec_v1_iff_to_nnf_v2_is_nnf_rec_v1]
     all_goals
       tauto
 
@@ -469,20 +469,11 @@ example
 -------------------------------------------------------------------------------
 
 
-
-
-
-
--------------------------------------------------------------------------------
-
-
-
-
 example
   (A A' : String)
   (F : Formula_)
-  (h1 : F.is_nnf_v1)
-  (h2 : ¬ is_neg_literal_in A F) :
+  (h1 : is_nnf_rec_v1 F)
+  (h2 : ¬ is_neg_literal_in_rec A F) :
   ∀ (V : ValuationAsTotalFunction), eval V (((atom_ A).imp_ (atom_ A')).imp_ (F.imp_ (replace_atom_one_rec A (atom_ A') F))) :=
   by
   intro V
@@ -511,7 +502,7 @@ example
   case not_ phi ih =>
     cases phi
     case atom_ X =>
-      unfold is_neg_literal_in at h2
+      unfold is_neg_literal_in_rec at h2
 
       simp only [replace_atom_one_rec]
       split_ifs
@@ -520,15 +511,15 @@ example
       simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
       tauto
     all_goals
-      unfold is_nnf_v1 at h1
+      unfold is_nnf_rec_v1 at h1
       contradiction
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih =>
-    unfold is_nnf_v1 at h1
+    unfold is_nnf_rec_v1 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
-    unfold is_neg_literal_in at h2
+    unfold is_neg_literal_in_rec at h2
     simp only [not_or] at h2
     obtain ⟨h2_left, h2_right⟩ := h2
 
@@ -541,15 +532,15 @@ example
     simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff] at *
     tauto
   all_goals
-    unfold is_nnf_v1 at h1
+    unfold is_nnf_rec_v1 at h1
     contradiction
 
 
 example
   (A A' : String)
   (F : Formula_)
-  (h1 : F.is_nnf_v1)
-  (h2 : ¬ is_pos_literal_in A F) :
+  (h1 : is_nnf_rec_v1 F)
+  (h2 : ¬ is_pos_literal_in_rec A F) :
   ∀ (V : ValuationAsTotalFunction), eval V (((atom_ A).imp_ (atom_ A')).imp_ ((replace_atom_one_rec A (atom_ A') F).imp_ F)) = true :=
   by
   intro V
@@ -561,7 +552,7 @@ example
     simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
     tauto
   case atom_ X =>
-    unfold is_pos_literal_in at h2
+    unfold is_pos_literal_in_rec at h2
 
     unfold replace_atom_one_rec
     split_ifs
@@ -586,15 +577,15 @@ example
         simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
         tauto
     all_goals
-      unfold is_nnf_v1 at h1
+      unfold is_nnf_rec_v1 at h1
       contradiction
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih =>
-    unfold is_nnf_v1 at h1
+    unfold is_nnf_rec_v1 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
-    unfold is_pos_literal_in at h2
+    unfold is_pos_literal_in_rec at h2
     simp only [not_or] at h2
     obtain ⟨h2_left, h2_right⟩ := h2
 
@@ -607,7 +598,7 @@ example
     simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff] at *
     tauto
   all_goals
-    unfold is_nnf_v1 at h1
+    unfold is_nnf_rec_v1 at h1
     contradiction
 
 

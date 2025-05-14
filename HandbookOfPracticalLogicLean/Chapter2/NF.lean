@@ -801,6 +801,43 @@ lemma is_literal_rec_iff_is_literal_ind
 -------------------------------------------------------------------------------
 
 
+lemma is_nnf_rec_v1_imp_is_nnf_rec_v2
+  (F : Formula_)
+  (h1 : is_nnf_rec_v1 F) :
+  is_nnf_rec_v2 F :=
+  by
+  induction F
+  case false_ | true_ | atom_ X =>
+    unfold is_nnf_rec_v2
+    exact trivial
+  case not_ phi ih =>
+    cases phi
+    case atom_ X =>
+      unfold is_nnf_rec_v2
+      exact trivial
+    all_goals
+      unfold is_nnf_rec_v1 at h1
+      contradiction
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih =>
+    unfold is_nnf_rec_v1 at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
+    unfold is_nnf_rec_v2
+    constructor
+    · apply phi_ih
+      exact h1_left
+    · apply psi_ih
+      exact h1_right
+  all_goals
+    unfold is_nnf_rec_v1 at h1
+    contradiction
+
+
+-------------------------------------------------------------------------------
+
+
 lemma is_pos_nnf_rec_v1_imp_is_nnf_rec_v1
   (F : Formula_)
   (h1 : is_pos_nnf_rec_v1 F) :
