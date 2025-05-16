@@ -96,7 +96,7 @@ example
 -------------------------------------------------------------------------------
 
 
-lemma is_dnf_ind_v1_list_disj_cons_left
+lemma list_disj_cons_is_dnf_ind_v1_imp_list_disj_tail_is_dnf_ind_v1
   (F : Formula_)
   (l : List Formula_)
   (h1 : is_dnf_ind_v1 (list_disj (F :: l))) :
@@ -118,7 +118,7 @@ lemma is_dnf_ind_v1_list_disj_cons_left
       exact ih_2
 
 
-lemma is_dnf_ind_v1_list_disj_cons_right
+lemma hd_is_conj_ind_v1_and_list_disj_tail_is_dnf_ind_v1_imp_list_disj_cons_is_dnf_ind_v1
   (F : Formula_)
   (l : List Formula_)
   (h1 : is_conj_ind_v1 F)
@@ -137,7 +137,7 @@ lemma is_dnf_ind_v1_list_disj_cons_right
     · exact h2
 
 
-lemma is_dnf_ind_v1_list_disj_filter
+lemma list_disj_is_dnf_ind_v1_imp_list_disj_of_filter_is_dnf_ind_v1
   (l : List Formula_)
   (pred : Formula_ → Bool)
   (h1 : is_dnf_ind_v1 (list_disj l)) :
@@ -162,13 +162,13 @@ lemma is_dnf_ind_v1_list_disj_filter
         case rule_1 ih_1 =>
           contradiction
         case rule_2 ih_1 ih_2 =>
-          apply is_dnf_ind_v1_list_disj_cons_right
+          apply hd_is_conj_ind_v1_and_list_disj_tail_is_dnf_ind_v1_imp_list_disj_cons_is_dnf_ind_v1
           · exact ih_1
           · apply ih
             exact ih_2
     case neg c1 =>
       apply ih
-      exact is_dnf_ind_v1_list_disj_cons_left hd tl h1
+      exact list_disj_cons_is_dnf_ind_v1_imp_list_disj_tail_is_dnf_ind_v1 hd tl h1
 
 
 -------------------------------------------------------------------------------
