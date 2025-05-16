@@ -31,8 +31,9 @@ lemma list_conj_of_list_of_is_constant_ind_or_is_literal_ind_is_conj_ind_v1
   case cons hd tl ih =>
     cases tl
     case nil =>
-      unfold list_conj
       simp only [List.mem_singleton] at h1
+
+      unfold list_conj
 
       have s1 : is_constant_ind hd ∨ is_literal_ind hd :=
       by
