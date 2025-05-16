@@ -79,12 +79,12 @@ lemma list_conj_of_list_of_is_constant_ind_or_is_literal_ind_is_conj_ind_v1
 
 example
   (F : Formula_)
-  (xs : List Formula_)
-  (h1 : is_conj_ind_v1 (list_conj xs))
-  (h2 : F ∈ xs) :
+  (l : List Formula_)
+  (h1 : is_conj_ind_v1 (list_conj l))
+  (h2 : F ∈ l) :
   is_conj_ind_v1 F :=
   by
-  induction xs
+  induction l
   case nil =>
     simp only [List.not_mem_nil] at h2
   case cons hd tl ih =>
@@ -246,10 +246,10 @@ lemma eval_list_conj_union
 
 lemma eval_list_conj_subset
   (V : ValuationAsTotalFunction)
-  (xs ys : List Formula_)
-  (h1 : xs ⊆ ys)
-  (h2 : eval V (list_conj ys) = true) :
-  eval V (list_conj xs) = true :=
+  (l1 l2 : List Formula_)
+  (h1 : l1 ⊆ l2)
+  (h2 : eval V (list_conj l2) = true) :
+  eval V (list_conj l1) = true :=
   by
   simp only [eval_list_conj_eq_true_iff_eval_all_eq_true] at h2
 
