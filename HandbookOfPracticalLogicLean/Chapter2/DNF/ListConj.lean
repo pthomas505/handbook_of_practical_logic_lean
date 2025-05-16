@@ -1,4 +1,5 @@
-import HandbookOfPracticalLogicLean.Chapter2.DNF.IsDNF_1
+import HandbookOfPracticalLogicLean.Chapter2.NF
+import HandbookOfPracticalLogicLean.Chapter2.Semantics
 
 
 set_option autoImplicit false
@@ -16,36 +17,36 @@ def list_conj :
 
 lemma list_conj_of_is_constant_ind_v1_or_is_literal_ind_v1_is_conj_ind_v1
   (l : List Formula_)
-  (h1 : ∀ (F : Formula_), F ∈ l → (is_constant_ind_v1 F ∨ is_literal_ind_v1 F)) :
+  (h1 : ∀ (F : Formula_), F ∈ l → (is_constant_ind F ∨ is_literal_ind F)) :
   is_conj_ind_v1 (list_conj l) :=
   by
   induction l
   case nil =>
     unfold list_conj
-    apply is_conj_ind_v1.rule_3
-    apply is_constant_ind_v1.rule_2
+    apply is_conj_ind_v1.rule_1
+    apply is_constant_ind.rule_2
   case cons hd tl ih =>
     cases tl
     case nil =>
       unfold list_conj
       simp only [List.mem_singleton] at h1
 
-      have s1 : is_constant_ind_v1 hd ∨ is_literal_ind_v1 hd :=
+      have s1 : is_constant_ind hd ∨ is_literal_ind hd :=
       by
         apply h1
         rfl
 
       cases s1
       case inl s1 =>
-        apply is_conj_ind_v1.rule_3
+        apply is_conj_ind_v1.rule_1
         exact s1
       case inr s1 =>
-        apply is_conj_ind_v1.rule_4
+        apply is_conj_ind_v1.rule_2
         exact s1
     case cons tl_hd tl_tl =>
       simp only [List.mem_cons] at h1
 
-      have s1 : is_constant_ind_v1 hd ∨ is_literal_ind_v1 hd :=
+      have s1 : is_constant_ind hd ∨ is_literal_ind hd :=
       by
         apply h1
         left
@@ -54,7 +55,7 @@ lemma list_conj_of_is_constant_ind_v1_or_is_literal_ind_v1_is_conj_ind_v1
       unfold list_conj
       cases s1
       case inl s1 =>
-        apply is_conj_ind_v1.rule_1
+        apply is_conj_ind_v1.rule_3
         · exact s1
         · apply ih
           intro F a1
@@ -63,7 +64,7 @@ lemma list_conj_of_is_constant_ind_v1_or_is_literal_ind_v1_is_conj_ind_v1
           right
           exact a1
       case inr s1 =>
-        apply is_conj_ind_v1.rule_2
+        apply is_conj_ind_v1.rule_4
         · exact s1
         · apply ih
           intro F a1
@@ -97,29 +98,29 @@ example
     case cons tl_hd tl_tl =>
       simp only [list_conj] at h1
       cases h1
-      case rule_1 ih_1 ih_2 =>
+      case rule_3 ih_1 ih_2 =>
         cases h2
         case inl h2 =>
           rewrite [h2]
-          apply is_conj_ind_v1.rule_3
+          apply is_conj_ind_v1.rule_1
           exact ih_1
         case inr h2 =>
           apply ih
           · exact ih_2
           · exact h2
-      case rule_2 ih_1 ih_2 =>
+      case rule_4 ih_1 ih_2 =>
         cases h2
         case inl h2 =>
           rewrite [h2]
-          apply is_conj_ind_v1.rule_4
+          apply is_conj_ind_v1.rule_2
           exact ih_1
         case inr h2 =>
           apply ih
           · exact ih_2
           · exact h2
-      case rule_3 ih_1 =>
+      case rule_1 ih_1 =>
         contradiction
-      case rule_4 ih_1 =>
+      case rule_2 ih_1 =>
         contradiction
 
 
