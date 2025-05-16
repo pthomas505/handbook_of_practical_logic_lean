@@ -8,6 +8,9 @@ set_option autoImplicit false
 open Formula_
 
 
+/--
+  `list_conj l` := If the list of formulas `l` is empty then `true_`. If `l` is not empty then the iterated conjunction of the formulas in `l`.
+-/
 def list_conj :
   List Formula_ → Formula_
   | [] => true_
@@ -15,7 +18,7 @@ def list_conj :
   | hd :: tl => and_ hd (list_conj tl)
 
 
-lemma list_conj_of_is_constant_ind_v1_or_is_literal_ind_v1_is_conj_ind_v1
+lemma list_conj_of_list_of_is_constant_ind_or_is_literal_ind_is_conj_ind_v1
   (l : List Formula_)
   (h1 : ∀ (F : Formula_), F ∈ l → (is_constant_ind F ∨ is_literal_ind F)) :
   is_conj_ind_v1 (list_conj l) :=
@@ -86,9 +89,11 @@ example
     simp only [List.not_mem_nil] at h2
   case cons hd tl ih =>
     simp only [List.mem_cons] at h2
+
     cases tl
     case nil =>
       simp only [list_conj] at h1
+
       cases h2
       case inl h2 =>
         rewrite [h2]
@@ -97,7 +102,10 @@ example
         simp only [List.not_mem_nil] at h2
     case cons tl_hd tl_tl =>
       simp only [list_conj] at h1
+
       cases h1
+      case rule_1 ih_1 | rule_2 ih_1 =>
+        contradiction
       case rule_3 ih_1 ih_2 =>
         cases h2
         case inl h2 =>
@@ -118,10 +126,6 @@ example
           apply ih
           · exact ih_2
           · exact h2
-      case rule_1 ih_1 =>
-        contradiction
-      case rule_2 ih_1 =>
-        contradiction
 
 
 -------------------------------------------------------------------------------
@@ -141,6 +145,7 @@ lemma eval_list_conj_eq_true_imp_eval_all_eq_true
     cases tl
     case nil =>
       unfold list_conj at h1
+
       simp only [List.mem_singleton] at a1
       rewrite [a1]
       exact h1
@@ -148,15 +153,16 @@ lemma eval_list_conj_eq_true_imp_eval_all_eq_true
       unfold list_conj at h1
       unfold eval at h1
       simp only [bool_iff_prop_and] at h1
+      obtain ⟨h1_left, h1_right⟩ := h1
 
       simp only [List.mem_cons] at a1
       cases a1
       case inl a1_left =>
         rewrite [a1_left]
-        tauto
+        exact h1_left
       case inr a1_right =>
         apply ih
-        · tauto
+        · exact h1_right
         · simp only [List.mem_cons]
           exact a1_right
 
@@ -251,3 +257,6 @@ lemma eval_list_conj_subset
   intro F a1
   apply h2
   exact h1 a1
+
+
+#lint
