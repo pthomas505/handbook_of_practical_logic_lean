@@ -131,7 +131,7 @@ example
 -------------------------------------------------------------------------------
 
 
-lemma eval_list_conj_eq_true_imp_eval_all_eq_true
+lemma eval_list_conj_eq_true_imp_forall_eval_eq_true
   (V : ValuationAsTotalFunction)
   (l : List Formula_)
   (h1 : eval V (list_conj l) = true) :
@@ -167,7 +167,7 @@ lemma eval_list_conj_eq_true_imp_eval_all_eq_true
           exact a1_right
 
 
-lemma eval_all_eq_true_imp_eval_list_conj_eq_true
+lemma forall_eval_eq_true_imp_eval_list_conj_eq_true
   (V : ValuationAsTotalFunction)
   (l : List Formula_)
   (h1 : ∀ (F : Formula_), F ∈ l → eval V F = true) :
@@ -202,14 +202,14 @@ lemma eval_all_eq_true_imp_eval_list_conj_eq_true
         exact a1
 
 
-lemma eval_list_conj_eq_true_iff_eval_all_eq_true
+lemma eval_list_conj_eq_true_iff_forall_eval_eq_true
   (V : ValuationAsTotalFunction)
   (l : List Formula_) :
   eval V (list_conj l) = true ↔ (∀ (F : Formula_), F ∈ l → eval V F = true) :=
   by
   constructor
-  · apply eval_list_conj_eq_true_imp_eval_all_eq_true
-  · apply eval_all_eq_true_imp_eval_list_conj_eq_true
+  · apply eval_list_conj_eq_true_imp_forall_eval_eq_true
+  · apply forall_eval_eq_true_imp_eval_list_conj_eq_true
 
 
 -------------------------------------------------------------------------------
@@ -220,7 +220,7 @@ lemma eval_list_conj_union
   (l1 l2 : List Formula_) :
   eval V (list_conj (l1 ∪ l2)) = true ↔ (eval V (list_conj l1) = true ∧ eval V (list_conj l2) = true) :=
   by
-  simp only [eval_list_conj_eq_true_iff_eval_all_eq_true]
+  simp only [eval_list_conj_eq_true_iff_forall_eval_eq_true]
   simp only [List.mem_union_iff]
   constructor
   · intro a1
@@ -251,9 +251,9 @@ lemma eval_list_conj_subset
   (h2 : eval V (list_conj l2) = true) :
   eval V (list_conj l1) = true :=
   by
-  simp only [eval_list_conj_eq_true_iff_eval_all_eq_true] at h2
+  simp only [eval_list_conj_eq_true_iff_forall_eval_eq_true] at h2
 
-  simp only [eval_list_conj_eq_true_iff_eval_all_eq_true]
+  simp only [eval_list_conj_eq_true_iff_forall_eval_eq_true]
   intro F a1
   apply h2
   exact h1 a1
