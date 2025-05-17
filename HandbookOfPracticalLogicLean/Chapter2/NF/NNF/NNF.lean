@@ -229,6 +229,4 @@ lemma to_nnf_v2_is_nnf_rec_v1
       tauto
 
 
-
-
 #lint
