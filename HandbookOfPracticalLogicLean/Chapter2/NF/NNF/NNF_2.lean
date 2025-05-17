@@ -131,6 +131,9 @@ lemma eval_eq_eval_to_nnf_v2
     tauto
 
 
+-------------------------------------------------------------------------------
+
+
 lemma to_nnf_neg_v2_is_nnf_rec_v1_iff_to_nnf_v2_is_nnf_rec_v1
   (F : Formula_)
   (h1 : ¬ is_subformula false_ F)
