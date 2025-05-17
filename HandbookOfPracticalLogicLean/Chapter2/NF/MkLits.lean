@@ -1,4 +1,5 @@
-import HandbookOfPracticalLogicLean.Chapter2.DNF.ListConj
+import HandbookOfPracticalLogicLean.Chapter2.NF.NF
+import HandbookOfPracticalLogicLean.Chapter2.NF.ListConj.IsConj
 
 
 set_option autoImplicit false
@@ -24,7 +25,7 @@ lemma mk_lits_is_conj_ind_v1
   is_conj_ind_v1 (mk_lits atoms V) :=
   by
   unfold mk_lits
-  apply list_conj_of_is_constant_ind_v1_or_is_literal_ind_v1_is_conj_ind_v1
+  apply list_conj_of_list_of_is_constant_ind_or_is_literal_ind_is_conj_ind_v1
   intro F a1
   right
   simp only [List.mem_map] at a1
@@ -32,10 +33,10 @@ lemma mk_lits_is_conj_ind_v1
   split_ifs at a1_right
   case pos c1 =>
     rewrite [← a1_right]
-    apply is_literal_ind_v1.rule_1
+    apply is_literal_ind.rule_1
   case neg c1 =>
     rewrite [← a1_right]
-    apply is_literal_ind_v1.rule_2
+    apply is_literal_ind.rule_2
 
 
 -------------------------------------------------------------------------------
