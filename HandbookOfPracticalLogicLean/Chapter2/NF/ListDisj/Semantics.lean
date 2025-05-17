@@ -164,3 +164,6 @@ lemma eval_list_disj_subset
   constructor
   · exact h1 h2_left
   · exact h2_right
+
+
+#lint
