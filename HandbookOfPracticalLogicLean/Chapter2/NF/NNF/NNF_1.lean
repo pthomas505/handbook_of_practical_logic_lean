@@ -134,6 +134,9 @@ lemma eval_eq_eval_to_nnf_v1
     tauto
 
 
+-------------------------------------------------------------------------------
+
+
 lemma to_nnf_neg_v1_is_nnf_rec_v1_iff_to_nnf_v1_is_nnf_rec_v1
   (F : Formula_) :
   (to_nnf_neg_v1 F).is_nnf_rec_v1 ↔ (to_nnf_v1 F).is_nnf_rec_v1 :=
