@@ -69,3 +69,6 @@ lemma eval_negate_literal_eq_not_eval_literal
       simp only [is_literal_rec] at h1
   all_goals
     simp only [is_literal_rec] at h1
+
+
+#lint
