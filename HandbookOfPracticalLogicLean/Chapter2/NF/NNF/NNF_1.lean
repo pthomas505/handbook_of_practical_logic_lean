@@ -191,3 +191,139 @@ lemma to_nnf_v1_is_nnf_rec_v1
     simp only [is_nnf_rec_v1]
     simp only [to_nnf_neg_v1_is_nnf_rec_v1_iff_to_nnf_v1_is_nnf_rec_v1]
     exact ⟨⟨phi_ih, psi_ih⟩, ⟨phi_ih, psi_ih⟩⟩
+
+
+-------------------------------------------------------------------------------
+
+
+example
+  (A A' : String)
+  (F : Formula_)
+  (h1 : is_nnf_rec_v1 F)
+  (h2 : ¬ is_neg_literal_in_rec A F) :
+  ∀ (V : ValuationAsTotalFunction), eval V (((atom_ A).imp_ (atom_ A')).imp_ (F.imp_ (replace_atom_one_rec A (atom_ A') F))) :=
+  by
+  intro V
+  induction F
+  case false_ | true_ =>
+    unfold replace_atom_one_rec
+    simp only [eval]
+    rewrite [Bool.eq_iff_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
+    tauto
+  case atom_ X =>
+    unfold replace_atom_one_rec
+    simp only [eval]
+    split_ifs
+    case pos c1 =>
+      rewrite [c1]
+      unfold eval
+      rewrite [Bool.eq_iff_iff]
+      simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
+      tauto
+    case neg c1 =>
+      unfold eval
+      rewrite [Bool.eq_iff_iff]
+      simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
+      tauto
+  case not_ phi ih =>
+    cases phi
+    case atom_ X =>
+      unfold is_neg_literal_in_rec at h2
+
+      simp only [replace_atom_one_rec]
+      split_ifs
+      simp only [eval]
+      rewrite [Bool.eq_iff_iff]
+      simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
+      tauto
+    all_goals
+      unfold is_nnf_rec_v1 at h1
+      contradiction
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih =>
+    unfold is_nnf_rec_v1 at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
+    unfold is_neg_literal_in_rec at h2
+    simp only [not_or] at h2
+    obtain ⟨h2_left, h2_right⟩ := h2
+
+    simp only [eval] at phi_ih
+    simp only [eval] at psi_ih
+
+    simp only [replace_atom_one_rec]
+    simp only [eval]
+    rewrite [Bool.eq_iff_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff] at *
+    tauto
+  all_goals
+    unfold is_nnf_rec_v1 at h1
+    contradiction
+
+
+example
+  (A A' : String)
+  (F : Formula_)
+  (h1 : is_nnf_rec_v1 F)
+  (h2 : ¬ is_pos_literal_in_rec A F) :
+  ∀ (V : ValuationAsTotalFunction), eval V (((atom_ A).imp_ (atom_ A')).imp_ ((replace_atom_one_rec A (atom_ A') F).imp_ F)) = true :=
+  by
+  intro V
+  induction F
+  case false_ | true_ =>
+    unfold replace_atom_one_rec
+    simp only [eval]
+    rewrite [Bool.eq_iff_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
+    tauto
+  case atom_ X =>
+    unfold is_pos_literal_in_rec at h2
+
+    unfold replace_atom_one_rec
+    split_ifs
+    simp only [eval]
+    rewrite [Bool.eq_iff_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
+    tauto
+  case not_ phi ih =>
+    cases phi
+    case atom_ X =>
+      simp only [replace_atom_one_rec]
+      split_ifs
+      case pos c1 =>
+        simp only [eval]
+        rewrite [c1]
+        rewrite [Bool.eq_iff_iff]
+        simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
+        tauto
+      case neg c1 =>
+        simp only [eval]
+        rewrite [Bool.eq_iff_iff]
+        simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
+        tauto
+    all_goals
+      unfold is_nnf_rec_v1 at h1
+      contradiction
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih =>
+    unfold is_nnf_rec_v1 at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
+    unfold is_pos_literal_in_rec at h2
+    simp only [not_or] at h2
+    obtain ⟨h2_left, h2_right⟩ := h2
+
+    simp only [eval] at phi_ih
+    simp only [eval] at psi_ih
+
+    simp only [replace_atom_one_rec]
+    simp only [eval]
+    rewrite [Bool.eq_iff_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff] at *
+    tauto
+  all_goals
+    unfold is_nnf_rec_v1 at h1
+    contradiction
