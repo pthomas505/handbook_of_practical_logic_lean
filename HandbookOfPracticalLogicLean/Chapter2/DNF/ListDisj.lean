@@ -234,6 +234,64 @@ lemma eval_list_disj_eq_true_iff_exists_eval_eq_true
 -------------------------------------------------------------------------------
 
 
+lemma eval_list_disj_union
+  (V : ValuationAsTotalFunction)
+  (l1 l2 : List Formula_) :
+  eval V (list_disj (l1 ∪ l2)) = true ↔ (eval V (list_disj l1) = true ∨ eval V (list_disj l2) = true) :=
+  by
+  simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
+  simp only [List.mem_union_iff]
+  constructor
+  · intro a1
+    obtain ⟨F, a1_left, a1_right⟩ := a1
+
+    cases a1_left
+    case inl a1_left =>
+      left
+      apply Exists.intro F
+      exact ⟨a1_left, a1_right⟩
+    case inr a1_left =>
+      right
+      apply Exists.intro F
+      exact ⟨a1_left, a1_right⟩
+  · intro a1
+    cases a1
+    case inl a1 =>
+      obtain ⟨F, a1_left, a1_right⟩ := a1
+      apply Exists.intro F
+      constructor
+      · left
+        exact a1_left
+      · exact a1_right
+    case inr a1 =>
+      obtain ⟨F, a1_left, a1_right⟩ := a1
+      apply Exists.intro F
+      constructor
+      · right
+        exact a1_left
+      · exact a1_right
+
+
+lemma eval_list_disj_subset
+  (V : ValuationAsTotalFunction)
+  (l1 l2 : List Formula_)
+  (h1 : l1 ⊆ l2)
+  (h2 : eval V (list_disj l1) = true) :
+  eval V (list_disj l2) = true :=
+  by
+  simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true] at h2
+  obtain ⟨F, h2_left, h2_right⟩ := h2
+
+  simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
+  apply Exists.intro F
+  constructor
+  · exact h1 h2_left
+  · exact h2_right
+
+
+-------------------------------------------------------------------------------
+
+
 lemma list_disj_of_is_conj_ind_v1_is_dnf_ind_v1
   (l : List Formula_)
   (h1 : ∀ (F : Formula_), F ∈ l → is_conj_ind_v1 F) :
