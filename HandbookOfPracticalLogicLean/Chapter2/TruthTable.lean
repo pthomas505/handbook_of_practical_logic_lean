@@ -31,7 +31,7 @@ def gen_all_valuations_as_list_of_list_of_pairs :
 def all_valuations_as_set_of_list_of_pairs
   (atom_list : List String) :
   Set (ValuationAsListOfPairs) :=
-  { V : ValuationAsListOfPairs | (V.map Prod.fst) = atom_list }
+  { l : ValuationAsListOfPairs | (l.map Prod.fst) = atom_list }
 
 
 example
@@ -144,9 +144,9 @@ def gen_all_valuations_as_list_of_total_functions
 
 def all_valuations_as_set_of_total_functions
   (init : ValuationAsTotalFunction)
-  (atoms : List String) :
+  (atom_list : List String) :
   Set ValuationAsTotalFunction :=
-  { V : ValuationAsTotalFunction | ∀ (X : String), X ∉ atoms → V X = init X }
+  { l : ValuationAsTotalFunction | ∀ (X : String), X ∉ atom_list → l X = init X }
 
 
 example
