@@ -150,16 +150,6 @@ def all_valuations_as_set_of_total_functions
 
 
 example
-  (init : ValuationAsTotalFunction)
-  (atoms : List String)
-  (V : ValuationAsTotalFunction)
-  (h1 : V ∈ gen_all_valuations_as_list_of_total_functions init atoms) :
-  V ∈ all_valuations_as_set_of_total_functions init atoms :=
-  by
-  sorry
-
-
-example
   (init : String → Bool)
   (atom_list : List String)
   (V : ValuationAsTotalFunction)
