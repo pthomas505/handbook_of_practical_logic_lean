@@ -35,35 +35,32 @@ def all_valuations_as_set_of_list_of_pairs
 
 
 example
-  (atoms : List String)
   (V : ValuationAsListOfPairs)
-  (h1 : V ∈ all_valuations_as_set_of_list_of_pairs atoms) :
+  (atoms : List String)
+  (h1 : (V.map Prod.fst) = atoms) :
   V ∈ gen_all_valuations_as_list_of_list_of_pairs atoms :=
   by
   induction atoms generalizing V
   case nil =>
-    unfold all_valuations_as_set_of_list_of_pairs at h1
-    simp only [List.map_eq_nil_iff] at h1
-
-    unfold gen_all_valuations_as_list_of_list_of_pairs
-    simp only [List.mem_singleton]
-    exact h1
-  case cons hd tl ih =>
-    unfold all_valuations_as_set_of_list_of_pairs at h1
-
-    unfold all_valuations_as_set_of_list_of_pairs at ih
-
-    simp only [gen_all_valuations_as_list_of_list_of_pairs]
-    simp only [List.mem_append, List.mem_map]
     cases V
     case nil =>
-      simp only [Set.mem_setOf_eq, List.map_nil, List.nil_eq] at h1
+      unfold gen_all_valuations_as_list_of_list_of_pairs
+      simp only [List.mem_singleton]
+    case cons V_hd V_tl =>
+      simp only [List.map_cons] at h1
+      contradiction
+  case cons hd tl ih =>
+    cases V
+    case nil =>
+      simp only [List.map_nil] at h1
       contradiction
     case cons V_hd V_tl =>
-      simp only [Set.mem_setOf_eq, List.map_cons, List.cons.injEq] at h1
+      simp only [List.map_cons, List.cons.injEq] at h1
       obtain ⟨h1_left, h1_right⟩ := h1
 
-      simp only [Set.mem_setOf_eq] at ih
+      unfold gen_all_valuations_as_list_of_list_of_pairs
+      simp only [List.mem_append, List.mem_map]
+
       cases c1 : V_hd.2
       case false =>
         left
@@ -87,11 +84,44 @@ example
 
 example
   (atoms : List String)
-  (V : ValuationAsListOfPairs)
-  (h1 : V ∈ gen_all_valuations_as_list_of_list_of_pairs atoms) :
-  V ∈ all_valuations_as_set_of_list_of_pairs atoms :=
+  (l : ValuationAsListOfPairs)
+  (h1 : l ∈ gen_all_valuations_as_list_of_list_of_pairs atoms) :
+  (l.map Prod.fst) = atoms :=
   by
-  sorry
+  induction atoms generalizing l
+  case nil =>
+    cases l
+    case nil =>
+      simp only [List.map_nil]
+    case cons l_hd l_tl =>
+      unfold gen_all_valuations_as_list_of_list_of_pairs at h1
+      simp only [List.mem_singleton] at h1
+      contradiction
+  case cons hd tl ih =>
+    cases l
+    case nil =>
+      unfold gen_all_valuations_as_list_of_list_of_pairs at h1
+      simp only [List.mem_append, List.mem_map] at h1
+      cases h1
+      case inl h1 | inr h1 =>
+        obtain ⟨V, h1_left, h1_right⟩ := h1
+        contradiction
+    case cons l_hd l_tl =>
+      unfold gen_all_valuations_as_list_of_list_of_pairs at h1
+      simp only [List.mem_append, List.mem_map] at h1
+
+      simp only [List.map_cons, List.cons.injEq]
+      cases h1
+      case inr h1 | inl h1 =>
+        obtain ⟨V, h1_left, h1_right⟩ := h1
+        injection h1_right
+        case _ hd_eq tl_eq =>
+          constructor
+          · rewrite [← hd_eq]
+            simp only
+          · rewrite [← tl_eq]
+            apply ih
+            exact h1_left
 
 
 -------------------------------------------------------------------------------
