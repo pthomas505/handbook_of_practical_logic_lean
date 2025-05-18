@@ -30,8 +30,26 @@ def gen_all_valuations_as_list_of_list_of_pairs :
 
 def all_valuations_as_set_of_list_of_pairs
   (atoms : List String) :
-  Set (List (String × Bool)) :=
-  { l : List (String × Bool) | (l.map Prod.fst) = atoms }
+  Set (ValuationAsListOfPairs) :=
+  { V : ValuationAsListOfPairs | (V.map Prod.fst) = atoms }
+
+
+example
+  (atoms : List String)
+  (V : ValuationAsListOfPairs)
+  (h1 : V ∈ all_valuations_as_set_of_list_of_pairs atoms) :
+  V ∈ gen_all_valuations_as_list_of_list_of_pairs atoms :=
+  by
+  sorry
+
+
+example
+  (atoms : List String)
+  (V : ValuationAsListOfPairs)
+  (h1 : V ∈ gen_all_valuations_as_list_of_list_of_pairs atoms) :
+  V ∈ all_valuations_as_set_of_list_of_pairs atoms :=
+  by
+  sorry
 
 
 -------------------------------------------------------------------------------
@@ -57,6 +75,26 @@ def all_valuations_as_set_of_total_functions
   (atoms : List String) :
   Set ValuationAsTotalFunction :=
   { V : ValuationAsTotalFunction | ∀ (X : String), X ∉ atoms → V X = init X }
+
+
+example
+  (init : ValuationAsTotalFunction)
+  (atoms : List String)
+  (V : ValuationAsTotalFunction)
+  (h1 : V ∈ all_valuations_as_set_of_total_functions init atoms) :
+  V ∈ gen_all_valuations_as_list_of_total_functions init atoms :=
+  by
+  sorry
+
+
+example
+  (init : ValuationAsTotalFunction)
+  (atoms : List String)
+  (V : ValuationAsTotalFunction)
+  (h1 : V ∈ gen_all_valuations_as_list_of_total_functions init atoms) :
+  V ∈ all_valuations_as_set_of_total_functions init atoms :=
+  by
+  sorry
 
 
 -------------------------------------------------------------------------------
