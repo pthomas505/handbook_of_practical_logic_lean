@@ -1,4 +1,4 @@
-import HandbookOfPracticalLogicLean.Chapter2.NF.NNF.Negate
+import HandbookOfPracticalLogicLean.Chapter2.NF.Negate
 import HandbookOfPracticalLogicLean.Chapter2.NF.NF
 import HandbookOfPracticalLogicLean.Chapter2.NF.DNF.PureDNF
 
