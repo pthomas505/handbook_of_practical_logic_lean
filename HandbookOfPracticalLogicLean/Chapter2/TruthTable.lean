@@ -28,8 +28,17 @@ def gen_all_valuations_as_list_of_list_of_pairs :
   left ++ right
 
 
+def all_valuations_as_set_of_list_of_pairs
+  (atoms : List String) :
+  Set (List (String × Bool)) :=
+  { l : List (String × Bool) | (l.map Prod.fst) = atoms }
+
+
+-------------------------------------------------------------------------------
+
+
 /--
-  `gen_all_valuations_as_list_of_total_functions init atoms` := All of the functions from strings to booleans that map the strings not in `atoms` to the same values as `init`.
+  `gen_all_valuations_as_list_of_total_functions init atoms` := A list of all of the functions from strings to booleans that map the strings not in `atoms` to the same values as `init`.
 -/
 def gen_all_valuations_as_list_of_total_functions
   (init : ValuationAsTotalFunction) :
@@ -41,6 +50,13 @@ def gen_all_valuations_as_list_of_total_functions
   let right := List.map (fun (V : ValuationAsTotalFunction) => Function.updateITE V hd true) (gen_all_valuations_as_list_of_total_functions init tl)
 
   left ++ right
+
+
+def all_valuations_as_set_of_total_functions
+  (init : ValuationAsTotalFunction)
+  (atoms : List String) :
+  Set ValuationAsTotalFunction :=
+  { V : ValuationAsTotalFunction | ∀ (X : String), X ∉ atoms → V X = init X }
 
 
 -------------------------------------------------------------------------------
@@ -83,6 +99,21 @@ lemma gen_all_valuations_as_list_of_list_of_pairs_is_complete
           · exact trivial
           · rfl
         · rfl
+
+
+-------------------------------------------------------------------------------
+
+
+example
+  (init : String → Bool)
+  (atom_list : List String)
+  (V : ValuationAsTotalFunction)
+  (X : String)
+  (h1 : V ∈ gen_all_valuations_as_list_of_total_functions init atom_list)
+  (h2 : X ∉ atom_list) :
+  V X = init X :=
+  by
+  sorry
 
 
 lemma gen_all_valuations_as_list_of_total_functions_is_complete
