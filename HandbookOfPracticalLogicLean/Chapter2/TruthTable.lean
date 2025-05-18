@@ -29,42 +29,42 @@ def gen_all_valuations_as_list_of_list_of_pairs :
 
 
 def all_valuations_as_set_of_list_of_pairs
-  (atoms : List String) :
+  (atom_list : List String) :
   Set (ValuationAsListOfPairs) :=
-  { V : ValuationAsListOfPairs | (V.map Prod.fst) = atoms }
+  { V : ValuationAsListOfPairs | (V.map Prod.fst) = atom_list }
 
 
 example
-  (V : ValuationAsListOfPairs)
-  (atoms : List String)
-  (h1 : (V.map Prod.fst) = atoms) :
-  V ∈ gen_all_valuations_as_list_of_list_of_pairs atoms :=
+  (l : ValuationAsListOfPairs)
+  (atom_list : List String)
+  (h1 : (l.map Prod.fst) = atom_list) :
+  l ∈ gen_all_valuations_as_list_of_list_of_pairs atom_list :=
   by
-  induction atoms generalizing V
+  induction atom_list generalizing l
   case nil =>
-    cases V
+    cases l
     case nil =>
       unfold gen_all_valuations_as_list_of_list_of_pairs
       simp only [List.mem_singleton]
-    case cons V_hd V_tl =>
+    case cons l_hd l_tl =>
       simp only [List.map_cons] at h1
       contradiction
   case cons hd tl ih =>
-    cases V
+    cases l
     case nil =>
       simp only [List.map_nil] at h1
       contradiction
-    case cons V_hd V_tl =>
+    case cons l_hd l_tl =>
       simp only [List.map_cons, List.cons.injEq] at h1
       obtain ⟨h1_left, h1_right⟩ := h1
 
       unfold gen_all_valuations_as_list_of_list_of_pairs
       simp only [List.mem_append, List.mem_map]
 
-      cases c1 : V_hd.2
+      cases c1 : l_hd.2
       case false =>
         left
-        apply Exists.intro V_tl
+        apply Exists.intro l_tl
         constructor
         · apply ih
           exact h1_right
@@ -73,7 +73,7 @@ example
           rfl
       case true =>
         right
-        apply Exists.intro V_tl
+        apply Exists.intro l_tl
         constructor
         · apply ih
           exact h1_right
@@ -83,12 +83,12 @@ example
 
 
 example
-  (atoms : List String)
+  (atom_list : List String)
   (l : ValuationAsListOfPairs)
-  (h1 : l ∈ gen_all_valuations_as_list_of_list_of_pairs atoms) :
-  (l.map Prod.fst) = atoms :=
+  (h1 : l ∈ gen_all_valuations_as_list_of_list_of_pairs atom_list) :
+  (l.map Prod.fst) = atom_list :=
   by
-  induction atoms generalizing l
+  induction atom_list generalizing l
   case nil =>
     cases l
     case nil =>
