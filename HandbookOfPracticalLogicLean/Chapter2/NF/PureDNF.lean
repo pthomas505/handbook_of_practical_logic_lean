@@ -1,5 +1,8 @@
-import HandbookOfPracticalLogicLean.Chapter2.DNF.ToDNF
-import HandbookOfPracticalLogicLean.Chapter2.DNF.AllPairs
+import HandbookOfPracticalLogicLean.Chapter2.NF.NF
+import HandbookOfPracticalLogicLean.Chapter2.NF.ToDNF
+import HandbookOfPracticalLogicLean.Chapter2.NF.AllPairs
+import HandbookOfPracticalLogicLean.Chapter2.NF.ListConj.Semantics
+import HandbookOfPracticalLogicLean.Chapter2.NF.ListDisj.Semantics
 
 
 set_option autoImplicit false
@@ -41,10 +44,10 @@ lemma mem_list_mem_pure_dnf_of_nnf_v1_imp_is_constant_or_literal
   (F : Formula_)
   (l : List Formula_)
   (P : Formula_)
-  (h1 : is_nnf_v1 F)
+  (h1 : is_nnf_rec_v1 F)
   (h2 : l ∈ pure_dnf F)
   (h3 : P ∈ l) :
-  is_constant_ind_v1 P ∨ is_literal_ind_v1 P :=
+  is_constant_ind P ∨ is_literal_ind P :=
   by
   induction F generalizing l
   case false_ =>
@@ -56,7 +59,7 @@ lemma mem_list_mem_pure_dnf_of_nnf_v1_imp_is_constant_or_literal
     rewrite [h3]
 
     left
-    apply is_constant_ind_v1.rule_1
+    apply is_constant_ind.rule_1
   case true_ =>
     unfold pure_dnf at h2
     simp only [List.mem_singleton] at h2
@@ -66,7 +69,7 @@ lemma mem_list_mem_pure_dnf_of_nnf_v1_imp_is_constant_or_literal
     rewrite [h3]
 
     left
-    apply is_constant_ind_v1.rule_2
+    apply is_constant_ind.rule_2
   case atom_ X =>
     unfold pure_dnf at h2
     simp only [List.mem_singleton] at h2
@@ -76,7 +79,7 @@ lemma mem_list_mem_pure_dnf_of_nnf_v1_imp_is_constant_or_literal
     rewrite [h3]
 
     right
-    apply is_literal_ind_v1.rule_1
+    apply is_literal_ind.rule_1
   case not_ phi ih =>
     unfold pure_dnf at h2
     simp only [List.mem_singleton] at h2
@@ -88,12 +91,12 @@ lemma mem_list_mem_pure_dnf_of_nnf_v1_imp_is_constant_or_literal
     cases phi
     case atom_ X =>
       right
-      apply is_literal_ind_v1.rule_2
+      apply is_literal_ind.rule_2
     all_goals
-      unfold is_nnf_v1 at h1
+      unfold is_nnf_rec_v1 at h1
       contradiction
   case and_ phi psi phi_ih psi_ih =>
-    unfold is_nnf_v1 at h1
+    unfold is_nnf_rec_v1 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
     unfold pure_dnf at h2
@@ -115,7 +118,7 @@ lemma mem_list_mem_pure_dnf_of_nnf_v1_imp_is_constant_or_literal
       · exact ys_mem
       · exact h3
   case or_ phi psi phi_ih psi_ih =>
-    unfold is_nnf_v1 at h1
+    unfold is_nnf_rec_v1 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
     unfold pure_dnf at h2
@@ -133,47 +136,47 @@ lemma mem_list_mem_pure_dnf_of_nnf_v1_imp_is_constant_or_literal
       · exact h2
       · exact h3
   all_goals
-    unfold is_nnf_v1 at h1
+    unfold is_nnf_rec_v1 at h1
     contradiction
 
 
 lemma is_nnf_v1_imp_pure_dnf_is_ind
   (F : Formula_)
-  (h1 : is_nnf_v1 F) :
+  (h1 : is_nnf_rec_v1 F) :
   is_dnf_ind_v1 (dnf_list_of_list_to_formula (pure_dnf F)) :=
   by
   cases F
   case false_ =>
     unfold pure_dnf
     simp only [dnf_list_of_list_to_formula_singleton]
-    apply is_dnf_ind_v1.rule_2
-    apply is_conj_ind_v1.rule_3
-    apply is_constant_ind_v1.rule_1
+    apply is_dnf_ind_v1.rule_1
+    apply is_conj_ind_v1.rule_1
+    apply is_constant_ind.rule_1
   case true_ =>
     unfold pure_dnf
     simp only [dnf_list_of_list_to_formula_singleton]
-    apply is_dnf_ind_v1.rule_2
-    apply is_conj_ind_v1.rule_3
-    apply is_constant_ind_v1.rule_2
+    apply is_dnf_ind_v1.rule_1
+    apply is_conj_ind_v1.rule_1
+    apply is_constant_ind.rule_2
   case atom_ X =>
     unfold pure_dnf
     simp only [dnf_list_of_list_to_formula_singleton]
-    apply is_dnf_ind_v1.rule_2
-    apply is_conj_ind_v1.rule_4
-    apply is_literal_ind_v1.rule_1
+    apply is_dnf_ind_v1.rule_1
+    apply is_conj_ind_v1.rule_2
+    apply is_literal_ind.rule_1
   case not_ phi =>
     unfold pure_dnf
     simp only [dnf_list_of_list_to_formula_singleton]
     cases phi
     case atom_ X =>
-      apply is_dnf_ind_v1.rule_2
-      apply is_conj_ind_v1.rule_4
-      apply is_literal_ind_v1.rule_2
+      apply is_dnf_ind_v1.rule_1
+      apply is_conj_ind_v1.rule_2
+      apply is_literal_ind.rule_2
     all_goals
-      unfold is_nnf_v1 at h1
+      unfold is_nnf_rec_v1 at h1
       contradiction
   case and_ phi psi =>
-    unfold is_nnf_v1 at h1
+    unfold is_nnf_rec_v1 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
     unfold pure_dnf
@@ -183,7 +186,7 @@ lemma is_nnf_v1_imp_pure_dnf_is_ind
     simp only [List.mem_map] at a1
     obtain ⟨l, a1_left, a1_right⟩ := a1
     rewrite [← a1_right]
-    apply list_conj_of_is_constant_ind_v1_or_is_literal_ind_v1_is_conj_ind_v1
+    apply list_conj_of_list_of_is_constant_ind_or_is_literal_ind_is_conj_ind_v1
     intro P a2
 
     obtain s1 := mem_all_pairs_v4_union_imp_eq_union (pure_dnf phi) (pure_dnf psi) l a1_left
@@ -203,7 +206,7 @@ lemma is_nnf_v1_imp_pure_dnf_is_ind
       · exact ys_mem
       · exact a2
   case or_ phi psi =>
-    unfold is_nnf_v1 at h1
+    unfold is_nnf_rec_v1 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
     unfold pure_dnf
@@ -213,7 +216,7 @@ lemma is_nnf_v1_imp_pure_dnf_is_ind
     simp only [List.mem_map, List.mem_union_iff] at a1
     obtain ⟨l, a1_left, a1_right⟩ := a1
     rewrite [← a1_right]
-    apply list_conj_of_is_constant_ind_v1_or_is_literal_ind_v1_is_conj_ind_v1
+    apply list_conj_of_list_of_is_constant_ind_or_is_literal_ind_is_conj_ind_v1
     intro P a2
 
     cases a1_left
@@ -228,7 +231,7 @@ lemma is_nnf_v1_imp_pure_dnf_is_ind
       · exact a1_left
       · exact a2
   all_goals
-    unfold is_nnf_v1 at h1
+    unfold is_nnf_rec_v1 at h1
     contradiction
 
 
@@ -248,7 +251,7 @@ lemma eval_dnf_list_of_list_to_formula_pure_dnf_eq_eval
     simp only [bool_iff_prop_and]
     rewrite [← phi_ih]
     rewrite [← psi_ih]
-    simp only [eval_list_disj_eq_true_iff_eval_exists_eq_true]
+    simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
     simp only [List.mem_map]
     simp only [mem_all_pairs_v4_union_iff_eq_union]
     constructor
@@ -293,7 +296,7 @@ lemma eval_dnf_list_of_list_to_formula_pure_dnf_eq_eval
     simp only [bool_iff_prop_or]
     rewrite [← phi_ih]
     rewrite [← psi_ih]
-    simp only [eval_list_disj_eq_true_iff_eval_exists_eq_true]
+    simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
     simp only [List.mem_map, List.mem_union_iff]
     constructor
     · intro a1

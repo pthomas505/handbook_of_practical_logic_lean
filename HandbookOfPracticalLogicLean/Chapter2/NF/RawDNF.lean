@@ -1,4 +1,5 @@
-import HandbookOfPracticalLogicLean.Chapter2.DNF.IsDNF_2
+import HandbookOfPracticalLogicLean.Chapter2.Semantics
+import HandbookOfPracticalLogicLean.Chapter2.NF.NF
 
 
 set_option autoImplicit false
@@ -29,63 +30,63 @@ def raw_dnf :
 
 lemma is_dnf_ind_distrib_and
   (P Q : Formula_)
-  (h1 : is_nnf_v1 P)
-  (h2 : is_nnf_v1 Q)
+  (h1 : is_nnf_rec_v1 P)
+  (h2 : is_nnf_rec_v1 Q)
   (h3 : is_dnf_ind_v2 P)
   (h4 : is_dnf_ind_v2 Q) :
   is_dnf_ind_v2 (distrib (and_ P Q)) :=
   by
   induction Q generalizing P
   case or_ T U T_ih U_ih =>
-    unfold is_nnf_v1 at h2
+    unfold is_nnf_rec_v1 at h2
     obtain ⟨h2_left, h2_right⟩ := h2
 
     simp only [distrib]
-    apply is_dnf_ind_v2.rule_1
+    apply is_dnf_ind_v2.rule_2
     · apply T_ih
       · exact h1
       · exact h2_left
       · exact h3
       · cases h4
-        case rule_1 h4_ih_1 h4_ih_2 =>
-          exact h4_ih_1
-        case rule_2 h4_ih =>
+        case rule_1 h4_ih =>
           contradiction
+        case rule_2 h4_ih_1 h4_ih_2 =>
+          exact h4_ih_1
     · apply U_ih
       · exact h1
       · exact h2_right
       · exact h3
       · cases h4
-        case rule_1 h4_ih_1 h4_ih_2 =>
-          exact h4_ih_2
-        case rule_2 h4_ih =>
+        case rule_1 h4_ih =>
           contradiction
+        case rule_2 h4_ih_1 h4_ih_2 =>
+          exact h4_ih_2
   all_goals
     induction P
     case or_ R S R_ih S_ih =>
-      unfold is_nnf_v1 at h1
+      unfold is_nnf_rec_v1 at h1
       obtain ⟨h1_left, h1_right⟩ := h1
 
       simp only [distrib]
-      apply is_dnf_ind_v2.rule_1
+      apply is_dnf_ind_v2.rule_2
       · apply R_ih
         · exact h1_left
         · cases h3
-          case rule_1 h3_ih_1 h3_ih_2 =>
-            exact h3_ih_1
-          case rule_2 h3_ih =>
+          case rule_1 h3_ih =>
             contradiction
+          case rule_2 h3_ih_1 h3_ih_2 =>
+            exact h3_ih_1
       · apply S_ih
         · exact h1_right
         · cases h3
-          case rule_1 h3_ih_1 h3_ih_2 =>
-            exact h3_ih_2
-          case rule_2 h3_ih =>
+          case rule_1 h3_ih =>
             contradiction
+          case rule_2 h3_ih_1 h3_ih_2 =>
+            exact h3_ih_2
     any_goals
       simp only [distrib]
-      apply is_dnf_ind_v2.rule_2
-      apply is_conj_ind_v2.rule_1
+      apply is_dnf_ind_v2.rule_1
+      apply is_conj_ind_v2.rule_3
     any_goals
       cases h3
       cases h4
@@ -94,17 +95,17 @@ lemma is_dnf_ind_distrib_and
 
 lemma is_nnf_v1_distrib_and
   (P Q : Formula_)
-  (h1 : is_nnf_v1 P)
-  (h2 : is_nnf_v1 Q) :
-  is_nnf_v1 (distrib (and_ P Q)) :=
+  (h1 : is_nnf_rec_v1 P)
+  (h2 : is_nnf_rec_v1 Q) :
+  is_nnf_rec_v1 (distrib (and_ P Q)) :=
   by
   induction Q generalizing P
   case or_ T U T_ih U_ih =>
-    unfold is_nnf_v1 at h2
+    unfold is_nnf_rec_v1 at h2
     obtain ⟨h2_left, h2_right⟩ := h2
 
     simp only [distrib]
-    unfold is_nnf_v1
+    unfold is_nnf_rec_v1
     constructor
     · apply T_ih
       · exact h1
@@ -115,11 +116,11 @@ lemma is_nnf_v1_distrib_and
   all_goals
     induction P
     case or_ R S R_ih S_ih =>
-      unfold is_nnf_v1 at h1
+      unfold is_nnf_rec_v1 at h1
       obtain ⟨h1_left, h1_right⟩ := h1
 
       simp only [distrib]
-      unfold is_nnf_v1
+      unfold is_nnf_rec_v1
       constructor
       · apply R_ih
         exact h1_left
@@ -127,18 +128,18 @@ lemma is_nnf_v1_distrib_and
         exact h1_right
     all_goals
       simp only [distrib]
-      unfold is_nnf_v1
+      unfold is_nnf_rec_v1
       exact ⟨h1, h2⟩
 
 
 lemma is_nnf_v1_raw_dnf
   (F : Formula_)
-  (h1 : is_nnf_v1 F) :
-  is_nnf_v1 (raw_dnf F) :=
+  (h1 : is_nnf_rec_v1 F) :
+  is_nnf_rec_v1 (raw_dnf F) :=
   by
   induction F
   case and_ phi psi phi_ih psi_ih =>
-    unfold is_nnf_v1 at h1
+    unfold is_nnf_rec_v1 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
     unfold raw_dnf
@@ -148,11 +149,11 @@ lemma is_nnf_v1_raw_dnf
     · apply psi_ih
       exact h1_right
   case or_ phi psi phi_ih psi_ih =>
-    unfold is_nnf_v1 at h1
+    unfold is_nnf_rec_v1 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
     unfold raw_dnf
-    unfold is_nnf_v1
+    unfold is_nnf_rec_v1
     constructor
     · apply phi_ih
       exact h1_left
@@ -165,37 +166,37 @@ lemma is_nnf_v1_raw_dnf
 
 example
   (F : Formula_)
-  (h1 : is_nnf_v1 F) :
+  (h1 : is_nnf_rec_v1 F) :
   is_dnf_ind_v2 (raw_dnf F) :=
   by
   induction F
   case false_ =>
     unfold raw_dnf
-    apply is_dnf_ind_v2.rule_2
-    apply is_conj_ind_v2.rule_2
-    exact is_constant_ind_v2.rule_1
+    apply is_dnf_ind_v2.rule_1
+    apply is_conj_ind_v2.rule_1
+    exact is_constant_ind.rule_1
   case true_ =>
     unfold raw_dnf
-    apply is_dnf_ind_v2.rule_2
-    apply is_conj_ind_v2.rule_2
-    exact is_constant_ind_v2.rule_2
+    apply is_dnf_ind_v2.rule_1
+    apply is_conj_ind_v2.rule_1
+    exact is_constant_ind.rule_2
   case atom_ X =>
     unfold raw_dnf
-    apply is_dnf_ind_v2.rule_2
-    apply is_conj_ind_v2.rule_3
-    apply is_literal_ind_v2.rule_1
+    apply is_dnf_ind_v2.rule_1
+    apply is_conj_ind_v2.rule_2
+    apply is_literal_ind.rule_1
   case not_ phi ih =>
     unfold raw_dnf
     cases phi
     case atom_ X =>
-      apply is_dnf_ind_v2.rule_2
-      apply is_conj_ind_v2.rule_3
-      apply is_literal_ind_v2.rule_2
+      apply is_dnf_ind_v2.rule_1
+      apply is_conj_ind_v2.rule_2
+      apply is_literal_ind.rule_2
     all_goals
-      unfold is_nnf_v1 at h1
+      unfold is_nnf_rec_v1 at h1
       contradiction
   case and_ P Q P_ih Q_ih =>
-    unfold is_nnf_v1 at h1
+    unfold is_nnf_rec_v1 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
     unfold raw_dnf
@@ -209,17 +210,17 @@ example
     · exact P_ih
     · exact Q_ih
   case or_ P Q P_ih Q_ih =>
-    unfold is_nnf_v1 at h1
+    unfold is_nnf_rec_v1 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
     unfold raw_dnf
-    apply is_dnf_ind_v2.rule_1
+    apply is_dnf_ind_v2.rule_2
     · apply P_ih
       exact h1_left
     · apply Q_ih
       exact h1_right
   all_goals
-    simp only [is_nnf_v1] at h1
+    simp only [is_nnf_rec_v1] at h1
 
 
 -------------------------------------------------------------------------------

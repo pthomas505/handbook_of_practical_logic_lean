@@ -1,5 +1,5 @@
-import HandbookOfPracticalLogicLean.Chapter2.DNF.ListConj
-import HandbookOfPracticalLogicLean.Chapter2.CNF.IsCNF_2
+import HandbookOfPracticalLogicLean.Chapter2.NF.ListConj.Semantics
+
 
 import Mathlib.Tactic
 
@@ -24,7 +24,7 @@ example
   simp only [eval]
   simp only [bool_iff_prop_iff]
   simp only [bool_iff_prop_or]
-  simp only [eval_list_conj_eq_true_iff_eval_all_eq_true]
+  simp only [eval_list_conj_eq_true_iff_forall_eval_eq_true]
   simp only [List.mem_map]
   constructor
   · intro a1 F a2

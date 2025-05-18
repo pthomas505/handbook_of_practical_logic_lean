@@ -1,4 +1,5 @@
-import HandbookOfPracticalLogicLean.Chapter2.DNF.PureDNFSimp_1
+import HandbookOfPracticalLogicLean.Chapter2.NF.PureDNFSimp_1
+import HandbookOfPracticalLogicLean.Chapter2.NF.NNF.NNF_1
 
 
 set_option autoImplicit false
@@ -56,7 +57,7 @@ example
   eval V (list_disj xs) = true ↔
     eval V (list_disj (List.filter (fun (Q : Formula_) => Q = P ∨ ¬ (eval V Q = true → eval V P = true)) xs)) = true :=
   by
-  simp only [eval_list_disj_eq_true_iff_eval_exists_eq_true]
+  simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_filter]
   simp only [decide_eq_true_iff]
   constructor
@@ -111,7 +112,7 @@ example
     eval V (dnf_list_of_list_to_formula (List.filter (fun (zs : List Formula_) => ¬ List.SSubset xs zs) zss)) = true :=
   by
   unfold dnf_list_of_list_to_formula
-  simp only [eval_list_disj_eq_true_iff_eval_exists_eq_true]
+  simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_map, List.mem_filter]
   simp only [decide_eq_true_iff]
   constructor
@@ -149,7 +150,7 @@ example
   eval V (list_disj xs) = true ↔
     eval V (list_disj (List.filter (fun (R : Formula_) => R = P ∨ R = Q ∨ (¬ (eval V R = true → eval V P = true) ∧ ¬ (eval V R = true → eval V Q = true))) xs)) = true :=
   by
-  simp only [eval_list_disj_eq_true_iff_eval_exists_eq_true]
+  simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_filter]
   simp only [decide_eq_true_iff]
   constructor
@@ -313,7 +314,7 @@ example
   (xs : List Formula_) :
   (eval V (list_disj xs) = true) ↔ eval V (list_disj (List.dedup xs)) = true :=
   by
-  simp only [eval_list_disj_eq_true_iff_eval_exists_eq_true]
+  simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_dedup]
 
 
@@ -341,7 +342,7 @@ lemma eval_pure_dnf_simp_2_left
   eval V (dnf_list_of_list_to_formula (pure_dnf_simp_2 xss)) = true :=
   by
   unfold dnf_list_of_list_to_formula at h1
-  simp only [eval_list_disj_eq_true_iff_eval_exists_eq_true] at h1
+  simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true] at h1
   obtain ⟨F, h1_left, h1_right⟩ := h1
   simp only [List.mem_map] at h1_left
   obtain ⟨zs, h1_left_left, h1_left_right⟩ := h1_left
@@ -349,7 +350,7 @@ lemma eval_pure_dnf_simp_2_left
 
   unfold pure_dnf_simp_2
   unfold dnf_list_of_list_to_formula
-  simp only [eval_list_disj_eq_true_iff_eval_exists_eq_true]
+  simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_map, List.mem_filter]
   simp only [decide_eq_true_iff]
 
@@ -384,12 +385,12 @@ lemma eval_dnf_list_of_list_to_formula_subset
   eval V (dnf_list_of_list_to_formula yss) = true :=
   by
   unfold dnf_list_of_list_to_formula at h2
-  simp only [eval_list_disj_eq_true_iff_eval_exists_eq_true] at h2
+  simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true] at h2
   simp only [List.mem_map] at h2
   obtain ⟨F, ⟨xs, h2_left_left, h2_left_right⟩, h2_right⟩ := h2
 
   unfold dnf_list_of_list_to_formula
-  simp only [eval_list_disj_eq_true_iff_eval_exists_eq_true]
+  simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_map]
   apply Exists.intro F
   constructor
@@ -486,19 +487,19 @@ example
     unfold dnf_list_of_list_to_formula
     simp only [List.map_nil]
     unfold list_disj
-    apply is_dnf_ind_v1.rule_2
-    apply is_conj_ind_v1.rule_3
-    exact is_constant_ind_v1.rule_1
+    apply is_dnf_ind_v1.rule_1
+    apply is_conj_ind_v1.rule_1
+    exact is_constant_ind.rule_1
   case pos c1 c2 =>
     unfold dnf_list_of_list_to_formula
     simp only [List.map_cons, List.map_nil]
     unfold list_conj
     unfold list_disj
-    apply is_dnf_ind_v1.rule_2
-    apply is_conj_ind_v1.rule_3
-    exact is_constant_ind_v1.rule_2
+    apply is_dnf_ind_v1.rule_1
+    apply is_conj_ind_v1.rule_1
+    exact is_constant_ind.rule_2
   case neg c1 c2 =>
     simp only
     apply pure_dnf_simp_2_is_dnf_ind_v1
     apply pure_dnf_simp_1_is_dnf_ind_v1
-    apply to_nnf_v1_is_nnf_v1
+    apply to_nnf_v1_is_nnf_rec_v1

@@ -1,7 +1,9 @@
 import MathlibExtraLean.List
 
 import HandbookOfPracticalLogicLean.Chapter2.TruthTable
-import HandbookOfPracticalLogicLean.Chapter2.DNF.ListDisj
+import HandbookOfPracticalLogicLean.Chapter2.NF.MkLits
+import HandbookOfPracticalLogicLean.Chapter2.NF.ListDisj.IsDNF
+import HandbookOfPracticalLogicLean.Chapter2.NF.ListDisj.Semantics
 
 
 set_option autoImplicit false
@@ -55,7 +57,7 @@ lemma eval_eq_true_imp_eval_to_dnf_eq_true
   eval V (to_dnf init F) = true :=
   by
   unfold to_dnf
-  apply eval_exists_eq_true_imp_eval_list_disj_eq_true
+  apply exists_eval_eq_true_imp_eval_list_disj_eq_true
   simp only [List.mem_map]
   apply Exists.intro (mk_lits F.atom_list.dedup V)
   constructor
@@ -80,7 +82,7 @@ lemma eval_to_dnf_eq_true_imp_eval_eq_true
   eval V F = true :=
   by
   unfold to_dnf at h1
-  rewrite [eval_list_disj_eq_true_iff_eval_exists_eq_true] at h1
+  rewrite [eval_list_disj_eq_true_iff_exists_eval_eq_true] at h1
   obtain ⟨F', ⟨h1_left, h1_right⟩⟩ := h1
   unfold gen_all_satisfying_valuations_as_list_of_total_functions at h1_left
   simp only [Bool.decide_eq_true, List.mem_map, List.mem_filter] at h1_left

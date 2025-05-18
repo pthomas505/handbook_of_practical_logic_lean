@@ -1,4 +1,6 @@
-import HandbookOfPracticalLogicLean.Chapter2.DNF.PureDNF
+import HandbookOfPracticalLogicLean.Chapter2.NF.NNF.Negate
+import HandbookOfPracticalLogicLean.Chapter2.NF.NF
+import HandbookOfPracticalLogicLean.Chapter2.NF.PureDNF
 
 
 set_option autoImplicit false
@@ -10,7 +12,7 @@ open Formula_
 def has_complementary
   (l : List Formula_) :
   Prop :=
-  ∃ (P : Formula_), P ∈ l ∧ P.is_literal ∧ ∃ (Q : Formula_), Q ∈ l ∧ Q.is_literal ∧ negate_literal Q = P
+  ∃ (P : Formula_), P ∈ l ∧ P.is_literal_rec ∧ ∃ (Q : Formula_), Q ∈ l ∧ Q.is_literal_rec ∧ negate_literal Q = P
 
 instance
   (l : List Formula_) :
@@ -151,12 +153,12 @@ lemma has_complementary_imp_eval_list_conj_false
           obtain s1 := negate_literal_not_eq_self hd P_lit
           contradiction
         case inr Q_mem =>
-          simp only [eval_list_conj_eq_true_iff_eval_all_eq_true]
+          simp only [eval_list_conj_eq_true_iff_forall_eval_eq_true]
           intro a1
 
           rewrite [← P_mem] at a1
           rewrite [← eq] at a1
-          rewrite [eval_negate_literal V Q Q_lit] at a1
+          rewrite [eval_negate_literal_eq_not_eval_literal V Q Q_lit] at a1
           simp only [bool_iff_prop_not] at a1
 
           intro contra
@@ -167,14 +169,14 @@ lemma has_complementary_imp_eval_list_conj_false
       case inr P_mem =>
         cases Q_mem
         case inl Q_mem =>
-          simp only [eval_list_conj_eq_true_iff_eval_all_eq_true]
+          simp only [eval_list_conj_eq_true_iff_forall_eval_eq_true]
           intro a1
 
           rewrite [← Q_mem] at a1
           have s1 : ¬ eval V P = true :=
           by
             rewrite [← eq]
-            rewrite [eval_negate_literal V Q Q_lit]
+            rewrite [eval_negate_literal_eq_not_eval_literal V Q Q_lit]
             simp only [bool_iff_prop_not]
             intro contra
             contradiction
@@ -199,7 +201,7 @@ lemma eval_dnf_list_of_list_to_formula_filter_not_has_complementary
     eval V (dnf_list_of_list_to_formula ll) :=
   by
   unfold dnf_list_of_list_to_formula
-  simp only [eval_list_disj_eq_true_iff_eval_exists_eq_true]
+  simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_map, List.mem_filter]
   constructor
   · intro a1
@@ -244,14 +246,14 @@ example
   simp only [List.map_cons, List.map_nil] at h1
   unfold list_disj at h1
   cases h1
-  case rule_1 ih_1 ih_2 =>
+  case rule_1 ih =>
+    contradiction
+  case rule_2 ih_1 ih_2 =>
     unfold dnf_list_of_list_to_formula
     simp only [List.map_cons, List.map_nil]
     unfold list_disj
-    apply is_dnf_ind_v1.rule_2
+    apply is_dnf_ind_v1.rule_1
     exact ih_1
-  case rule_2 ih =>
-    contradiction
 
 
 example
@@ -263,12 +265,12 @@ example
   simp only [List.map_cons, List.map_nil] at h1
   unfold list_disj at h1
   cases h1
-  case rule_1 ih_1 ih_2 =>
+  case rule_1 ih =>
+    contradiction
+  case rule_2 ih_1 ih_2 =>
     unfold dnf_list_of_list_to_formula
     simp only [List.map_cons, List.map_nil]
     exact ih_2
-  case rule_2 ih =>
-    contradiction
 
 
 lemma is_dnf_ind_v1_dnf_list_of_list_to_formula_cons_left
@@ -280,7 +282,7 @@ lemma is_dnf_ind_v1_dnf_list_of_list_to_formula_cons_left
   unfold dnf_list_of_list_to_formula at h1
   simp only [List.map_cons] at h1
   unfold dnf_list_of_list_to_formula
-  apply is_dnf_ind_v1_list_disj_cons_left (list_conj xs)
+  apply list_disj_cons_is_dnf_ind_v1_imp_list_disj_tail_is_dnf_ind_v1 (list_conj xs)
   exact h1
 
 
@@ -294,7 +296,7 @@ lemma is_dnf_ind_v1_dnf_list_of_list_to_formula_cons_right
   unfold dnf_list_of_list_to_formula at h2
 
   unfold dnf_list_of_list_to_formula
-  apply is_dnf_ind_v1_list_disj_cons_right
+  apply hd_is_conj_ind_v1_and_list_disj_tail_is_dnf_ind_v1_imp_list_disj_cons_is_dnf_ind_v1
   · exact h1
   · exact h2
 
@@ -325,15 +327,15 @@ lemma is_dnf_ind_v1_dnf_list_of_list_to_formula_filter
         simp only [List.map_cons] at h1
         unfold list_disj at h1
         cases h1
-        case rule_1 ih_1 ih_2 =>
+        case rule_1 ih_1 =>
+          contradiction
+        case rule_2 ih_1 ih_2 =>
           simp only [List.map_cons]
           apply is_dnf_ind_v1_dnf_list_of_list_to_formula_cons_right
           · exact ih_1
           · apply ih
             simp only [List.map_cons]
             exact ih_2
-        case rule_2 ih_1 =>
-          contradiction
     case neg c1 =>
       apply ih
       exact is_dnf_ind_v1_dnf_list_of_list_to_formula_cons_left hd tl h1
@@ -341,7 +343,7 @@ lemma is_dnf_ind_v1_dnf_list_of_list_to_formula_filter
 
 lemma pure_dnf_simp_1_is_dnf_ind_v1
   (F : Formula_)
-  (h1 : is_nnf_v1 F) :
+  (h1 : is_nnf_rec_v1 F) :
   is_dnf_ind_v1 (dnf_list_of_list_to_formula (pure_dnf_simp_1 F)) :=
   by
   unfold pure_dnf_simp_1
