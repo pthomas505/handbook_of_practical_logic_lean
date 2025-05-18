@@ -1,4 +1,4 @@
-import HandbookOfPracticalLogicLean.Chapter2.NF.PureDNFSimp_1
+import HandbookOfPracticalLogicLean.Chapter2.NF.DNF.PureDNFSimp_1
 import HandbookOfPracticalLogicLean.Chapter2.NF.NNF.NNF_1
 
 
