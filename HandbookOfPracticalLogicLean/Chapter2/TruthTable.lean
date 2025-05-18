@@ -40,7 +40,49 @@ example
   (h1 : V ∈ all_valuations_as_set_of_list_of_pairs atoms) :
   V ∈ gen_all_valuations_as_list_of_list_of_pairs atoms :=
   by
-  sorry
+  induction atoms generalizing V
+  case nil =>
+    unfold all_valuations_as_set_of_list_of_pairs at h1
+    simp only [List.map_eq_nil_iff] at h1
+
+    unfold gen_all_valuations_as_list_of_list_of_pairs
+    simp only [List.mem_singleton]
+    exact h1
+  case cons hd tl ih =>
+    unfold all_valuations_as_set_of_list_of_pairs at h1
+
+    unfold all_valuations_as_set_of_list_of_pairs at ih
+
+    simp only [gen_all_valuations_as_list_of_list_of_pairs]
+    simp only [List.mem_append, List.mem_map]
+    cases V
+    case nil =>
+      simp only [Set.mem_setOf_eq, List.map_nil, List.nil_eq] at h1
+      contradiction
+    case cons V_hd V_tl =>
+      simp only [Set.mem_setOf_eq, List.map_cons, List.cons.injEq] at h1
+      obtain ⟨h1_left, h1_right⟩ := h1
+
+      simp only [Set.mem_setOf_eq] at ih
+      cases c1 : V_hd.2
+      case false =>
+        left
+        apply Exists.intro V_tl
+        constructor
+        · apply ih
+          exact h1_right
+        · rewrite [← h1_left]
+          rewrite [← c1]
+          rfl
+      case true =>
+        right
+        apply Exists.intro V_tl
+        constructor
+        · apply ih
+          exact h1_right
+        · rewrite [← h1_left]
+          rewrite [← c1]
+          rfl
 
 
 example
