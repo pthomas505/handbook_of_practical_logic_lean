@@ -1,12 +1,7 @@
 import MathlibExtraLean.List
 
-import HandbookOfPracticalLogicLean.Chapter2.Formula
-
 
 set_option autoImplicit false
-
-
-open Formula_
 
 
 /-
