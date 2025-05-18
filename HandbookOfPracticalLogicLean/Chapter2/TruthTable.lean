@@ -402,12 +402,12 @@ lemma mem_zip_gen_all_valuations_as_list_of_total_functions_imp_eval_eq
 -------------------------------------------------------------------------------
 
 
-def find_valuation (f : ValuationAsListOfPairs → Bool) :
+def find_valuation (pred : ValuationAsListOfPairs → Bool) :
   List String → ValuationAsListOfPairs → Option ValuationAsListOfPairs
-| [], v => if f v then some v else none
+| [], v => if pred v then some v else none
 | hd :: tl, v =>
-  find_valuation f tl ((hd, false) :: v) <|>
-  find_valuation f tl ((hd, true) :: v)
+  find_valuation pred tl ((hd, false) :: v) <|>
+  find_valuation pred tl ((hd, true) :: v)
 
 #eval find_valuation (fun (v : List _) => ("P", true) ∈ v ∧ ("Q", false) ∈ v) ["P", "Q"] []
 
