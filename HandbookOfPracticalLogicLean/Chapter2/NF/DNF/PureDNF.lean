@@ -1,6 +1,7 @@
+import MathlibExtraLean.AllPairs
+
 import HandbookOfPracticalLogicLean.Chapter2.NF.NF
 import HandbookOfPracticalLogicLean.Chapter2.NF.DNF.ToDNF
-import HandbookOfPracticalLogicLean.Chapter2.NF.AllPairs
 import HandbookOfPracticalLogicLean.Chapter2.NF.ListConj.Semantics
 import HandbookOfPracticalLogicLean.Chapter2.NF.ListDisj.Semantics
 
