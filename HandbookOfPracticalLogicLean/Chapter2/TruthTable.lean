@@ -159,6 +159,18 @@ example
   sorry
 
 
+example
+  (init : String → Bool)
+  (atom_list : List String)
+  (V : ValuationAsTotalFunction)
+  (X : String)
+  (h1 : V ∈ gen_all_valuations_as_list_of_total_functions init atom_list)
+  (h2 : X ∉ atom_list) :
+  V X = init X :=
+  by
+  sorry
+
+
 -------------------------------------------------------------------------------
 
 
@@ -202,18 +214,6 @@ lemma gen_all_valuations_as_list_of_list_of_pairs_is_complete
 
 
 -------------------------------------------------------------------------------
-
-
-example
-  (init : String → Bool)
-  (atom_list : List String)
-  (V : ValuationAsTotalFunction)
-  (X : String)
-  (h1 : V ∈ gen_all_valuations_as_list_of_total_functions init atom_list)
-  (h2 : X ∉ atom_list) :
-  V X = init X :=
-  by
-  sorry
 
 
 lemma gen_all_valuations_as_list_of_total_functions_is_complete
