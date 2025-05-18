@@ -29,7 +29,7 @@ def gen_all_valuations_as_list_of_list_of_pairs :
 
 
 /--
-  `gen_all_valuations_as_list_of_total_functions init atoms` := All of the functions from strings to booleans that map every string not in `atoms` to the same value as `init`.
+  `gen_all_valuations_as_list_of_total_functions init atoms` := All of the functions from strings to booleans that map the strings not in `atoms` to the same values as `init`.
 -/
 def gen_all_valuations_as_list_of_total_functions
   (init : ValuationAsTotalFunction) :
