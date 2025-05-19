@@ -66,7 +66,7 @@ lemma eval_eq_true_imp_eval_to_dnf_eq_true
     · unfold gen_all_satisfying_valuations_as_list_of_total_functions
       simp only [List.mem_filter]
       constructor
-      · apply gen_all_valuations_as_list_of_total_functions_is_complete
+      · apply mem_all_valuations_as_set_of_total_functions_imp_mem_gen_all_valuations_as_list_of_total_functions
         exact h1
       · simp only [Bool.decide_eq_true]
         exact h2
