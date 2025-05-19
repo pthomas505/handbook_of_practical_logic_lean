@@ -273,6 +273,22 @@ lemma mem_all_valuations_as_set_of_total_functions_imp_mem_gen_all_valuations_as
             · exact ⟨c2, c3⟩
 
 
+lemma mem_gen_all_valuations_as_list_of_total_functions_iff_mem_all_valuations_as_set_of_total_functions
+  (init : String → Bool)
+  (atom_list : List String)
+  (V : ValuationAsTotalFunction) :
+  V ∈ gen_all_valuations_as_list_of_total_functions init atom_list ↔ V ∈ all_valuations_as_set_of_total_functions init atom_list :=
+  by
+  unfold all_valuations_as_set_of_total_functions
+  simp only [Set.mem_setOf_eq]
+  constructor
+  · intro a1 X a2
+    apply mem_gen_all_valuations_as_list_of_total_functions_imp_mem_all_valuations_as_set_of_total_functions init atom_list
+    · exact a1
+    · exact a2
+  · apply mem_all_valuations_as_set_of_total_functions_imp_mem_gen_all_valuations_as_list_of_total_functions
+
+
 -------------------------------------------------------------------------------
 
 
