@@ -366,6 +366,9 @@ lemma gen_all_valuations_as_list_of_total_functions_length_cons
   apply gen_all_valuations_as_list_of_total_functions_length_pos
 
 
+-------------------------------------------------------------------------------
+
+
 lemma gen_all_valuations_as_list_of_total_functions_length_eq
   (init_1 init_2 : String → Bool)
   (atom_list : List String) :
