@@ -488,16 +488,8 @@ lemma gen_all_valuations_as_list_of_total_functions_length_pos
   (atom_list : List String) :
   0 < (gen_all_valuations_as_list_of_total_functions init atom_list).length :=
   by
-  induction atom_list
-  case nil =>
-    unfold gen_all_valuations_as_list_of_total_functions
-    simp only [List.length_singleton]
-    exact Nat.one_pos
-  case cons hd tl ih =>
-    unfold gen_all_valuations_as_list_of_total_functions
-    simp only [List.length_append, List.length_map]
-    apply Nat.add_pos_left
-    exact ih
+  simp only [gen_all_valuations_as_list_of_total_functions_length]
+  exact Nat.two_pow_pos atom_list.length
 
 
 lemma gen_all_valuations_as_list_of_total_functions_length_cons
@@ -510,25 +502,6 @@ lemma gen_all_valuations_as_list_of_total_functions_length_cons
   simp only [List.length_append, List.length_map]
   apply Nat.lt_add_of_pos_left
   apply gen_all_valuations_as_list_of_total_functions_length_pos
-
-
--------------------------------------------------------------------------------
-
-
-lemma gen_all_valuations_as_list_of_total_functions_length_eq
-  (init_1 init_2 : String → Bool)
-  (atom_list : List String) :
-  (gen_all_valuations_as_list_of_total_functions init_1 atom_list).length = (gen_all_valuations_as_list_of_total_functions init_2 atom_list).length :=
-  by
-  induction atom_list
-  case nil =>
-    unfold gen_all_valuations_as_list_of_total_functions
-    simp only [List.length_singleton]
-  case cons hd tl ih =>
-    unfold gen_all_valuations_as_list_of_total_functions
-    simp only [List.length_append, List.length_map]
-    rewrite [ih]
-    rfl
 
 
 -------------------------------------------------------------------------------
@@ -594,7 +567,7 @@ lemma gen_all_valuations_as_list_of_total_functions_eq_on_atom_list
             · exact h1_left
             · exact h2
     · simp only [List.length_map]
-      apply gen_all_valuations_as_list_of_total_functions_length_eq
+      simp only [gen_all_valuations_as_list_of_total_functions_length]
 
 
 lemma mem_zip_gen_all_valuations_as_list_of_total_functions_imp_eval_eq

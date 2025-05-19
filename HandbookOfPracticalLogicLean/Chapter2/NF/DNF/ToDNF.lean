@@ -108,7 +108,7 @@ example
   (gen_all_valuations_as_list_of_total_functions init_2 atom_list) :=
   by
   apply List.length_eq_and_mem_zip_imp_fun_eq_imp_map_eq
-  · apply gen_all_valuations_as_list_of_total_functions_length_eq
+  · simp only [gen_all_valuations_as_list_of_total_functions_length]
   · intro p a1
     apply eq_on_mem_imp_mk_lits_eq
     intro X a2
@@ -127,7 +127,7 @@ lemma aux_4
   by
   apply List.length_eq_and_mem_zip_imp_fun_eq_imp_map_eq
   · apply List.pred_eq_all_mem_zip_imp_filter_length_eq
-    · apply gen_all_valuations_as_list_of_total_functions_length_eq
+    · simp only [gen_all_valuations_as_list_of_total_functions_length]
     · intro p a1
       apply theorem_2_2
       intro X a2
