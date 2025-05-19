@@ -34,7 +34,7 @@ def all_valuations_as_set_of_list_of_pairs
   { l : ValuationAsListOfPairs | (l.map Prod.fst) = atom_list }
 
 
-example
+lemma mem_all_valuations_as_set_of_list_of_pairs_imp_mem_gen_all_valuations_as_list_of_list_of_pairs
   (l : ValuationAsListOfPairs)
   (atom_list : List String)
   (h1 : (l.map Prod.fst) = atom_list) :
@@ -82,7 +82,7 @@ example
           rfl
 
 
-example
+lemma mem_gen_all_valuations_as_list_of_list_of_pairs_imp_mem_all_valuations_as_set_of_list_of_pairs
   (atom_list : List String)
   (l : ValuationAsListOfPairs)
   (h1 : l ∈ gen_all_valuations_as_list_of_list_of_pairs atom_list) :
@@ -122,6 +122,18 @@ example
           · rewrite [← tl_eq]
             apply ih
             exact h1_left
+
+
+lemma mem_gen_all_valuations_as_list_of_list_of_pairs_iff_mem_all_valuations_as_set_of_list_of_pairs
+  (atom_list : List String)
+  (l : ValuationAsListOfPairs) :
+  l ∈ gen_all_valuations_as_list_of_list_of_pairs atom_list ↔ l ∈ all_valuations_as_set_of_list_of_pairs atom_list :=
+  by
+  unfold all_valuations_as_set_of_list_of_pairs
+  simp only [Set.mem_setOf_eq]
+  constructor
+  · apply mem_gen_all_valuations_as_list_of_list_of_pairs_imp_mem_all_valuations_as_set_of_list_of_pairs
+  · apply mem_all_valuations_as_set_of_list_of_pairs_imp_mem_gen_all_valuations_as_list_of_list_of_pairs
 
 
 -------------------------------------------------------------------------------
