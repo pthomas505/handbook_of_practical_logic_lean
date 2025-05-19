@@ -447,7 +447,23 @@ example
 -------------------------------------------------------------------------------
 
 
-example
+lemma gen_all_valuations_as_list_of_list_of_pairs_length
+  (atom_list : List String) :
+  (gen_all_valuations_as_list_of_list_of_pairs atom_list).length = 2 ^ atom_list.length :=
+  by
+  induction atom_list
+  case nil =>
+    unfold gen_all_valuations_as_list_of_list_of_pairs
+    simp only [List.length_singleton, List.length_nil, pow_zero]
+  case cons hd tl ih =>
+    unfold gen_all_valuations_as_list_of_list_of_pairs
+    simp only [List.length_append, List.length_map, List.length_cons]
+    simp only [Nat.two_pow_succ]
+    rewrite [ih]
+    rfl
+
+
+lemma gen_all_valuations_as_list_of_total_functions_length
   (init : String → Bool)
   (atom_list : List String) :
   (gen_all_valuations_as_list_of_total_functions init atom_list).length = 2 ^ atom_list.length :=
