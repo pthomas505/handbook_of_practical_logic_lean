@@ -483,30 +483,6 @@ lemma gen_all_valuations_as_list_of_total_functions_length
 -------------------------------------------------------------------------------
 
 
-lemma gen_all_valuations_as_list_of_total_functions_length_pos
-  (init : String → Bool)
-  (atom_list : List String) :
-  0 < (gen_all_valuations_as_list_of_total_functions init atom_list).length :=
-  by
-  simp only [gen_all_valuations_as_list_of_total_functions_length]
-  exact Nat.two_pow_pos atom_list.length
-
-
-lemma gen_all_valuations_as_list_of_total_functions_length_cons
-  (init : String → Bool)
-  (X : String)
-  (atom_list : List String) :
-  (gen_all_valuations_as_list_of_total_functions init atom_list).length < (gen_all_valuations_as_list_of_total_functions init (X :: atom_list)).length :=
-  by
-  conv => right; unfold gen_all_valuations_as_list_of_total_functions
-  simp only [List.length_append, List.length_map]
-  apply Nat.lt_add_of_pos_left
-  apply gen_all_valuations_as_list_of_total_functions_length_pos
-
-
--------------------------------------------------------------------------------
-
-
 lemma gen_all_valuations_as_list_of_total_functions_eq_on_atom_list
   (init_1 init_2 : ValuationAsTotalFunction)
   (atom_list : List String)
