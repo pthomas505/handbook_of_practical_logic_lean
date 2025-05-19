@@ -142,6 +142,48 @@ lemma mem_gen_all_valuations_as_list_of_list_of_pairs_iff_mem_all_valuations_as_
 -------------------------------------------------------------------------------
 
 
+lemma gen_all_valuations_as_list_of_list_of_pairs_is_complete
+  (atom_list : List String)
+  (f : String → Bool) :
+  Function.toListOfPairs atom_list f ∈ gen_all_valuations_as_list_of_list_of_pairs atom_list :=
+  by
+  induction atom_list
+  case nil =>
+    unfold Function.toListOfPairs
+    unfold gen_all_valuations_as_list_of_list_of_pairs
+    simp only [List.map_nil, List.mem_singleton]
+  case cons hd tl ih =>
+    unfold Function.toListOfPairs at ih
+
+    unfold Function.toListOfPairs
+    unfold gen_all_valuations_as_list_of_list_of_pairs
+    simp only [List.map_cons, List.mem_append, List.mem_map, List.cons.injEq, Prod.mk.injEq]
+    cases f hd
+    case false =>
+      left
+      apply Exists.intro (List.map (fun x => (x, f x)) tl)
+      constructor
+      · exact ih
+      · constructor
+        · constructor
+          · exact trivial
+          · rfl
+        · rfl
+    case true =>
+      right
+      apply Exists.intro (List.map (fun x => (x, f x)) tl)
+      constructor
+      · exact ih
+      · constructor
+        · constructor
+          · exact trivial
+          · rfl
+        · rfl
+
+
+-------------------------------------------------------------------------------
+
+
 /--
   `gen_all_valuations_as_list_of_total_functions init atom_list` := A list of all of the functions from strings to booleans that are identical to the function `init` for every string not in `atom_list`.
 -/
@@ -290,48 +332,6 @@ lemma mem_gen_all_valuations_as_list_of_total_functions_iff_mem_all_valuations_a
     · exact a1
     · exact a2
   · apply mem_all_valuations_as_set_of_total_functions_imp_mem_gen_all_valuations_as_list_of_total_functions
-
-
--------------------------------------------------------------------------------
-
-
-lemma gen_all_valuations_as_list_of_list_of_pairs_is_complete
-  (atom_list : List String)
-  (f : String → Bool) :
-  Function.toListOfPairs atom_list f ∈ gen_all_valuations_as_list_of_list_of_pairs atom_list :=
-  by
-  induction atom_list
-  case nil =>
-    unfold Function.toListOfPairs
-    unfold gen_all_valuations_as_list_of_list_of_pairs
-    simp only [List.map_nil, List.mem_singleton]
-  case cons hd tl ih =>
-    unfold Function.toListOfPairs at ih
-
-    unfold Function.toListOfPairs
-    unfold gen_all_valuations_as_list_of_list_of_pairs
-    simp only [List.map_cons, List.mem_append, List.mem_map, List.cons.injEq, Prod.mk.injEq]
-    cases f hd
-    case false =>
-      left
-      apply Exists.intro (List.map (fun x => (x, f x)) tl)
-      constructor
-      · exact ih
-      · constructor
-        · constructor
-          · exact trivial
-          · rfl
-        · rfl
-    case true =>
-      right
-      apply Exists.intro (List.map (fun x => (x, f x)) tl)
-      constructor
-      · exact ih
-      · constructor
-        · constructor
-          · exact trivial
-          · rfl
-        · rfl
 
 
 -------------------------------------------------------------------------------
