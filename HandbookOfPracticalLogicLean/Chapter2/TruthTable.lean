@@ -149,6 +149,78 @@ def all_valuations_as_set_of_total_functions
   { l : ValuationAsTotalFunction | ∀ (X : String), X ∉ atom_list → l X = init X }
 
 
+lemma gen_all_valuations_as_list_of_total_functions_is_complete
+  (init : String → Bool)
+  (atom_list : List String)
+  (V : ValuationAsTotalFunction)
+  (h1 : ∀ (X : String), X ∉ atom_list → V X = init X) :
+  V ∈ gen_all_valuations_as_list_of_total_functions init atom_list :=
+  by
+  induction atom_list generalizing V
+  case nil =>
+    unfold gen_all_valuations_as_list_of_total_functions
+    simp only [List.mem_singleton]
+    funext X
+    apply h1
+    simp only [List.not_mem_nil]
+    intro contra
+    exact contra
+  case cons hd tl ih =>
+    simp only [List.mem_cons, not_or] at h1
+
+    unfold gen_all_valuations_as_list_of_total_functions
+    simp only [List.mem_append, List.mem_map]
+    cases c1 : V hd
+    case false =>
+      left
+      apply Exists.intro (fun (X : String) => if X ∈ tl then V X else init X)
+      constructor
+      · apply ih
+        intro X a2
+        split_ifs
+        rfl
+      · funext X
+        unfold Function.updateITE
+        split_ifs
+        case pos c2 =>
+          rewrite [← c1]
+          rewrite [c2]
+          rfl
+        case neg c2 =>
+          simp only
+          split_ifs
+          case pos c3 =>
+            rfl
+          case neg c3 =>
+            rewrite [h1]
+            · rfl
+            · exact ⟨c2, c3⟩
+    case true =>
+      right
+      apply Exists.intro (fun (X : String) => if X ∈ tl then V X else init X)
+      constructor
+      · apply ih
+        intro X a2
+        split_ifs
+        rfl
+      · funext X
+        unfold Function.updateITE
+        split_ifs
+        case pos c2 =>
+          rewrite [← c1]
+          rewrite [c2]
+          rfl
+        case neg c2 =>
+          simp only
+          split_ifs
+          case pos c3 =>
+            rfl
+          case neg c3 =>
+            rewrite [h1]
+            · rfl
+            · exact ⟨c2, c3⟩
+
+
 example
   (init : String → Bool)
   (atom_list : List String)
@@ -234,76 +306,6 @@ lemma gen_all_valuations_as_list_of_list_of_pairs_is_complete
 -------------------------------------------------------------------------------
 
 
-lemma gen_all_valuations_as_list_of_total_functions_is_complete
-  (init : String → Bool)
-  (atom_list : List String)
-  (V : ValuationAsTotalFunction)
-  (h1 : ∀ (X : String), X ∉ atom_list → V X = init X) :
-  V ∈ gen_all_valuations_as_list_of_total_functions init atom_list :=
-  by
-  induction atom_list generalizing V
-  case nil =>
-    unfold gen_all_valuations_as_list_of_total_functions
-    simp only [List.mem_singleton]
-    funext X
-    apply h1
-    simp only [List.not_mem_nil]
-    intro contra
-    exact contra
-  case cons hd tl ih =>
-    simp only [List.mem_cons, not_or] at h1
-
-    unfold gen_all_valuations_as_list_of_total_functions
-    simp only [List.mem_append, List.mem_map]
-    cases c1 : V hd
-    case false =>
-      left
-      apply Exists.intro (fun (X : String) => if X ∈ tl then V X else init X)
-      constructor
-      · apply ih
-        intro X a2
-        split_ifs
-        rfl
-      · funext X
-        unfold Function.updateITE
-        split_ifs
-        case pos c2 =>
-          rewrite [← c1]
-          rewrite [c2]
-          rfl
-        case neg c2 =>
-          simp only
-          split_ifs
-          case pos c3 =>
-            rfl
-          case neg c3 =>
-            rewrite [h1]
-            · rfl
-            · exact ⟨c2, c3⟩
-    case true =>
-      right
-      apply Exists.intro (fun (X : String) => if X ∈ tl then V X else init X)
-      constructor
-      · apply ih
-        intro X a2
-        split_ifs
-        rfl
-      · funext X
-        unfold Function.updateITE
-        split_ifs
-        case pos c2 =>
-          rewrite [← c1]
-          rewrite [c2]
-          rfl
-        case neg c2 =>
-          simp only
-          split_ifs
-          case pos c3 =>
-            rfl
-          case neg c3 =>
-            rewrite [h1]
-            · rfl
-            · exact ⟨c2, c3⟩
 
 
 -------------------------------------------------------------------------------
