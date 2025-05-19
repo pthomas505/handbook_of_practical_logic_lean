@@ -344,16 +344,6 @@ def valuation_as_list_of_pairs_to_valuation_as_total_function
   Function.updateFromListOfPairsITE init l
 
 
-def valuation_as_total_function_to_valuation_as_list_of_pairs
-  (atom_list : List String)
-  (V : ValuationAsTotalFunction) :
-  ValuationAsListOfPairs :=
-  Function.toListOfPairs atom_list V
-
-
--------------------------------------------------------------------------------
-
-
 example
   (init : ValuationAsTotalFunction)
   (atom_list : List String) :
@@ -395,6 +385,13 @@ example
         unfold Function.updateITE
         split_ifs
         rfl
+
+
+def valuation_as_total_function_to_valuation_as_list_of_pairs
+  (atom_list : List String)
+  (V : ValuationAsTotalFunction) :
+  ValuationAsListOfPairs :=
+  Function.toListOfPairs atom_list V
 
 
 example
