@@ -306,11 +306,6 @@ lemma gen_all_valuations_as_list_of_list_of_pairs_is_complete
 -------------------------------------------------------------------------------
 
 
-
-
--------------------------------------------------------------------------------
-
-
 lemma gen_all_valuations_as_list_of_total_functions_length_pos
   (init : String → Bool)
   (atom_list : List String) :
