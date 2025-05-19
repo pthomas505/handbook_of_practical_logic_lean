@@ -233,7 +233,7 @@ lemma mem_all_valuations_as_set_of_total_functions_imp_mem_gen_all_valuations_as
             · exact ⟨c2, c3⟩
 
 
-example
+lemma mem_gen_all_valuations_as_list_of_total_functions_imp_mem_all_valuations_as_set_of_total_functions
   (init : String → Bool)
   (atom_list : List String)
   (V : ValuationAsTotalFunction)
