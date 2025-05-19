@@ -480,6 +480,9 @@ lemma gen_all_valuations_as_list_of_total_functions_length
     rfl
 
 
+-------------------------------------------------------------------------------
+
+
 lemma gen_all_valuations_as_list_of_total_functions_length_pos
   (init : String → Bool)
   (atom_list : List String) :
