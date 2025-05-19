@@ -142,7 +142,7 @@ lemma mem_gen_all_valuations_as_list_of_list_of_pairs_iff_mem_all_valuations_as_
 -------------------------------------------------------------------------------
 
 
-lemma gen_all_valuations_as_list_of_list_of_pairs_is_complete
+example
   (atom_list : List String)
   (f : String → Bool) :
   Function.toListOfPairs atom_list f ∈ gen_all_valuations_as_list_of_list_of_pairs atom_list :=
