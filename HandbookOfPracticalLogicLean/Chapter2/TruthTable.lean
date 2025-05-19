@@ -158,7 +158,35 @@ example
   (h2 : X ∉ atom_list) :
   V X = init X :=
   by
-  sorry
+  induction atom_list generalizing V
+  case nil =>
+    unfold gen_all_valuations_as_list_of_total_functions at h1
+    simp only [List.mem_singleton] at h1
+    rewrite [h1]
+    rfl
+  case cons hd tl ih =>
+    unfold gen_all_valuations_as_list_of_total_functions at h1
+    simp only [List.mem_append, List.mem_map] at h1
+
+    simp only [List.mem_cons] at h2
+
+    cases h1
+    case inl h1 | inr h1 =>
+      obtain ⟨l, h1_left, h1_right⟩ := h1
+      rewrite [← h1_right]
+      unfold Function.updateITE
+      split_ifs
+      case pos c1 =>
+        exfalso
+        apply h2
+        left
+        exact c1
+      case neg c1 =>
+        apply ih l h1_left
+        intro contra
+        apply h2
+        right
+        exact contra
 
 
 -------------------------------------------------------------------------------
