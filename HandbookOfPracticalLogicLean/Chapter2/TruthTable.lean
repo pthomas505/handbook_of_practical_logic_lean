@@ -17,7 +17,7 @@ def ValuationAsListOfPairs : Type := List (String × Bool)
 
 
 /--
-  `gen_all_valuations_as_list_of_list_of_pairs atom_list` := A list of all of the lists of pairs of strings and booleans that can be constructed by pairing each atom in `atom_list` with a boolean.
+  `gen_all_valuations_as_list_of_list_of_pairs atom_list` := Returns a list of all of the lists of pairs of strings and booleans that can be constructed by pairing each string in `atom_list` with a boolean.
 -/
 def gen_all_valuations_as_list_of_list_of_pairs :
   List String → List (ValuationAsListOfPairs)
@@ -31,6 +31,9 @@ def gen_all_valuations_as_list_of_list_of_pairs :
   left ++ right
 
 
+/--
+  `all_valuations_as_set_of_list_of_pairs atom_list` := The set of all of the lists of pairs of strings and booleans that can be constructed by pairing each string in `atom_list` with a boolean.
+-/
 def all_valuations_as_set_of_list_of_pairs
   (atom_list : List String) :
   Set (ValuationAsListOfPairs) :=
@@ -185,7 +188,7 @@ example
 
 
 /--
-  `gen_all_valuations_as_list_of_total_functions init atom_list` := A list of all of the functions from strings to booleans that are identical to the function `init` for every string not in `atom_list`.
+  `gen_all_valuations_as_list_of_total_functions init atom_list` := Returns a list of all of the functions from strings to booleans that are identical to the function `init` for every string not in `atom_list`.
 -/
 def gen_all_valuations_as_list_of_total_functions
   (init : ValuationAsTotalFunction) :
@@ -199,6 +202,9 @@ def gen_all_valuations_as_list_of_total_functions
   left ++ right
 
 
+/--
+  `all_valuations_as_set_of_total_functions init atom_list` := The set of all of the functions from strings to booleans that are identical to the function `init` for every string not in `atom_list`.
+-/
 def all_valuations_as_set_of_total_functions
   (init : ValuationAsTotalFunction)
   (atom_list : List String) :
