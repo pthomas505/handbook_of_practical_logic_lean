@@ -96,17 +96,8 @@ lemma mem_all_valuations_as_set_of_list_of_pairs_imp_mem_gen_all_valuations_as_l
       simp only [List.mem_append, List.mem_map]
 
       cases c1 : l_hd.2
-      case false =>
-        left
-        apply Exists.intro l_tl
-        constructor
-        · apply ih
-          exact h1_right
-        · rewrite [← h1_left]
-          rewrite [← c1]
-          rfl
-      case true =>
-        right
+      map_tacs [left; right]
+      all_goals
         apply Exists.intro l_tl
         constructor
         · apply ih
@@ -148,18 +139,8 @@ example
     unfold gen_all_valuations_as_list_of_list_of_pairs
     simp only [List.map_cons, List.mem_append, List.mem_map, List.cons.injEq, Prod.mk.injEq]
     cases f hd
-    case false =>
-      left
-      apply Exists.intro (List.map (fun x => (x, f x)) tl)
-      constructor
-      · exact ih
-      · constructor
-        · constructor
-          · exact trivial
-          · rfl
-        · rfl
-    case true =>
-      right
+    map_tacs [left; right]
+    all_goals
       apply Exists.intro (List.map (fun x => (x, f x)) tl)
       constructor
       · exact ih
@@ -262,32 +243,8 @@ lemma mem_all_valuations_as_set_of_total_functions_imp_mem_gen_all_valuations_as
     unfold gen_all_valuations_as_list_of_total_functions
     simp only [List.mem_append, List.mem_map]
     cases c1 : V hd
-    case false =>
-      left
-      apply Exists.intro (fun (X : String) => if X ∈ tl then V X else init X)
-      constructor
-      · apply ih
-        intro X a2
-        split_ifs
-        rfl
-      · funext X
-        unfold Function.updateITE
-        split_ifs
-        case pos c2 =>
-          rewrite [← c1]
-          rewrite [c2]
-          rfl
-        case neg c2 =>
-          simp only
-          split_ifs
-          case pos c3 =>
-            rfl
-          case neg c3 =>
-            rewrite [h1]
-            · rfl
-            · exact ⟨c2, c3⟩
-    case true =>
-      right
+    map_tacs [left; right]
+    all_goals
       apply Exists.intro (fun (X : String) => if X ∈ tl then V X else init X)
       constructor
       · apply ih
