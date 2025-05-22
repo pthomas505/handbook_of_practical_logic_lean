@@ -175,15 +175,17 @@ example
 
 /--
   `gen_all_valuations_as_list_of_total_functions init atom_list` := Returns a list of all of the functions from strings to booleans that are identical to the function `init` for every string not in `atom_list`.
+  [ V : String → Bool | ∀ (X : String), X ∉ atom_list → V X = init X ]
 -/
 def gen_all_valuations_as_list_of_total_functions
   (init : ValuationAsTotalFunction) :
   List String → List (ValuationAsTotalFunction)
 | [] => [init]
 | hd :: tl =>
-  let left := List.map (fun (V : ValuationAsTotalFunction) => Function.updateITE V hd false) (gen_all_valuations_as_list_of_total_functions init tl)
+  let prev := gen_all_valuations_as_list_of_total_functions init tl
 
-  let right := List.map (fun (V : ValuationAsTotalFunction) => Function.updateITE V hd true) (gen_all_valuations_as_list_of_total_functions init tl)
+  let left := List.map (fun (V : ValuationAsTotalFunction) => Function.updateITE V hd false) prev
+  let right := List.map (fun (V : ValuationAsTotalFunction) => Function.updateITE V hd true) prev
 
   left ++ right
 
@@ -195,7 +197,7 @@ def all_valuations_as_set_of_total_functions
   (init : ValuationAsTotalFunction)
   (atom_list : List String) :
   Set ValuationAsTotalFunction :=
-  { l : ValuationAsTotalFunction | ∀ (X : String), X ∉ atom_list → l X = init X }
+  { V : ValuationAsTotalFunction | ∀ (X : String), X ∉ atom_list → V X = init X }
 
 
 lemma mem_gen_all_valuations_as_list_of_total_functions_imp_mem_all_valuations_as_set_of_total_functions
