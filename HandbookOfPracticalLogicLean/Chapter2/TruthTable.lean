@@ -18,6 +18,7 @@ def ValuationAsListOfPairs : Type := List (String × Bool)
 
 /--
   `gen_all_valuations_as_list_of_list_of_pairs atom_list` := Returns a list of all of the lists of pairs of strings and booleans that can be constructed by pairing each string in `atom_list` with a boolean.
+  [ l : List (String × Bool) | (l.map Prod.fst) = atom_list ]
 -/
 def gen_all_valuations_as_list_of_list_of_pairs :
   List String → List (ValuationAsListOfPairs)
@@ -48,38 +49,23 @@ lemma mem_gen_all_valuations_as_list_of_list_of_pairs_imp_mem_all_valuations_as_
   by
   induction atom_list generalizing l
   case nil =>
-    cases l
-    case nil =>
-      simp only [List.map_nil]
-    case cons l_hd l_tl =>
-      unfold gen_all_valuations_as_list_of_list_of_pairs at h1
-      simp only [List.mem_singleton] at h1
-      contradiction
-  case cons hd tl ih =>
-    cases l
-    case nil =>
-      unfold gen_all_valuations_as_list_of_list_of_pairs at h1
-      simp only [List.mem_append, List.mem_map] at h1
-      cases h1
-      case inl h1 | inr h1 =>
-        obtain ⟨V, h1_left, h1_right⟩ := h1
-        contradiction
-    case cons l_hd l_tl =>
-      unfold gen_all_valuations_as_list_of_list_of_pairs at h1
-      simp only [List.mem_append, List.mem_map] at h1
+    unfold gen_all_valuations_as_list_of_list_of_pairs at h1
+    simp only [List.mem_singleton] at h1
 
-      simp only [List.map_cons, List.cons.injEq]
-      cases h1
-      case inr h1 | inl h1 =>
-        obtain ⟨V, h1_left, h1_right⟩ := h1
-        injection h1_right
-        case _ hd_eq tl_eq =>
-          constructor
-          · rewrite [← hd_eq]
-            simp only
-          · rewrite [← tl_eq]
-            apply ih
-            exact h1_left
+    rewrite [h1]
+    unfold List.map
+    rfl
+  case cons hd tl ih =>
+    unfold gen_all_valuations_as_list_of_list_of_pairs at h1
+    simp only [List.mem_append, List.mem_map] at h1
+
+    cases h1
+    case inl h1 | inr h1 =>
+      obtain ⟨V, h1_left, h1_right⟩ := h1
+      rewrite [← h1_right]
+      simp only [List.map_cons]
+      rewrite [ih V h1_left]
+      rfl
 
 
 lemma mem_all_valuations_as_set_of_list_of_pairs_imp_mem_gen_all_valuations_as_list_of_list_of_pairs
