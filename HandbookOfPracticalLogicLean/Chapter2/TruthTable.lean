@@ -527,21 +527,35 @@ lemma mem_zip_gen_all_valuations_as_list_of_total_functions_imp_eval_eq
 -------------------------------------------------------------------------------
 
 
-def find_valuation (pred : ValuationAsListOfPairs → Bool) :
+/--
+  Helper function for `find_valuation`.
+-/
+def find_valuation_aux
+  (pred : ValuationAsListOfPairs → Bool) :
   List String → ValuationAsListOfPairs → Option ValuationAsListOfPairs
 | [], v => if pred v then some v else none
 | hd :: tl, v =>
-  find_valuation pred tl ((hd, false) :: v) <|>
-  find_valuation pred tl ((hd, true) :: v)
+  find_valuation_aux pred tl ((hd, false) :: v) <|>
+  find_valuation_aux pred tl ((hd, true) :: v)
 
-#eval find_valuation (fun (v : List _) => ("P", true) ∈ v ∧ ("Q", false) ∈ v) ["P", "Q"] []
+/--
+  `find_valuation pred atom_list` := Searches for a list of pairs of strings and booleans in the set `{ l : List (String × Bool) | (l.map Prod.fst) = atom_list }` that satisfies the predicate `pred` by successively generating each list in the set until one or none is found.
+-/
+def find_valuation
+  (pred : ValuationAsListOfPairs → Bool)
+  (atom_list : List String) :
+  Option ValuationAsListOfPairs :=
+  find_valuation_aux pred atom_list []
+
+
+#eval find_valuation (fun (v : List _) => ("P", true) ∈ v ∧ ("Q", false) ∈ v) ["P", "Q"]
 
 
 def find_satisfying_valuation
   (F : Formula_) :
   Option ValuationAsListOfPairs :=
   let pred := fun (v : List (String × Bool)) => eval (valuation_as_list_of_pairs_to_valuation_as_total_function (fun _ => false) v) F
-  find_valuation pred F.atom_list.dedup []
+  find_valuation pred F.atom_list.dedup
 
 
 def check_tautology
