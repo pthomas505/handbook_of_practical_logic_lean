@@ -541,7 +541,6 @@ def find_satisfying_valuation
   (F : Formula_) :
   Option ValuationAsListOfPairs :=
   let pred := fun (v : List (String × Bool)) => eval (valuation_as_list_of_pairs_to_valuation_as_total_function (fun _ => false) v) F
-
   find_valuation pred F.atom_list.dedup []
 
 
