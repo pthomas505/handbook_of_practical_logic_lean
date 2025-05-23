@@ -489,6 +489,7 @@ lemma gen_all_valuations_as_list_of_total_functions_eq_on_atom_list
           simp only [List.zip_map] at h1
           simp only [List.mem_map, Prod.exists, Prod.map_apply] at h1
           obtain ⟨a, b, ⟨h1_left, h1_right⟩⟩ := h1
+
           rewrite [← h1_right]
           simp only
           unfold Function.updateITE
