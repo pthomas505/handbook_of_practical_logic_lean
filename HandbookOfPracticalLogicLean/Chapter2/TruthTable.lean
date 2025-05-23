@@ -386,7 +386,7 @@ example
       intro V a1
       unfold Function.toListOfPairs
       simp only [List.map_cons]
-      congr! 1
+      congr 1
       · unfold Function.updateITE
         simp only [if_pos]
       · simp only [List.map_inj_left]
