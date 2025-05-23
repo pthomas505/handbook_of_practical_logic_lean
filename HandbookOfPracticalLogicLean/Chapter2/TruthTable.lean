@@ -288,11 +288,16 @@ lemma mem_gen_all_valuations_as_list_of_total_functions_iff_mem_all_valuations_a
 -------------------------------------------------------------------------------
 
 
+/--
+  `valuation_as_list_of_pairs_to_valuation_as_total_function init l` := Translates the list of string and boolean pairs `l` to a function that maps each string that occurs in a pair in `l` to the boolean value that it is paired with, and each string that does not occur in a pair in `l` to the boolean value that the function `init` maps it to. If a string occurs in more than one pair in `l` then the function maps it to the boolean value in the left most pair that it occurs in.
+-/
 def valuation_as_list_of_pairs_to_valuation_as_total_function
   (init : ValuationAsTotalFunction)
   (l : ValuationAsListOfPairs) :
   ValuationAsTotalFunction :=
   Function.updateFromListOfPairsITE init l
+
+#eval valuation_as_list_of_pairs_to_valuation_as_total_function (fun _ => false) [("P", true), ("P", false)] "P"
 
 
 example
