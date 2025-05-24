@@ -292,7 +292,7 @@ lemma mem_gen_all_valuations_as_list_of_total_functions_iff_mem_all_valuations_a
 
 
 /--
-  `valuation_as_list_of_pairs_to_valuation_as_total_function init l` := Translates the list of string and boolean pairs `l` to a function that maps each string that occurs in a pair in `l` to the boolean value that it is paired with, and each string that does not occur in a pair in `l` to the boolean value that the function `init` maps it to. If a string occurs in more than one pair in `l` then the function maps it to the boolean value in the leftmost pair that it occurs in.
+  `valuation_as_list_of_pairs_to_valuation_as_total_function init l` := Translates the list of string and boolean pairs `l` to a function that maps each string that occurs in a pair in `l` to the leftmost boolean value that it is paired with, and each string that does not occur in a pair in `l` to the boolean value mapped to by the function `init`.
 -/
 def valuation_as_list_of_pairs_to_valuation_as_total_function
   (init : ValuationAsTotalFunction)
@@ -542,7 +542,7 @@ def find_valuation_aux
   find_valuation_aux pred tl ((hd, true) :: v)
 
 /--
-  `find_valuation pred atom_list` := Searches for a list of pairs of strings and booleans in the set `{ l : List (String × Bool) | (l.map Prod.fst) = atom_list }` that satisfies the predicate `pred` by successively generating each list in the set until one or none is found.
+  `find_valuation pred atom_list` := Searches for the first valuation in `{ l : List (String × Bool) | (l.map Prod.fst) = atom_list }` that satisfies the predicate `pred`.
 -/
 def find_valuation
   (pred : ValuationAsListOfPairs → Bool)
@@ -555,7 +555,7 @@ def find_valuation
 
 
 /--
-  `find_satisfying_valuation F` := Searches for a valuation that satisfies the formula `F` by successively generating each valuation in the set `{ l : List (String × Bool) | (l.map Prod.fst) = F.atom_list }` until one or none is found.
+  `find_satisfying_valuation F` := Searches for the first valuation in `{ l : List (String × Bool) | (l.map Prod.fst) = F.atom_list }` that satisfies the formula `F`.
 -/
 def find_satisfying_valuation
   (F : Formula_) :
@@ -594,7 +594,7 @@ instance
 
 
 /--
-  `cartesian_product l` := The n-ary cartesian product over the lists in `l`.
+  `cartesian_product l` := The n-ary cartesian product of the lists in `l`.
 -/
 def cartesian_product
   {α : Type} :
