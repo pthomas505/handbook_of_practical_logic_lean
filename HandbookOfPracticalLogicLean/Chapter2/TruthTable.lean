@@ -601,7 +601,8 @@ def cartesian_product
   List (List α) → List (List α)
 | [] => [[]]
 | hd :: tl =>
-  (hd.map (fun (x : α) => (cartesian_product tl).map (fun (xs : List α) => x :: xs))).flatten
+  let prev := cartesian_product tl
+  (hd.map (fun (x : α) => prev.map (fun (xs : List α) => x :: xs))).flatten
 
 #eval cartesian_product [[0, 1]]
 #eval cartesian_product [[0, 1], [0, 1], [0, 1]]
