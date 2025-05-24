@@ -10,7 +10,7 @@ open Formula_
 
 
 /--
-  `Formula_.subformula_list F` := The list of all of the subformulas of a formula `F`.
+  `Formula_.subformula_list F` := A list of all of the subformulas of the formula `F`.
 -/
 def Formula_.subformula_list :
   Formula_ → List Formula_
@@ -18,10 +18,10 @@ def Formula_.subformula_list :
   | true_ => [true_]
   | atom_ X => [atom_ X]
   | not_ phi => [not_ phi] ++ phi.subformula_list
-  | and_ phi psi => [and_ phi psi] ++ phi.subformula_list ++ psi.subformula_list
-  | or_ phi psi => [or_ phi psi] ++ phi.subformula_list ++ psi.subformula_list
-  | imp_ phi psi => [imp_ phi psi] ++ phi.subformula_list ++ psi.subformula_list
-  | iff_ phi psi => [iff_ phi psi] ++ phi.subformula_list ++ psi.subformula_list
+  | and_ phi psi => [and_ phi psi] ++ (phi.subformula_list ++ psi.subformula_list)
+  | or_ phi psi => [or_ phi psi] ++ (phi.subformula_list ++ psi.subformula_list)
+  | imp_ phi psi => [imp_ phi psi] ++ (phi.subformula_list ++ psi.subformula_list)
+  | iff_ phi psi => [iff_ phi psi] ++ (phi.subformula_list ++ psi.subformula_list)
 
 
 /--
@@ -63,21 +63,102 @@ instance
     infer_instance
 
 
+lemma is_subformula_iff_mem_subformula_list
+  (F F' : Formula_) :
+  is_subformula F F' ↔ F ∈ subformula_list F' :=
+  by
+  induction F'
+  all_goals
+    unfold is_subformula
+    unfold subformula_list
+  case false_ | true_ | atom_ X =>
+    simp only [List.mem_singleton]
+  case not_ phi ih =>
+    simp only [List.singleton_append, List.mem_cons]
+    rewrite [ih]
+    rfl
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    simp only [List.mem_append, List.mem_singleton]
+    rewrite [phi_ih]
+    rewrite [psi_ih]
+    rfl
+
+
+lemma is_subformula_refl
+  (F : Formula_) :
+  is_subformula F F :=
+  by
+  cases F
+  case false_ | true_ | atom_ X =>
+    unfold is_subformula
+    rfl
+  all_goals
+    unfold is_subformula
+    left
+    rfl
+
+
+lemma is_subformula_trans
+  (F F' F'' : Formula_)
+  (h1 : is_subformula F F')
+  (h2 : is_subformula F' F'') :
+  is_subformula F F'' :=
+  by
+  induction F''
+  case false_ | true_ | atom_ X =>
+    unfold is_subformula at h2
+    rewrite [← h2]
+    exact h1
+  case not_ phi ih =>
+    unfold is_subformula at h2
+
+    cases h2
+    case inl h2 =>
+      rewrite [← h2]
+      exact h1
+    case inr h2 =>
+      unfold is_subformula
+      right
+      apply ih
+      exact h2
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    unfold is_subformula at h2
+
+    cases h2
+    case inl h2 =>
+      rewrite [← h2]
+      exact h1
+    case inr h2 =>
+      unfold is_subformula
+      right
+      cases h2
+      case inl h2 =>
+        left
+        apply phi_ih
+        exact h2
+      case inr h2 =>
+        right
+        apply psi_ih
+        exact h2
+
+
 lemma not_is_subformula_imp_not_equal
   (F F' : Formula_)
   (h1 : ¬ is_subformula F F') :
   ¬ F = F' :=
   by
-  cases F'
-  all_goals
-    intro contra
-    apply h1
-    unfold is_subformula
-  case false_ | true_ | atom_ X =>
-    exact contra
-  all_goals
-    left
-    exact contra
+  intro contra
+  apply h1
+  rewrite [contra]
+  apply is_subformula_refl
 
 
 /--
