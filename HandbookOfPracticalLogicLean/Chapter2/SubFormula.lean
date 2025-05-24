@@ -150,17 +150,6 @@ lemma is_subformula_trans
         exact h2
 
 
-lemma not_is_subformula_imp_not_equal
-  (F F' : Formula_)
-  (h1 : ¬ is_subformula F F') :
-  ¬ F = F' :=
-  by
-  intro contra
-  apply h1
-  rewrite [contra]
-  apply is_subformula_refl
-
-
 /--
   `is_proper_subformula F F'` := True if and only if `F` is a proper subformula of the formula `F'`.
 -/
