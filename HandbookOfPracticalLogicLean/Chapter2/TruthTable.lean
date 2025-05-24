@@ -536,10 +536,10 @@ lemma mem_zip_gen_all_valuations_as_list_of_total_functions_imp_eval_eq
 def find_valuation_aux
   (pred : ValuationAsListOfPairs → Bool) :
   List String → ValuationAsListOfPairs → Option ValuationAsListOfPairs
-| [], v => if pred v then some v else none
-| hd :: tl, v =>
-  find_valuation_aux pred tl ((hd, false) :: v) <|>
-  find_valuation_aux pred tl ((hd, true) :: v)
+| [], l => if pred l then some l else none
+| hd :: tl, l =>
+  find_valuation_aux pred tl ((hd, false) :: l) <|>
+  find_valuation_aux pred tl ((hd, true) :: l)
 
 /--
   `find_valuation pred atom_list` := Searches for the first valuation in `{ l : List (String × Bool) | (l.map Prod.fst) = atom_list }` that satisfies the predicate `pred`.
