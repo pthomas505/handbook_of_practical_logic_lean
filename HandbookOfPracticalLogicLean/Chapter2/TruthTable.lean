@@ -617,9 +617,9 @@ def all_sublists
   {α : Type} :
   List α → List (List α)
   | [] => [[]]
-  | (a :: as) =>
-      let recval := all_sublists as
-      recval.map (a :: .) ++ recval
+  | hd :: tl =>
+    let recval := all_sublists tl
+    recval.map (fun (l : List α) => hd :: l) ++ recval
 
 #eval all_sublists [0, 1, 2]
 #eval [0, 1, 2].sublists
