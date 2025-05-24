@@ -13,7 +13,7 @@ open Formula_
 
 
 /--
-  `ValuationAsListOfPairs` := The valuation of a formula as a list of pairs of strings and booleans.
+  The valuation of a formula as a list of pairs of strings and booleans.
 -/
 def ValuationAsListOfPairs : Type := List (String × Bool)
   deriving Inhabited
