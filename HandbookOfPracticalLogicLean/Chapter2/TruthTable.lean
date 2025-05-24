@@ -12,6 +12,9 @@ set_option autoImplicit false
 open Formula_
 
 
+/--
+  `ValuationAsListOfPairs` := The valuation of a formula as a list of pairs of strings and booleans.
+-/
 def ValuationAsListOfPairs : Type := List (String × Bool)
   deriving Inhabited
 
@@ -551,13 +554,19 @@ def find_valuation
 #eval find_valuation (fun (v : List _) => ("P", true) ∈ v ∧ ("Q", false) ∈ v) ["P", "Q"]
 
 
+/--
+  `find_satisfying_valuation F` := Searches for a valuation that satisfies the formula `F` by successively generating each valuation in the set `{ l : List (String × Bool) | (l.map Prod.fst) = F.atom_list }` until one or none is found.
+-/
 def find_satisfying_valuation
   (F : Formula_) :
   Option ValuationAsListOfPairs :=
-  let pred := fun (v : List (String × Bool)) => eval (valuation_as_list_of_pairs_to_valuation_as_total_function (fun _ => false) v) F
+  let pred := fun (V : List (String × Bool)) => eval (valuation_as_list_of_pairs_to_valuation_as_total_function (fun _ => false) V) F
   find_valuation pred F.atom_list.dedup
 
 
+/--
+  `check_tautology F` := True if and only if the formula `F` is a tautology.
+-/
 def check_tautology
   (F : Formula_) :
   Prop :=
@@ -584,12 +593,15 @@ instance
 -------------------------------------------------------------------------------
 
 
+/--
+  `cartesian_product l` := The n-ary cartesian product over the lists in `l`.
+-/
 def cartesian_product
   {α : Type} :
   List (List α) → List (List α)
 | [] => [[]]
 | hd :: tl =>
-  (hd.map (fun x => (cartesian_product tl).map (fun xs => x :: xs))).flatten
+  (hd.map (fun (x : α) => (cartesian_product tl).map (fun (xs : List α) => x :: xs))).flatten
 
 #eval cartesian_product [[0, 1]]
 #eval cartesian_product [[0, 1], [0, 1], [0, 1]]
@@ -598,6 +610,9 @@ def cartesian_product
 -------------------------------------------------------------------------------
 
 
+/--
+  `all_sublists l` := A list of all of the sublists of `l`.
+-/
 def all_sublists
   {α : Type} :
   List α → List (List α)
@@ -609,3 +624,6 @@ def all_sublists
 #eval all_sublists [0, 1, 2]
 #eval [0, 1, 2].sublists
 #eval [0, 1, 2].sublistsFast
+
+
+#lint
