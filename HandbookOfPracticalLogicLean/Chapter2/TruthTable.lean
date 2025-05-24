@@ -551,7 +551,7 @@ def find_valuation
   find_valuation_aux pred atom_list []
 
 
-#eval find_valuation (fun (v : List _) => ("P", true) ∈ v ∧ ("Q", false) ∈ v) ["P", "Q"]
+#eval find_valuation (fun (l : List (String × Bool)) => ("P", true) ∈ l ∧ ("Q", false) ∈ l) ["P", "Q"]
 
 
 /--
