@@ -581,16 +581,21 @@ instance
 #eval check_tautology (imp_ (atom_ "P") (atom_ "Q"))
 
 
+-------------------------------------------------------------------------------
+
+
 def cartesian_product
   {α : Type} :
   List (List α) → List (List α)
 | [] => [[]]
-| xs :: xss =>
-  let sub_products := cartesian_product xss
-  (xs.map (fun val => sub_products.map (fun sub => val :: sub))).flatten
+| hd :: tl =>
+  (hd.map (fun x => (cartesian_product tl).map (fun xs => x :: xs))).flatten
 
 #eval cartesian_product [[0, 1]]
 #eval cartesian_product [[0, 1], [0, 1], [0, 1]]
+
+
+-------------------------------------------------------------------------------
 
 
 def all_sublists
