@@ -347,7 +347,7 @@ example
 
 
 /--
-  `valuation_as_total_function_to_valuation_as_list_of_pairs atom_list V` := Translates the function from strings to booleans `V` to a list of pairs of strings and booleans by pairing each string in `atom_list` with the boolean value that `V` maps it to.
+  `valuation_as_total_function_to_valuation_as_list_of_pairs atom_list V` := Translates the function from strings to booleans `V` to a list of pairs of strings and booleans by pairing each string in `atom_list` with the boolean value mapped to by `V`.
 -/
 def valuation_as_total_function_to_valuation_as_list_of_pairs
   (atom_list : List String)
