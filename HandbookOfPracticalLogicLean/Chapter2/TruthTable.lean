@@ -72,8 +72,8 @@ lemma mem_gen_all_valuations_as_list_of_list_of_pairs_imp_mem_all_valuations_as_
 
 
 lemma mem_all_valuations_as_set_of_list_of_pairs_imp_mem_gen_all_valuations_as_list_of_list_of_pairs
-  (l : ValuationAsListOfPairs)
   (atom_list : List String)
+  (l : ValuationAsListOfPairs)
   (h1 : (l.map Prod.fst) = atom_list) :
   l ∈ gen_all_valuations_as_list_of_list_of_pairs atom_list :=
   by
