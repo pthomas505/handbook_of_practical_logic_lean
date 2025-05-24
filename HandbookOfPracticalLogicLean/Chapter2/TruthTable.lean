@@ -158,7 +158,7 @@ example
 
 
 /--
-  `gen_all_valuations_as_list_of_total_functions init atom_list` := Returns a list of all of the functions from strings to booleans that are identical to the function `init` for every string not in `atom_list`.
+  `gen_all_valuations_as_list_of_total_functions init atom_list` := Returns a list of all of the functions from strings to booleans that map every string not in `atom_list` to the same value as the function `init`.
   [ V : String → Bool | ∀ (X : String), X ∉ atom_list → V X = init X ]
 -/
 def gen_all_valuations_as_list_of_total_functions
@@ -175,7 +175,7 @@ def gen_all_valuations_as_list_of_total_functions
 
 
 /--
-  `all_valuations_as_set_of_total_functions init atom_list` := The set of all of the functions from strings to booleans that are identical to the function `init` for every string not in `atom_list`.
+  `all_valuations_as_set_of_total_functions init atom_list` := The set of all of the functions from strings to booleans that map every string not in `atom_list` to the same value as the function `init`.
 -/
 def all_valuations_as_set_of_total_functions
   (init : ValuationAsTotalFunction)
