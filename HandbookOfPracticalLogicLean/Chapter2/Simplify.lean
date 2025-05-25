@@ -731,7 +731,7 @@ example
   apply simplify_is_logically_equivalent
 
 
-example
+lemma simplify_aux_size_le_size
   (F : Formula_) :
   size (simplify_aux F) <= size F :=
   by
@@ -847,6 +847,36 @@ example
             rewrite [s1]
             simp only [size]
             apply Nat.le_refl
+
+
+example
+  (F : Formula_) :
+  size (simplify F) <= size F :=
+  by
+  induction F
+  case false_ | true_ | atom_ X =>
+    simp only [simplify]
+    apply Nat.le_refl
+  case not_ phi ih =>
+    simp only [simplify]
+    trans
+    · apply simplify_aux_size_le_size
+    · unfold size
+      apply Nat.add_le_add_right
+      exact ih
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    simp only [simplify]
+    trans
+    · apply simplify_aux_size_le_size
+    · unfold size
+      apply Nat.add_le_add_right
+      apply Nat.add_le_add
+      · exact phi_ih
+      · exact psi_ih
 
 
 #lint
