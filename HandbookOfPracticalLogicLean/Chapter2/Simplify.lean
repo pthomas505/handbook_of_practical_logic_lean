@@ -731,6 +731,9 @@ example
   apply simplify_is_logically_equivalent
 
 
+-------------------------------------------------------------------------------
+
+
 lemma simplify_aux_size_le_size
   (F : Formula_) :
   size (simplify_aux F) <= size F :=
