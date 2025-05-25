@@ -37,7 +37,7 @@ def simplify_aux :
 
 
 /--
-  `simplify F` := Translates the formula `F` to a semantically equivalent formula with less than or equal to the number of subformulas as `F`.
+  `simplify F` := Translates the formula `F` to a logically equivalent formula with less than or equal to the number of subformulas as `F`.
 -/
 def simplify :
   Formula_ → Formula_
@@ -96,7 +96,7 @@ def simplify_aux_and :
   | and_ _ false_ => false_
   | and_ false_ _ => false_
   | and_ phi true_ => phi
-  | and_ true_ phi => phi
+  | and_ true_ psi => psi
   | phi => phi
 
 
@@ -219,10 +219,13 @@ lemma simplify_aux_and_cases
 -------------------------------------------------------------------------------
 
 
+/--
+  `simplify_aux_or F` := If the formula `F` is of the form `or_ _ _` then `simplify_aux F`. If the formula `F` is not of the form `or_ _ _` then `F`.
+-/
 def simplify_aux_or :
   Formula_ → Formula_
   | or_ phi false_ => phi
-  | or_ false_ phi => phi
+  | or_ false_ psi => psi
   | or_ _ true_ => true_
   | or_ true_ _ => true_
   | phi => phi
@@ -345,11 +348,14 @@ lemma simplify_aux_or_cases
 -------------------------------------------------------------------------------
 
 
+/--
+  `simplify_aux_imp F` := If the formula `F` is of the form `imp_ _ _` then `simplify_aux F`. If the formula `F` is not of the form `imp_ _ _` then `F`.
+-/
 def simplify_aux_imp :
   Formula_ → Formula_
   | imp_ false_ _ => true_
   | imp_ _ true_ => true_
-  | imp_ true_ phi => phi
+  | imp_ true_ psi => psi
   | imp_ phi false_ => not_ phi
   | phi => phi
 
@@ -472,12 +478,15 @@ lemma simplify_aux_imp_cases
 -------------------------------------------------------------------------------
 
 
+/--
+  `simplify_aux_iff F` := If the formula `F` is of the form `iff_ _ _` then `simplify_aux F`. If the formula `F` is not of the form `iff_ _ _` then `F`.
+-/
 def simplify_aux_iff :
   Formula_ → Formula_
   | iff_ phi true_ => phi
-  | iff_ true_ phi => phi
+  | iff_ true_ psi => psi
   | iff_ phi false_ => not_ phi
-  | iff_ false_ phi => not_ phi
+  | iff_ false_ psi => not_ psi
   | phi => phi
 
 
@@ -581,3 +590,6 @@ example
   simp only [are_logically_equivalent_iff_eval_eq]
   intro V
   apply simplify_is_logically_equivalent
+
+
+#lint
