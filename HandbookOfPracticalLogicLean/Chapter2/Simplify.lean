@@ -66,6 +66,32 @@ def simplify_aux_not :
   | phi => phi
 
 
+example
+  (F : Formula_)
+  (h1 : ∃ (phi : Formula_), F = not_ phi) :
+  simplify_aux_not F = simplify_aux F :=
+  by
+  obtain ⟨phi, h1⟩ := h1
+  rewrite [h1]
+  cases phi
+  all_goals
+    simp only [simplify_aux_not]
+    simp only [simplify_aux]
+
+example
+  (F : Formula_)
+  (h1 : ¬ ∃ (phi : Formula_), F = not_ phi) :
+  simplify_aux_not F = F :=
+  by
+  simp only [not_exists] at h1
+  cases F
+  case not_ phi =>
+    specialize h1 phi
+    contradiction
+  all_goals
+    simp only [simplify_aux_not]
+
+
 example :
   simplify_aux_not (not_ false_) = true_ :=
   by
@@ -98,6 +124,34 @@ def simplify_aux_and :
   | and_ phi true_ => phi
   | and_ true_ psi => psi
   | phi => phi
+
+
+example
+  (F : Formula_)
+  (h1 : ∃ (phi psi : Formula_), F = and_ phi psi) :
+  simplify_aux_and F = simplify_aux F :=
+  by
+  obtain ⟨phi, psi, h1⟩ := h1
+  rewrite [h1]
+  cases phi
+  all_goals
+    cases psi
+    all_goals
+      simp only [simplify_aux_and]
+      simp only [simplify_aux]
+
+example
+  (F : Formula_)
+  (h1 : ¬ ∃ (phi psi : Formula_), F = and_ phi psi) :
+  simplify_aux_and F = F :=
+  by
+  simp only [not_exists] at h1
+  cases F
+  case and_ phi psi =>
+    specialize h1 phi psi
+    contradiction
+  all_goals
+    simp only [simplify_aux_and]
 
 
 example
