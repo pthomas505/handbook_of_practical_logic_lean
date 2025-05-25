@@ -286,6 +286,34 @@ def simplify_aux_or :
 
 
 example
+  (F : Formula_)
+  (h1 : ∃ (phi psi : Formula_), F = or_ phi psi) :
+  simplify_aux_or F = simplify_aux F :=
+  by
+  obtain ⟨phi, psi, h1⟩ := h1
+  rewrite [h1]
+  cases phi
+  all_goals
+    cases psi
+    all_goals
+      simp only [simplify_aux_or]
+      simp only [simplify_aux]
+
+example
+  (F : Formula_)
+  (h1 : ¬ ∃ (phi psi : Formula_), F = or_ phi psi) :
+  simplify_aux_or F = F :=
+  by
+  simp only [not_exists] at h1
+  cases F
+  case or_ phi psi =>
+    specialize h1 phi psi
+    contradiction
+  all_goals
+    simp only [simplify_aux_or]
+
+
+example
   (F : Formula_) :
   simplify_aux_or (or_ F false_) = F :=
   by
@@ -412,6 +440,34 @@ def simplify_aux_imp :
   | imp_ true_ psi => psi
   | imp_ phi false_ => not_ phi
   | phi => phi
+
+
+example
+  (F : Formula_)
+  (h1 : ∃ (phi psi : Formula_), F = imp_ phi psi) :
+  simplify_aux_imp F = simplify_aux F :=
+  by
+  obtain ⟨phi, psi, h1⟩ := h1
+  rewrite [h1]
+  cases phi
+  all_goals
+    cases psi
+    all_goals
+      simp only [simplify_aux_imp]
+      simp only [simplify_aux]
+
+example
+  (F : Formula_)
+  (h1 : ¬ ∃ (phi psi : Formula_), F = imp_ phi psi) :
+  simplify_aux_imp F = F :=
+  by
+  simp only [not_exists] at h1
+  cases F
+  case imp_ phi psi =>
+    specialize h1 phi psi
+    contradiction
+  all_goals
+    simp only [simplify_aux_imp]
 
 
 example
@@ -542,6 +598,34 @@ def simplify_aux_iff :
   | iff_ phi false_ => not_ phi
   | iff_ false_ psi => not_ psi
   | phi => phi
+
+
+example
+  (F : Formula_)
+  (h1 : ∃ (phi psi : Formula_), F = iff_ phi psi) :
+  simplify_aux_iff F = simplify_aux F :=
+  by
+  obtain ⟨phi, psi, h1⟩ := h1
+  rewrite [h1]
+  cases phi
+  all_goals
+    cases psi
+    all_goals
+      simp only [simplify_aux_iff]
+      simp only [simplify_aux]
+
+example
+  (F : Formula_)
+  (h1 : ¬ ∃ (phi psi : Formula_), F = iff_ phi psi) :
+  simplify_aux_iff F = F :=
+  by
+  simp only [not_exists] at h1
+  cases F
+  case iff_ phi psi =>
+    specialize h1 phi psi
+    contradiction
+  all_goals
+    simp only [simplify_aux_iff]
 
 
 lemma simplify_aux_iff_cases
