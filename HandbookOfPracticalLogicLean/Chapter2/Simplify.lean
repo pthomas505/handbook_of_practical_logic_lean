@@ -9,6 +9,9 @@ set_option autoImplicit false
 open Formula_
 
 
+/--
+  Helper function for `simplify`.
+-/
 def simplify_aux :
   Formula_ → Formula_
   | not_ false_ => true_
@@ -33,6 +36,9 @@ def simplify_aux :
   | phi => phi
 
 
+/--
+  `simplify F` := Translates the formula `F` to a semantically equivalent formula with less than or equal to the number of subformulas as `F`.
+-/
 def simplify :
   Formula_ → Formula_
   | not_ phi => simplify_aux (not_ (simplify phi))
@@ -49,6 +55,9 @@ def simplify :
 -------------------------------------------------------------------------------
 
 
+/--
+  `simplify_aux_not F` := Trys to simplify the formula `F` using a logical equivalence of the form `not phi <-> F'`.
+-/
 def simplify_aux_not :
   Formula_ → Formula_
   | not_ false_ => true_
@@ -79,6 +88,9 @@ example
 -------------------------------------------------------------------------------
 
 
+/--
+  `simplify_aux_and F` := Translates the formula `F` to a semantically equivalent formula with less than or equal to the number of `and_` subformulas as `F`.
+-/
 def simplify_aux_and :
   Formula_ → Formula_
   | and_ _ false_ => false_
