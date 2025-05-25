@@ -1,4 +1,5 @@
 import HandbookOfPracticalLogicLean.Chapter2.Semantics
+import HandbookOfPracticalLogicLean.Chapter2.Size
 
 import Mathlib.Tactic
 
@@ -37,7 +38,7 @@ def simplify_aux :
 
 
 /--
-  `simplify F` := Translates the formula `F` to a logically equivalent formula with less than or equal to the number of subformulas as `F`.
+  `simplify F` := Translates the formula `F` to a logically equivalent formula with a size less than or equal to that of `F`.
 -/
 def simplify :
   Formula_ → Formula_
@@ -728,6 +729,124 @@ example
   simp only [are_logically_equivalent_iff_eval_eq]
   intro V
   apply simplify_is_logically_equivalent
+
+
+example
+  (F : Formula_) :
+  size (simplify_aux F) <= size F :=
+  by
+  cases F
+  case false_ | true_ | atom_ X =>
+    simp only [simplify_aux]
+    apply Nat.le_of_eq
+    rfl
+  case not_ phi =>
+    cases phi
+    all_goals
+      simp only [simplify_aux]
+      simp only [size]
+    case false_ | true_ =>
+      apply Nat.le_add_right
+    case not_ phi =>
+      apply Nat.le_add_right_of_le
+      apply Nat.le_add_right
+    all_goals
+      apply Nat.le_refl
+  case and_ phi psi =>
+    obtain s1 := simplify_aux_and_cases phi psi
+    cases s1
+    case inl s1 =>
+      rewrite [s1]
+      simp only [size]
+      apply Nat.le_add_right_of_le
+      apply Nat.le_add_right
+    case inr s1 =>
+      cases s1
+      case inl s1 =>
+        rewrite [s1]
+        simp only [size]
+        apply Nat.le_add_right_of_le
+        apply Nat.le_add_left
+      case inr s1 =>
+        rewrite [s1]
+        simp only [size]
+        apply Nat.le_refl
+  case or_ phi psi =>
+    obtain s1 := simplify_aux_or_cases phi psi
+    cases s1
+    case inl s1 =>
+      rewrite [s1]
+      simp only [size]
+      apply Nat.le_add_right_of_le
+      apply Nat.le_add_right
+    case inr s1 =>
+      cases s1
+      case inl s1 =>
+        rewrite [s1]
+        simp only [size]
+        apply Nat.le_add_right_of_le
+        apply Nat.le_add_left
+      case inr s1 =>
+        rewrite [s1]
+        simp only [size]
+        apply Nat.le_refl
+  case imp_ phi psi =>
+    obtain s1 := simplify_aux_imp_cases phi psi
+    cases s1
+    case inl s1 =>
+      rewrite [s1]
+      simp only [size]
+      apply Nat.le_add_left
+    case inr s1 =>
+      cases s1
+      case inl s1 =>
+        rewrite [s1]
+        simp only [size]
+        apply Nat.le_add_right_of_le
+        apply Nat.le_add_left
+      case inr s1 =>
+        cases s1
+        case inl s1 =>
+          rewrite [s1]
+          simp only [size]
+          apply Nat.add_le_add_right
+          apply Nat.le_add_right
+        case inr s1 =>
+          rewrite [s1]
+          simp only [size]
+          apply Nat.le_refl
+  case iff_ phi psi =>
+    obtain s1 := simplify_aux_iff_cases phi psi
+    cases s1
+    case inl s1 =>
+      rewrite [s1]
+      simp only [size]
+      apply Nat.le_add_right_of_le
+      apply Nat.le_add_right
+    case inr s1 =>
+      cases s1
+      case inl s1 =>
+        rewrite [s1]
+        simp only [size]
+        apply Nat.le_add_right_of_le
+        apply Nat.le_add_left
+      case inr s1 =>
+        cases s1
+        case inl s1 =>
+          rewrite [s1]
+          simp only [size]
+          apply Nat.add_le_add_right
+          apply Nat.le_add_right
+        case inr s1 =>
+          cases s1
+          case inl s1 =>
+            rewrite [s1]
+            simp only [size]
+            apply Nat.le_add_left
+          case inr s1 =>
+            rewrite [s1]
+            simp only [size]
+            apply Nat.le_refl
 
 
 #lint
