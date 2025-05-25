@@ -662,7 +662,7 @@ lemma simplify_aux_iff_cases
 lemma simplify_aux_is_logically_equivalent
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V F = eval V (simplify_aux F) :=
+  eval V (simplify_aux F) = eval V F :=
   by
   cases F
   case false_ | true_ | atom_ X =>
@@ -698,14 +698,14 @@ lemma simplify_aux_is_logically_equivalent
 lemma simplify_is_logically_equivalent
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V F = eval V (simplify F) :=
+  eval V (simplify F) = eval V F :=
   by
   induction F
   case false_ | true_ | atom_ X =>
     rfl
   case not_ phi ih =>
     unfold simplify
-    rewrite [← simplify_aux_is_logically_equivalent]
+    rewrite [simplify_aux_is_logically_equivalent]
     unfold eval
     rewrite [ih]
     rfl
@@ -715,7 +715,7 @@ lemma simplify_is_logically_equivalent
     | imp_ phi psi phi_ih psi_ih
     | iff_ phi psi phi_ih psi_ih =>
     unfold simplify
-    rewrite [← simplify_aux_is_logically_equivalent]
+    rewrite [simplify_aux_is_logically_equivalent]
     unfold eval
     rewrite [phi_ih]
     rewrite [psi_ih]
@@ -724,7 +724,7 @@ lemma simplify_is_logically_equivalent
 
 example
   (F : Formula_) :
-  are_logically_equivalent F (simplify F) :=
+  are_logically_equivalent (simplify F) F :=
   by
   simp only [are_logically_equivalent_iff_eval_eq]
   intro V
