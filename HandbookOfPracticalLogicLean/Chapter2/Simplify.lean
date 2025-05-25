@@ -56,7 +56,7 @@ def simplify :
 
 
 /--
-  `simplify_aux_not F` := Trys to simplify the formula `F` using a logical equivalence of the form `not_ phi <-> F'`.
+  `simplify_aux_not F` := Trys to simplify the formula `F` using a logical equivalence of the form `not_ _ <-> _`.
 -/
 def simplify_aux_not :
   Formula_ → Formula_
@@ -89,7 +89,7 @@ example
 
 
 /--
-  `simplify_aux_and F` := Trys to simplify the formula `F` using a logical equivalence of the form `and_ phi psi <-> F'`.
+  `simplify_aux_and F` := Trys to simplify the formula `F` using a logical equivalence of the form `and_ _ _ <-> _`.
 -/
 def simplify_aux_and :
   Formula_ → Formula_
