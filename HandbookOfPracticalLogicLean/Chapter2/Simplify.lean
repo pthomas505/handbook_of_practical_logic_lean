@@ -166,58 +166,27 @@ example
   (F : Formula_) :
   simplify_aux_and (and_ false_ F) = false_ :=
   by
-  unfold simplify_aux_and
-  split
-  case _ phi psi ih_1 =>
-    rfl
-  case _ phi psi ih_1 ih_2 =>
-    rfl
-  case _ phi psi ih_1 ih_2 =>
-    cases ih_2
-    rfl
-  case _ phi psi ih_1 ih_2 ih_3 =>
-    cases ih_3
-  · tauto
+  cases F
+  all_goals
+    simp only [simplify_aux_and]
 
 
 example
   (F : Formula_) :
   simplify_aux_and (and_ F true_) = F :=
   by
-  unfold simplify_aux_and
-  split
-  case _ phi psi ih_1 =>
-    cases ih_1
-  case _ phi psi ih_1 ih_2 =>
-    cases ih_2
-    rfl
-  case _ phi psi ih_1 ih_2 =>
-    cases ih_2
-    rfl
-  case _ phi psi ih_1 ih_2 ih_3 =>
-    cases ih_3
-    rfl
-  · tauto
+  cases F
+  all_goals
+    simp only [simplify_aux_and]
 
 
 example
   (F : Formula_) :
   simplify_aux_and (and_ true_ F) = F :=
   by
-  unfold simplify_aux_and
-  split
-  case _ phi psi ih_1 =>
-    cases ih_1
-    rfl
-  case _ phi psi ih_1 ih_2 =>
-    cases ih_2
-  case _ phi psi ih_1 ih_2 =>
-    cases ih_2
-    rfl
-  case _ phi psi ih_1 ih_2 ih_3 =>
-    cases ih_3
-    rfl
-  · tauto
+  cases F
+  all_goals
+    simp only [simplify_aux_and]
 
 
 example
@@ -242,7 +211,7 @@ example
   case _ phi psi ih_1 ih_2 ih_3 =>
     cases ih_3
     contradiction
-  · tauto
+  · rfl
 
 
 lemma simplify_aux_and_cases
@@ -251,24 +220,12 @@ lemma simplify_aux_and_cases
   simplify_aux (and_ P Q) = Q ∨
   simplify_aux (and_ P Q) = and_ P Q :=
   by
-  unfold simplify_aux
-  split
-  any_goals
-    contradiction
-  any_goals
-    tauto
-  case _ phi psi ih_1 =>
-    cases ih_1
-    tauto
-  case _ phi psi ih_1 ih_2 =>
-    cases ih_2
-    tauto
-  case _ phi psi ih_1 ih_2 =>
-    cases ih_2
-    tauto
-  case _ phi psi ih_1 ih_2 ih_3 =>
-    cases ih_3
-    tauto
+  cases P
+  all_goals
+    cases Q
+    all_goals
+      simp only [simplify_aux]
+      tauto
 
 
 -------------------------------------------------------------------------------
@@ -325,56 +282,27 @@ example
   (F : Formula_) :
   simplify_aux_or (or_ false_ F) = F :=
   by
-  unfold simplify_aux_or
-  split
-  case _ phi psi ih_1 =>
-    cases ih_1
-    rfl
-  case _ phi psi ih_1 ih_2 =>
-    cases ih_2
-    rfl
-  case _ phi psi ih_1 ih_2 =>
-    cases ih_2
-    rfl
-  case _ phi psi ih_1 ih_2 ih_3 =>
-    cases ih_3
-  · tauto
+  cases F
+  all_goals
+    simp only [simplify_aux_or]
 
 
 example
   (F : Formula_) :
   simplify_aux_or (or_ F true_) = true_ :=
   by
-  unfold simplify_aux_or
-  split
-  case _ phi psi ih_1 =>
-    cases ih_1
-  case _ phi psi ih_1 ih_2 =>
-    cases ih_2
-    rfl
-  case _ phi psi ih_1 ih_2 =>
-    rfl
-  case _ phi psi ih_1 ih_2 ih_3 =>
-    rfl
-  · tauto
+  cases F
+  all_goals
+    simp only [simplify_aux_or]
 
 
 example
   (F : Formula_) :
   simplify_aux_or (or_ true_ F) = true_ :=
   by
-  unfold simplify_aux_or
-  split
-  case _ phi psi ih_1 =>
-    cases ih_1
-    rfl
-  case _ phi psi ih_1 ih_2 =>
-    cases ih_2
-  case _ phi psi ih_1 ih_2 =>
-    rfl
-  case _ phi psi ih_1 ih_2 ih_3 =>
-    rfl
-  · tauto
+  cases F
+  all_goals
+    simp only [simplify_aux_or]
 
 
 example
@@ -399,7 +327,7 @@ example
   case _ phi psi ih_1 ih_2 ih_3 =>
     cases ih_3
     contradiction
-  · tauto
+  · rfl
 
 
 lemma simplify_aux_or_cases
@@ -408,24 +336,12 @@ lemma simplify_aux_or_cases
   simplify_aux (or_ P Q) = Q ∨
   simplify_aux (or_ P Q) = or_ P Q :=
   by
-  unfold simplify_aux
-  split
-  any_goals
-    contradiction
-  any_goals
-    tauto
-  case _ phi psi ih_1 =>
-    cases ih_1
-    tauto
-  case _ phi psi ih_1 ih_2 =>
-    cases ih_2
-    tauto
-  case _ phi psi ih_1 ih_2 =>
-    cases ih_2
-    tauto
-  case _ phi psi ih_1 ih_2 ih_3 =>
-    cases ih_3
-    tauto
+  cases P
+  all_goals
+    cases Q
+    all_goals
+      simp only [simplify_aux]
+      tauto
 
 
 -------------------------------------------------------------------------------
