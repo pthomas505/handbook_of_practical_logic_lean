@@ -113,6 +113,24 @@ example
   simp only [simplify_aux_not]
 
 
+example
+  (F : Formula_)
+  (h1 : ¬ F = false_)
+  (h2 : ¬ F = true_)
+  (h3 : ¬ ∃ (phi : Formula_), F = not_ phi) :
+  simplify_aux_not (not_ F) = not_ F :=
+  by
+  simp only [not_exists] at h3
+  cases F
+  any_goals
+    contradiction
+  case not_ phi =>
+    specialize h3 phi
+    contradiction
+  all_goals
+    simp only [simplify_aux_not]
+
+
 -------------------------------------------------------------------------------
 
 
