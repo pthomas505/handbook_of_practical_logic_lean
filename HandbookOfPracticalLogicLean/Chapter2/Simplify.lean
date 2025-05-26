@@ -398,40 +398,18 @@ example
   (F : Formula_) :
   simplify_aux_imp (imp_ F true_) = true_ :=
   by
-  unfold simplify_aux_imp
-  split
-  case _ phi psi ih_1 =>
-    rfl
-  case _ phi psi ih_1 ih_2 =>
-    rfl
-  case _ phi psi ih_1 ih_2 =>
-    cases ih_2
-    rfl
-  case _ phi psi ih_1 ih_2 ih_3 =>
-    cases ih_3
-  · tauto
+  cases F
+  all_goals
+    simp only [simplify_aux_imp]
 
 
 example
   (F : Formula_) :
   simplify_aux_imp (imp_ true_ F) = F :=
   by
-  unfold simplify_aux_imp
-  split
-  case _ phi psi ih_1 =>
-    cases ih_1
-  case _ phi psi ih_1 ih_2 =>
-    cases ih_2
-    rfl
-  case _ phi psi ih_1 ih_2 =>
-    cases ih_2
-    rfl
-  case _ phi psi ih_1 ih_2 ih_3 =>
-    cases ih_3
-    exfalso
-    apply ih_2
-    rfl
-  · tauto
+  cases F
+  all_goals
+    simp only [simplify_aux_imp]
 
 
 example
@@ -440,20 +418,11 @@ example
   (h2 : ¬ F = true_) :
   simplify_aux_imp (imp_ F false_) = not_ F :=
   by
-  unfold simplify_aux_imp
-  split
-  case _ phi psi ih_1 =>
-    cases ih_1
+  cases F
+  any_goals
     contradiction
-  case _ phi psi ih_1 ih_2 =>
-    cases ih_2
-  case _ phi psi ih_1 ih_2 =>
-    cases ih_2
-    contradiction
-  case _ phi psi ih_1 ih_2 ih_3 =>
-    cases ih_3
-    rfl
-  · tauto
+  all_goals
+    simp only [simplify_aux_imp]
 
 
 example
@@ -478,7 +447,7 @@ example
   case _ phi psi ih_1 ih_2 ih_3 =>
     cases ih_3
     contradiction
-  · tauto
+  · rfl
 
 
 lemma simplify_aux_imp_cases
@@ -488,18 +457,12 @@ lemma simplify_aux_imp_cases
   simplify_aux (imp_ P Q) = not_ P ∨
   simplify_aux (imp_ P Q) = imp_ P Q :=
   by
-  unfold simplify_aux
-  split
-  any_goals
-    contradiction
-  any_goals
-    tauto
-  case _ phi psi ih_1 ih_2 =>
-    cases ih_2
-    tauto
-  case _ phi psi ih_1 ih_2 ih_3 =>
-    cases ih_3
-    tauto
+  cases P
+  all_goals
+    cases Q
+    all_goals
+      simp only [simplify_aux]
+      tauto
 
 
 -------------------------------------------------------------------------------
@@ -553,23 +516,12 @@ lemma simplify_aux_iff_cases
   simplify_aux (iff_ P Q) = not_ Q ∨
   simplify_aux (iff_ P Q) = iff_ P Q :=
   by
-  unfold simplify_aux
-  split
-  any_goals
-    contradiction
-  case _ phi psi ih_1 =>
-    cases ih_1
-    tauto
-  case _ phi psi ih_1 ih_2 =>
-    cases ih_2
-    tauto
-  case _ phi psi ih_1 ih_2 =>
-    cases ih_2
-    tauto
-  case _ phi psi ih_1 ih_2 ih_3 =>
-    cases ih_3
-    tauto
-  · tauto
+  cases P
+  all_goals
+    cases Q
+    all_goals
+      simp only [simplify_aux]
+      tauto
 
 
 -------------------------------------------------------------------------------
