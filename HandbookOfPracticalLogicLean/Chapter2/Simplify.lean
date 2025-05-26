@@ -79,6 +79,7 @@ example
     simp only [simplify_aux_not]
     simp only [simplify_aux]
 
+
 example
   (F : Formula_)
   (h1 : ¬ ∃ (phi : Formula_), F = not_ phi) :
@@ -140,6 +141,7 @@ example
     all_goals
       simp only [simplify_aux_and]
       simp only [simplify_aux]
+
 
 example
   (F : Formula_)
@@ -257,6 +259,7 @@ example
       simp only [simplify_aux_or]
       simp only [simplify_aux]
 
+
 example
   (F : Formula_)
   (h1 : ¬ ∃ (phi psi : Formula_), F = or_ phi psi) :
@@ -372,6 +375,7 @@ example
     all_goals
       simp only [simplify_aux_imp]
       simp only [simplify_aux]
+
 
 example
   (F : Formula_)
@@ -493,6 +497,7 @@ example
     all_goals
       simp only [simplify_aux_iff]
       simp only [simplify_aux]
+
 
 example
   (F : Formula_)
