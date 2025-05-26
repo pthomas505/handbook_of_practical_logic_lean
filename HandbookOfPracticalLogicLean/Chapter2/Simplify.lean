@@ -508,6 +508,72 @@ example
     simp only [simplify_aux_iff]
 
 
+example
+  (F : Formula_) :
+  simplify_aux_iff (iff_ F true_) = F :=
+  by
+  simp only [simplify_aux_iff]
+
+
+example
+  (F : Formula_) :
+  simplify_aux_iff (iff_ true_ F) = F :=
+  by
+  cases F
+  all_goals
+    simp only [simplify_aux_iff]
+
+
+example
+  (F : Formula_)
+  (h1 : ¬ F = true_) :
+  simplify_aux_iff (iff_ F false_) = not_ F :=
+  by
+  cases F
+  any_goals
+    contradiction
+  all_goals
+    simp only [simplify_aux_iff]
+
+
+example
+  (F : Formula_)
+  (h1 : ¬ F = false_)
+  (h2 : ¬ F = true_) :
+  simplify_aux_iff (iff_ false_ F) = not_ F :=
+  by
+  cases F
+  any_goals
+    contradiction
+  all_goals
+    simp only [simplify_aux_iff]
+
+
+example
+  (P Q : Formula_)
+  (h1 : ¬ P = false_)
+  (h2 : ¬ P = true_)
+  (h3 : ¬ Q = false_)
+  (h4 : ¬ Q = true_) :
+  simplify_aux_iff (iff_ P Q) = iff_ P Q :=
+  by
+  unfold simplify_aux_iff
+  split
+  case _ phi psi ih_1 =>
+    cases ih_1
+    contradiction
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
+    contradiction
+  case _ phi psi ih_1 ih_2 =>
+    cases ih_2
+    contradiction
+  case _ phi psi ih_1 ih_2 ih_3 =>
+    cases ih_3
+    contradiction
+  · rfl
+
+
 lemma simplify_aux_iff_cases
   (P Q : Formula_) :
   simplify_aux (iff_ P Q) = P ∨
