@@ -13,6 +13,7 @@ open Formula_
 
 
 /--
+  The valuation of a formula as a function from strings to booleans.
   A function from the set of atoms to the set of truth values `{false, true}`.
 -/
 def ValuationAsTotalFunction : Type := String → Bool
