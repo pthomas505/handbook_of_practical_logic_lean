@@ -386,6 +386,7 @@ namespace Option_
 
 
 /--
+  The valuation of a formula as a function from strings to optional booleans.
   A function from the set of atoms to the set of optional truth values `{false, true}`.
 -/
 def ValuationAsOptionFunction : Type := String → Option Bool
@@ -450,23 +451,23 @@ def Formula_.is_tautology
 
 
 /--
-  `gen_valuation` := The generation of a valuation function from a list of pairs of atoms and truth values.
+  `valuation_as_list_of_pairs_to_valuation_as_option_function l` := Translates the list of string and boolean pairs `l` to a function that maps each string that occurs in a pair in `l` to `some` of the leftmost boolean value that it is paired with, and each string that does not occur in a pair in `l` to `none`.
 -/
-def gen_valuation :
+def valuation_as_list_of_pairs_to_valuation_as_option_function :
   List (String × Bool) → ValuationAsOptionFunction
   | [] => fun _ => Option.none
-  | hd :: tl => Function.updateITE (gen_valuation tl) hd.fst (Option.some hd.snd)
+  | hd :: tl => Function.updateITE (valuation_as_list_of_pairs_to_valuation_as_option_function tl) hd.fst (Option.some hd.snd)
 
 
-#eval (eval (gen_valuation [("P", true)]) (atom_ "P"))
-#eval (eval (gen_valuation [("P", false)]) (atom_ "P"))
-#eval (eval (gen_valuation [("P", true)]) (not_ (atom_ "P")))
-#eval (eval (gen_valuation [("P", false)]) (not_ (atom_ "P")))
-#eval (eval (gen_valuation [("P", false), ("Q", false)]) (and_ (atom_ "P") (atom_ "Q")))
-#eval (eval (gen_valuation [("P", false), ("Q", true)]) (and_ (atom_ "P") (atom_ "Q")))
-#eval (eval (gen_valuation [("P", true), ("Q", false)]) (and_ (atom_ "P") (atom_ "Q")))
-#eval (eval (gen_valuation [("P", true), ("Q", true)]) (and_ (atom_ "P") (atom_ "Q")))
-#eval (eval (gen_valuation [("P", true)]) (atom_ "Q"))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_option_function [("P", true)]) (atom_ "P"))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_option_function [("P", false)]) (atom_ "P"))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_option_function [("P", true)]) (not_ (atom_ "P")))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_option_function [("P", false)]) (not_ (atom_ "P")))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_option_function [("P", false), ("Q", false)]) (and_ (atom_ "P") (atom_ "Q")))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_option_function [("P", false), ("Q", true)]) (and_ (atom_ "P") (atom_ "Q")))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_option_function [("P", true), ("Q", false)]) (and_ (atom_ "P") (atom_ "Q")))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_option_function [("P", true), ("Q", true)]) (and_ (atom_ "P") (atom_ "Q")))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_option_function [("P", true)]) (atom_ "Q"))
 
 
 end Option_
