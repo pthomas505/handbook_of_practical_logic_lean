@@ -455,8 +455,8 @@ def Formula_.is_tautology
 -/
 def valuation_as_list_of_pairs_to_valuation_as_option_function :
   List (String × Bool) → ValuationAsOptionFunction
-  | [] => fun _ => Option.none
-  | hd :: tl => Function.updateITE (valuation_as_list_of_pairs_to_valuation_as_option_function tl) hd.fst (Option.some hd.snd)
+  | [] => fun _ => none
+  | hd :: tl => Function.updateITE (valuation_as_list_of_pairs_to_valuation_as_option_function tl) hd.fst (some hd.snd)
 
 
 #eval (eval (valuation_as_list_of_pairs_to_valuation_as_option_function [("P", true)]) (atom_ "P"))
