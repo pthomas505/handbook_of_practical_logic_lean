@@ -454,7 +454,7 @@ lemma gen_all_valuations_as_list_of_total_functions_eq_on_atom_list
     (gen_all_valuations_as_list_of_total_functions init_1 atom_list)
     (gen_all_valuations_as_list_of_total_functions init_2 atom_list))
   (h2 : X ∈ atom_list) :
-  p.1 X = p.2 X :=
+  p.fst X = p.snd X :=
   by
   induction atom_list generalizing p
   case nil =>
@@ -516,7 +516,7 @@ lemma mem_zip_gen_all_valuations_as_list_of_total_functions_imp_eval_eq
   (h1 : p ∈ List.zip
     (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup)
     (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup)) :
-  eval p.1 F = eval p.2 F :=
+  eval p.fst F = eval p.snd F :=
   by
   apply theorem_2_2
   intro X a1
