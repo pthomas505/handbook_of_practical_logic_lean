@@ -389,7 +389,7 @@ namespace Option_
   The valuation of a formula as a function from strings to optional booleans.
   A function from the set of atoms to the set of optional truth values `{false, true}`.
 -/
-def ValuationAsOptionFunction : Type := String → Option Bool
+def ValuationAsPartialFunction : Type := String → Option Bool
   deriving Inhabited
 
 
@@ -397,7 +397,7 @@ def ValuationAsOptionFunction : Type := String → Option Bool
   `eval V F` := The evaluation of a formula `F` given the valuation `V`.
 -/
 def eval
-  (V : ValuationAsOptionFunction) :
+  (V : ValuationAsPartialFunction) :
   Formula_ → Option Bool
   | false_ => some false
   | true_ => some true
@@ -427,13 +427,13 @@ def eval
   `satisfies V F` := True if and only if the valuation `V` satisfies the formula `F`.
 -/
 def satisfies
-  (V : ValuationAsOptionFunction)
+  (V : ValuationAsPartialFunction)
   (F : Formula_) :
   Prop :=
   eval V F = some true
 
 instance
-  (V : ValuationAsOptionFunction)
+  (V : ValuationAsPartialFunction)
   (F : Formula_) :
   Decidable (satisfies V F) :=
   by
@@ -447,34 +447,34 @@ instance
 def Formula_.is_tautology
   (F : Formula_) :
   Prop :=
-  ∀ (V : ValuationAsOptionFunction), ((∀ (A : String), atom_occurs_in A F → ¬ V A = none) → satisfies V F)
+  ∀ (V : ValuationAsPartialFunction), ((∀ (A : String), atom_occurs_in A F → ¬ V A = none) → satisfies V F)
 
 
 /--
-  `valuation_as_list_of_pairs_to_valuation_as_option_function l` := Translates the list of string and boolean pairs `l` to a function that maps each string that occurs in a pair in `l` to `some` of the leftmost boolean value that it is paired with, and each string that does not occur in a pair in `l` to `none`.
+  `valuation_as_list_of_pairs_to_valuation_as_partial_function l` := Translates the list of string and boolean pairs `l` to a function that maps each string that occurs in a pair in `l` to `some` of the leftmost boolean value that it is paired with, and each string that does not occur in a pair in `l` to `none`.
 -/
-def valuation_as_list_of_pairs_to_valuation_as_option_function :
-  List (String × Bool) → ValuationAsOptionFunction
+def valuation_as_list_of_pairs_to_valuation_as_partial_function :
+  List (String × Bool) → ValuationAsPartialFunction
   | [] => fun _ => none
-  | hd :: tl => Function.updateITE (valuation_as_list_of_pairs_to_valuation_as_option_function tl) hd.fst (some hd.snd)
+  | hd :: tl => Function.updateITE (valuation_as_list_of_pairs_to_valuation_as_partial_function tl) hd.fst (some hd.snd)
 
 
-#eval (eval (valuation_as_list_of_pairs_to_valuation_as_option_function [("P", true)]) (atom_ "P"))
-#eval (eval (valuation_as_list_of_pairs_to_valuation_as_option_function [("P", false)]) (atom_ "P"))
-#eval (eval (valuation_as_list_of_pairs_to_valuation_as_option_function [("P", true)]) (not_ (atom_ "P")))
-#eval (eval (valuation_as_list_of_pairs_to_valuation_as_option_function [("P", false)]) (not_ (atom_ "P")))
-#eval (eval (valuation_as_list_of_pairs_to_valuation_as_option_function [("P", false), ("Q", false)]) (and_ (atom_ "P") (atom_ "Q")))
-#eval (eval (valuation_as_list_of_pairs_to_valuation_as_option_function [("P", false), ("Q", true)]) (and_ (atom_ "P") (atom_ "Q")))
-#eval (eval (valuation_as_list_of_pairs_to_valuation_as_option_function [("P", true), ("Q", false)]) (and_ (atom_ "P") (atom_ "Q")))
-#eval (eval (valuation_as_list_of_pairs_to_valuation_as_option_function [("P", true), ("Q", true)]) (and_ (atom_ "P") (atom_ "Q")))
-#eval (eval (valuation_as_list_of_pairs_to_valuation_as_option_function [("P", true)]) (atom_ "Q"))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", true)]) (atom_ "P"))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", false)]) (atom_ "P"))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", true)]) (not_ (atom_ "P")))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", false)]) (not_ (atom_ "P")))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", false), ("Q", false)]) (and_ (atom_ "P") (atom_ "Q")))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", false), ("Q", true)]) (and_ (atom_ "P") (atom_ "Q")))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", true), ("Q", false)]) (and_ (atom_ "P") (atom_ "Q")))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", true), ("Q", true)]) (and_ (atom_ "P") (atom_ "Q")))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", true)]) (atom_ "Q"))
 
 
 end Option_
 
 
 example
-  (V_opt : Option_.ValuationAsOptionFunction)
+  (V_opt : Option_.ValuationAsPartialFunction)
   (V : ValuationAsTotalFunction)
   (F : Formula_)
   (h1 : ∀ (A : String), atom_occurs_in A F → V_opt A = some (V A)) :
@@ -532,7 +532,7 @@ example
 -/
 def val_to_opt_val
   (V : ValuationAsTotalFunction) :
-  Option_.ValuationAsOptionFunction :=
+  Option_.ValuationAsPartialFunction :=
   fun (A : String) => some (V A)
 
 
@@ -540,7 +540,7 @@ def val_to_opt_val
   `opt_val_to_val V_opt` := The conversion of the option valued valuation function `V_opt` to a valuation function.
 -/
 def opt_val_to_val
-  (V_opt : Option_.ValuationAsOptionFunction) :
+  (V_opt : Option_.ValuationAsPartialFunction) :
   ValuationAsTotalFunction :=
   fun (A : String) =>
     match V_opt A with
@@ -558,7 +558,7 @@ lemma val_to_opt_val_eq_some_val
 
 
 lemma opt_val_eq_some_opt_val_to_val
-  (V_opt : Option_.ValuationAsOptionFunction)
+  (V_opt : Option_.ValuationAsPartialFunction)
   (A : String)
   (h1 : ¬ V_opt A = none) :
   V_opt A = some ((opt_val_to_val V_opt) A) :=
@@ -573,7 +573,7 @@ lemma opt_val_eq_some_opt_val_to_val
 
 
 lemma eval_opt_val_to_val
-  (V_opt : Option_.ValuationAsOptionFunction)
+  (V_opt : Option_.ValuationAsPartialFunction)
   (F : Formula_)
   (h1 : ∀ (A : String), atom_occurs_in A F → ¬ V_opt A = none) :
   Option_.eval V_opt F = some (eval (opt_val_to_val V_opt) F) :=
