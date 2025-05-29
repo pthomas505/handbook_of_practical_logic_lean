@@ -129,7 +129,7 @@ theorem theorem_2_3_all
   (V : ValuationAsTotalFunction)
   (τ : String → Formula_)
   (F : Formula_) :
-  eval V (replace_atom_all_rec τ F) = eval (eval V ∘ τ) F :=
+  eval V (replace_atom_all_rec τ F) = eval ((eval V) ∘ τ) F :=
   by
   induction F
   case false_ | true_ =>
