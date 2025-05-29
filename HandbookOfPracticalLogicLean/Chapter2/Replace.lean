@@ -183,6 +183,29 @@ theorem theorem_2_5_all
     apply h1
 
 
+example
+  (V : ValuationAsTotalFunction)
+  (τ1 τ2 : String → Formula_)
+  (F : Formula_)
+  (h1 : ∀ (A : String), atom_occurs_in A F → eval V (τ1 A) = eval V (τ2 A)) :
+  eval V (replace_atom_all_rec τ1 F) = eval V (replace_atom_all_rec τ2 F) :=
+  by
+  cases F
+  case false_ | true_ =>
+    unfold replace_atom_all_rec
+    rfl
+  case atom_ X =>
+    unfold replace_atom_all_rec
+    apply h1
+    unfold atom_occurs_in
+    rfl
+  all_goals
+    simp only [theorem_2_3_all]
+    apply theorem_2_2
+    simp only [Function.comp_apply]
+    exact h1
+
+
 theorem corollary_2_6_all
   (V : ValuationAsTotalFunction)
   (τ1 τ2 : String → Formula_)
