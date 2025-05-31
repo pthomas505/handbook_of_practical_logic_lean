@@ -437,10 +437,20 @@ lemma is_repl_of_formula_in_formula_ind_imp_is_repl_of_formula_in_formula_rec
     induction P_u generalizing P_v
     all_goals
       cases P_v
-      all_goals
-        unfold is_repl_of_formula_in_formula_rec
-        right
-        itauto
+    all_goals
+      unfold is_repl_of_formula_in_formula_rec
+    case
+        not_.not_
+      | and_.and_
+      | or_.or_
+      | imp_.imp_
+      | iff_.iff_ =>
+      right
+      left
+      exact ⟨h1_ih_1, h1_ih_2⟩
+    all_goals
+      right
+      exact ⟨h1_ih_1, h1_ih_2⟩
   case not_ P_u P_v h1_ih_1 h1_ih_2 =>
     unfold is_repl_of_formula_in_formula_rec
     right
