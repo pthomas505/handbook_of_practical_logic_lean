@@ -232,40 +232,40 @@ example
 
 
 /--
-  `is_repl_of_formula_in_formula_fun U V P_u P_v` := True if and only if `P_v` is the result of replacing one or more specified occurrences (but not necessarily all occurrences) of `U` in `P_u` by occurrences of `V`.
+  `is_repl_of_formula_in_formula_rec U V P_u P_v` := True if and only if `P_v` is the result of replacing one or more specified occurrences (but not necessarily all occurrences) of `U` in `P_u` by occurrences of `V`.
 -/
-def is_repl_of_formula_in_formula_fun
+def is_repl_of_formula_in_formula_rec
   (U V : Formula_) :
   Formula_ → Formula_ → Prop
   | not_ P_u, not_ P_v =>
     not_ P_u = not_ P_v ∨ (not_ P_u = U ∧ not_ P_v = V) ∨
-    is_repl_of_formula_in_formula_fun U V P_u P_v
+    is_repl_of_formula_in_formula_rec U V P_u P_v
 
   | and_ P_u Q_u, and_ P_v Q_v =>
     and_ P_u Q_u = and_ P_v Q_v ∨ (and_ P_u Q_u = U ∧ and_ P_v Q_v = V) ∨
-    is_repl_of_formula_in_formula_fun U V P_u P_v ∧ is_repl_of_formula_in_formula_fun U V Q_u Q_v
+    is_repl_of_formula_in_formula_rec U V P_u P_v ∧ is_repl_of_formula_in_formula_rec U V Q_u Q_v
 
   | or_ P_u Q_u, or_ P_v Q_v =>
     or_ P_u Q_u = or_ P_v Q_v ∨ (or_ P_u Q_u = U ∧ or_ P_v Q_v = V) ∨
-    is_repl_of_formula_in_formula_fun U V P_u P_v ∧ is_repl_of_formula_in_formula_fun U V Q_u Q_v
+    is_repl_of_formula_in_formula_rec U V P_u P_v ∧ is_repl_of_formula_in_formula_rec U V Q_u Q_v
 
   | imp_ P_u Q_u, imp_ P_v Q_v =>
     imp_ P_u Q_u = imp_ P_v Q_v ∨ (imp_ P_u Q_u = U ∧ imp_ P_v Q_v = V) ∨
-    is_repl_of_formula_in_formula_fun U V P_u P_v ∧ is_repl_of_formula_in_formula_fun U V Q_u Q_v
+    is_repl_of_formula_in_formula_rec U V P_u P_v ∧ is_repl_of_formula_in_formula_rec U V Q_u Q_v
 
   | iff_ P_u Q_u, iff_ P_v Q_v =>
     iff_ P_u Q_u = iff_ P_v Q_v ∨ (iff_ P_u Q_u = U ∧ iff_ P_v Q_v = V) ∨
-    is_repl_of_formula_in_formula_fun U V P_u P_v ∧ is_repl_of_formula_in_formula_fun U V Q_u Q_v
+    is_repl_of_formula_in_formula_rec U V P_u P_v ∧ is_repl_of_formula_in_formula_rec U V Q_u Q_v
 
   | P_u, P_v => P_u = P_v ∨ (P_u = U ∧ P_v = V)
 
-instance (U V F F' : Formula_) : Decidable (is_repl_of_formula_in_formula_fun U V F F') :=
+instance (U V F F' : Formula_) : Decidable (is_repl_of_formula_in_formula_rec U V F F') :=
   by
   induction F generalizing F'
   all_goals
     cases F'
     all_goals
-      unfold is_repl_of_formula_in_formula_fun
+      unfold is_repl_of_formula_in_formula_rec
       infer_instance
 
 
@@ -323,10 +323,10 @@ inductive is_repl_of_formula_in_formula
     is_repl_of_formula_in_formula U V (P_u.iff_ Q_u) (P_v.iff_ Q_v)
 
 
-lemma is_repl_of_formula_in_formula_fun_imp_is_repl_of_formula_in_formula
+lemma is_repl_of_formula_in_formula_rec_imp_is_repl_of_formula_in_formula
   (U V : Formula_)
   (F F' : Formula_)
-  (h1 : is_repl_of_formula_in_formula_fun U V F F') :
+  (h1 : is_repl_of_formula_in_formula_rec U V F F') :
   is_repl_of_formula_in_formula U V F F' :=
   by
   induction F generalizing F'
@@ -338,7 +338,7 @@ lemma is_repl_of_formula_in_formula_fun_imp_is_repl_of_formula_in_formula
     apply is_repl_of_formula_in_formula.same_
     rfl
   case atom_.atom_ X X' =>
-    unfold is_repl_of_formula_in_formula_fun at h1
+    unfold is_repl_of_formula_in_formula_rec at h1
     cases h1
     case inl h1 =>
       apply is_repl_of_formula_in_formula.same_
@@ -349,7 +349,7 @@ lemma is_repl_of_formula_in_formula_fun_imp_is_repl_of_formula_in_formula
       · exact h1_left
       · exact h1_right
   case not_.not_ phi ih phi' =>
-    unfold is_repl_of_formula_in_formula_fun at h1
+    unfold is_repl_of_formula_in_formula_rec at h1
     cases h1
     case inl h1 =>
       apply is_repl_of_formula_in_formula.same_
@@ -370,7 +370,7 @@ lemma is_repl_of_formula_in_formula_fun_imp_is_repl_of_formula_in_formula
     | or_.or_ phi psi phi_ih psi_ih phi' psi'
     | imp_.imp_ phi psi phi_ih psi_ih phi' psi'
     | iff_.iff_ phi psi phi_ih psi_ih phi' psi' =>
-    unfold is_repl_of_formula_in_formula_fun at h1
+    unfold is_repl_of_formula_in_formula_rec at h1
     cases h1
     case inl h1 =>
       apply is_repl_of_formula_in_formula.same_
@@ -396,7 +396,7 @@ lemma is_repl_of_formula_in_formula_fun_imp_is_repl_of_formula_in_formula
           exact h1_right
 
   all_goals
-    unfold is_repl_of_formula_in_formula_fun at h1
+    unfold is_repl_of_formula_in_formula_rec at h1
     cases h1
     case inl h1 =>
       cases h1
@@ -407,11 +407,11 @@ lemma is_repl_of_formula_in_formula_fun_imp_is_repl_of_formula_in_formula
       · exact h1_right
 
 
-lemma is_repl_of_formula_in_formula_imp_is_repl_of_formula_in_formula_fun
+lemma is_repl_of_formula_in_formula_imp_is_repl_of_formula_in_formula_rec
   (U V : Formula_)
   (F F' : Formula_)
   (h1 : is_repl_of_formula_in_formula U V F F') :
-  is_repl_of_formula_in_formula_fun U V F F' :=
+  is_repl_of_formula_in_formula_rec U V F F' :=
   by
   induction h1
   case same_ P_u P_v h1_ih =>
@@ -419,28 +419,28 @@ lemma is_repl_of_formula_in_formula_imp_is_repl_of_formula_in_formula_fun
     all_goals
       cases P_v
       all_goals
-        unfold is_repl_of_formula_in_formula_fun
+        unfold is_repl_of_formula_in_formula_rec
         itauto
   case diff_ P_u P_v h1_ih_1 h1_ih_2 =>
     induction P_u generalizing P_v
     all_goals
       cases P_v
       all_goals
-        unfold is_repl_of_formula_in_formula_fun
+        unfold is_repl_of_formula_in_formula_rec
         itauto
   all_goals
-    unfold is_repl_of_formula_in_formula_fun
+    unfold is_repl_of_formula_in_formula_rec
     itauto
 
 
-lemma is_repl_of_formula_in_formula_fun_iff_is_repl_of_formula_in_formula
+lemma is_repl_of_formula_in_formula_rec_iff_is_repl_of_formula_in_formula
   (U V : Formula_)
   (F F' : Formula_) :
-  is_repl_of_formula_in_formula_fun U V F F' ↔ is_repl_of_formula_in_formula U V F F' :=
+  is_repl_of_formula_in_formula_rec U V F F' ↔ is_repl_of_formula_in_formula U V F F' :=
   by
   constructor
-  · apply is_repl_of_formula_in_formula_fun_imp_is_repl_of_formula_in_formula
-  · apply is_repl_of_formula_in_formula_imp_is_repl_of_formula_in_formula_fun
+  · apply is_repl_of_formula_in_formula_rec_imp_is_repl_of_formula_in_formula
+  · apply is_repl_of_formula_in_formula_imp_is_repl_of_formula_in_formula_rec
 
 
 example
