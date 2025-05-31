@@ -85,10 +85,10 @@ theorem corollary_2_4_one
 theorem theorem_2_5_one
   (V : ValuationAsTotalFunction)
   (P Q : Formula_)
-  (X : String)
+  (A : String)
   (R : Formula_)
   (h1 : eval V P = eval V Q) :
-  eval V (replace_atom_one_rec X P R) = eval V (replace_atom_one_rec X Q R) :=
+  eval V (replace_atom_one_rec A P R) = eval V (replace_atom_one_rec A Q R) :=
   by
   simp only [theorem_2_3_one]
   rewrite [h1]
@@ -98,10 +98,10 @@ theorem theorem_2_5_one
 theorem corollary_2_6_one
   (V : ValuationAsTotalFunction)
   (P Q : Formula_)
-  (X : String)
+  (A : String)
   (R : Formula_)
   (h1 : are_logically_equivalent P Q) :
-  eval V (replace_atom_one_rec X P R) = eval V (replace_atom_one_rec X Q R) :=
+  eval V (replace_atom_one_rec A P R) = eval V (replace_atom_one_rec A Q R) :=
   by
   simp only [are_logically_equivalent_iff_eval_eq] at h1
 
@@ -169,7 +169,7 @@ theorem corollary_2_4_all
   apply h1
 
 
-example
+theorem theorem_2_5_all
   (V : ValuationAsTotalFunction)
   (τ1 τ2 : String → Formula_)
   (F : Formula_)
@@ -192,31 +192,42 @@ example
     exact h1
 
 
-theorem theorem_2_5_all
+example
   (V : ValuationAsTotalFunction)
   (τ1 τ2 : String → Formula_)
   (F : Formula_)
-  (h1 : ∀ (X : String), eval V (τ1 X) = eval V (τ2 X)) :
+  (h1 : ∀ (A : String), eval V (τ1 A) = eval V (τ2 A)) :
   eval V (replace_atom_all_rec τ1 F) = eval V (replace_atom_all_rec τ2 F) :=
   by
-    simp only [theorem_2_3_all]
-    congr 1
-    funext X
-    simp only [Function.comp_apply]
-    apply h1
+  apply theorem_2_5_all
+  intro A a1
+  apply h1
 
 
 theorem corollary_2_6_all
   (V : ValuationAsTotalFunction)
   (τ1 τ2 : String → Formula_)
   (F : Formula_)
-  (h1 : ∀ (X : String), are_logically_equivalent (τ1 X) (τ2 X)) :
+  (h1 : ∀ (A : String), atom_occurs_in A F → are_logically_equivalent (τ1 A) (τ2 A)) :
   eval V (replace_atom_all_rec τ1 F) = eval V (replace_atom_all_rec τ2 F) :=
   by
   simp only [are_logically_equivalent_iff_eval_eq] at h1
 
   apply theorem_2_5_all
-  intro X
+  intro A a1
+  apply h1
+  exact a1
+
+
+example
+  (V : ValuationAsTotalFunction)
+  (τ1 τ2 : String → Formula_)
+  (F : Formula_)
+  (h1 : ∀ (A : String), are_logically_equivalent (τ1 A) (τ2 A)) :
+  eval V (replace_atom_all_rec τ1 F) = eval V (replace_atom_all_rec τ2 F) :=
+  by
+  apply corollary_2_6_all
+  intro A a1
   apply h1
 
 
