@@ -169,20 +169,6 @@ theorem corollary_2_4_all
   apply h1
 
 
-theorem theorem_2_5_all
-  (V : ValuationAsTotalFunction)
-  (τ1 τ2 : String → Formula_)
-  (F : Formula_)
-  (h1 : ∀ (X : String), eval V (τ1 X) = eval V (τ2 X)) :
-  eval V (replace_atom_all_rec τ1 F) = eval V (replace_atom_all_rec τ2 F) :=
-  by
-    simp only [theorem_2_3_all]
-    congr 1
-    funext X
-    simp only [Function.comp_apply]
-    apply h1
-
-
 example
   (V : ValuationAsTotalFunction)
   (τ1 τ2 : String → Formula_)
@@ -204,6 +190,20 @@ example
     apply theorem_2_2
     simp only [Function.comp_apply]
     exact h1
+
+
+theorem theorem_2_5_all
+  (V : ValuationAsTotalFunction)
+  (τ1 τ2 : String → Formula_)
+  (F : Formula_)
+  (h1 : ∀ (X : String), eval V (τ1 X) = eval V (τ2 X)) :
+  eval V (replace_atom_all_rec τ1 F) = eval V (replace_atom_all_rec τ2 F) :=
+  by
+    simp only [theorem_2_3_all]
+    congr 1
+    funext X
+    simp only [Function.comp_apply]
+    apply h1
 
 
 theorem corollary_2_6_all
