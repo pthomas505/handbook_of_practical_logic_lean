@@ -339,17 +339,20 @@ lemma is_repl_of_formula_in_formula_rec_imp_is_repl_of_formula_in_formula_ind
     rfl
   case atom_.atom_ X X' =>
     unfold is_repl_of_formula_in_formula_rec at h1
+
     cases h1
     case inl h1 =>
       apply is_repl_of_formula_in_formula_ind.same_
       exact h1
     case inr h1 =>
       obtain ⟨h1_left, h1_right⟩ := h1
+
       apply is_repl_of_formula_in_formula_ind.diff_
       · exact h1_left
       · exact h1_right
   case not_.not_ phi ih phi' =>
     unfold is_repl_of_formula_in_formula_rec at h1
+
     cases h1
     case inl h1 =>
       apply is_repl_of_formula_in_formula_ind.same_
@@ -358,6 +361,7 @@ lemma is_repl_of_formula_in_formula_rec_imp_is_repl_of_formula_in_formula_ind
       cases h1
       case inl h1 =>
         obtain ⟨h1_left, h1_right⟩ := h1
+
         apply is_repl_of_formula_in_formula_ind.diff_
         · exact h1_left
         · exact h1_right
@@ -371,6 +375,7 @@ lemma is_repl_of_formula_in_formula_rec_imp_is_repl_of_formula_in_formula_ind
     | imp_.imp_ phi psi phi_ih psi_ih phi' psi'
     | iff_.iff_ phi psi phi_ih psi_ih phi' psi' =>
     unfold is_repl_of_formula_in_formula_rec at h1
+
     cases h1
     case inl h1 =>
       apply is_repl_of_formula_in_formula_ind.same_
@@ -379,6 +384,7 @@ lemma is_repl_of_formula_in_formula_rec_imp_is_repl_of_formula_in_formula_ind
       cases h1
       case inl h1 =>
         obtain ⟨h1_left, h1_right⟩ := h1
+
         apply is_repl_of_formula_in_formula_ind.diff_
         · exact h1_left
         · exact h1_right
@@ -397,11 +403,13 @@ lemma is_repl_of_formula_in_formula_rec_imp_is_repl_of_formula_in_formula_ind
 
   all_goals
     unfold is_repl_of_formula_in_formula_rec at h1
+
     cases h1
     case inl h1 =>
       cases h1
     case inr h1 =>
       obtain ⟨h1_left, h1_right⟩ := h1
+
       apply is_repl_of_formula_in_formula_ind.diff_
       · exact h1_left
       · exact h1_right
