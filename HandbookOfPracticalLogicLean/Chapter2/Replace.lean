@@ -446,11 +446,15 @@ lemma is_repl_of_formula_in_formula_ind_imp_is_repl_of_formula_in_formula_rec
     right
     right
     exact h1_ih_2
-  all_goals
+  case
+    and_ P_u Q_u P_v Q_v h1_ih_1 h1_ih_2 h1_ih_3 h1_ih_4
+  | or_ P_u Q_u P_v Q_v h1_ih_1 h1_ih_2 h1_ih_3 h1_ih_4
+  | imp_ P_u Q_u P_v Q_v h1_ih_1 h1_ih_2 h1_ih_3 h1_ih_4
+  | iff_ P_u Q_u P_v Q_v h1_ih_1 h1_ih_2 h1_ih_3 h1_ih_4 =>
     unfold is_repl_of_formula_in_formula_rec
     right
     right
-    itauto
+    exact ⟨h1_ih_3, h1_ih_4⟩
 
 
 lemma is_repl_of_formula_in_formula_rec_iff_is_repl_of_formula_in_formula_ind
