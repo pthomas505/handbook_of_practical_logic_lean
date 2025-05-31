@@ -414,7 +414,7 @@ lemma is_repl_of_formula_in_formula_ind_imp_is_repl_of_formula_in_formula_rec
   induction h1
   case same_ P_u P_v h1_ih =>
     rewrite [h1_ih]
-    induction P_v
+    cases P_v
     all_goals
       unfold is_repl_of_formula_in_formula_rec
       left
@@ -422,7 +422,7 @@ lemma is_repl_of_formula_in_formula_ind_imp_is_repl_of_formula_in_formula_rec
   case diff_ P_u P_v h1_ih_1 h1_ih_2 =>
     rewrite [h1_ih_1]
     rewrite [h1_ih_2]
-    induction U generalizing V
+    cases U
     all_goals
       cases V
     all_goals
