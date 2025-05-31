@@ -84,8 +84,8 @@ theorem corollary_2_4_one
 
 theorem theorem_2_5_one
   (V : ValuationAsTotalFunction)
-  (P Q : Formula_)
   (A : String)
+  (P Q : Formula_)
   (R : Formula_)
   (h1 : eval V P = eval V Q) :
   eval V (replace_atom_one_rec A P R) = eval V (replace_atom_one_rec A Q R) :=
@@ -97,8 +97,8 @@ theorem theorem_2_5_one
 
 theorem corollary_2_6_one
   (V : ValuationAsTotalFunction)
-  (P Q : Formula_)
   (A : String)
+  (P Q : Formula_)
   (R : Formula_)
   (h1 : are_logically_equivalent P Q) :
   eval V (replace_atom_one_rec A P R) = eval V (replace_atom_one_rec A Q R) :=
@@ -176,20 +176,10 @@ theorem theorem_2_5_all
   (h1 : ∀ (A : String), atom_occurs_in A F → eval V (τ1 A) = eval V (τ2 A)) :
   eval V (replace_atom_all_rec τ1 F) = eval V (replace_atom_all_rec τ2 F) :=
   by
-  cases F
-  case false_ | true_ =>
-    unfold replace_atom_all_rec
-    rfl
-  case atom_ X =>
-    unfold replace_atom_all_rec
-    apply h1
-    unfold atom_occurs_in
-    rfl
-  all_goals
-    simp only [theorem_2_3_all]
-    apply theorem_2_2
-    simp only [Function.comp_apply]
-    exact h1
+  simp only [theorem_2_3_all]
+  apply theorem_2_2
+  simp only [Function.comp_apply]
+  exact h1
 
 
 example
