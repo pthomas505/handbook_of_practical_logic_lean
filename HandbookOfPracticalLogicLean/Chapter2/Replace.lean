@@ -443,6 +443,8 @@ lemma is_repl_of_formula_in_formula_ind_imp_is_repl_of_formula_in_formula_rec
         itauto
   all_goals
     unfold is_repl_of_formula_in_formula_rec
+    right
+    right
     itauto
 
 
