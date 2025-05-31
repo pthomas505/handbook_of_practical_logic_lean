@@ -396,7 +396,7 @@ lemma is_repl_of_formula_in_formula_rec_imp_is_repl_of_formula_in_formula_ind
 
     cases h1
     case inl h1 =>
-      cases h1
+      contradiction
     case inr h1 =>
       obtain ⟨h1_left, h1_right⟩ := h1
 
