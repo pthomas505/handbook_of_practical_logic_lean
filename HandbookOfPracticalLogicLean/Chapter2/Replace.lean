@@ -420,23 +420,19 @@ lemma is_repl_of_formula_in_formula_ind_imp_is_repl_of_formula_in_formula_rec
       left
       rfl
   case diff_ P_u P_v h1_ih_1 h1_ih_2 =>
-    induction P_u generalizing P_v
+    rewrite [h1_ih_1]
+    rewrite [h1_ih_2]
+    induction U generalizing V
     all_goals
-      cases P_v
+      cases V
     all_goals
       unfold is_repl_of_formula_in_formula_rec
-    case
-        not_.not_
-      | and_.and_
-      | or_.or_
-      | imp_.imp_
-      | iff_.iff_ =>
       right
+    case not_.not_ | and_.and_ | or_.or_ | imp_.imp_ | iff_.iff_ =>
       left
-      exact ⟨h1_ih_1, h1_ih_2⟩
+      exact ⟨rfl, rfl⟩
     all_goals
-      right
-      exact ⟨h1_ih_1, h1_ih_2⟩
+      exact ⟨rfl, rfl⟩
   case not_ P_u P_v h1_ih_1 h1_ih_2 =>
     unfold is_repl_of_formula_in_formula_rec
     right
