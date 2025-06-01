@@ -35,7 +35,7 @@ lemma mk_lits_is_conj_ind_v1
   intro F a1
   right
   simp only [List.mem_map] at a1
-  obtain ⟨X, ⟨a1_left, a1_right⟩⟩ := a1
+  obtain ⟨A, ⟨a1_left, a1_right⟩⟩ := a1
   split_ifs at a1_right
   case pos c1 =>
     rewrite [← a1_right]
@@ -97,8 +97,8 @@ lemma eval_mk_lits_eq_true_imp_valuations_eq_on_atom_list
       specialize ih h1_right
 
       cases a1
-      case inl a1_left =>
-        rewrite [a1_left]
+      case inl a1 =>
+        rewrite [a1]
         split_ifs at h1_left
         case pos c1 =>
           rewrite [c1]
@@ -113,15 +113,15 @@ lemma eval_mk_lits_eq_true_imp_valuations_eq_on_atom_list
           unfold eval at h1_left
           simp only [Bool.not_eq_true] at h1_left
           exact h1_left
-      case inr a1_right =>
+      case inr a1 =>
         apply ih
-        exact a1_right
+        exact a1
 
 
 lemma valuations_eq_on_atom_list_imp_eval_mk_lits_eq_true
   (V_1 V_2 : ValuationAsTotalFunction)
   (atom_list : List String)
-  (h1 : ∀ (X : String), X ∈ atom_list → V_1 X = V_2 X) :
+  (h1 : ∀ (A : String), A ∈ atom_list → V_1 A = V_2 A) :
   eval V_1 (mk_lits atom_list V_2) = true :=
   by
   induction atom_list
@@ -196,7 +196,7 @@ lemma eval_mk_lits_eq_true_iff_valuations_eq_on_atom_list
   (V_1 V_2 : ValuationAsTotalFunction)
   (atom_list : List String) :
   eval V_1 (mk_lits atom_list V_2) = true ↔
-    ∀ (X : String), X ∈ atom_list → V_1 X = V_2 X :=
+    ∀ (A : String), A ∈ atom_list → V_1 A = V_2 A :=
   by
   constructor
   · apply eval_mk_lits_eq_true_imp_valuations_eq_on_atom_list
@@ -206,7 +206,7 @@ lemma eval_mk_lits_eq_true_iff_valuations_eq_on_atom_list
 -------------------------------------------------------------------------------
 
 
-theorem eval_of_mk_lits_with_same_valuation_eq_true
+theorem eval_of_mk_lits_same_valuation_eq_true
   (V : ValuationAsTotalFunction)
   (atom_list : List String) :
   eval V (mk_lits atom_list V) = true :=
@@ -222,15 +222,15 @@ theorem eval_of_mk_lits_with_same_valuation_eq_true
 lemma eq_on_mem_imp_mk_lits_eq
   (V_1 V_2 : ValuationAsTotalFunction)
   (atom_list : List String)
-  (h1 : ∀ (X : String), X ∈ atom_list → V_1 X = V_2 X) :
+  (h1 : ∀ (A : String), A ∈ atom_list → V_1 A = V_2 A) :
   mk_lits atom_list V_1 = mk_lits atom_list V_2 :=
   by
   unfold mk_lits
   simp only
-  congr! 1
+  congr 1
   simp only [List.map_inj_left]
-  intro X a1
-  rewrite [h1 X a1]
+  intro A a1
+  rewrite [h1 A a1]
   rfl
 
 
@@ -238,12 +238,12 @@ lemma mk_lits_eq_imp_eq_on_mem
   (V_1 V_2 : ValuationAsTotalFunction)
   (atom_list : List String)
   (h1 : mk_lits atom_list V_1 = mk_lits atom_list V_2) :
-  ∀ (X : String), X ∈ atom_list → V_1 X = V_2 X :=
+  ∀ (A : String), A ∈ atom_list → V_1 A = V_2 A :=
   by
   induction atom_list
   case nil =>
     simp only [List.not_mem_nil]
-    intro X a1
+    intro A a1
     contradiction
   case cons hd tl ih =>
     cases tl
@@ -252,7 +252,7 @@ lemma mk_lits_eq_imp_eq_on_mem
       simp only [List.map_cons, List.map_nil] at h1
       unfold list_conj at h1
 
-      intro X a1
+      intro A a1
       simp only [List.mem_singleton] at a1
       rewrite [a1]
       split_ifs at h1
@@ -276,32 +276,32 @@ lemma mk_lits_eq_imp_eq_on_mem
       simp only [and_.injEq] at h1
       obtain ⟨h1_left, h1_right⟩ := h1
 
-      intro X a1
+      intro A a1
       simp only [List.mem_cons] at a1
       cases a1
-      case inl c1 =>
-        rewrite [c1]
+      case inl a1 =>
+        rewrite [a1]
         split_ifs at h1_left
-        case pos c2 c3 =>
+        case pos c1 c2 =>
+          rewrite [c1]
           rewrite [c2]
-          rewrite [c3]
           rfl
-        case neg c2 c3 =>
+        case neg c1 c2 =>
+          simp only [Bool.not_eq_true] at c1
           simp only [Bool.not_eq_true] at c2
-          simp only [Bool.not_eq_true] at c3
+          rewrite [c1]
           rewrite [c2]
-          rewrite [c3]
           rfl
-      case inr c1 =>
+      case inr a1 =>
         apply ih
         · exact h1_right
-        · exact c1
+        · exact a1
 
 
 lemma eq_on_mem_iff_mk_lits_eq
   (V_1 V_2 : ValuationAsTotalFunction)
   (atom_list : List String) :
-  (∀ (X : String), X ∈ atom_list → V_1 X = V_2 X) ↔
+  (∀ (A : String), A ∈ atom_list → V_1 A = V_2 A) ↔
     mk_lits atom_list V_1 = mk_lits atom_list V_2 :=
   by
   constructor
