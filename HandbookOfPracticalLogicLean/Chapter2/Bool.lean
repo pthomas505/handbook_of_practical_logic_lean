@@ -111,7 +111,6 @@ lemma bool_iff_prop_iff
     all_goals
       unfold b_iff
       dsimp only
-    all_goals
       decide
 
 
