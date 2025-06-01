@@ -26,9 +26,9 @@ def mk_lits
 
 
 lemma mk_lits_is_conj_ind_v1
-  (atoms : List String)
+  (atom_list : List String)
   (V : ValuationAsTotalFunction) :
-  is_conj_ind_v1 (mk_lits atoms V) :=
+  is_conj_ind_v1 (mk_lits atom_list V) :=
   by
   unfold mk_lits
   apply list_conj_of_list_of_is_constant_ind_or_is_literal_ind_is_conj_ind_v1
