@@ -98,7 +98,7 @@ theorem theorem_2_7
 
     rewrite [Bool.eq_iff_iff]
     simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or]
-    tauto
+    simp only [not_and_or]
   case or_ phi psi phi_ih psi_ih =>
     unfold has_dual at h1
     obtain ⟨h1_left, h1_right⟩ := h1
@@ -108,7 +108,7 @@ theorem theorem_2_7
 
     rewrite [Bool.eq_iff_iff]
     simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or]
-    tauto
+    simp only [not_or]
   all_goals
     unfold has_dual at h1
     contradiction
