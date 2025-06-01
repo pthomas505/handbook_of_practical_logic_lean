@@ -8,15 +8,18 @@ set_option autoImplicit false
 open Formula_
 
 
+/--
+  `mk_lits atom_list V` := Returns a formula constructed as a conjunction of literals that is only satisfied by valuations that map each atom in `atom_list` to the same boolean value as the valuation `V`.
+-/
 def mk_lits
-  (atoms : List String)
+  (atom_list : List String)
   (V : ValuationAsTotalFunction) :
   Formula_ :=
   let f : String → Formula_ := fun (A : String) =>
     if V A = true
     then atom_ A
     else not_ (atom_ A)
-  list_conj (atoms.map f)
+  list_conj (atom_list.map f)
 
 
 lemma mk_lits_is_conj_ind_v1
@@ -301,3 +304,6 @@ lemma eq_on_mem_iff_mk_lits_eq
   constructor
   · apply eq_on_mem_imp_mk_lits_eq
   · apply mk_lits_eq_imp_eq_on_mem
+
+
+#lint
