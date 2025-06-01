@@ -9,7 +9,7 @@ open Formula_
 
 
 /--
-  `mk_lits atom_list V` := Returns a formula constructed as a conjunction of literals that is only satisfied by valuations that map each atom in `atom_list` to the same boolean value as the valuation `V`.
+  `mk_lits atom_list V` := Returns a conjunction of literals as a formula that is only satisfied by valuations that map each atom in `atom_list` to the same boolean value as the valuation `V`.
 -/
 def mk_lits
   (atom_list : List String)
@@ -20,6 +20,9 @@ def mk_lits
     then atom_ A
     else not_ (atom_ A)
   list_conj (atom_list.map f)
+
+
+-------------------------------------------------------------------------------
 
 
 lemma mk_lits_is_conj_ind_v1
