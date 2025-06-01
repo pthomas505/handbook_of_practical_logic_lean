@@ -9,7 +9,7 @@ open Formula_
 
 
 /--
-  `mk_lits atom_list V` := Returns a conjunction of literals as a formula that is only satisfied by valuations that map each atom in `atom_list` to the same boolean value as the valuation `V`.
+  `mk_lits atom_list V` := Returns a formula that is a conjunction of literals and that is only satisfied by valuations that map each atom in `atom_list` to the same boolean value as the valuation `V`.
 -/
 def mk_lits
   (atom_list : List String)
@@ -52,9 +52,9 @@ lemma eval_mk_lits_eq_true_imp_valuations_eq_on_atom_list
   (V_1 V_2 : ValuationAsTotalFunction)
   (atom_list : List String)
   (h1 : eval V_1 (mk_lits atom_list V_2) = true) :
-  ∀ (X : String), X ∈ atom_list → V_1 X = V_2 X :=
+  ∀ (A : String), A ∈ atom_list → V_1 A = V_2 A :=
   by
-  intro X a1
+  intro A a1
   induction atom_list
   case nil =>
     simp only [List.not_mem_nil] at a1
