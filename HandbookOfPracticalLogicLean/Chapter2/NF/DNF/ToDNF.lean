@@ -71,7 +71,7 @@ lemma eval_eq_true_imp_eval_to_dnf_eq_true
       · simp only [Bool.decide_eq_true]
         exact h2
     · rfl
-  · apply eval_of_mk_lits_with_same_valuation_eq_true
+  · apply eval_of_mk_lits_same_valuation_eq_true
 
 
 lemma eval_to_dnf_eq_true_imp_eval_eq_true
@@ -89,7 +89,7 @@ lemma eval_to_dnf_eq_true_imp_eval_eq_true
   obtain ⟨V', ⟨h1_left_left_left, h1_left_left_right⟩, h1_left_right⟩ := h1_left
   rewrite [← h1_left_right] at h1_right
   clear h1_left_right
-  obtain s1 := eval_mk_lits_eq_true_imp_valuations_eq_on_atom_list V V' F.atom_list.dedup h1_right
+  obtain s1 := eval_mk_lits_eq_true_imp_valuations_eq_on_atom_list F.atom_list.dedup V V' h1_right
   rewrite [← h1_left_left_right]
   apply theorem_2_2
   intro X a1
