@@ -159,6 +159,25 @@ lemma valuations_eq_on_atom_list_imp_eval_mk_lits_eq_true
   (h1 : ∀ (A : String), A ∈ atom_list → V_1 A = V_2 A) :
   eval V_1 (mk_lits atom_list V_2) = true :=
   by
+  simp only [mk_lits]
+  simp only [eval_list_conj_eq_true_iff_forall_eval_eq_true]
+  simp only [List.mem_map]
+  intro F a1
+  obtain ⟨A, a1_left, a1_right⟩ := a1
+  split_ifs at a1_right
+  case pos c1 =>
+    rewrite [← a1_right]
+    unfold eval
+    rewrite [h1 A a1_left]
+    exact c1
+  case neg c1 =>
+    rewrite [← a1_right]
+    simp only [eval]
+    rewrite [h1 A a1_left]
+    simp only [bool_iff_prop_not]
+    exact c1
+
+
   induction atom_list
   case nil =>
     unfold mk_lits
