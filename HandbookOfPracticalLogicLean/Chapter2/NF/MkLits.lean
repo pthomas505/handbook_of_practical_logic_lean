@@ -1,5 +1,6 @@
 import HandbookOfPracticalLogicLean.Chapter2.NF.NF
 import HandbookOfPracticalLogicLean.Chapter2.NF.ListConj.IsConj
+import HandbookOfPracticalLogicLean.Chapter2.NF.ListConj.Semantics
 
 
 set_option autoImplicit false
@@ -20,6 +21,69 @@ def mk_lits
     then atom_ A
     else not_ (atom_ A)
   list_conj (atom_list.map f)
+
+
+-------------------------------------------------------------------------------
+
+
+example
+  (atom_list : List String)
+  (V : ValuationAsTotalFunction) :
+  let f : String → Formula_ := fun (A : String) =>
+    if V A = true
+    then atom_ A
+    else not_ (atom_ A)
+  ∀ (F : Formula_), F ∈ (atom_list.map f) → eval V F = true :=
+  by
+  simp only
+  intro F a1
+  simp only [List.mem_map] at a1
+  obtain ⟨A, a1_left, a1_right⟩ := a1
+  rewrite [← a1_right]
+  split_ifs
+  case pos c1 =>
+    unfold eval
+    exact c1
+  case neg c1 =>
+    simp only [eval]
+    simp only [bool_iff_prop_not]
+    exact c1
+
+
+-------------------------------------------------------------------------------
+
+
+lemma mk_lits_atom_list
+  (atom_list : List String)
+  (V : ValuationAsTotalFunction) :
+  Formula_.atom_list (mk_lits atom_list V) = atom_list :=
+  by
+  simp only [mk_lits]
+  induction atom_list
+  case nil =>
+    simp only [List.map_nil]
+    unfold list_conj
+    unfold atom_list
+    rfl
+  case cons hd tl ih =>
+    cases tl
+    case nil =>
+      simp only [List.map_cons, List.map_nil]
+      unfold list_conj
+      split_ifs
+      all_goals
+        simp only [atom_list]
+    case cons tl_hd tl_tl =>
+      simp only [List.map_cons] at ih
+
+      simp only [List.map_cons]
+      unfold list_conj
+      split_ifs
+      all_goals
+        simp only [atom_list]
+        split_ifs at ih
+        rewrite [ih]
+        simp only [List.singleton_append]
 
 
 -------------------------------------------------------------------------------
@@ -54,6 +118,40 @@ lemma eval_mk_lits_eq_true_imp_valuations_eq_on_atom_list
   (h1 : eval V_1 (mk_lits atom_list V_2) = true) :
   ∀ (A : String), A ∈ atom_list → V_1 A = V_2 A :=
   by
+  simp only [mk_lits] at h1
+  simp only [eval_list_conj_eq_true_iff_forall_eval_eq_true] at h1
+  simp only [List.mem_map] at h1
+  intro A a1
+  by_cases c1 : V_2 A = true
+  case pos =>
+    have s1 : ∃ (B : String), B ∈ atom_list ∧ (if V_2 B = true then atom_ B else not_ (atom_ B)) = atom_ A :=
+    by
+      apply Exists.intro A
+      split_ifs
+      exact ⟨a1, rfl⟩
+
+    specialize h1 (atom_ A) s1
+    simp only [eval] at h1
+    rewrite [c1]
+    rewrite [h1]
+    rfl
+  case neg =>
+    have s1 : ∃ (B : String), B ∈ atom_list ∧ (if V_2 B = true then atom_ B else not_ (atom_ B)) = not_ (atom_ A) :=
+    by
+      apply Exists.intro A
+      split_ifs
+      exact ⟨a1, rfl⟩
+
+    specialize h1 (not_ (atom_ A)) s1
+    simp only [eval] at h1
+    simp only [bool_iff_prop_not] at h1
+
+    simp only [Bool.not_eq_true] at c1
+    simp only [Bool.not_eq_true] at h1
+    rewrite [c1]
+    rewrite [h1]
+    rfl
+
   intro A a1
   induction atom_list
   case nil =>
