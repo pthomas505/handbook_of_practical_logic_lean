@@ -152,69 +152,6 @@ lemma eval_mk_lits_eq_true_imp_valuations_eq_on_atom_list
     rewrite [h1]
     rfl
 
-  intro A a1
-  induction atom_list
-  case nil =>
-    simp only [List.not_mem_nil] at a1
-  case cons hd tl ih =>
-    cases tl
-    case nil =>
-      unfold mk_lits at h1
-      simp only [List.map_cons, List.map_nil] at h1
-      unfold list_conj at h1
-
-      simp only [List.mem_singleton] at a1
-      rewrite [a1]
-
-      split_ifs at h1
-      case pos c1 =>
-        rewrite [c1]
-        unfold eval at h1
-        exact h1
-      case neg c1 =>
-        simp only [Bool.not_eq_true] at c1
-        rewrite [c1]
-
-        unfold eval at h1
-        simp only [bool_iff_prop_not] at h1
-        unfold eval at h1
-        simp only [Bool.not_eq_true] at h1
-        exact h1
-    case cons tl_hd tl_tl =>
-      unfold mk_lits at ih
-      simp only [List.map_cons, List.mem_cons] at ih
-
-      unfold mk_lits at h1
-      simp only [List.map_cons] at h1
-      unfold list_conj at h1
-      unfold eval at h1
-      simp only [bool_iff_prop_and] at h1
-      obtain ⟨h1_left, h1_right⟩ := h1
-
-      simp only [List.mem_cons] at a1
-      specialize ih h1_right
-
-      cases a1
-      case inl a1 =>
-        rewrite [a1]
-        split_ifs at h1_left
-        case pos c1 =>
-          rewrite [c1]
-          unfold eval at h1_left
-          exact h1_left
-        case neg c1 =>
-          simp only [Bool.not_eq_true] at c1
-          rewrite [c1]
-
-          unfold eval at h1_left
-          simp only [bool_iff_prop_not] at h1_left
-          unfold eval at h1_left
-          simp only [Bool.not_eq_true] at h1_left
-          exact h1_left
-      case inr a1 =>
-        apply ih
-        exact a1
-
 
 lemma valuations_eq_on_atom_list_imp_eval_mk_lits_eq_true
   (V_1 V_2 : ValuationAsTotalFunction)
