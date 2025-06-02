@@ -113,8 +113,8 @@ lemma mk_lits_is_conj_ind_v1
 
 
 lemma eval_mk_lits_eq_true_imp_valuations_eq_on_atom_list
-  (V_1 V_2 : ValuationAsTotalFunction)
   (atom_list : List String)
+  (V_1 V_2 : ValuationAsTotalFunction)
   (h1 : eval V_1 (mk_lits atom_list V_2) = true) :
   ∀ (A : String), A ∈ atom_list → V_1 A = V_2 A :=
   by
@@ -154,8 +154,8 @@ lemma eval_mk_lits_eq_true_imp_valuations_eq_on_atom_list
 
 
 lemma valuations_eq_on_atom_list_imp_eval_mk_lits_eq_true
-  (V_1 V_2 : ValuationAsTotalFunction)
   (atom_list : List String)
+  (V_1 V_2 : ValuationAsTotalFunction)
   (h1 : ∀ (A : String), A ∈ atom_list → V_1 A = V_2 A) :
   eval V_1 (mk_lits atom_list V_2) = true :=
   by
@@ -179,8 +179,8 @@ lemma valuations_eq_on_atom_list_imp_eval_mk_lits_eq_true
 
 
 lemma eval_mk_lits_eq_true_iff_valuations_eq_on_atom_list
-  (V_1 V_2 : ValuationAsTotalFunction)
-  (atom_list : List String) :
+  (atom_list : List String)
+  (V_1 V_2 : ValuationAsTotalFunction) :
   eval V_1 (mk_lits atom_list V_2) = true ↔
     ∀ (A : String), A ∈ atom_list → V_1 A = V_2 A :=
   by
@@ -193,8 +193,8 @@ lemma eval_mk_lits_eq_true_iff_valuations_eq_on_atom_list
 
 
 theorem eval_of_mk_lits_same_valuation_eq_true
-  (V : ValuationAsTotalFunction)
-  (atom_list : List String) :
+  (atom_list : List String)
+  (V : ValuationAsTotalFunction) :
   eval V (mk_lits atom_list V) = true :=
   by
   apply valuations_eq_on_atom_list_imp_eval_mk_lits_eq_true
@@ -206,8 +206,8 @@ theorem eval_of_mk_lits_same_valuation_eq_true
 
 
 lemma eq_on_mem_imp_mk_lits_eq
-  (V_1 V_2 : ValuationAsTotalFunction)
   (atom_list : List String)
+  (V_1 V_2 : ValuationAsTotalFunction)
   (h1 : ∀ (A : String), A ∈ atom_list → V_1 A = V_2 A) :
   mk_lits atom_list V_1 = mk_lits atom_list V_2 :=
   by
@@ -221,8 +221,8 @@ lemma eq_on_mem_imp_mk_lits_eq
 
 
 lemma mk_lits_eq_imp_eq_on_mem
-  (V_1 V_2 : ValuationAsTotalFunction)
   (atom_list : List String)
+  (V_1 V_2 : ValuationAsTotalFunction)
   (h1 : mk_lits atom_list V_1 = mk_lits atom_list V_2) :
   ∀ (A : String), A ∈ atom_list → V_1 A = V_2 A :=
   by
@@ -285,8 +285,8 @@ lemma mk_lits_eq_imp_eq_on_mem
 
 
 lemma eq_on_mem_iff_mk_lits_eq
-  (V_1 V_2 : ValuationAsTotalFunction)
-  (atom_list : List String) :
+  (atom_list : List String)
+  (V_1 V_2 : ValuationAsTotalFunction) :
   (∀ (A : String), A ∈ atom_list → V_1 A = V_2 A) ↔
     mk_lits atom_list V_1 = mk_lits atom_list V_2 :=
   by
