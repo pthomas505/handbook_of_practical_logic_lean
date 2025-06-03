@@ -53,7 +53,7 @@ example
 -------------------------------------------------------------------------------
 
 
-lemma mk_lits_atom_list
+example
   (atom_list : List String)
   (V : ValuationAsTotalFunction) :
   Formula_.atom_list (mk_lits atom_list V) = atom_list :=
