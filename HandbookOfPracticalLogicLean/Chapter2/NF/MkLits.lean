@@ -71,7 +71,9 @@ example
       simp only [List.map_cons, List.map_nil]
       unfold list_conj
       split_ifs
-      all_goals
+      case pos c1 =>
+        simp only [atom_list]
+      case neg c1 =>
         simp only [atom_list]
     case cons tl_hd tl_tl =>
       simp only [List.map_cons] at ih
