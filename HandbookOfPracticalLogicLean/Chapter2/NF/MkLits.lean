@@ -232,63 +232,6 @@ lemma mk_lits_eq_imp_eq_on_mem
   rewrite [← h1]
   apply eval_of_mk_lits_same_valuation_eq_true
 
-  induction atom_list
-  case nil =>
-    simp only [List.not_mem_nil]
-    intro A a1
-    contradiction
-  case cons hd tl ih =>
-    cases tl
-    case nil =>
-      unfold mk_lits at h1
-      simp only [List.map_cons, List.map_nil] at h1
-      unfold list_conj at h1
-
-      intro A a1
-      simp only [List.mem_singleton] at a1
-      rewrite [a1]
-      split_ifs at h1
-      case pos c1 c2 =>
-        rewrite [c1]
-        rewrite [c2]
-        rfl
-      case neg c1 c2 =>
-        simp only [Bool.not_eq_true] at c1
-        simp only [Bool.not_eq_true] at c2
-        rewrite [c1]
-        rewrite [c2]
-        rfl
-    case cons tl_hd tl_tl =>
-      unfold mk_lits at ih
-      simp only [List.map_cons, List.mem_cons] at ih
-
-      unfold mk_lits at h1
-      simp only [List.map_cons] at h1
-      unfold list_conj at h1
-      simp only [and_.injEq] at h1
-      obtain ⟨h1_left, h1_right⟩ := h1
-
-      intro A a1
-      simp only [List.mem_cons] at a1
-      cases a1
-      case inl a1 =>
-        rewrite [a1]
-        split_ifs at h1_left
-        case pos c1 c2 =>
-          rewrite [c1]
-          rewrite [c2]
-          rfl
-        case neg c1 c2 =>
-          simp only [Bool.not_eq_true] at c1
-          simp only [Bool.not_eq_true] at c2
-          rewrite [c1]
-          rewrite [c2]
-          rfl
-      case inr a1 =>
-        apply ih
-        · exact h1_right
-        · exact a1
-
 
 lemma eq_on_mem_iff_mk_lits_eq
   (atom_list : List String)
