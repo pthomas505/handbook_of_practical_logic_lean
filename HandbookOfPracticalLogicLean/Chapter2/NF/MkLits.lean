@@ -228,6 +228,10 @@ lemma mk_lits_eq_imp_eq_on_mem
   (h1 : mk_lits atom_list V_1 = mk_lits atom_list V_2) :
   ∀ (A : String), A ∈ atom_list → V_1 A = V_2 A :=
   by
+  apply eval_mk_lits_eq_true_imp_valuations_eq_on_atom_list
+  rewrite [← h1]
+  apply eval_of_mk_lits_same_valuation_eq_true
+
   induction atom_list
   case nil =>
     simp only [List.not_mem_nil]
