@@ -134,6 +134,68 @@ lemma eval_eq_eval_to_nnf_v2
 -------------------------------------------------------------------------------
 
 
+lemma to_nnf_neg_v2_is_nnf_rec_v2_iff_to_nnf_v2_is_nnf_rec_v2
+  (F : Formula_) :
+  (to_nnf_neg_v2 F).is_nnf_rec_v2 ↔ (to_nnf_v2 F).is_nnf_rec_v2 :=
+  by
+  induction F
+  case false_ | true_ | atom_ X =>
+    unfold to_nnf_v2
+    unfold to_nnf_neg_v2
+    unfold is_nnf_rec_v2
+    rfl
+  case not_ phi ih =>
+    unfold to_nnf_v2
+    simp only [to_nnf_neg_v2]
+    rewrite [ih]
+    rfl
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    unfold to_nnf_v2
+    simp only [to_nnf_neg_v2]
+    simp only [is_nnf_rec_v2]
+    rewrite [phi_ih]
+    rewrite [psi_ih]
+    rfl
+
+
+lemma to_nnf_v2_is_nnf_rec_v2
+  (F : Formula_) :
+  is_nnf_rec_v2 (to_nnf_v2 F) :=
+  by
+  induction F
+  case false_ | true_ | atom_ X =>
+    unfold to_nnf_v2
+    unfold is_nnf_rec_v2
+    exact trivial
+  case not_ phi ih =>
+    unfold to_nnf_v2
+    simp only [to_nnf_neg_v2_is_nnf_rec_v2_iff_to_nnf_v2_is_nnf_rec_v2]
+    exact ih
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih =>
+    unfold to_nnf_v2
+    simp only [is_nnf_rec_v2]
+    exact ⟨phi_ih, psi_ih⟩
+  case imp_ phi psi phi_ih psi_ih =>
+    unfold to_nnf_v2
+    unfold is_nnf_rec_v2
+    simp only [to_nnf_neg_v2_is_nnf_rec_v2_iff_to_nnf_v2_is_nnf_rec_v2]
+    exact ⟨phi_ih, psi_ih⟩
+  case iff_ phi psi phi_ih psi_ih =>
+    unfold to_nnf_v2
+    simp only [is_nnf_rec_v2]
+    simp only [to_nnf_neg_v2_is_nnf_rec_v2_iff_to_nnf_v2_is_nnf_rec_v2]
+    exact ⟨⟨phi_ih, psi_ih⟩, ⟨phi_ih, psi_ih⟩⟩
+
+
+-------------------------------------------------------------------------------
+
+
 lemma to_nnf_neg_v2_is_nnf_rec_v1_iff_to_nnf_v2_is_nnf_rec_v1
   (F : Formula_)
   (h1 : ¬ is_subformula false_ F)
