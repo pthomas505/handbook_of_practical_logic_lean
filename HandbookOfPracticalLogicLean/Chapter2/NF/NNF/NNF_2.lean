@@ -16,7 +16,7 @@ open Formula_
 
 mutual
 /--
-  `to_nnf_v2 F` := The result of translating the formula `F` to a logically equivalent formula in negation normal form.
+  `to_nnf_v2 F` := Translates the formula `F` to a logically equivalent formula in negation normal form.
 -/
 def to_nnf_v2 :
   Formula_ → Formula_
