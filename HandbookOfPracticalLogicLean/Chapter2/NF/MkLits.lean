@@ -123,6 +123,7 @@ lemma eval_mk_lits_eq_true_imp_valuations_eq_on_atom_list
   simp only [mk_lits] at h1
   simp only [eval_list_conj_eq_true_iff_forall_eval_eq_true] at h1
   simp only [List.mem_map] at h1
+
   intro A a1
   by_cases c1 : V_2 A = true
   case pos =>
