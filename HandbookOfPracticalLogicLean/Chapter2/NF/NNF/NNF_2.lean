@@ -66,7 +66,7 @@ lemma eval_to_nnf_neg_v2_eq_not_eval_to_nnf_v2
     simp only [to_nnf_neg_v2]
     rewrite [ih]
     rewrite [Bool.eq_iff_iff]
-    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
+    simp only [bool_iff_prop_not]
     tauto
   case
       and_ phi psi phi_ih psi_ih
@@ -79,7 +79,7 @@ lemma eval_to_nnf_neg_v2_eq_not_eval_to_nnf_v2
     rewrite [phi_ih]
     rewrite [psi_ih]
     rewrite [Bool.eq_iff_iff]
-    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or]
     tauto
 
 
