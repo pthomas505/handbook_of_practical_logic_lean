@@ -28,7 +28,7 @@ def to_nnf_v2 :
   | phi => phi
 
 /--
-  `to_nnf_neg_v2 F` := The result of translating the formula `not_ F` to a logically equivalent formula in negation normal form.
+  `to_nnf_neg_v2 F` := Translates the formula `not_ F` to a logically equivalent formula in negation normal form.
 -/
 def to_nnf_neg_v2 :
   Formula_ → Formula_
