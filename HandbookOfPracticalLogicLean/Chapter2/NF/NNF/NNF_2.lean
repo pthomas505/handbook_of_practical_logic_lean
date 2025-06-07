@@ -153,23 +153,36 @@ lemma to_nnf_neg_v2_is_nnf_rec_v1_iff_to_nnf_v2_is_nnf_rec_v1
     simp only [is_nnf_rec_v1]
   case not_ phi ih =>
     unfold is_subformula at h1
+    simp only [not_or] at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
     unfold is_subformula at h2
+    simp only [not_or] at h2
+    obtain ⟨h2_left, h2_right⟩ := h2
 
     unfold to_nnf_v2
     simp only [to_nnf_neg_v2]
-    tauto
+    rewrite [ih h1_right h2_right]
+    rfl
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih
     | imp_ phi psi phi_ih psi_ih
     | iff_ phi psi phi_ih psi_ih =>
     unfold is_subformula at h1
+    simp only [not_or] at h1
+    obtain ⟨h1_left, ⟨h1_right_left, h1_right_right⟩⟩ := h1
+
     unfold is_subformula at h2
+    simp only [not_or] at h2
+    obtain ⟨h2_left, ⟨h2_right_left, h2_right_right⟩⟩ := h2
 
     unfold to_nnf_v2
     simp only [to_nnf_neg_v2]
     simp only [is_nnf_rec_v1]
-    tauto
+    rewrite [phi_ih h1_right_left h2_right_left]
+    rewrite [psi_ih h1_right_right h2_right_right]
+    rfl
 
 
 lemma to_nnf_v2_is_nnf_rec_v1
