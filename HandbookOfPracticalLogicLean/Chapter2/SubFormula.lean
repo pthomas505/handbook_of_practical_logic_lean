@@ -166,4 +166,16 @@ instance
   infer_instance
 
 
+example
+  (F F' : Formula_)
+  (h1 : ¬ is_subformula F F') :
+  ¬ is_proper_subformula F F' :=
+  by
+  unfold is_proper_subformula
+  intro contra
+  obtain ⟨contra_left, contra_right⟩ := contra
+  apply h1
+  exact contra_left
+
+
 #lint
