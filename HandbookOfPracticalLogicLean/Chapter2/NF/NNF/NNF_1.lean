@@ -211,7 +211,7 @@ example
     unfold replace_atom_one_rec
     simp only [eval]
     rewrite [Bool.eq_iff_iff]
-    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
+    simp only [bool_iff_prop_imp]
     tauto
   case atom_ X =>
     unfold replace_atom_one_rec
@@ -221,12 +221,12 @@ example
       rewrite [c1]
       unfold eval
       rewrite [Bool.eq_iff_iff]
-      simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
+      simp only [bool_iff_prop_imp]
       tauto
     case neg c1 =>
       unfold eval
       rewrite [Bool.eq_iff_iff]
-      simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
+      simp only [bool_iff_prop_imp]
       tauto
   case not_ phi ih =>
     cases phi
@@ -237,7 +237,7 @@ example
       split_ifs
       simp only [eval]
       rewrite [Bool.eq_iff_iff]
-      simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
+      simp only [bool_iff_prop_not, bool_iff_prop_imp]
       tauto
     all_goals
       unfold is_nnf_rec_v1 at h1
@@ -253,12 +253,15 @@ example
     obtain ⟨h2_left, h2_right⟩ := h2
 
     simp only [eval] at phi_ih
+    simp only [bool_iff_prop_imp] at phi_ih
+
     simp only [eval] at psi_ih
+    simp only [bool_iff_prop_imp] at psi_ih
 
     simp only [replace_atom_one_rec]
     simp only [eval]
     rewrite [Bool.eq_iff_iff]
-    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff] at *
+    simp only [bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp]
     tauto
   all_goals
     unfold is_nnf_rec_v1 at h1
@@ -278,7 +281,7 @@ example
     unfold replace_atom_one_rec
     simp only [eval]
     rewrite [Bool.eq_iff_iff]
-    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
+    simp only [bool_iff_prop_imp]
     tauto
   case atom_ X =>
     unfold is_pos_literal_in_rec at h2
@@ -287,7 +290,7 @@ example
     split_ifs
     simp only [eval]
     rewrite [Bool.eq_iff_iff]
-    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
+    simp only [bool_iff_prop_imp]
     tauto
   case not_ phi ih =>
     cases phi
@@ -298,12 +301,12 @@ example
         simp only [eval]
         rewrite [c1]
         rewrite [Bool.eq_iff_iff]
-        simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
+        simp only [bool_iff_prop_not, bool_iff_prop_imp]
         tauto
       case neg c1 =>
         simp only [eval]
         rewrite [Bool.eq_iff_iff]
-        simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
+        simp only [bool_iff_prop_not, bool_iff_prop_imp]
         tauto
     all_goals
       unfold is_nnf_rec_v1 at h1
@@ -319,13 +322,19 @@ example
     obtain ⟨h2_left, h2_right⟩ := h2
 
     simp only [eval] at phi_ih
+    simp only [bool_iff_prop_imp] at phi_ih
+
     simp only [eval] at psi_ih
+    simp only [bool_iff_prop_imp] at psi_ih
 
     simp only [replace_atom_one_rec]
     simp only [eval]
     rewrite [Bool.eq_iff_iff]
-    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff] at *
+    simp only [bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp]
     tauto
   all_goals
     unfold is_nnf_rec_v1 at h1
     contradiction
+
+
+#lint
