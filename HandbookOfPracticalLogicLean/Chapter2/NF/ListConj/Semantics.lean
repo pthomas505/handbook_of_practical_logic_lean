@@ -35,14 +35,14 @@ lemma eval_list_conj_eq_true_imp_forall_eval_eq_true
 
       simp only [List.mem_cons] at a1
       cases a1
-      case inl a1_left =>
-        rewrite [a1_left]
+      case inl a1 =>
+        rewrite [a1]
         exact h1_left
-      case inr a1_right =>
+      case inr a1 =>
         apply ih
         · exact h1_right
         · simp only [List.mem_cons]
-          exact a1_right
+          exact a1
 
 
 lemma forall_eval_eq_true_imp_eval_list_conj_eq_true
