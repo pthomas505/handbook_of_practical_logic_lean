@@ -1,4 +1,4 @@
-import HandbookOfPracticalLogicLean.Chapter2.Semantics
+import HandbookOfPracticalLogicLean.Chapter2.Formula
 
 
 set_option autoImplicit false
