@@ -37,15 +37,15 @@ lemma eval_list_disj_eq_true_imp_exists_eval_eq_true
       simp only [bool_iff_prop_or] at h1
 
       cases h1
-      case inl h1_left =>
+      case inl h1 =>
         apply Exists.intro hd
         simp only [List.mem_cons]
         constructor
         · left
           exact trivial
-        · exact h1_left
-      case inr h1_right =>
-        specialize ih h1_right
+        · exact h1
+      case inr h1 =>
+        specialize ih h1
         obtain ⟨F, ⟨ih_left, ih_right⟩⟩ := ih
         simp only [List.mem_cons] at ih_left
 
@@ -84,17 +84,17 @@ lemma exists_eval_eq_true_imp_eval_list_disj_eq_true
       unfold eval
       simp only [bool_iff_prop_or]
       cases h1_left
-      case inl h1_left_left =>
-        rewrite [← h1_left_left]
+      case inl h1_left =>
+        rewrite [← h1_left]
         left
         exact h1_right
-      case inr h1_left_right =>
+      case inr h1_left =>
         right
         apply ih
         apply Exists.intro F
         simp only [List.mem_cons]
         constructor
-        · exact h1_left_right
+        · exact h1_left
         · exact h1_right
 
 
@@ -120,7 +120,7 @@ lemma eval_list_disj_union
   simp only [List.mem_union_iff]
   constructor
   · intro a1
-    obtain ⟨F, a1_left, a1_right⟩ := a1
+    obtain ⟨F, ⟨a1_left, a1_right⟩⟩ := a1
 
     cases a1_left
     case inl a1_left =>
@@ -134,14 +134,14 @@ lemma eval_list_disj_union
   · intro a1
     cases a1
     case inl a1 =>
-      obtain ⟨F, a1_left, a1_right⟩ := a1
+      obtain ⟨F, ⟨a1_left, a1_right⟩⟩ := a1
       apply Exists.intro F
       constructor
       · left
         exact a1_left
       · exact a1_right
     case inr a1 =>
-      obtain ⟨F, a1_left, a1_right⟩ := a1
+      obtain ⟨F, ⟨a1_left, a1_right⟩⟩ := a1
       apply Exists.intro F
       constructor
       · right
@@ -157,7 +157,7 @@ lemma eval_list_disj_subset
   eval V (list_disj l2) = true :=
   by
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true] at h2
-  obtain ⟨F, h2_left, h2_right⟩ := h2
+  obtain ⟨F, ⟨h2_left, h2_right⟩⟩ := h2
 
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   apply Exists.intro F
