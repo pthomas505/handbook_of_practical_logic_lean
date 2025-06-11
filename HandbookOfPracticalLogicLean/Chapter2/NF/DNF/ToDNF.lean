@@ -12,6 +12,10 @@ set_option autoImplicit false
 open Formula_
 
 
+/--
+  `gen_all_satisfying_valuations_as_list_of_total_functions init F` := Returns a list of all of the functions from strings to booleans that satisfy the formula `F` and map every string not in the atoms of `F` to the same value as the function `init`.
+  [ V : String → Bool | eval V F = true ∧ ∀ (X : String), X ∉ F.atom_list → V X = init X ]
+-/
 def gen_all_satisfying_valuations_as_list_of_total_functions
   (init : ValuationAsTotalFunction)
   (F : Formula_) :
@@ -22,6 +26,9 @@ def gen_all_satisfying_valuations_as_list_of_total_functions
 -------------------------------------------------------------------------------
 
 
+/--
+  `to_dnf init F` := Translates the formula `F` to a logically equivalent formula in disjunctive normal form.
+-/
 def to_dnf
   (init : ValuationAsTotalFunction)
   (F : Formula_) :

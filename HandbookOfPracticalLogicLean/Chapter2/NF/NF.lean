@@ -446,7 +446,7 @@ instance
 
 
 /--
-  `Formula_.is_dnf_rec_v1 F` := True if and only if the formula `F` is in disjunction normal form, every left disjunct is a conjunction, and every left conjunct is a constant or a literal.
+  `Formula_.is_dnf_rec_v1 F` := True if and only if the formula `F` is in disjunctive normal form, every left disjunct is a conjunction, and every left conjunct is a constant or a literal.
 -/
 def Formula_.is_dnf_rec_v1 :
   Formula_ → Prop
@@ -464,7 +464,7 @@ instance
 
 
 /--
-  `Formula_.is_dnf_rec_v2 F` := True if and only if the formula `F` is in disjunction normal form.
+  `Formula_.is_dnf_rec_v2 F` := True if and only if the formula `F` is in disjunctive normal form.
 -/
 def Formula_.is_dnf_rec_v2 :
   Formula_ → Prop
@@ -485,7 +485,7 @@ instance
 
 
 /--
-  `Formula_.is_cnf_rec_v1 F` := True if and only if the formula `F` is in conjunction normal form, every left conjunct is a disjunction, and every left disjunct is a constant or a literal.
+  `Formula_.is_cnf_rec_v1 F` := True if and only if the formula `F` is in conjunctive normal form, every left conjunct is a disjunction, and every left disjunct is a constant or a literal.
 -/
 def Formula_.is_cnf_rec_v1 :
   Formula_ → Prop
@@ -503,7 +503,7 @@ instance
 
 
 /--
-  `Formula_.is_cnf_rec_v2 F` := True if and only if the formula `F` is in conjunction normal form.
+  `Formula_.is_cnf_rec_v2 F` := True if and only if the formula `F` is in conjunctive normal form.
 -/
 def Formula_.is_cnf_rec_v2 :
   Formula_ → Prop
@@ -656,7 +656,7 @@ inductive is_conj_ind_v2 : Formula_ → Prop
 
 
 /--
-  `is_dnf_ind_v1 F` := True if and only if the formula `F` is in disjunction normal form, every left disjunct is a conjunction, and every left conjunct is a constant or a literal.
+  `is_dnf_ind_v1 F` := True if and only if the formula `F` is in disjunctive normal form, every left disjunct is a conjunction, and every left conjunct is a constant or a literal.
 -/
 inductive is_dnf_ind_v1 : Formula_ → Prop
 | rule_1
@@ -672,7 +672,7 @@ inductive is_dnf_ind_v1 : Formula_ → Prop
 
 
 /--
-  `is_dnf_ind_v2 F` := True if and only if the formula `F` is in disjunction normal form.
+  `is_dnf_ind_v2 F` := True if and only if the formula `F` is in disjunctive normal form.
 -/
 inductive is_dnf_ind_v2 : Formula_ → Prop
 | rule_1
@@ -691,7 +691,7 @@ inductive is_dnf_ind_v2 : Formula_ → Prop
 
 
 /--
-  `is_cnf_ind_v1 F` := True if and only if the formula `F` is in conjunction normal form, every left conjunct is a disjunction, and every left disjunct is a constant or a literal.
+  `is_cnf_ind_v1 F` := True if and only if the formula `F` is in conjunctive normal form, every left conjunct is a disjunction, and every left disjunct is a constant or a literal.
 -/
 inductive is_cnf_ind_v1 : Formula_ → Prop
 | rule_1
@@ -707,7 +707,7 @@ inductive is_cnf_ind_v1 : Formula_ → Prop
 
 
 /--
-  `is_cnf_ind_v2 F` := True if and only if the formula `F` is in conjunction normal form.
+  `is_cnf_ind_v2 F` := True if and only if the formula `F` is in conjunctive normal form.
 -/
 inductive is_cnf_ind_v2 : Formula_ → Prop
 | rule_1
