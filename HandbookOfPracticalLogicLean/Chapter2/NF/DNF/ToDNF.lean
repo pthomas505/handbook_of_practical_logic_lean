@@ -14,13 +14,60 @@ open Formula_
 
 /--
   `gen_all_satisfying_valuations_as_list_of_total_functions init F` := Returns a list of all of the functions from strings to booleans that satisfy the formula `F` and map every string not in the atoms of `F` to the same value as the function `init`.
-  [ V : String → Bool | eval V F = true ∧ ∀ (X : String), X ∉ F.atom_list → V X = init X ]
+  [ V : String → Bool | eval V F = true ∧ ∀ (X : String), X ∉ F.atom_list.dedup → V X = init X ]
 -/
 def gen_all_satisfying_valuations_as_list_of_total_functions
   (init : ValuationAsTotalFunction)
   (F : Formula_) :
   List ValuationAsTotalFunction :=
   (gen_all_valuations_as_list_of_total_functions init F.atom_list.dedup).filter (fun (V : ValuationAsTotalFunction) => eval V F = true)
+
+
+/--
+  `all_satisfying_valuations_as_set_of_total_functions init F` := The set of all of the functions from strings to booleans that satisfy the formula `F` and map every string not in the atoms of `F` to the same value as the function `init`.
+-/
+def all_satisfying_valuations_as_set_of_total_functions
+  (init : ValuationAsTotalFunction)
+  (F : Formula_) :
+  Set ValuationAsTotalFunction :=
+  { V : ValuationAsTotalFunction | eval V F = true ∧ ∀ (X : String), X ∉ F.atom_list.dedup → V X = init X }
+
+
+lemma mem_gen_all_satisfying_valuations_as_list_of_total_functions_imp_mem_all_satisfying_valuations_as_set_of_total_functions
+  (init : String → Bool)
+  (F : Formula_)
+  (V : ValuationAsTotalFunction)
+  (h1 : V ∈ gen_all_satisfying_valuations_as_list_of_total_functions init F) :
+  eval V F = true ∧ ∀ (X : String), X ∉ F.atom_list.dedup → V X = init X :=
+  by
+  unfold gen_all_satisfying_valuations_as_list_of_total_functions at h1
+  simp only [List.mem_filter] at h1
+  obtain ⟨h1_left, h1_right⟩ := h1
+
+  constructor
+  · simp only [Bool.decide_eq_true] at h1_right
+    exact h1_right
+  · intro X a1
+    apply mem_gen_all_valuations_as_list_of_total_functions_imp_mem_all_valuations_as_set_of_total_functions init F.atom_list.dedup
+    · exact h1_left
+    · exact a1
+
+
+lemma mem_all_satisfying_valuations_as_set_of_total_functions_imp_mem_gen_all_satisfying_valuations_as_list_of_total_functions
+  (init : String → Bool)
+  (F : Formula_)
+  (V : ValuationAsTotalFunction)
+  (h1 : eval V F = true)
+  (h2 : ∀ (X : String), X ∉ F.atom_list.dedup → V X = init X) :
+  V ∈ gen_all_satisfying_valuations_as_list_of_total_functions init F :=
+  by
+  unfold gen_all_satisfying_valuations_as_list_of_total_functions
+  simp only [List.mem_filter]
+  constructor
+  · apply mem_all_valuations_as_set_of_total_functions_imp_mem_gen_all_valuations_as_list_of_total_functions
+    exact h2
+  · simp only [Bool.decide_eq_true]
+    exact h1
 
 
 -------------------------------------------------------------------------------
