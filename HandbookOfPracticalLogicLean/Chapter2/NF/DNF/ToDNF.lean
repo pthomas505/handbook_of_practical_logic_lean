@@ -13,7 +13,7 @@ open Formula_
 
 
 /--
-  `gen_all_satisfying_valuations_as_list_of_total_functions init F` := Returns a list of all of the functions from strings to booleans that satisfy the formula `F` and map every string not in the atoms of `F` to the same value as the function `init`.
+  `gen_all_satisfying_valuations_as_list_of_total_functions init F` := Returns a list of all of the functions from strings to booleans that both satisfy the formula `F` and map every string not in the atoms of `F` to the same value as the function `init`.
   [ V : String → Bool | eval V F = true ∧ ∀ (X : String), X ∉ F.atom_list.dedup → V X = init X ]
 -/
 def gen_all_satisfying_valuations_as_list_of_total_functions
@@ -24,7 +24,7 @@ def gen_all_satisfying_valuations_as_list_of_total_functions
 
 
 /--
-  `all_satisfying_valuations_as_set_of_total_functions init F` := The set of all of the functions from strings to booleans that satisfy the formula `F` and map every string not in the atoms of `F` to the same value as the function `init`.
+  `all_satisfying_valuations_as_set_of_total_functions init F` := The set of all of the functions from strings to booleans that both satisfy the formula `F` and map every string not in the atoms of `F` to the same value as the function `init`.
 -/
 def all_satisfying_valuations_as_set_of_total_functions
   (init : ValuationAsTotalFunction)
