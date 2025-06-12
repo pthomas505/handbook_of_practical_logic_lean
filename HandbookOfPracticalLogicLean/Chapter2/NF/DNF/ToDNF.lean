@@ -70,6 +70,23 @@ lemma mem_all_satisfying_valuations_as_set_of_total_functions_imp_mem_gen_all_sa
     exact h1
 
 
+lemma mem_gen_all_satisfying_valuations_as_list_of_total_functions_iff_mem_all_satisfying_valuations_as_set_of_total_functions
+  (init : String → Bool)
+  (F : Formula_)
+  (V : ValuationAsTotalFunction) :
+  V ∈ gen_all_satisfying_valuations_as_list_of_total_functions init F ↔ V ∈ all_satisfying_valuations_as_set_of_total_functions init F :=
+  by
+  unfold all_satisfying_valuations_as_set_of_total_functions
+  simp only [Set.mem_setOf_eq]
+  constructor
+  · apply mem_gen_all_satisfying_valuations_as_list_of_total_functions_imp_mem_all_satisfying_valuations_as_set_of_total_functions
+  · intro a1
+    obtain ⟨a1_left, a1_right⟩ := a1
+    apply mem_all_satisfying_valuations_as_set_of_total_functions_imp_mem_gen_all_satisfying_valuations_as_list_of_total_functions
+    · exact a1_left
+    · exact a1_right
+
+
 -------------------------------------------------------------------------------
 
 
