@@ -122,6 +122,31 @@ example
 -------------------------------------------------------------------------------
 
 
+lemma eval_to_dnf_eq_true_imp_eval_eq_true
+  (init : ValuationAsTotalFunction)
+  (V : ValuationAsTotalFunction)
+  (F : Formula_)
+  (h1 : eval V (to_dnf init F) = true) :
+  eval V F = true :=
+  by
+  unfold to_dnf at h1
+  rewrite [eval_list_disj_eq_true_iff_exists_eval_eq_true] at h1
+  obtain ⟨F', ⟨h1_left, h1_right⟩⟩ := h1
+  unfold gen_all_satisfying_valuations_as_list_of_total_functions at h1_left
+  simp only [Bool.decide_eq_true, List.mem_map, List.mem_filter] at h1_left
+  obtain ⟨V', ⟨h1_left_left_left, h1_left_left_right⟩, h1_left_right⟩ := h1_left
+  rewrite [← h1_left_right] at h1_right
+  clear h1_left_right
+  obtain s1 := eval_mk_lits_eq_true_imp_valuations_eq_on_atom_list F.atom_list.dedup V V' h1_right
+  rewrite [← h1_left_left_right]
+  apply theorem_2_2
+  intro X a1
+  apply s1
+  simp only [List.mem_dedup]
+  rewrite [← atom_occurs_in_iff_mem_atom_list]
+  exact a1
+
+
 lemma eval_eq_true_imp_eval_to_dnf_eq_true_aux
   (init : ValuationAsTotalFunction)
   (V : ValuationAsTotalFunction)
@@ -146,31 +171,6 @@ lemma eval_eq_true_imp_eval_to_dnf_eq_true_aux
         exact h2
     · rfl
   · apply eval_of_mk_lits_same_valuation_eq_true
-
-
-lemma eval_to_dnf_eq_true_imp_eval_eq_true
-  (init : ValuationAsTotalFunction)
-  (V : ValuationAsTotalFunction)
-  (F : Formula_)
-  (h1 : eval V (to_dnf init F) = true) :
-  eval V F = true :=
-  by
-  unfold to_dnf at h1
-  rewrite [eval_list_disj_eq_true_iff_exists_eval_eq_true] at h1
-  obtain ⟨F', ⟨h1_left, h1_right⟩⟩ := h1
-  unfold gen_all_satisfying_valuations_as_list_of_total_functions at h1_left
-  simp only [Bool.decide_eq_true, List.mem_map, List.mem_filter] at h1_left
-  obtain ⟨V', ⟨h1_left_left_left, h1_left_left_right⟩, h1_left_right⟩ := h1_left
-  rewrite [← h1_left_right] at h1_right
-  clear h1_left_right
-  obtain s1 := eval_mk_lits_eq_true_imp_valuations_eq_on_atom_list F.atom_list.dedup V V' h1_right
-  rewrite [← h1_left_left_right]
-  apply theorem_2_2
-  intro X a1
-  apply s1
-  simp only [List.mem_dedup]
-  rewrite [← atom_occurs_in_iff_mem_atom_list]
-  exact a1
 
 
 example
