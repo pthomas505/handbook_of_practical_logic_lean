@@ -219,7 +219,7 @@ lemma aux_4
     · exact a2
 
 
-example
+lemma to_dnf_diff_init_eq
   (init_1 init_2 : ValuationAsTotalFunction)
   (F : Formula_) :
   to_dnf init_1 F = to_dnf init_2 F :=
