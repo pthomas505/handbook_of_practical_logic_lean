@@ -267,4 +267,8 @@ lemma eval_eq_true_imp_eval_to_dnf_eq_true
   (h1 : eval V F = true) :
   eval V (to_dnf init F) = true :=
   by
-  sorry
+  rewrite [to_dnf_diff_init_eq init V]
+  apply eval_eq_true_imp_eval_to_dnf_eq_true_aux
+  · intro X a1
+    rfl
+  · exact h1
