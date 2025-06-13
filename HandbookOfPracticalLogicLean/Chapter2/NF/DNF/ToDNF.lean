@@ -152,6 +152,26 @@ lemma eval_to_dnf_eq_true_imp_eval_eq_true
 
 example
   (init_1 init_2 : ValuationAsTotalFunction)
+  (F : Formula_)
+  (X : String)
+  (p : ValuationAsTotalFunction × ValuationAsTotalFunction)
+  (h1 : p ∈ List.zip
+    (List.filter (fun (V : ValuationAsTotalFunction) => eval V F) (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup))
+    (List.filter (fun (V : ValuationAsTotalFunction) => eval V F) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup)))
+  (h2 : X ∈ F.atom_list.dedup) :
+  p.1 X = p.2 X :=
+  by
+  apply gen_all_valuations_as_list_of_total_functions_eq_on_atom_list init_1 init_2 F.atom_list.dedup
+  · apply List.mem_zip_filter_and_pred_eq_all_mem_zip_imp_mem_zip (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup) (fun (V : ValuationAsTotalFunction) => eval V F)
+    · exact h1
+    · intro q a1
+      apply mem_zip_gen_all_valuations_as_list_of_total_functions_imp_eval_eq
+      exact a1
+  · exact h2
+
+
+example
+  (init_1 init_2 : ValuationAsTotalFunction)
   (atom_list : List String) :
   List.map (mk_lits atom_list)
   (gen_all_valuations_as_list_of_total_functions init_1 atom_list) =
@@ -197,26 +217,6 @@ lemma aux_4
         apply mem_zip_gen_all_valuations_as_list_of_total_functions_imp_eval_eq init_1 init_2
         exact a3
     · exact a2
-
-
-example
-  (init_1 init_2 : ValuationAsTotalFunction)
-  (F : Formula_)
-  (X : String)
-  (p : ValuationAsTotalFunction × ValuationAsTotalFunction)
-  (h1 : p ∈ List.zip
-    (List.filter (fun (V : ValuationAsTotalFunction) => eval V F) (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup))
-    (List.filter (fun (V : ValuationAsTotalFunction) => eval V F) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup)))
-  (h2 : X ∈ F.atom_list.dedup) :
-  p.1 X = p.2 X :=
-  by
-  apply gen_all_valuations_as_list_of_total_functions_eq_on_atom_list init_1 init_2 F.atom_list.dedup
-  · apply List.mem_zip_filter_and_pred_eq_all_mem_zip_imp_mem_zip (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup) (fun (V : ValuationAsTotalFunction) => eval V F)
-    · exact h1
-    · intro q a1
-      apply mem_zip_gen_all_valuations_as_list_of_total_functions_imp_eval_eq
-      exact a1
-  · exact h2
 
 
 example
