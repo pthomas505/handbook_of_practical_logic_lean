@@ -246,9 +246,6 @@ lemma eval_eq_true_imp_eval_to_dnf_eq_true
   · exact h1
 
 
--------------------------------------------------------------------------------
-
-
 lemma eval_to_dnf_eq_true_imp_eval_eq_true
   (init : ValuationAsTotalFunction)
   (V : ValuationAsTotalFunction)
