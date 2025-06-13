@@ -269,3 +269,12 @@ lemma eval_to_dnf_eq_true_imp_eval_eq_true
   simp only [List.mem_dedup]
   rewrite [← atom_occurs_in_iff_mem_atom_list]
   exact a1
+
+
+lemma eval_eq_eval_to_dnf
+  (init : ValuationAsTotalFunction)
+  (V : ValuationAsTotalFunction)
+  (F : Formula_) :
+  eval V F = eval V (to_dnf init F) :=
+  by
+  sorry
