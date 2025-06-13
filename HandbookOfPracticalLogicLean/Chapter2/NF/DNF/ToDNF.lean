@@ -231,6 +231,9 @@ example
   apply aux_4
 
 
+-------------------------------------------------------------------------------
+
+
 lemma eval_eq_true_imp_eval_to_dnf_eq_true_aux
   (init : ValuationAsTotalFunction)
   (V : ValuationAsTotalFunction)
