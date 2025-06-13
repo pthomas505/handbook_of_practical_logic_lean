@@ -275,6 +275,8 @@ lemma eval_eq_eval_to_dnf
   (init : ValuationAsTotalFunction)
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V F = eval V (to_dnf init F) :=
+  eval V F = true ↔ eval V (to_dnf init F) = true:=
   by
-  sorry
+  constructor
+  · apply eval_eq_true_imp_eval_to_dnf_eq_true
+  · apply eval_to_dnf_eq_true_imp_eval_eq_true
