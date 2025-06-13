@@ -268,7 +268,7 @@ lemma eval_eq_eval_to_dnf
 -------------------------------------------------------------------------------
 
 
-example
+lemma to_dnf_is_dnf_ind_v1
   (init : ValuationAsTotalFunction)
   (F : Formula_) :
   is_dnf_ind_v1 (to_dnf init F) :=
