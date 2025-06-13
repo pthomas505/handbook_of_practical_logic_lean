@@ -105,20 +105,6 @@ def to_dnf
 #eval (to_dnf (fun _ => true) (Formula_| ((P \/ (Q /\ R)) /\ (~P \/ ~R)))).toString
 
 
-example
-  (init : ValuationAsTotalFunction)
-  (F : Formula_) :
-  is_dnf_ind_v1 (to_dnf init F) :=
-  by
-  unfold to_dnf
-  apply list_disj_of_is_conj_ind_v1_is_dnf_ind_v1
-  intro F' a1
-  simp only [List.mem_map] at a1
-  obtain ⟨V, ⟨a1_left, a1_right⟩⟩ := a1
-  rewrite [← a1_right]
-  apply mk_lits_is_conj_ind_v1
-
-
 -------------------------------------------------------------------------------
 
 
@@ -280,3 +266,17 @@ lemma eval_eq_eval_to_dnf
   constructor
   · apply eval_eq_true_imp_eval_to_dnf_eq_true
   · apply eval_to_dnf_eq_true_imp_eval_eq_true
+
+
+example
+  (init : ValuationAsTotalFunction)
+  (F : Formula_) :
+  is_dnf_ind_v1 (to_dnf init F) :=
+  by
+  unfold to_dnf
+  apply list_disj_of_is_conj_ind_v1_is_dnf_ind_v1
+  intro F' a1
+  simp only [List.mem_map] at a1
+  obtain ⟨V, ⟨a1_left, a1_right⟩⟩ := a1
+  rewrite [← a1_right]
+  apply mk_lits_is_conj_ind_v1
