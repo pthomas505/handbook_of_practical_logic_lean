@@ -188,7 +188,7 @@ example
     · exact a2
 
 
-lemma aux_4
+lemma to_dnf_diff_init_eq_aux
   (init_1 init_2 : ValuationAsTotalFunction)
   (F : Formula_) :
   List.map (mk_lits F.atom_list.dedup)
@@ -228,7 +228,7 @@ lemma to_dnf_diff_init_eq
   unfold gen_all_satisfying_valuations_as_list_of_total_functions
   congr 1
   simp only [Bool.decide_eq_true]
-  apply aux_4
+  apply to_dnf_diff_init_eq_aux
 
 
 -------------------------------------------------------------------------------
