@@ -280,3 +280,6 @@ example
   obtain ⟨V, ⟨a1_left, a1_right⟩⟩ := a1
   rewrite [← a1_right]
   apply mk_lits_is_conj_ind_v1
+
+
+#lint
