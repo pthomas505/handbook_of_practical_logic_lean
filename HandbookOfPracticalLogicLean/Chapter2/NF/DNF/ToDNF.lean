@@ -150,32 +150,6 @@ lemma eval_to_dnf_eq_true_imp_eval_eq_true
 -------------------------------------------------------------------------------
 
 
-lemma eval_eq_true_imp_eval_to_dnf_eq_true_aux
-  (init : ValuationAsTotalFunction)
-  (V : ValuationAsTotalFunction)
-  (F : Formula_)
-  (h1 : ∀ (X : String), X ∉ F.atom_list.dedup → V X = init X)
-  (h2 : eval V F = true) :
-  eval V (to_dnf init F) = true :=
-  by
-  unfold to_dnf
-  apply exists_eval_eq_true_imp_eval_list_disj_eq_true
-  simp only [List.mem_map]
-  apply Exists.intro (mk_lits F.atom_list.dedup V)
-  constructor
-  · apply Exists.intro V
-    constructor
-    · unfold gen_all_satisfying_valuations_as_list_of_total_functions
-      simp only [List.mem_filter]
-      constructor
-      · apply mem_all_valuations_as_set_of_total_functions_imp_mem_gen_all_valuations_as_list_of_total_functions
-        exact h1
-      · simp only [Bool.decide_eq_true]
-        exact h2
-    · rfl
-  · apply eval_of_mk_lits_same_valuation_eq_true
-
-
 example
   (init_1 init_2 : ValuationAsTotalFunction)
   (atom_list : List String) :
@@ -255,6 +229,32 @@ example
   congr 1
   simp only [Bool.decide_eq_true]
   apply aux_4
+
+
+lemma eval_eq_true_imp_eval_to_dnf_eq_true_aux
+  (init : ValuationAsTotalFunction)
+  (V : ValuationAsTotalFunction)
+  (F : Formula_)
+  (h1 : ∀ (X : String), X ∉ F.atom_list.dedup → V X = init X)
+  (h2 : eval V F = true) :
+  eval V (to_dnf init F) = true :=
+  by
+  unfold to_dnf
+  apply exists_eval_eq_true_imp_eval_list_disj_eq_true
+  simp only [List.mem_map]
+  apply Exists.intro (mk_lits F.atom_list.dedup V)
+  constructor
+  · apply Exists.intro V
+    constructor
+    · unfold gen_all_satisfying_valuations_as_list_of_total_functions
+      simp only [List.mem_filter]
+      constructor
+      · apply mem_all_valuations_as_set_of_total_functions_imp_mem_gen_all_valuations_as_list_of_total_functions
+        exact h1
+      · simp only [Bool.decide_eq_true]
+        exact h2
+    · rfl
+  · apply eval_of_mk_lits_same_valuation_eq_true
 
 
 lemma eval_eq_true_imp_eval_to_dnf_eq_true
