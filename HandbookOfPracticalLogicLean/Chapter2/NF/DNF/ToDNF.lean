@@ -147,6 +147,9 @@ lemma eval_to_dnf_eq_true_imp_eval_eq_true
   exact a1
 
 
+-------------------------------------------------------------------------------
+
+
 lemma eval_eq_true_imp_eval_to_dnf_eq_true_aux
   (init : ValuationAsTotalFunction)
   (V : ValuationAsTotalFunction)
@@ -252,3 +255,13 @@ example
   congr 1
   simp only [Bool.decide_eq_true]
   apply aux_4
+
+
+lemma eval_eq_true_imp_eval_to_dnf_eq_true
+  (init : ValuationAsTotalFunction)
+  (V : ValuationAsTotalFunction)
+  (F : Formula_)
+  (h1 : eval V F = true) :
+  eval V (to_dnf init F) = true :=
+  by
+  sorry
