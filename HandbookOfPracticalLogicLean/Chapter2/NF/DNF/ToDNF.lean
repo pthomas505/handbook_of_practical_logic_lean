@@ -105,9 +105,6 @@ def to_dnf
 #eval (to_dnf (fun _ => true) (Formula_| ((P \/ (Q /\ R)) /\ (~P \/ ~R)))).toString
 
 
--------------------------------------------------------------------------------
-
-
 example
   (init_1 init_2 : ValuationAsTotalFunction)
   (F : Formula_)
@@ -266,6 +263,9 @@ lemma eval_eq_eval_to_dnf
   constructor
   · apply eval_eq_true_imp_eval_to_dnf_eq_true
   · apply eval_to_dnf_eq_true_imp_eval_eq_true
+
+
+-------------------------------------------------------------------------------
 
 
 example
