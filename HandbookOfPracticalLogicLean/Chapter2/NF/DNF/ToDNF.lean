@@ -147,9 +147,9 @@ lemma to_dnf_diff_init_eq_aux
   (init_1 init_2 : ValuationAsTotalFunction)
   (F : Formula_) :
   List.map (mk_lits F.atom_list.dedup)
-    (List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup)) =
+    (List.filter (fun (V : ValuationAsTotalFunction) => eval V F) (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup)) =
   List.map (mk_lits F.atom_list.dedup)
-    (List.filter (fun V ↦ eval V F) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup)) :=
+    (List.filter (fun (V : ValuationAsTotalFunction) => eval V F) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup)) :=
   by
   apply List.length_eq_and_mem_zip_imp_fun_eq_imp_map_eq
   · apply List.pred_eq_all_mem_zip_imp_filter_length_eq
@@ -166,7 +166,7 @@ lemma to_dnf_diff_init_eq_aux
     apply eq_on_mem_imp_mk_lits_eq
     intro X a2
     apply gen_all_valuations_as_list_of_total_functions_eq_on_atom_list init_1 init_2 F.atom_list.dedup
-    · apply List.mem_zip_filter_and_pred_eq_all_mem_zip_imp_mem_zip (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup) (fun V => eval V F)
+    · apply List.mem_zip_filter_and_pred_eq_all_mem_zip_imp_mem_zip (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup) (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup) (fun (V : ValuationAsTotalFunction) => eval V F)
       · exact a1
       · intro q a3
         apply mem_zip_gen_all_valuations_as_list_of_total_functions_imp_eval_eq init_1 init_2
