@@ -8,6 +8,12 @@ set_option autoImplicit false
 open Formula_
 
 
+/--
+  `distrib F` := Recursively replaces any subformulas in `F` of the form `p ∧ (q ∨ r)` and `(p ∨ q) ∧ r` with `(p ∧ q) ∨ (p ∧ r)` and `(p ∧ r) ∨ (q ∧ r)` respectively.
+  These are tautologies:
+  `(p ∧ (q ∨ r)) ↔ ((p ∧ q) ∨ (p ∧ r))`
+  `((p ∨ q) ∧ r) ↔ ((p ∧ r) ∨ (q ∧ r))`
+-/
 def distrib :
   Formula_ → Formula_
   | and_ p (or_ q r) => or_ (distrib (and_ p q)) (distrib (and_ p r))
@@ -15,6 +21,9 @@ def distrib :
   | F => F
 
 
+/--
+  `raw_dnf F` := Translates the formula `F` to a logically equivalent formula in disjunctive normal form.
+-/
 def raw_dnf :
   Formula_ → Formula_
   | and_ p q => distrib (and_ (raw_dnf p) (raw_dnf q))
