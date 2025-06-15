@@ -9,7 +9,7 @@ open Formula_
 
 
 /--
-  `distrib F` := Recursively replaces any subformulas in `F` of the form `p ∧ (q ∨ r)` and `(p ∨ q) ∧ r` with `(p ∧ q) ∨ (p ∧ r)` and `(p ∧ r) ∨ (q ∧ r)` respectively.
+  `distrib F` := Recursively replaces any subformulas of `F` of the form `p ∧ (q ∨ r)` and `(p ∨ q) ∧ r` with `(p ∧ q) ∨ (p ∧ r)` and `(p ∧ r) ∨ (q ∧ r)` respectively.
   These are tautologies:
   `(p ∧ (q ∨ r)) ↔ ((p ∧ q) ∨ (p ∧ r))`
   `((p ∨ q) ∧ r) ↔ ((p ∧ r) ∨ (q ∧ r))`
