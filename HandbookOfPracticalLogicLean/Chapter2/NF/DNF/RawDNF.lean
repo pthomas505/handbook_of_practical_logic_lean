@@ -66,7 +66,8 @@ example
 lemma eval_distrib_and
   (V : ValuationAsTotalFunction)
   (P Q : Formula_) :
-  eval V (and_ P Q) = true ↔ eval V (distrib (and_ P Q)) :=
+  eval V (and_ P Q) = true ↔
+    eval V (distrib (and_ P Q)) = true :=
   by
   induction P generalizing Q
   case or_ R S R_ih S_ih =>
