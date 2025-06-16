@@ -40,19 +40,6 @@ def raw_dnf :
 example
   (V : ValuationAsTotalFunction)
   (P Q R : Formula_) :
-  eval V (and_ (or_ P Q) R) = true ↔
-    eval V (or_ (and_ P R) (and_ Q R)) = true :=
-  by
-  simp only [eval]
-  simp only [bool_iff_prop_and]
-  simp only [bool_iff_prop_or]
-  simp only [bool_iff_prop_and]
-  exact or_and_right
-
-
-example
-  (V : ValuationAsTotalFunction)
-  (P Q R : Formula_) :
   eval V (and_ P (or_ Q R)) = true ↔
     eval V (or_ (and_ P Q) (and_ P R)) = true :=
   by
@@ -61,6 +48,19 @@ example
   simp only [bool_iff_prop_or]
   simp only [bool_iff_prop_and]
   exact and_or_left
+
+
+example
+  (V : ValuationAsTotalFunction)
+  (P Q R : Formula_) :
+  eval V (and_ (or_ P Q) R) = true ↔
+    eval V (or_ (and_ P R) (and_ Q R)) = true :=
+  by
+  simp only [eval]
+  simp only [bool_iff_prop_and]
+  simp only [bool_iff_prop_or]
+  simp only [bool_iff_prop_and]
+  exact or_and_right
 
 
 lemma eval_distrib_and
