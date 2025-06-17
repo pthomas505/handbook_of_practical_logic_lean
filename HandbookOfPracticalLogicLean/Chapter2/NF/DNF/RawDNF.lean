@@ -163,6 +163,7 @@ lemma is_dnf_ind_v2_distrib_and
     induction P
     case or_ R S R_ih S_ih =>
       simp only [distrib]
+
       cases h1
       case rule_1 ih_1 =>
         contradiction
@@ -305,7 +306,8 @@ example
     · apply Q_ih
       exact h1_right
   all_goals
-    simp only [is_nnf_rec_v1] at h1
+    unfold is_nnf_rec_v1 at h1
+    contradiction
 
 
 #lint
