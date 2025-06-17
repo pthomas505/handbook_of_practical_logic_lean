@@ -33,7 +33,8 @@ example
   (V : ValuationAsTotalFunction)
   (l1 l2 : List Formula_)
   (h1 : l1 ⊆ l2) :
-  eval V (or_ (list_conj l1) (list_conj l2)) = true ↔ eval V (list_conj l1) = true :=
+  eval V (or_ (list_conj l1) (list_conj l2)) = true ↔
+    eval V (list_conj l1) = true :=
   by
   simp only [eval]
   simp only [bool_iff_prop_or]
