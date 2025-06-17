@@ -31,9 +31,9 @@ example
 
 example
   (V : ValuationAsTotalFunction)
-  (xs ys : List Formula_)
-  (h1 : xs ⊆ ys) :
-  eval V (or_ (list_conj xs) (list_conj ys)) = true ↔ eval V (list_conj xs) = true :=
+  (l1 l2 : List Formula_)
+  (h1 : l1 ⊆ l2) :
+  eval V (or_ (list_conj l1) (list_conj l2)) = true ↔ eval V (list_conj l1) = true :=
   by
   simp only [eval]
   simp only [bool_iff_prop_or]
@@ -43,7 +43,7 @@ example
     case inl a1 =>
       exact a1
     case inr a1 =>
-      exact eval_list_conj_subset V xs ys h1 a1
+      exact eval_list_conj_subset V l1 l2 h1 a1
   · intro a1
     left
     exact a1
