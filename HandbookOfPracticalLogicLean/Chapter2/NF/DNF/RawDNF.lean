@@ -22,7 +22,7 @@ def distrib :
 
 
 /--
-  `raw_dnf F` := Translates the formula `F` to a logically equivalent formula such that if `F` is in negation normal form then `raw_dnf F` is in disjunctive normal form.
+  `raw_dnf F` := Translates the formula `F` to a logically equivalent formula. If `F` is in negation normal form then `raw_dnf F` is in disjunctive normal form.
 -/
 def raw_dnf :
   Formula_ → Formula_

@@ -42,7 +42,7 @@ instance
 #eval has_complementary [not_ (atom_ "P"), atom_ "P", atom_ "Q"]
 
 
-#eval (List.filter (fun (l : List Formula_) => ¬ (has_complementary l)) (pure_dnf (Formula_| ((P \/ (Q /\ R)) /\ (~P \/ ~R))))).toString
+#eval (List.filter (fun (l : List Formula_) => ¬ (has_complementary l)) (to_dnf_v3_aux_1 (Formula_| ((P \/ (Q /\ R)) /\ (~P \/ ~R))))).toString
 
 
 lemma not_has_complementary_singleton
@@ -197,10 +197,10 @@ lemma has_complementary_imp_eval_list_conj_false
 lemma eval_dnf_list_of_list_to_formula_filter_not_has_complementary
   (V : ValuationAsTotalFunction)
   (ll : List (List Formula_)) :
-  eval V (dnf_list_of_list_to_formula (List.filter (fun (l : List Formula_) => ¬ (has_complementary l)) ll)) = true ↔
-    eval V (dnf_list_of_list_to_formula ll) :=
+  eval V (to_dnf_v3_aux_2 (List.filter (fun (l : List Formula_) => ¬ (has_complementary l)) ll)) = true ↔
+    eval V (to_dnf_v3_aux_2 ll) :=
   by
-  unfold dnf_list_of_list_to_formula
+  unfold to_dnf_v3_aux_2
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_map, List.mem_filter]
   constructor
@@ -224,13 +224,13 @@ lemma eval_dnf_list_of_list_to_formula_filter_not_has_complementary
 def pure_dnf_simp_1
   (F : Formula_) :
   List (List Formula_) :=
-  List.filter (fun (l : List Formula_) => ¬ (has_complementary l)) (pure_dnf F)
+  List.filter (fun (l : List Formula_) => ¬ (has_complementary l)) (to_dnf_v3_aux_1 F)
 
 
 lemma eval_pure_dnf_simp_1
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V (dnf_list_of_list_to_formula (pure_dnf_simp_1 F)) = true ↔ eval V F = true :=
+  eval V (to_dnf_v3_aux_2 (pure_dnf_simp_1 F)) = true ↔ eval V F = true :=
   by
   unfold pure_dnf_simp_1
   simp only [← eval_dnf_list_of_list_to_formula_pure_dnf_eq_eval V F]
@@ -239,17 +239,17 @@ lemma eval_pure_dnf_simp_1
 
 example
   (xs ys : List Formula_)
-  (h1 : is_dnf_ind_v1 (dnf_list_of_list_to_formula [xs, ys])) :
-  is_dnf_ind_v1 (dnf_list_of_list_to_formula [xs]) :=
+  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 [xs, ys])) :
+  is_dnf_ind_v1 (to_dnf_v3_aux_2 [xs]) :=
   by
-  unfold dnf_list_of_list_to_formula at h1
+  unfold to_dnf_v3_aux_2 at h1
   simp only [List.map_cons, List.map_nil] at h1
   unfold list_disj at h1
   cases h1
   case rule_1 ih =>
     contradiction
   case rule_2 ih_1 ih_2 =>
-    unfold dnf_list_of_list_to_formula
+    unfold to_dnf_v3_aux_2
     simp only [List.map_cons, List.map_nil]
     unfold list_disj
     apply is_dnf_ind_v1.rule_1
@@ -258,17 +258,17 @@ example
 
 example
   (xs ys : List Formula_)
-  (h1 : is_dnf_ind_v1 (dnf_list_of_list_to_formula [xs, ys])) :
-  is_dnf_ind_v1 (dnf_list_of_list_to_formula [ys]) :=
+  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 [xs, ys])) :
+  is_dnf_ind_v1 (to_dnf_v3_aux_2 [ys]) :=
   by
-  unfold dnf_list_of_list_to_formula at h1
+  unfold to_dnf_v3_aux_2 at h1
   simp only [List.map_cons, List.map_nil] at h1
   unfold list_disj at h1
   cases h1
   case rule_1 ih =>
     contradiction
   case rule_2 ih_1 ih_2 =>
-    unfold dnf_list_of_list_to_formula
+    unfold to_dnf_v3_aux_2
     simp only [List.map_cons, List.map_nil]
     exact ih_2
 
@@ -276,12 +276,12 @@ example
 lemma is_dnf_ind_v1_dnf_list_of_list_to_formula_cons_left
   (xs : List Formula_)
   (xss : List (List Formula_))
-  (h1 : is_dnf_ind_v1 (dnf_list_of_list_to_formula (xs :: xss))) :
-  is_dnf_ind_v1 (dnf_list_of_list_to_formula xss) :=
+  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 (xs :: xss))) :
+  is_dnf_ind_v1 (to_dnf_v3_aux_2 xss) :=
   by
-  unfold dnf_list_of_list_to_formula at h1
+  unfold to_dnf_v3_aux_2 at h1
   simp only [List.map_cons] at h1
-  unfold dnf_list_of_list_to_formula
+  unfold to_dnf_v3_aux_2
   apply list_disj_cons_is_dnf_ind_v1_imp_list_disj_tail_is_dnf_ind_v1 (list_conj xs)
   exact h1
 
@@ -290,12 +290,12 @@ lemma is_dnf_ind_v1_dnf_list_of_list_to_formula_cons_right
   (xs : List Formula_)
   (xss : List (List Formula_))
   (h1 : is_conj_ind_v1 (list_conj xs))
-  (h2 : is_dnf_ind_v1 (dnf_list_of_list_to_formula xss)) :
-  is_dnf_ind_v1 (dnf_list_of_list_to_formula (xs :: xss)) :=
+  (h2 : is_dnf_ind_v1 (to_dnf_v3_aux_2 xss)) :
+  is_dnf_ind_v1 (to_dnf_v3_aux_2 (xs :: xss)) :=
   by
-  unfold dnf_list_of_list_to_formula at h2
+  unfold to_dnf_v3_aux_2 at h2
 
-  unfold dnf_list_of_list_to_formula
+  unfold to_dnf_v3_aux_2
   apply hd_is_conj_ind_v1_and_list_disj_tail_is_dnf_ind_v1_imp_list_disj_cons_is_dnf_ind_v1
   · exact h1
   · exact h2
@@ -304,12 +304,12 @@ lemma is_dnf_ind_v1_dnf_list_of_list_to_formula_cons_right
 lemma is_dnf_ind_v1_dnf_list_of_list_to_formula_filter
   (xss : List (List Formula_))
   (pred : List Formula_ → Bool)
-  (h1 : is_dnf_ind_v1 (dnf_list_of_list_to_formula xss)) :
-  is_dnf_ind_v1 (dnf_list_of_list_to_formula (List.filter pred xss)) :=
+  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 xss)) :
+  is_dnf_ind_v1 (to_dnf_v3_aux_2 (List.filter pred xss)) :=
   by
-  unfold dnf_list_of_list_to_formula at h1
+  unfold to_dnf_v3_aux_2 at h1
 
-  unfold dnf_list_of_list_to_formula
+  unfold to_dnf_v3_aux_2
   induction xss
   case nil =>
     simp only [List.filter_nil]
@@ -344,7 +344,7 @@ lemma is_dnf_ind_v1_dnf_list_of_list_to_formula_filter
 lemma pure_dnf_simp_1_is_dnf_ind_v1
   (F : Formula_)
   (h1 : is_nnf_rec_v1 F) :
-  is_dnf_ind_v1 (dnf_list_of_list_to_formula (pure_dnf_simp_1 F)) :=
+  is_dnf_ind_v1 (to_dnf_v3_aux_2 (pure_dnf_simp_1 F)) :=
   by
   unfold pure_dnf_simp_1
   apply is_dnf_ind_v1_dnf_list_of_list_to_formula_filter

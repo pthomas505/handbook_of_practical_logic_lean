@@ -109,10 +109,10 @@ example
   (xs : List Formula_)
   (zss : List (List Formula_))
   (h1 : xs ∈ zss) :
-  eval V (dnf_list_of_list_to_formula zss) = true ↔
-    eval V (dnf_list_of_list_to_formula (List.filter (fun (zs : List Formula_) => ¬ List.SSubset xs zs) zss)) = true :=
+  eval V (to_dnf_v3_aux_2 zss) = true ↔
+    eval V (to_dnf_v3_aux_2 (List.filter (fun (zs : List Formula_) => ¬ List.SSubset xs zs) zss)) = true :=
   by
-  unfold dnf_list_of_list_to_formula
+  unfold to_dnf_v3_aux_2
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_map, List.mem_filter]
   simp only [decide_eq_true_iff]
@@ -197,10 +197,10 @@ example
   (V : ValuationAsTotalFunction)
   (xs ys : List Formula_)
   (h1 : xs ⊆ ys) :
-  eval V (dnf_list_of_list_to_formula [xs, ys]) = true ↔
-  eval V (dnf_list_of_list_to_formula [xs]) = true :=
+  eval V (to_dnf_v3_aux_2 [xs, ys]) = true ↔
+  eval V (to_dnf_v3_aux_2 [xs]) = true :=
   by
-  unfold dnf_list_of_list_to_formula
+  unfold to_dnf_v3_aux_2
   simp only [List.map_cons, List.map_nil]
   simp only [list_disj]
   simp only [eval]
@@ -222,10 +222,10 @@ example
   (xs ys zs : List Formula_)
   (h1 : xs ⊆ ys)
   (h2 : ys ⊆ zs) :
-  eval V (dnf_list_of_list_to_formula [xs, ys, zs]) = true ↔
-  eval V (dnf_list_of_list_to_formula [xs]) = true :=
+  eval V (to_dnf_v3_aux_2 [xs, ys, zs]) = true ↔
+  eval V (to_dnf_v3_aux_2 [xs]) = true :=
   by
-  unfold dnf_list_of_list_to_formula
+  unfold to_dnf_v3_aux_2
   simp only [List.map_cons, List.map_nil]
   simp only [list_disj]
   simp only [eval]
@@ -254,10 +254,10 @@ example
   (V : ValuationAsTotalFunction)
   (xs ys zs : List Formula_)
   (h1 : xs ⊆ zs) :
-  eval V (dnf_list_of_list_to_formula [xs, ys, zs]) = true ↔
-  eval V (dnf_list_of_list_to_formula [xs, ys]) = true :=
+  eval V (to_dnf_v3_aux_2 [xs, ys, zs]) = true ↔
+  eval V (to_dnf_v3_aux_2 [xs, ys]) = true :=
   by
-  unfold dnf_list_of_list_to_formula
+  unfold to_dnf_v3_aux_2
   simp only [List.map_cons, List.map_nil]
   simp only [list_disj]
   simp only [eval]
@@ -339,10 +339,10 @@ def pure_dnf_simp_2
 lemma eval_pure_dnf_simp_2_left
   (V : ValuationAsTotalFunction)
   (xss : List (List Formula_))
-  (h1 : eval V (dnf_list_of_list_to_formula xss) = true) :
-  eval V (dnf_list_of_list_to_formula (pure_dnf_simp_2 xss)) = true :=
+  (h1 : eval V (to_dnf_v3_aux_2 xss) = true) :
+  eval V (to_dnf_v3_aux_2 (pure_dnf_simp_2 xss)) = true :=
   by
-  unfold dnf_list_of_list_to_formula at h1
+  unfold to_dnf_v3_aux_2 at h1
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true] at h1
   obtain ⟨F, h1_left, h1_right⟩ := h1
   simp only [List.mem_map] at h1_left
@@ -350,7 +350,7 @@ lemma eval_pure_dnf_simp_2_left
   rewrite [← h1_left_right] at h1_right
 
   unfold pure_dnf_simp_2
-  unfold dnf_list_of_list_to_formula
+  unfold to_dnf_v3_aux_2
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_map, List.mem_filter]
   simp only [decide_eq_true_iff]
@@ -382,15 +382,15 @@ lemma eval_dnf_list_of_list_to_formula_subset
   (V : ValuationAsTotalFunction)
   (xss yss : List (List Formula_))
   (h1 : xss ⊆ yss)
-  (h2 : eval V (dnf_list_of_list_to_formula xss) = true) :
-  eval V (dnf_list_of_list_to_formula yss) = true :=
+  (h2 : eval V (to_dnf_v3_aux_2 xss) = true) :
+  eval V (to_dnf_v3_aux_2 yss) = true :=
   by
-  unfold dnf_list_of_list_to_formula at h2
+  unfold to_dnf_v3_aux_2 at h2
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true] at h2
   simp only [List.mem_map] at h2
   obtain ⟨F, ⟨xs, h2_left_left, h2_left_right⟩, h2_right⟩ := h2
 
-  unfold dnf_list_of_list_to_formula
+  unfold to_dnf_v3_aux_2
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_map]
   apply Exists.intro F
@@ -405,8 +405,8 @@ lemma eval_dnf_list_of_list_to_formula_subset
 lemma eval_pure_dnf_simp_2_right
   (V : ValuationAsTotalFunction)
   (xss : List (List Formula_))
-  (h1 : eval V (dnf_list_of_list_to_formula (pure_dnf_simp_2 xss)) = true) :
-  eval V (dnf_list_of_list_to_formula xss) = true :=
+  (h1 : eval V (to_dnf_v3_aux_2 (pure_dnf_simp_2 xss)) = true) :
+  eval V (to_dnf_v3_aux_2 xss) = true :=
   by
   apply eval_dnf_list_of_list_to_formula_subset V (pure_dnf_simp_2 xss)
   · unfold pure_dnf_simp_2
@@ -417,8 +417,8 @@ lemma eval_pure_dnf_simp_2_right
 lemma eval_pure_dnf_simp_2
   (V : ValuationAsTotalFunction)
   (xss : List (List Formula_)) :
-  eval V (dnf_list_of_list_to_formula xss) = true ↔
-    eval V (dnf_list_of_list_to_formula (pure_dnf_simp_2 xss)) = true :=
+  eval V (to_dnf_v3_aux_2 xss) = true ↔
+    eval V (to_dnf_v3_aux_2 (pure_dnf_simp_2 xss)) = true :=
   by
   constructor
   · apply eval_pure_dnf_simp_2_left
@@ -427,8 +427,8 @@ lemma eval_pure_dnf_simp_2
 
 lemma pure_dnf_simp_2_is_dnf_ind_v1
   (xss : List (List Formula_))
-  (h1 : is_dnf_ind_v1 (dnf_list_of_list_to_formula xss)) :
-  is_dnf_ind_v1 (dnf_list_of_list_to_formula (pure_dnf_simp_2 xss)) :=
+  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 xss)) :
+  is_dnf_ind_v1 (to_dnf_v3_aux_2 (pure_dnf_simp_2 xss)) :=
   by
   unfold pure_dnf_simp_2
   apply is_dnf_ind_v1_dnf_list_of_list_to_formula_filter
@@ -454,19 +454,19 @@ def simp_dnf
 example
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V F = true ↔ eval V (dnf_list_of_list_to_formula (simp_dnf F)) = true :=
+  eval V F = true ↔ eval V (to_dnf_v3_aux_2 (simp_dnf F)) = true :=
   by
   unfold simp_dnf
   split_ifs
   case pos c1 =>
     rewrite [c1]
-    unfold dnf_list_of_list_to_formula
+    unfold to_dnf_v3_aux_2
     simp only [List.map_nil]
     unfold list_disj
     rfl
   case pos c1 c2 =>
     rewrite [c2]
-    unfold dnf_list_of_list_to_formula
+    unfold to_dnf_v3_aux_2
     simp only [List.map_cons, List.map_nil]
     unfold list_conj
     unfold list_disj
@@ -480,19 +480,19 @@ example
 
 example
   (F : Formula_) :
-  is_dnf_ind_v1 (dnf_list_of_list_to_formula (simp_dnf F)) :=
+  is_dnf_ind_v1 (to_dnf_v3_aux_2 (simp_dnf F)) :=
   by
   unfold simp_dnf
   split_ifs
   case pos c1 =>
-    unfold dnf_list_of_list_to_formula
+    unfold to_dnf_v3_aux_2
     simp only [List.map_nil]
     unfold list_disj
     apply is_dnf_ind_v1.rule_1
     apply is_conj_ind_v1.rule_1
     exact is_constant_ind.rule_1
   case pos c1 c2 =>
-    unfold dnf_list_of_list_to_formula
+    unfold to_dnf_v3_aux_2
     simp only [List.map_cons, List.map_nil]
     unfold list_conj
     unfold list_disj
