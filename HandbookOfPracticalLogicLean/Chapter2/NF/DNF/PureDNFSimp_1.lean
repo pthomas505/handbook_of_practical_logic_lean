@@ -79,14 +79,14 @@ lemma not_has_complementary_singleton
   unfold has_complementary
   unfold are_complementary
   intro contra
-  obtain ⟨P, mem_P, Q, mem_Q, lit_P, lit_Q, eq⟩ := contra
-  simp only [List.mem_singleton] at mem_P
-  simp only [List.mem_singleton] at mem_Q
-  rewrite [mem_Q] at eq
-  rewrite [mem_P] at eq
+  obtain ⟨P, P_mem, Q, Q_mem, P_lit, Q_lit, eq⟩ := contra
+  simp only [List.mem_singleton] at P_mem
+  simp only [List.mem_singleton] at Q_mem
+  rewrite [P_mem] at eq
+  rewrite [Q_mem] at eq
   apply negate_literal_not_eq_self F
-  · rewrite [← mem_P]
-    exact lit_P
+  · rewrite [← P_mem]
+    exact P_lit
   · exact eq
 
 
