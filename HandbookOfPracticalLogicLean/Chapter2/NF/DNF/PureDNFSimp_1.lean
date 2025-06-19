@@ -145,96 +145,20 @@ lemma has_complementary_imp_eval_list_conj_false
   (h1 : has_complementary l) :
   eval V (list_conj l) = false :=
   by
-  induction l
-  case nil =>
-    unfold has_complementary at h1
-    contradiction
-  case cons hd tl ih =>
-    cases tl
-    case nil =>
-      unfold list_conj at ih
+  unfold has_complementary at h1
+  unfold are_complementary at h1
+  obtain ⟨P, P_mem, Q, Q_mem, P_lit, Q_lit, eq⟩ := h1
 
-      unfold has_complementary at h1
-      unfold are_complementary at h1
-      obtain ⟨P, P_mem, Q, Q_mem, P_lit, Q_lit, eq⟩ := h1
+  simp only [← Bool.eq_false_eq_not_eq_true]
+  intro contra
+  simp only [eval_list_conj_eq_true_iff_forall_eval_eq_true] at contra
 
-      simp only [List.mem_singleton] at P_mem
-      simp only [List.mem_singleton] at Q_mem
-
-      rewrite [P_mem] at eq
-      rewrite [Q_mem] at eq
-
-      rewrite [P_mem] at P_lit
-
-      obtain s1 := negate_literal_not_eq_self hd P_lit
-      contradiction
-    case cons tl_hd tl_tl =>
-      unfold has_complementary at ih
-
-      unfold has_complementary at h1
-      unfold are_complementary at h1
-      obtain ⟨P, P_mem, Q, Q_mem, P_lit, Q_lit, eq⟩ := h1
-
-      simp only [List.mem_cons] at P_mem
-      simp only [List.mem_cons] at Q_mem
-
-      unfold list_conj
-      unfold eval
-      apply Bool.bool_eq_false
-      simp only [bool_iff_prop_and]
-      simp only [not_and]
-
-      cases P_mem
-      case inl P_mem =>
-        cases Q_mem
-        case inl Q_mem =>
-          rewrite [P_mem] at eq
-          rewrite [Q_mem] at eq
-
-          rewrite [P_mem] at P_lit
-
-          obtain s1 := negate_literal_not_eq_self hd P_lit
-          contradiction
-        case inr Q_mem =>
-          simp only [eval_list_conj_eq_true_iff_forall_eval_eq_true]
-          intro a1
-
-          rewrite [← P_mem] at a1
-          rewrite [← eq] at a1
-          rewrite [eval_negate_literal_eq_not_eval_literal V Q Q_lit] at a1
-          simp only [bool_iff_prop_not] at a1
-
-          intro contra
-          apply a1
-          apply contra
-          simp only [List.mem_cons]
-          exact Q_mem
-      case inr P_mem =>
-        cases Q_mem
-        case inl Q_mem =>
-          simp only [eval_list_conj_eq_true_iff_forall_eval_eq_true]
-          intro a1
-
-          rewrite [← Q_mem] at a1
-          have s1 : ¬ eval V P = true :=
-          by
-            rewrite [← eq]
-            rewrite [eval_negate_literal_eq_not_eval_literal V Q Q_lit]
-            simp only [bool_iff_prop_not]
-            intro contra
-            contradiction
-
-          intro contra
-          apply s1
-          apply contra
-          simp only [List.mem_cons]
-          exact P_mem
-        case inr Q_mem =>
-          intro a1
-          simp only [Bool.bool_iff_false]
-          apply ih
-          simp only [List.mem_cons]
-          exact ⟨P, P_mem, Q, Q_mem, P_lit, Q_lit, eq⟩
+  obtain s1 := eval_negate_literal_eq_not_eval_literal V Q Q_lit
+  rewrite [eq] at s1
+  rewrite [contra P P_mem] at s1
+  rewrite [contra Q Q_mem] at s1
+  simp only [b_not] at s1
+  contradiction
 
 
 lemma eval_dnf_list_of_list_to_formula_filter_not_has_complementary
