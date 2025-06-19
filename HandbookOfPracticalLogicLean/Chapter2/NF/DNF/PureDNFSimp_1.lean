@@ -10,21 +10,36 @@ open Formula_
 
 
 /--
-  `has_complementary l` := True if and only if there exists a pair of literal formulas `P` and `Q` in the list of formulas `l` such that `P` is the negation of `Q`.
+  `are_complementary P Q` := True if and only if the formulas `P` and `Q` are literals and `P` is the negation of `Q`.
+-/
+def are_complementary
+  (P Q : Formula_) :
+  Prop :=
+  P.is_literal_rec ∧ Q.is_literal_rec ∧ negate_literal Q = P
+
+instance
+  (P Q : Formula_) :
+  Decidable (are_complementary P Q) :=
+  by
+  unfold are_complementary
+  infer_instance
+
+
+/--
+  `has_complementary l` := True if and only if the list of formulas `l` contains a pair of complementary formulas.
 -/
 def has_complementary
   (l : List Formula_) :
   Prop :=
-  ∃ (P : Formula_), P ∈ l ∧ P.is_literal_rec ∧ ∃ (Q : Formula_), Q ∈ l ∧ Q.is_literal_rec ∧ negate_literal Q = P
+  ∃ (P : Formula_), P ∈ l ∧ ∃ (Q : Formula_), Q ∈ l ∧ are_complementary P Q
+  -- ∃ (P : Formula_), P ∈ l ∧ P.is_literal_rec ∧ ∃ (Q : Formula_), Q ∈ l ∧ Q.is_literal_rec ∧ negate_literal Q = P
 
 instance
   (l : List Formula_) :
   Decidable (has_complementary l) :=
   by
-  induction l
-  all_goals
-    unfold has_complementary
-    infer_instance
+  unfold has_complementary
+  infer_instance
 
 
 #eval has_complementary []
@@ -53,8 +68,9 @@ lemma not_has_complementary_singleton
   ¬ has_complementary [F] :=
   by
   unfold has_complementary
+  unfold are_complementary
   intro contra
-  obtain ⟨P, mem_P, lit_P, Q, mem_Q, lit_Q, eq⟩ := contra
+  obtain ⟨P, mem_P, Q, mem_Q, lit_P, lit_Q, eq⟩ := contra
   simp only [List.mem_singleton] at mem_P
   simp only [List.mem_singleton] at mem_Q
   rewrite [mem_Q] at eq
@@ -77,28 +93,41 @@ lemma filter_not_has_complementary_singleton
 
 
 lemma not_has_complementary_union
-  (xs ys : List Formula_)
-  (h1 : ¬ has_complementary (xs ∪ ys)) :
-  ¬ has_complementary xs ∧ ¬ has_complementary ys :=
+  (l1 l2 : List Formula_)
+  (h1 : ¬ has_complementary (l1 ∪ l2)) :
+  ¬ has_complementary l1 ∧ ¬ has_complementary l2 :=
   by
   unfold has_complementary at h1
+  unfold are_complementary at h1
   simp only [List.mem_union_iff] at h1
 
   unfold has_complementary
+  unfold are_complementary
   constructor
-  all_goals
-    intro contra
-    obtain ⟨P, P_mem, P_lit, Q, Q_mem, Q_lit, eq⟩ := contra
+  · intro contra
+    obtain ⟨P, P_mem, Q, Q_mem, P_lit, Q_lit, eq⟩ := contra
     apply h1
     apply Exists.intro P
     constructor
-    · first | left; exact P_mem | right; exact P_mem
-    · constructor
-      · exact P_lit
-      · apply Exists.intro Q
-        constructor
-        · first | left; exact Q_mem | right; exact Q_mem
-        · exact ⟨Q_lit, eq⟩
+    · left
+      exact P_mem
+    · apply Exists.intro Q
+      constructor
+      · left
+        exact Q_mem
+      · exact ⟨P_lit, ⟨Q_lit, eq⟩⟩
+  · intro contra
+    obtain ⟨P, P_mem, Q, Q_mem, P_lit, Q_lit, eq⟩ := contra
+    apply h1
+    apply Exists.intro P
+    constructor
+    · right
+      exact P_mem
+    · apply Exists.intro Q
+      constructor
+      · right
+        exact Q_mem
+      · exact ⟨P_lit, ⟨Q_lit, eq⟩⟩
 
 
 lemma has_complementary_imp_eval_list_conj_false
@@ -117,7 +146,8 @@ lemma has_complementary_imp_eval_list_conj_false
       unfold list_conj at ih
 
       unfold has_complementary at h1
-      obtain ⟨P, P_mem, P_lit, ⟨Q, Q_mem, Q_lit, eq⟩⟩ := h1
+      unfold are_complementary at h1
+      obtain ⟨P, P_mem, Q, Q_mem, P_lit, Q_lit, eq⟩ := h1
 
       simp only [List.mem_singleton] at P_mem
       simp only [List.mem_singleton] at Q_mem
@@ -133,7 +163,8 @@ lemma has_complementary_imp_eval_list_conj_false
       unfold has_complementary at ih
 
       unfold has_complementary at h1
-      obtain ⟨P, P_mem, P_lit, ⟨Q, Q_mem, Q_lit, eq⟩⟩ := h1
+      unfold are_complementary at h1
+      obtain ⟨P, P_mem, Q, Q_mem, P_lit, Q_lit, eq⟩ := h1
 
       simp only [List.mem_cons] at P_mem
       simp only [List.mem_cons] at Q_mem
@@ -194,7 +225,7 @@ lemma has_complementary_imp_eval_list_conj_false
           simp only [Bool.bool_iff_false]
           apply ih
           simp only [List.mem_cons]
-          exact ⟨P, P_mem, P_lit, Q, Q_mem, Q_lit, eq⟩
+          exact ⟨P, P_mem, Q, Q_mem, P_lit, Q_lit, eq⟩
 
 
 lemma eval_dnf_list_of_list_to_formula_filter_not_has_complementary
