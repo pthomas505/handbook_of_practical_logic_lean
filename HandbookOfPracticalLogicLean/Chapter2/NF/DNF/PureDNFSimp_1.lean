@@ -176,16 +176,20 @@ lemma eval_to_dnf_v3_aux_2_filter_not_has_complementary
     exact ⟨F, ⟨l, s3, s2⟩, s1⟩
   · intro a1
     obtain ⟨F, ⟨l, s3, s2⟩, s1⟩ := a1
+    rewrite [← s2] at s1
 
-    have s4 : ¬ has_complementary l :=
-    by
-      rewrite [← s2] at s1
-      intro contra
-      rewrite [has_complementary_imp_eval_list_conj_false V l contra] at s1
-      contradiction
-
-    simp only [decide_eq_true_iff]
-    exact ⟨F, ⟨l, ⟨s3, s4⟩, s2⟩, s1⟩
+    apply Exists.intro (list_conj l)
+    constructor
+    · apply Exists.intro l
+      constructor
+      · constructor
+        · exact s3
+        · simp only [decide_eq_true_iff]
+          intro contra
+          simp only [has_complementary_imp_eval_list_conj_false V l contra] at s1
+          contradiction
+      · rfl
+    · exact s1
 
 
 lemma eval_pure_dnf_simp_1
@@ -196,6 +200,9 @@ lemma eval_pure_dnf_simp_1
   unfold pure_dnf_simp_1
   simp only [eval_eq_eval_to_dnf_v3 V F]
   apply eval_to_dnf_v3_aux_2_filter_not_has_complementary
+
+
+-------------------------------------------------------------------------------
 
 
 example
