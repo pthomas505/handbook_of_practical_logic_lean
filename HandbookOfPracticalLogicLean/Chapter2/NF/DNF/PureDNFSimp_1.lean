@@ -42,6 +42,15 @@ instance
   infer_instance
 
 
+/--
+  `pure_dnf_simp_1 F` := The removal of every list of formulas with complementary literals from `to_dnf_v3_aux_1 F`.
+-/
+def pure_dnf_simp_1
+  (F : Formula_) :
+  List (List Formula_) :=
+  List.filter (fun (l : List Formula_) => ¬ (has_complementary l)) (to_dnf_v3_aux_1 F)
+
+
 #eval has_complementary []
 
 #eval has_complementary [atom_ "P"]
@@ -253,15 +262,6 @@ lemma eval_dnf_list_of_list_to_formula_filter_not_has_complementary
 
     simp only [decide_eq_true_iff]
     exact ⟨F, ⟨l, ⟨s3, s4⟩, s2⟩, s1⟩
-
-
-/--
-  `pure_dnf_simp_1 F` := The removal of every list of formulas with complementary literals from `to_dnf_v3_aux_1 F`.
--/
-def pure_dnf_simp_1
-  (F : Formula_) :
-  List (List Formula_) :=
-  List.filter (fun (l : List Formula_) => ¬ (has_complementary l)) (to_dnf_v3_aux_1 F)
 
 
 lemma eval_pure_dnf_simp_1
