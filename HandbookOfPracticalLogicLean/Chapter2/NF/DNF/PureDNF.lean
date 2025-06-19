@@ -68,7 +68,7 @@ lemma eval_eq_eval_to_dnf_v3
     simp only [mem_all_pairs_v4_union_iff_eq_union]
     constructor
     · intro a1
-      obtain ⟨⟨p, ⟨l1, l1_mem, a1_left_left⟩, a1_left_right⟩ , ⟨Q, ⟨l2, l2_mem, a1_right_left⟩, a1_right_right⟩ ⟩ := a1
+      obtain ⟨⟨P, ⟨l1, l1_mem, a1_left_left⟩, a1_left_right⟩ , ⟨Q, ⟨l2, l2_mem, a1_right_left⟩, a1_right_right⟩⟩ := a1
       rewrite [← a1_left_left] at a1_left_right
       rewrite [← a1_right_left] at a1_right_right
       apply Exists.intro (list_conj (l1 ∪ l2))
@@ -82,7 +82,7 @@ lemma eval_eq_eval_to_dnf_v3
       · simp only [eval_list_conj_union]
         exact ⟨a1_left_right, a1_right_right⟩
     · intro a1
-      obtain ⟨F, ⟨p, ⟨l1, l2, ⟨l1_mem, l2_mem, eq⟩⟩, a1_left⟩, a1_right⟩ := a1
+      obtain ⟨F, ⟨P, ⟨l1, l2, ⟨l1_mem, l2_mem, eq⟩⟩, a1_left⟩, a1_right⟩ := a1
       rewrite [← a1_left] at a1_right
       rewrite [← eq] at a1_right
       simp only [eval_list_conj_union] at a1_right
