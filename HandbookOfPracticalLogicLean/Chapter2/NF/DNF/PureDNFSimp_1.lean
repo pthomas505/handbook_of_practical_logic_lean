@@ -32,7 +32,6 @@ def has_complementary
   (l : List Formula_) :
   Prop :=
   ∃ (P : Formula_), P ∈ l ∧ ∃ (Q : Formula_), Q ∈ l ∧ are_complementary P Q
-  -- ∃ (P : Formula_), P ∈ l ∧ P.is_literal_rec ∧ ∃ (Q : Formula_), Q ∈ l ∧ Q.is_literal_rec ∧ negate_literal Q = P
 
 instance
   (l : List Formula_) :
