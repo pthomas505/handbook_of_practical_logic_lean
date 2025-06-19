@@ -45,7 +45,7 @@ def to_dnf_v3
 #eval (to_dnf_v3_aux_2 [[atom_ "P", atom_ "Q"], [not_ (atom_ "P"), atom_ "R"]]).toString
 
 
-example
+lemma eval_eq_eval_to_dnf_v3
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V F = true ↔ eval V (to_dnf_v3 F) = true :=

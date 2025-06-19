@@ -233,7 +233,7 @@ lemma eval_pure_dnf_simp_1
   eval V (to_dnf_v3_aux_2 (pure_dnf_simp_1 F)) = true ↔ eval V F = true :=
   by
   unfold pure_dnf_simp_1
-  simp only [← eval_dnf_list_of_list_to_formula_pure_dnf_eq_eval V F]
+  simp only [eval_eq_eval_to_dnf_v3 V F]
   apply eval_dnf_list_of_list_to_formula_filter_not_has_complementary
 
 
@@ -348,4 +348,4 @@ lemma pure_dnf_simp_1_is_dnf_ind_v1
   by
   unfold pure_dnf_simp_1
   apply is_dnf_ind_v1_dnf_list_of_list_to_formula_filter
-  exact is_nnf_v1_imp_pure_dnf_is_ind F h1
+  exact is_nnf_rec_v1_imp_to_dnf_v3_is_dnf_ind_v1 F h1
