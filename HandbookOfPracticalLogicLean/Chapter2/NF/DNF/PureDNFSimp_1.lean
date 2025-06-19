@@ -161,7 +161,7 @@ lemma has_complementary_imp_eval_list_conj_false
   contradiction
 
 
-lemma eval_to_dnf_v3_aux_2_filter_not_has_complementary
+lemma eval_to_dnf_v3_aux_2_filter_not_has_complementary_eq_eval_to_dnf_v3_aux_2
   (V : ValuationAsTotalFunction)
   (ll : List (List Formula_)) :
   eval V (to_dnf_v3_aux_2 (List.filter (fun (l : List Formula_) => ¬ (has_complementary l)) ll)) = true ↔
@@ -199,7 +199,7 @@ lemma eval_pure_dnf_simp_1
   by
   unfold pure_dnf_simp_1
   simp only [eval_eq_eval_to_dnf_v3 V F]
-  apply eval_to_dnf_v3_aux_2_filter_not_has_complementary
+  apply eval_to_dnf_v3_aux_2_filter_not_has_complementary_eq_eval_to_dnf_v3_aux_2
 
 
 -------------------------------------------------------------------------------
