@@ -60,16 +60,16 @@ instance
 
 
 /--
-  `pure_dnf_simp_1 F` := The removal of every list of formulas with complementary literals from `to_dnf_v3_aux_1 F`.
+  `to_dnf_v3_aux_1_simp_1 F` := The removal of every list of formulas with complementary literals from `to_dnf_v3_aux_1 F`.
 -/
-def pure_dnf_simp_1
+def to_dnf_v3_aux_1_simp_1
   (F : Formula_) :
   List (List Formula_) :=
   List.filter (fun (l : List Formula_) => ¬ (has_complementary l)) (to_dnf_v3_aux_1 F)
 
 
 #eval (to_dnf_v3_aux_1 (Formula_| ((P \/ (Q /\ R)) /\ (~P \/ ~R)))).toString
-#eval (pure_dnf_simp_1 (Formula_| ((P \/ (Q /\ R)) /\ (~P \/ ~R)))).toString
+#eval (to_dnf_v3_aux_1_simp_1 (Formula_| ((P \/ (Q /\ R)) /\ (~P \/ ~R)))).toString
 
 
 lemma not_has_complementary_singleton
@@ -195,9 +195,9 @@ lemma eval_to_dnf_v3_aux_2_filter_not_has_complementary_eq_eval_to_dnf_v3_aux_2
 lemma eval_pure_dnf_simp_1
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V (to_dnf_v3_aux_2 (pure_dnf_simp_1 F)) = true ↔ eval V F = true :=
+  eval V (to_dnf_v3_aux_2 (to_dnf_v3_aux_1_simp_1 F)) = true ↔ eval V F = true :=
   by
-  unfold pure_dnf_simp_1
+  unfold to_dnf_v3_aux_1_simp_1
   simp only [eval_eq_eval_to_dnf_v3 V F]
   apply eval_to_dnf_v3_aux_2_filter_not_has_complementary_eq_eval_to_dnf_v3_aux_2
 
@@ -312,9 +312,9 @@ lemma is_dnf_ind_v1_dnf_list_of_list_to_formula_filter
 lemma pure_dnf_simp_1_is_dnf_ind_v1
   (F : Formula_)
   (h1 : is_nnf_rec_v1 F) :
-  is_dnf_ind_v1 (to_dnf_v3_aux_2 (pure_dnf_simp_1 F)) :=
+  is_dnf_ind_v1 (to_dnf_v3_aux_2 (to_dnf_v3_aux_1_simp_1 F)) :=
   by
-  unfold pure_dnf_simp_1
+  unfold to_dnf_v3_aux_1_simp_1
   apply is_dnf_ind_v1_dnf_list_of_list_to_formula_filter
   exact is_nnf_rec_v1_imp_to_dnf_v3_is_dnf_ind_v1 F h1
 
