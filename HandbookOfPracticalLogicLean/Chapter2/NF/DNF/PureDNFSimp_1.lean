@@ -211,7 +211,7 @@ lemma eval_eq_eval_to_dnf_v3_simp_1_aux
   apply eval_to_dnf_v3_aux_2_eq_eval_to_dnf_v3_aux_2_filter_not_has_complementary
 
 
-example
+lemma eval_eq_eval_to_dnf_v3_simp_1
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V F = true ↔ eval V (to_dnf_v3_simp_1 F) = true :=
