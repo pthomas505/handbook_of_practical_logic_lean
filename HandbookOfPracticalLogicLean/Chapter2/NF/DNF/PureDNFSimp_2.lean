@@ -474,7 +474,7 @@ example
   case neg c1 c2 =>
     simp only
     simp only [← eval_pure_dnf_simp_2]
-    simp only [eval_pure_dnf_simp_1]
+    simp only [← eval_eq_eval_to_dnf_v3_simp_1_aux]
     simp only [← eval_eq_eval_to_nnf_v1]
 
 

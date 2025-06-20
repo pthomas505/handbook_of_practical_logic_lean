@@ -201,15 +201,23 @@ lemma eval_to_dnf_v3_aux_2_eq_eval_to_dnf_v3_aux_2_filter_not_has_complementary
     exact ⟨F, ⟨l, s3, s2⟩, s1⟩
 
 
-lemma eval_eq_eval_to_dnf_v3_simp_1
+lemma eval_eq_eval_to_dnf_v3_simp_1_aux
+  (V : ValuationAsTotalFunction)
+  (F : Formula_) :
+  eval V F = true ↔ eval V (to_dnf_v3_aux_2 (to_dnf_v3_aux_1_simp_1 F)) = true :=
+  by
+  unfold to_dnf_v3_aux_1_simp_1
+  simp only [eval_eq_eval_to_dnf_v3 V F]
+  apply eval_to_dnf_v3_aux_2_eq_eval_to_dnf_v3_aux_2_filter_not_has_complementary
+
+
+example
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V F = true ↔ eval V (to_dnf_v3_simp_1 F) = true :=
   by
   unfold to_dnf_v3_simp_1
-  unfold to_dnf_v3_aux_1_simp_1
-  simp only [eval_eq_eval_to_dnf_v3 V F]
-  apply eval_to_dnf_v3_aux_2_eq_eval_to_dnf_v3_aux_2_filter_not_has_complementary
+  apply eval_eq_eval_to_dnf_v3_simp_1_aux
 
 
 -------------------------------------------------------------------------------
