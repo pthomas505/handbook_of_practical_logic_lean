@@ -431,7 +431,7 @@ lemma pure_dnf_simp_2_is_dnf_ind_v1
   is_dnf_ind_v1 (to_dnf_v3_aux_2 (pure_dnf_simp_2 xss)) :=
   by
   unfold pure_dnf_simp_2
-  apply is_dnf_ind_v1_dnf_list_of_list_to_formula_filter
+  apply is_dnf_ind_v1_to_dnf_v3_aux_2_filter
   exact h1
 
 
@@ -502,5 +502,5 @@ example
   case neg c1 c2 =>
     simp only
     apply pure_dnf_simp_2_is_dnf_ind_v1
-    apply pure_dnf_simp_1_is_dnf_ind_v1
+    apply is_dnf_ind_v1_to_dnf_v3_simp_1_aux
     apply to_nnf_v1_is_nnf_rec_v1
