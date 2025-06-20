@@ -26,7 +26,7 @@ instance
 
 
 /--
-  `has_complementary l` := True if and only if the list of formulas `l` contains a pair of complementary formulas.
+  `has_complementary l` := True if and only if the list of formulas `l` contains complementary formulas.
 -/
 def has_complementary
   (l : List Formula_) :
@@ -60,7 +60,7 @@ instance
 
 
 /--
-  `to_dnf_v3_aux_1_simp_1 F` := The removal of every list of formulas with complementary literals from `to_dnf_v3_aux_1 F`.
+  `to_dnf_v3_aux_1_simp_1 F` := The result of removing every list of formulas that contains complementary formulas from the list of lists of formulas given by `to_dnf_v3_aux_1 F`.
 -/
 def to_dnf_v3_aux_1_simp_1
   (F : Formula_) :
@@ -73,7 +73,7 @@ def to_dnf_v3_aux_1_simp_1
 
 
 /--
-  `to_dnf_v3_simp_1 F` := Translates the formula `F` to a logically equivalent formula. If `F` is in negation normal form then `to_dnf_v3 F` is in disjunctive normal form and none of the conjunctive clauses contain complementary formulas.
+  `to_dnf_v3_simp_1 F` := Translates the formula `F` to a logically equivalent formula. If `F` is in negation normal form then `to_dnf_v3_simp_1 F` is in disjunctive normal form and none of the conjunctive clauses in `to_dnf_v3_simp_1 F` contain complementary formulas.
 -/
 def to_dnf_v3_simp_1
   (F : Formula_) :
