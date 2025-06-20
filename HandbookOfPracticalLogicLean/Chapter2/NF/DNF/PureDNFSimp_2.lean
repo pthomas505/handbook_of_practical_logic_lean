@@ -53,10 +53,10 @@ example
 example
   (V : ValuationAsTotalFunction)
   (P : Formula_)
-  (xs : List Formula_)
-  (h1 : P ∈ xs) :
-  eval V (list_disj xs) = true ↔
-    eval V (list_disj (List.filter (fun (Q : Formula_) => Q = P ∨ ¬ (eval V Q = true → eval V P = true)) xs)) = true :=
+  (l : List Formula_)
+  (h1 : P ∈ l) :
+  eval V (list_disj l) = true ↔
+    eval V (list_disj (List.filter (fun (Q : Formula_) => Q = P ∨ ¬ (eval V Q = true → eval V P = true)) l)) = true :=
   by
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_filter]
@@ -88,17 +88,20 @@ example
     exact ⟨a1_left_left, a1_right⟩
 
 
+/--
+  `List.SSubset l1 l2` := True if and only if `l1` is a strict subset of `l2`.
+-/
 def List.SSubset
   {α : Type}
-  (l₁ l₂ : List α) :
+  (l1 l2 : List α) :
   Prop :=
-  l₁ ⊆ l₂ ∧ ¬ l₂ ⊆ l₁
+  l1 ⊆ l2 ∧ ¬ l2 ⊆ l1
 
 instance
   {α : Type}
   [DecidableEq α]
-  (l₁ l₂ : List α) :
-  Decidable (List.SSubset l₁ l₂) :=
+  (l1 l2 : List α) :
+  Decidable (List.SSubset l1 l2) :=
   by
   unfold List.SSubset
   infer_instance
@@ -106,11 +109,11 @@ instance
 
 example
   (V : ValuationAsTotalFunction)
-  (xs : List Formula_)
-  (zss : List (List Formula_))
-  (h1 : xs ∈ zss) :
-  eval V (to_dnf_v3_aux_2 zss) = true ↔
-    eval V (to_dnf_v3_aux_2 (List.filter (fun (zs : List Formula_) => ¬ List.SSubset xs zs) zss)) = true :=
+  (l : List Formula_)
+  (ll : List (List Formula_))
+  (h1 : l ∈ ll) :
+  eval V (to_dnf_v3_aux_2 ll) = true ↔
+    eval V (to_dnf_v3_aux_2 (List.filter (fun (m : List Formula_) => ¬ List.SSubset l m) ll)) = true :=
   by
   unfold to_dnf_v3_aux_2
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
@@ -118,38 +121,39 @@ example
   simp only [decide_eq_true_iff]
   constructor
   · intro a1
-    obtain ⟨F, ⟨zs, a1_left_left, a1_left_right⟩, a1_right⟩ := a1
-    by_cases c1 : List.SSubset xs zs
+    obtain ⟨F, ⟨m, a1_left_left, a1_left_right⟩, a1_right⟩ := a1
+    by_cases c1 : List.SSubset l m
     case pos =>
-      apply Exists.intro (list_conj xs)
+      apply Exists.intro (list_conj l)
       constructor
-      · apply Exists.intro xs
+      · apply Exists.intro l
         constructor
         · constructor
           · exact h1
           · unfold List.SSubset
-            intro ⟨contra_left, contra_right⟩
+            intro contra
+            obtain ⟨contra_left, contra_right⟩ := contra
             contradiction
         · rfl
       · unfold List.SSubset at c1
         obtain ⟨c1_left, c1_right⟩ := c1
         rewrite [← a1_left_right] at a1_right
-        apply eval_list_conj_subset V xs zs c1_left a1_right
+        apply eval_list_conj_subset V l m c1_left a1_right
     case neg =>
-      exact ⟨F, ⟨zs, ⟨a1_left_left, c1⟩, a1_left_right⟩, a1_right⟩
+      exact ⟨F, ⟨m, ⟨a1_left_left, c1⟩, a1_left_right⟩, a1_right⟩
   · intro a1
-    obtain ⟨F, ⟨zs, ⟨a1_left_left_left, a1_left_left_right⟩, a1_left_right⟩, a1_right⟩ := a1
-    exact ⟨F, ⟨zs, a1_left_left_left, a1_left_right⟩, a1_right⟩
+    obtain ⟨F, ⟨m, ⟨a1_left_left_left, a1_left_left_right⟩, a1_left_right⟩, a1_right⟩ := a1
+    exact ⟨F, ⟨m, a1_left_left_left, a1_left_right⟩, a1_right⟩
 
 
 example
   (V : ValuationAsTotalFunction)
   (P Q : Formula_)
-  (xs : List Formula_)
-  (h1 : P ∈ xs)
-  (h2 : Q ∈ xs) :
-  eval V (list_disj xs) = true ↔
-    eval V (list_disj (List.filter (fun (R : Formula_) => R = P ∨ R = Q ∨ (¬ (eval V R = true → eval V P = true) ∧ ¬ (eval V R = true → eval V Q = true))) xs)) = true :=
+  (l : List Formula_)
+  (h1 : P ∈ l)
+  (h2 : Q ∈ l) :
+  eval V (list_disj l) = true ↔
+    eval V (list_disj (List.filter (fun (R : Formula_) => R = P ∨ R = Q ∨ (¬ (eval V R = true → eval V P = true) ∧ ¬ (eval V R = true → eval V Q = true))) l)) = true :=
   by
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_filter]
@@ -189,16 +193,16 @@ example
             exact ⟨c1, c2⟩
         · exact a1_right
   · intro a1
-    obtain ⟨F, ⟨a1_left_left, a1_left_right⟩ , a1_right⟩ := a1
+    obtain ⟨F, ⟨a1_left_left, a1_left_right⟩, a1_right⟩ := a1
     exact ⟨F, a1_left_left, a1_right⟩
 
 
 example
   (V : ValuationAsTotalFunction)
-  (xs ys : List Formula_)
-  (h1 : xs ⊆ ys) :
-  eval V (to_dnf_v3_aux_2 [xs, ys]) = true ↔
-  eval V (to_dnf_v3_aux_2 [xs]) = true :=
+  (l1 l2 : List Formula_)
+  (h1 : l1 ⊆ l2) :
+  eval V (to_dnf_v3_aux_2 [l1, l2]) = true ↔
+    eval V (to_dnf_v3_aux_2 [l1]) = true :=
   by
   unfold to_dnf_v3_aux_2
   simp only [List.map_cons, List.map_nil]
@@ -211,7 +215,7 @@ example
     case inl a1 =>
       exact a1
     case inr a1 =>
-      exact eval_list_conj_subset V xs ys h1 a1
+      exact eval_list_conj_subset V l1 l2 h1 a1
   · intro a1
     left
     exact a1
@@ -219,11 +223,11 @@ example
 
 example
   (V : ValuationAsTotalFunction)
-  (xs ys zs : List Formula_)
-  (h1 : xs ⊆ ys)
-  (h2 : ys ⊆ zs) :
-  eval V (to_dnf_v3_aux_2 [xs, ys, zs]) = true ↔
-  eval V (to_dnf_v3_aux_2 [xs]) = true :=
+  (l1 l2 l3 : List Formula_)
+  (h1 : l1 ⊆ l2)
+  (h2 : l2 ⊆ l3) :
+  eval V (to_dnf_v3_aux_2 [l1, l2, l3]) = true ↔
+    eval V (to_dnf_v3_aux_2 [l1]) = true :=
   by
   unfold to_dnf_v3_aux_2
   simp only [List.map_cons, List.map_nil]
@@ -238,10 +242,12 @@ example
     case inr a1 =>
       cases a1
       case inl a1 =>
-        exact eval_list_conj_subset V xs ys h1 a1
+        apply eval_list_conj_subset V l1 l2
+        · exact h1
+        · exact a1
       case inr a1 =>
-        apply eval_list_conj_subset V xs zs
-        · trans ys
+        apply eval_list_conj_subset V l1 l3
+        · trans l2
           · exact h1
           · exact h2
         · exact a1
