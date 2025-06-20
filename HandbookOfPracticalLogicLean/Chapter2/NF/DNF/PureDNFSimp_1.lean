@@ -73,7 +73,7 @@ def to_dnf_v3_aux_1_simp_1
 
 
 /--
-  `to_dnf_v3_simp_1 F` := Translates the formula `F` to a logically equivalent formula. If `F` is in negation normal form then `to_dnf_v3 F` is in disjunctive normal form and no conjunctive clauses contain complementary formulas.
+  `to_dnf_v3_simp_1 F` := Translates the formula `F` to a logically equivalent formula. If `F` is in negation normal form then `to_dnf_v3 F` is in disjunctive normal form and none of the conjunctive clauses contain complementary formulas.
 -/
 def to_dnf_v3_simp_1
   (F : Formula_) :
