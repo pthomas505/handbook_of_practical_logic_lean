@@ -224,13 +224,14 @@ lemma eval_eq_eval_to_dnf_v3_simp_1
 
 
 example
-  (xs ys : List Formula_)
-  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 [xs, ys])) :
-  is_dnf_ind_v1 (to_dnf_v3_aux_2 [xs]) :=
+  (l1 l2 : List Formula_)
+  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 [l1, l2])) :
+  is_dnf_ind_v1 (to_dnf_v3_aux_2 [l1]) :=
   by
   unfold to_dnf_v3_aux_2 at h1
   simp only [List.map_cons, List.map_nil] at h1
   unfold list_disj at h1
+
   cases h1
   case rule_1 ih =>
     contradiction
@@ -243,13 +244,14 @@ example
 
 
 example
-  (xs ys : List Formula_)
-  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 [xs, ys])) :
-  is_dnf_ind_v1 (to_dnf_v3_aux_2 [ys]) :=
+  (l1 l2 : List Formula_)
+  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 [l1, l2])) :
+  is_dnf_ind_v1 (to_dnf_v3_aux_2 [l2]) :=
   by
   unfold to_dnf_v3_aux_2 at h1
   simp only [List.map_cons, List.map_nil] at h1
   unfold list_disj at h1
+
   cases h1
   case rule_1 ih =>
     contradiction
@@ -259,25 +261,26 @@ example
     exact ih_2
 
 
-lemma is_dnf_ind_v1_dnf_list_of_list_to_formula_cons_left
-  (xs : List Formula_)
-  (xss : List (List Formula_))
-  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 (xs :: xss))) :
-  is_dnf_ind_v1 (to_dnf_v3_aux_2 xss) :=
+lemma is_dnf_ind_v1_to_dnf_v3_aux_2_cons_left
+  (hd : List Formula_)
+  (tl : List (List Formula_))
+  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 (hd :: tl))) :
+  is_dnf_ind_v1 (to_dnf_v3_aux_2 tl) :=
   by
   unfold to_dnf_v3_aux_2 at h1
   simp only [List.map_cons] at h1
+
   unfold to_dnf_v3_aux_2
-  apply list_disj_cons_is_dnf_ind_v1_imp_list_disj_tail_is_dnf_ind_v1 (list_conj xs)
+  apply list_disj_cons_is_dnf_ind_v1_imp_list_disj_tail_is_dnf_ind_v1 (list_conj hd)
   exact h1
 
 
-lemma is_dnf_ind_v1_dnf_list_of_list_to_formula_cons_right
-  (xs : List Formula_)
-  (xss : List (List Formula_))
-  (h1 : is_conj_ind_v1 (list_conj xs))
-  (h2 : is_dnf_ind_v1 (to_dnf_v3_aux_2 xss)) :
-  is_dnf_ind_v1 (to_dnf_v3_aux_2 (xs :: xss)) :=
+lemma is_dnf_ind_v1_to_dnf_v3_aux_2_cons_right
+  (hd : List Formula_)
+  (tl : List (List Formula_))
+  (h1 : is_conj_ind_v1 (list_conj hd))
+  (h2 : is_dnf_ind_v1 (to_dnf_v3_aux_2 tl)) :
+  is_dnf_ind_v1 (to_dnf_v3_aux_2 (hd :: tl)) :=
   by
   unfold to_dnf_v3_aux_2 at h2
 
@@ -287,16 +290,16 @@ lemma is_dnf_ind_v1_dnf_list_of_list_to_formula_cons_right
   · exact h2
 
 
-lemma is_dnf_ind_v1_dnf_list_of_list_to_formula_filter
-  (xss : List (List Formula_))
+lemma is_dnf_ind_v1_to_dnf_v3_aux_2_filter
+  (ll : List (List Formula_))
   (pred : List Formula_ → Bool)
-  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 xss)) :
-  is_dnf_ind_v1 (to_dnf_v3_aux_2 (List.filter pred xss)) :=
+  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 ll)) :
+  is_dnf_ind_v1 (to_dnf_v3_aux_2 (List.filter pred ll)) :=
   by
   unfold to_dnf_v3_aux_2 at h1
 
   unfold to_dnf_v3_aux_2
-  induction xss
+  induction ll
   case nil =>
     simp only [List.filter_nil]
     exact h1
@@ -307,34 +310,46 @@ lemma is_dnf_ind_v1_dnf_list_of_list_to_formula_filter
       cases tl
       case nil =>
         simp only [List.map_cons, List.map_nil] at h1
+
         simp only [List.filter_nil, List.map_cons, List.map_nil]
         exact h1
       case cons tl_hd tl_tl =>
         simp only [List.map_cons] at h1
         unfold list_disj at h1
+
         cases h1
         case rule_1 ih_1 =>
           contradiction
         case rule_2 ih_1 ih_2 =>
           simp only [List.map_cons]
-          apply is_dnf_ind_v1_dnf_list_of_list_to_formula_cons_right
+          apply is_dnf_ind_v1_to_dnf_v3_aux_2_cons_right
           · exact ih_1
           · apply ih
             simp only [List.map_cons]
             exact ih_2
     case neg c1 =>
       apply ih
-      exact is_dnf_ind_v1_dnf_list_of_list_to_formula_cons_left hd tl h1
+      exact is_dnf_ind_v1_to_dnf_v3_aux_2_cons_left hd tl h1
 
 
-lemma pure_dnf_simp_1_is_dnf_ind_v1
+lemma is_dnf_ind_v1_to_dnf_v3_simp_1_aux
   (F : Formula_)
   (h1 : is_nnf_rec_v1 F) :
   is_dnf_ind_v1 (to_dnf_v3_aux_2 (to_dnf_v3_aux_1_simp_1 F)) :=
   by
   unfold to_dnf_v3_aux_1_simp_1
-  apply is_dnf_ind_v1_dnf_list_of_list_to_formula_filter
+  apply is_dnf_ind_v1_to_dnf_v3_aux_2_filter
   exact is_nnf_rec_v1_imp_to_dnf_v3_is_dnf_ind_v1 F h1
+
+
+lemma is_dnf_ind_v1_to_dnf_v3_simp_1
+  (F : Formula_)
+  (h1 : is_nnf_rec_v1 F) :
+  is_dnf_ind_v1 (to_dnf_v3_simp_1 F) :=
+  by
+  unfold to_dnf_v3_simp_1
+  apply is_dnf_ind_v1_to_dnf_v3_simp_1_aux
+  exact h1
 
 
 #lint
