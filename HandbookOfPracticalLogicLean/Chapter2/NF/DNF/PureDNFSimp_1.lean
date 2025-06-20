@@ -72,6 +72,15 @@ def to_dnf_v3_aux_1_simp_1
 #eval (to_dnf_v3_aux_1_simp_1 (Formula_| ((P \/ (Q /\ R)) /\ (~P \/ ~R)))).toString
 
 
+/--
+  `to_dnf_v3_simp_1 F` := Translates the formula `F` to a logically equivalent formula. If `F` is in negation normal form then `to_dnf_v3 F` is in disjunctive normal form and no conjunctive clauses contain complementary formulas.
+-/
+def to_dnf_v3_simp_1
+  (F : Formula_) :
+  Formula_ :=
+  to_dnf_v3_aux_2 (to_dnf_v3_aux_1_simp_1 F)
+
+
 lemma not_has_complementary_singleton
   (F : Formula_) :
   ¬ has_complementary [F] :=
@@ -161,19 +170,16 @@ lemma has_complementary_imp_eval_list_conj_false
   contradiction
 
 
-lemma eval_to_dnf_v3_aux_2_filter_not_has_complementary_eq_eval_to_dnf_v3_aux_2
+lemma eval_to_dnf_v3_aux_2_eq_eval_to_dnf_v3_aux_2_filter_not_has_complementary
   (V : ValuationAsTotalFunction)
   (ll : List (List Formula_)) :
-  eval V (to_dnf_v3_aux_2 (List.filter (fun (l : List Formula_) => ¬ (has_complementary l)) ll)) = true ↔
-    eval V (to_dnf_v3_aux_2 ll) = true :=
+  eval V (to_dnf_v3_aux_2 ll) = true ↔
+  eval V (to_dnf_v3_aux_2 (List.filter (fun (l : List Formula_) => ¬ (has_complementary l)) ll)) = true :=
   by
   unfold to_dnf_v3_aux_2
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_map, List.mem_filter]
   constructor
-  · intro a1
-    obtain ⟨F, ⟨l, ⟨s3, s4⟩, s2⟩, s1⟩ := a1
-    exact ⟨F, ⟨l, s3, s2⟩, s1⟩
   · intro a1
     obtain ⟨F, ⟨l, s3, s2⟩, s1⟩ := a1
     rewrite [← s2] at s1
@@ -190,16 +196,20 @@ lemma eval_to_dnf_v3_aux_2_filter_not_has_complementary_eq_eval_to_dnf_v3_aux_2
           contradiction
       · rfl
     · exact s1
+  · intro a1
+    obtain ⟨F, ⟨l, ⟨s3, s4⟩, s2⟩, s1⟩ := a1
+    exact ⟨F, ⟨l, s3, s2⟩, s1⟩
 
 
-lemma eval_pure_dnf_simp_1
+lemma eval_eq_eval_to_dnf_v3_simp_1
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V (to_dnf_v3_aux_2 (to_dnf_v3_aux_1_simp_1 F)) = true ↔ eval V F = true :=
+  eval V F = true ↔ eval V (to_dnf_v3_simp_1 F) = true :=
   by
+  unfold to_dnf_v3_simp_1
   unfold to_dnf_v3_aux_1_simp_1
   simp only [eval_eq_eval_to_dnf_v3 V F]
-  apply eval_to_dnf_v3_aux_2_filter_not_has_complementary_eq_eval_to_dnf_v3_aux_2
+  apply eval_to_dnf_v3_aux_2_eq_eval_to_dnf_v3_aux_2_filter_not_has_complementary
 
 
 -------------------------------------------------------------------------------
