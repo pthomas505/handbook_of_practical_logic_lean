@@ -60,12 +60,21 @@ instance
 
 
 /--
+  `to_dnf_v3_aux_1_simp_1_aux FSS` := The result of removing every list of formulas that contains complementary formulas from the list of lists of formulas `FSS`.
+-/
+def to_dnf_v3_aux_1_simp_1_aux
+  (FSS : List (List Formula_)) :
+  List (List Formula_) :=
+  List.filter (fun (FS : List Formula_) => ¬ (has_complementary FS)) FSS
+
+
+/--
   `to_dnf_v3_aux_1_simp_1 F` := The result of removing every list of formulas that contains complementary formulas from the list of lists of formulas given by `to_dnf_v3_aux_1 F`.
 -/
 def to_dnf_v3_aux_1_simp_1
   (F : Formula_) :
   List (List Formula_) :=
-  List.filter (fun (FS : List Formula_) => ¬ (has_complementary FS)) (to_dnf_v3_aux_1 F)
+  to_dnf_v3_aux_1_simp_1_aux (to_dnf_v3_aux_1 F)
 
 
 #eval (to_dnf_v3_aux_1 (Formula_| ((P \/ (Q /\ R)) /\ (~P \/ ~R)))).toString
@@ -207,6 +216,7 @@ lemma eval_eq_eval_to_dnf_v3_simp_1_aux
   eval V F = true ↔ eval V (to_dnf_v3_aux_2 (to_dnf_v3_aux_1_simp_1 F)) = true :=
   by
   unfold to_dnf_v3_aux_1_simp_1
+  unfold to_dnf_v3_aux_1_simp_1_aux
   simp only [eval_eq_eval_to_dnf_v3 V F]
   apply eval_to_dnf_v3_aux_2_eq_eval_to_dnf_v3_aux_2_filter_not_has_complementary
 
@@ -338,6 +348,7 @@ lemma is_dnf_ind_v1_to_dnf_v3_simp_1_aux
   is_dnf_ind_v1 (to_dnf_v3_aux_2 (to_dnf_v3_aux_1_simp_1 F)) :=
   by
   unfold to_dnf_v3_aux_1_simp_1
+  unfold to_dnf_v3_aux_1_simp_1_aux
   apply is_dnf_ind_v1_to_dnf_v3_aux_2_filter
   exact is_nnf_rec_v1_imp_to_dnf_v3_is_dnf_ind_v1 F h1
 
