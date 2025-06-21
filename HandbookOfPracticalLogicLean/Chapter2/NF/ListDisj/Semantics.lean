@@ -11,11 +11,11 @@ open Formula_
 
 lemma eval_list_disj_eq_true_imp_exists_eval_eq_true
   (V : ValuationAsTotalFunction)
-  (l : List Formula_)
-  (h1 : eval V (list_disj l) = true) :
-  ∃ (F : Formula_), F ∈ l ∧ eval V F = true :=
+  (FS : List Formula_)
+  (h1 : eval V (list_disj FS) = true) :
+  ∃ (F : Formula_), F ∈ FS ∧ eval V F = true :=
   by
-  induction l
+  induction FS
   case nil =>
     unfold list_disj at h1
     unfold eval at h1
@@ -59,11 +59,11 @@ lemma eval_list_disj_eq_true_imp_exists_eval_eq_true
 
 lemma exists_eval_eq_true_imp_eval_list_disj_eq_true
   (V : ValuationAsTotalFunction)
-  (l : List Formula_)
-  (h1 : ∃ (F : Formula_), F ∈ l ∧ eval V F = true) :
-  eval V (list_disj l) = true :=
+  (FS : List Formula_)
+  (h1 : ∃ (F : Formula_), F ∈ FS ∧ eval V F = true) :
+  eval V (list_disj FS) = true :=
   by
-  induction l
+  induction FS
   case nil =>
     obtain ⟨F, ⟨h1_left, h1_right⟩⟩ := h1
     simp only [List.not_mem_nil] at h1_left
@@ -100,8 +100,8 @@ lemma exists_eval_eq_true_imp_eval_list_disj_eq_true
 
 lemma eval_list_disj_eq_true_iff_exists_eval_eq_true
   (V : ValuationAsTotalFunction)
-  (l : List Formula_) :
-  eval V (list_disj l) = true ↔ (∃ (F : Formula_), F ∈ l ∧ eval V F = true) :=
+  (FS : List Formula_) :
+  eval V (list_disj FS) = true ↔ (∃ (F : Formula_), F ∈ FS ∧ eval V F = true) :=
   by
   constructor
   · apply eval_list_disj_eq_true_imp_exists_eval_eq_true
@@ -113,8 +113,8 @@ lemma eval_list_disj_eq_true_iff_exists_eval_eq_true
 
 lemma eval_list_disj_union
   (V : ValuationAsTotalFunction)
-  (l1 l2 : List Formula_) :
-  eval V (list_disj (l1 ∪ l2)) = true ↔ (eval V (list_disj l1) = true ∨ eval V (list_disj l2) = true) :=
+  (PS QS : List Formula_) :
+  eval V (list_disj (PS ∪ QS)) = true ↔ (eval V (list_disj PS) = true ∨ eval V (list_disj QS) = true) :=
   by
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_union_iff]
@@ -151,10 +151,10 @@ lemma eval_list_disj_union
 
 lemma eval_list_disj_subset
   (V : ValuationAsTotalFunction)
-  (l1 l2 : List Formula_)
-  (h1 : l1 ⊆ l2)
-  (h2 : eval V (list_disj l1) = true) :
-  eval V (list_disj l2) = true :=
+  (PS QS : List Formula_)
+  (h1 : PS ⊆ QS)
+  (h2 : eval V (list_disj PS) = true) :
+  eval V (list_disj QS) = true :=
   by
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true] at h2
   obtain ⟨F, ⟨h2_left, h2_right⟩⟩ := h2

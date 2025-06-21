@@ -26,16 +26,16 @@ instance
 
 
 /--
-  `has_complementary l` := True if and only if the list of formulas `l` contains complementary formulas.
+  `has_complementary FS` := True if and only if the list of formulas `FS` contains complementary formulas.
 -/
 def has_complementary
-  (l : List Formula_) :
+  (FS : List Formula_) :
   Prop :=
-  ∃ (P : Formula_), P ∈ l ∧ ∃ (Q : Formula_), Q ∈ l ∧ are_complementary P Q
+  ∃ (P : Formula_), P ∈ FS ∧ ∃ (Q : Formula_), Q ∈ FS ∧ are_complementary P Q
 
 instance
-  (l : List Formula_) :
-  Decidable (has_complementary l) :=
+  (FS : List Formula_) :
+  Decidable (has_complementary FS) :=
   by
   unfold has_complementary
   infer_instance
@@ -65,7 +65,7 @@ instance
 def to_dnf_v3_aux_1_simp_1
   (F : Formula_) :
   List (List Formula_) :=
-  List.filter (fun (l : List Formula_) => ¬ (has_complementary l)) (to_dnf_v3_aux_1 F)
+  List.filter (fun (FS : List Formula_) => ¬ (has_complementary FS)) (to_dnf_v3_aux_1 F)
 
 
 #eval (to_dnf_v3_aux_1 (Formula_| ((P \/ (Q /\ R)) /\ (~P \/ ~R)))).toString
@@ -101,7 +101,7 @@ lemma not_has_complementary_singleton
 
 lemma filter_not_has_complementary_singleton
   (F : Formula_) :
-  List.filter (fun (l : List Formula_) => ¬ has_complementary l) [[F]] = [[F]] :=
+  List.filter (fun (FS : List Formula_) => ¬ has_complementary FS) [[F]] = [[F]] :=
   by
   simp only [List.filter_eq_self, List.mem_singleton]
   intro l a1
@@ -111,9 +111,9 @@ lemma filter_not_has_complementary_singleton
 
 
 lemma not_has_complementary_union
-  (l1 l2 : List Formula_)
-  (h1 : ¬ has_complementary (l1 ∪ l2)) :
-  ¬ has_complementary l1 ∧ ¬ has_complementary l2 :=
+  (PS QS : List Formula_)
+  (h1 : ¬ has_complementary (PS ∪ QS)) :
+  ¬ has_complementary PS ∧ ¬ has_complementary QS :=
   by
   unfold has_complementary at h1
   unfold are_complementary at h1
@@ -150,9 +150,9 @@ lemma not_has_complementary_union
 
 lemma has_complementary_imp_eval_list_conj_false
   (V : ValuationAsTotalFunction)
-  (l : List Formula_)
-  (h1 : has_complementary l) :
-  eval V (list_conj l) = false :=
+  (FS : List Formula_)
+  (h1 : has_complementary FS) :
+  eval V (list_conj FS) = false :=
   by
   unfold has_complementary at h1
   unfold are_complementary at h1
@@ -172,33 +172,33 @@ lemma has_complementary_imp_eval_list_conj_false
 
 lemma eval_to_dnf_v3_aux_2_eq_eval_to_dnf_v3_aux_2_filter_not_has_complementary
   (V : ValuationAsTotalFunction)
-  (ll : List (List Formula_)) :
-  eval V (to_dnf_v3_aux_2 ll) = true ↔
-  eval V (to_dnf_v3_aux_2 (List.filter (fun (l : List Formula_) => ¬ (has_complementary l)) ll)) = true :=
+  (FSS : List (List Formula_)) :
+  eval V (to_dnf_v3_aux_2 FSS) = true ↔
+  eval V (to_dnf_v3_aux_2 (List.filter (fun (FS : List Formula_) => ¬ (has_complementary FS)) FSS)) = true :=
   by
   unfold to_dnf_v3_aux_2
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_map, List.mem_filter]
   constructor
   · intro a1
-    obtain ⟨F, ⟨l, s3, s2⟩, s1⟩ := a1
+    obtain ⟨F, ⟨FS, s3, s2⟩, s1⟩ := a1
     rewrite [← s2] at s1
 
-    apply Exists.intro (list_conj l)
+    apply Exists.intro (list_conj FS)
     constructor
-    · apply Exists.intro l
+    · apply Exists.intro FS
       constructor
       · constructor
         · exact s3
         · simp only [decide_eq_true_iff]
           intro contra
-          simp only [has_complementary_imp_eval_list_conj_false V l contra] at s1
+          simp only [has_complementary_imp_eval_list_conj_false V FS contra] at s1
           contradiction
       · rfl
     · exact s1
   · intro a1
-    obtain ⟨F, ⟨l, ⟨s3, s4⟩, s2⟩, s1⟩ := a1
-    exact ⟨F, ⟨l, s3, s2⟩, s1⟩
+    obtain ⟨F, ⟨FS, ⟨s3, s4⟩, s2⟩, s1⟩ := a1
+    exact ⟨F, ⟨FS, s3, s2⟩, s1⟩
 
 
 lemma eval_eq_eval_to_dnf_v3_simp_1_aux
@@ -224,9 +224,9 @@ lemma eval_eq_eval_to_dnf_v3_simp_1
 
 
 example
-  (l1 l2 : List Formula_)
-  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 [l1, l2])) :
-  is_dnf_ind_v1 (to_dnf_v3_aux_2 [l1]) :=
+  (PS QS : List Formula_)
+  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 [PS, QS])) :
+  is_dnf_ind_v1 (to_dnf_v3_aux_2 [PS]) :=
   by
   unfold to_dnf_v3_aux_2 at h1
   simp only [List.map_cons, List.map_nil] at h1
@@ -244,9 +244,9 @@ example
 
 
 example
-  (l1 l2 : List Formula_)
-  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 [l1, l2])) :
-  is_dnf_ind_v1 (to_dnf_v3_aux_2 [l2]) :=
+  (PS QS : List Formula_)
+  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 [PS, QS])) :
+  is_dnf_ind_v1 (to_dnf_v3_aux_2 [QS]) :=
   by
   unfold to_dnf_v3_aux_2 at h1
   simp only [List.map_cons, List.map_nil] at h1
@@ -291,15 +291,15 @@ lemma is_dnf_ind_v1_to_dnf_v3_aux_2_cons_right
 
 
 lemma is_dnf_ind_v1_to_dnf_v3_aux_2_filter
-  (ll : List (List Formula_))
+  (FSS : List (List Formula_))
   (pred : List Formula_ → Bool)
-  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 ll)) :
-  is_dnf_ind_v1 (to_dnf_v3_aux_2 (List.filter pred ll)) :=
+  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 FSS)) :
+  is_dnf_ind_v1 (to_dnf_v3_aux_2 (List.filter pred FSS)) :=
   by
   unfold to_dnf_v3_aux_2 at h1
 
   unfold to_dnf_v3_aux_2
-  induction ll
+  induction FSS
   case nil =>
     simp only [List.filter_nil]
     exact h1

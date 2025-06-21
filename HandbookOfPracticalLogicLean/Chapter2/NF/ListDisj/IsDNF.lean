@@ -9,11 +9,11 @@ open Formula_
 
 
 lemma list_disj_of_is_conj_ind_v1_is_dnf_ind_v1
-  (l : List Formula_)
-  (h1 : ∀ (F : Formula_), F ∈ l → is_conj_ind_v1 F) :
-  is_dnf_ind_v1 (list_disj l) :=
+  (FS : List Formula_)
+  (h1 : ∀ (F : Formula_), F ∈ FS → is_conj_ind_v1 F) :
+  is_dnf_ind_v1 (list_disj FS) :=
   by
-  induction l
+  induction FS
   case nil =>
     unfold list_disj
     apply is_dnf_ind_v1.rule_1
@@ -44,12 +44,12 @@ lemma list_disj_of_is_conj_ind_v1_is_dnf_ind_v1
 
 example
   (F : Formula_)
-  (l : List Formula_)
-  (h1 : is_dnf_ind_v1 (list_disj l))
-  (h2 : F ∈ l) :
+  (FS : List Formula_)
+  (h1 : is_dnf_ind_v1 (list_disj FS))
+  (h2 : F ∈ FS) :
   is_dnf_ind_v1 F :=
   by
-  induction l
+  induction FS
   case nil =>
     simp only [List.not_mem_nil] at h2
   case cons hd tl ih =>
@@ -88,11 +88,11 @@ example
 
 lemma list_disj_cons_is_dnf_ind_v1_imp_list_disj_tail_is_dnf_ind_v1
   (F : Formula_)
-  (l : List Formula_)
-  (h1 : is_dnf_ind_v1 (list_disj (F :: l))) :
-  is_dnf_ind_v1 (list_disj l) :=
+  (FS : List Formula_)
+  (h1 : is_dnf_ind_v1 (list_disj (F :: FS))) :
+  is_dnf_ind_v1 (list_disj FS) :=
   by
-  cases l
+  cases FS
   case nil =>
     unfold list_disj
     apply is_dnf_ind_v1.rule_1
@@ -110,12 +110,12 @@ lemma list_disj_cons_is_dnf_ind_v1_imp_list_disj_tail_is_dnf_ind_v1
 
 lemma hd_is_conj_ind_v1_and_list_disj_tail_is_dnf_ind_v1_imp_list_disj_cons_is_dnf_ind_v1
   (F : Formula_)
-  (l : List Formula_)
+  (FS : List Formula_)
   (h1 : is_conj_ind_v1 F)
-  (h2 : is_dnf_ind_v1 (list_disj l)) :
-  is_dnf_ind_v1 (list_disj (F :: l)) :=
+  (h2 : is_dnf_ind_v1 (list_disj FS)) :
+  is_dnf_ind_v1 (list_disj (F :: FS)) :=
   by
-  cases l
+  cases FS
   case nil =>
     unfold list_disj
     apply is_dnf_ind_v1.rule_1
@@ -128,12 +128,12 @@ lemma hd_is_conj_ind_v1_and_list_disj_tail_is_dnf_ind_v1_imp_list_disj_cons_is_d
 
 
 lemma list_disj_is_dnf_ind_v1_imp_list_disj_of_filter_is_dnf_ind_v1
-  (l : List Formula_)
+  (FS : List Formula_)
   (pred : Formula_ → Bool)
-  (h1 : is_dnf_ind_v1 (list_disj l)) :
-  is_dnf_ind_v1 (list_disj (List.filter pred l)) :=
+  (h1 : is_dnf_ind_v1 (list_disj FS)) :
+  is_dnf_ind_v1 (list_disj (List.filter pred FS)) :=
   by
-  induction l
+  induction FS
   case nil =>
     simp only [List.filter_nil]
     exact h1

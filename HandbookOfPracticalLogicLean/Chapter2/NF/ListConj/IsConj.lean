@@ -9,11 +9,11 @@ open Formula_
 
 
 lemma list_conj_of_list_of_is_constant_ind_or_is_literal_ind_is_conj_ind_v1
-  (l : List Formula_)
-  (h1 : ∀ (F : Formula_), F ∈ l → (is_constant_ind F ∨ is_literal_ind F)) :
-  is_conj_ind_v1 (list_conj l) :=
+  (FS : List Formula_)
+  (h1 : ∀ (F : Formula_), F ∈ FS → (is_constant_ind F ∨ is_literal_ind F)) :
+  is_conj_ind_v1 (list_conj FS) :=
   by
-  induction l
+  induction FS
   case nil =>
     unfold list_conj
     apply is_conj_ind_v1.rule_1
@@ -70,12 +70,12 @@ lemma list_conj_of_list_of_is_constant_ind_or_is_literal_ind_is_conj_ind_v1
 
 example
   (F : Formula_)
-  (l : List Formula_)
-  (h1 : is_conj_ind_v1 (list_conj l))
-  (h2 : F ∈ l) :
+  (FS : List Formula_)
+  (h1 : is_conj_ind_v1 (list_conj FS))
+  (h2 : F ∈ FS) :
   is_conj_ind_v1 F :=
   by
-  induction l
+  induction FS
   case nil =>
     simp only [List.not_mem_nil] at h2
   case cons hd tl ih =>

@@ -9,11 +9,11 @@ open Formula_
 
 
 lemma list_conj_of_is_disj_ind_v1_is_cnf_ind_v1
-  (l : List Formula_)
-  (h1 : ∀ (F : Formula_), F ∈ l → is_disj_ind_v1 F) :
-  is_cnf_ind_v1 (list_conj l) :=
+  (FS : List Formula_)
+  (h1 : ∀ (F : Formula_), F ∈ FS → is_disj_ind_v1 F) :
+  is_cnf_ind_v1 (list_conj FS) :=
   by
-  induction l
+  induction FS
   case nil =>
     unfold list_conj
     apply is_cnf_ind_v1.rule_1
@@ -44,12 +44,12 @@ lemma list_conj_of_is_disj_ind_v1_is_cnf_ind_v1
 
 example
   (F : Formula_)
-  (l : List Formula_)
-  (h1 : is_cnf_ind_v1 (list_conj l))
-  (h2 : F ∈ l) :
+  (FS : List Formula_)
+  (h1 : is_cnf_ind_v1 (list_conj FS))
+  (h2 : F ∈ FS) :
   is_cnf_ind_v1 F :=
   by
-  induction l
+  induction FS
   case nil =>
     simp only [List.not_mem_nil] at h2
   case cons hd tl ih =>
@@ -88,11 +88,11 @@ example
 
 lemma list_conj_cons_is_cnf_ind_v1_imp_list_conj_tail_is_cnf_ind_v1
   (F : Formula_)
-  (l : List Formula_)
-  (h1 : is_cnf_ind_v1 (list_conj (F :: l))) :
-  is_cnf_ind_v1 (list_conj l) :=
+  (FS : List Formula_)
+  (h1 : is_cnf_ind_v1 (list_conj (F :: FS))) :
+  is_cnf_ind_v1 (list_conj FS) :=
   by
-  cases l
+  cases FS
   case nil =>
     unfold list_conj
     apply is_cnf_ind_v1.rule_1
@@ -110,12 +110,12 @@ lemma list_conj_cons_is_cnf_ind_v1_imp_list_conj_tail_is_cnf_ind_v1
 
 lemma hd_is_disj_ind_v1_and_list_conj_tail_is_cnf_ind_v1_imp_list_conj_cons_is_cnf_ind_v1
   (F : Formula_)
-  (l : List Formula_)
+  (FS : List Formula_)
   (h1 : is_disj_ind_v1 F)
-  (h2 : is_cnf_ind_v1 (list_conj l)) :
-  is_cnf_ind_v1 (list_conj (F :: l)) :=
+  (h2 : is_cnf_ind_v1 (list_conj FS)) :
+  is_cnf_ind_v1 (list_conj (F :: FS)) :=
   by
-  cases l
+  cases FS
   case nil =>
     unfold list_conj
     apply is_cnf_ind_v1.rule_1
@@ -128,12 +128,12 @@ lemma hd_is_disj_ind_v1_and_list_conj_tail_is_cnf_ind_v1_imp_list_conj_cons_is_c
 
 
 lemma list_conj_is_cnf_ind_v1_imp_list_conj_of_filter_is_cnf_ind_v1
-  (l : List Formula_)
+  (FS : List Formula_)
   (pred : Formula_ → Bool)
-  (h1 : is_cnf_ind_v1 (list_conj l)) :
-  is_cnf_ind_v1 (list_conj (List.filter pred l)) :=
+  (h1 : is_cnf_ind_v1 (list_conj FS)) :
+  is_cnf_ind_v1 (list_conj (List.filter pred FS)) :=
   by
-  induction l
+  induction FS
   case nil =>
     simp only [List.filter_nil]
     exact h1

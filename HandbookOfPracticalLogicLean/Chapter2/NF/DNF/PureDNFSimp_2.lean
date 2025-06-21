@@ -31,10 +31,10 @@ example
 
 example
   (V : ValuationAsTotalFunction)
-  (l1 l2 : List Formula_)
-  (h1 : l1 ⊆ l2) :
-  eval V (or_ (list_conj l1) (list_conj l2)) = true ↔
-    eval V (list_conj l1) = true :=
+  (PS QS : List Formula_)
+  (h1 : PS ⊆ QS) :
+  eval V (or_ (list_conj PS) (list_conj QS)) = true ↔
+    eval V (list_conj PS) = true :=
   by
   simp only [eval]
   simp only [bool_iff_prop_or]
@@ -44,7 +44,7 @@ example
     case inl a1 =>
       exact a1
     case inr a1 =>
-      exact eval_list_conj_subset V l1 l2 h1 a1
+      exact eval_list_conj_subset V PS QS h1 a1
   · intro a1
     left
     exact a1
@@ -53,10 +53,10 @@ example
 example
   (V : ValuationAsTotalFunction)
   (P : Formula_)
-  (l : List Formula_)
-  (h1 : P ∈ l) :
-  eval V (list_disj l) = true ↔
-    eval V (list_disj (List.filter (fun (Q : Formula_) => Q = P ∨ ¬ (eval V Q = true → eval V P = true)) l)) = true :=
+  (FS : List Formula_)
+  (h1 : P ∈ FS) :
+  eval V (list_disj FS) = true ↔
+    eval V (list_disj (List.filter (fun (Q : Formula_) => Q = P ∨ ¬ (eval V Q = true → eval V P = true)) FS)) = true :=
   by
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_filter]
@@ -109,11 +109,11 @@ instance
 
 example
   (V : ValuationAsTotalFunction)
-  (l : List Formula_)
-  (ll : List (List Formula_))
-  (h1 : l ∈ ll) :
-  eval V (to_dnf_v3_aux_2 ll) = true ↔
-    eval V (to_dnf_v3_aux_2 (List.filter (fun (m : List Formula_) => ¬ List.SSubset l m) ll)) = true :=
+  (PS : List Formula_)
+  (FSS : List (List Formula_))
+  (h1 : PS ∈ FSS) :
+  eval V (to_dnf_v3_aux_2 FSS) = true ↔
+    eval V (to_dnf_v3_aux_2 (List.filter (fun (QS : List Formula_) => ¬ List.SSubset PS QS) FSS)) = true :=
   by
   unfold to_dnf_v3_aux_2
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
@@ -121,12 +121,12 @@ example
   simp only [decide_eq_true_iff]
   constructor
   · intro a1
-    obtain ⟨F, ⟨m, a1_left_left, a1_left_right⟩, a1_right⟩ := a1
-    by_cases c1 : List.SSubset l m
+    obtain ⟨F, ⟨QS, a1_left_left, a1_left_right⟩, a1_right⟩ := a1
+    by_cases c1 : List.SSubset PS QS
     case pos =>
-      apply Exists.intro (list_conj l)
+      apply Exists.intro (list_conj PS)
       constructor
-      · apply Exists.intro l
+      · apply Exists.intro PS
         constructor
         · constructor
           · exact h1
@@ -138,22 +138,22 @@ example
       · unfold List.SSubset at c1
         obtain ⟨c1_left, c1_right⟩ := c1
         rewrite [← a1_left_right] at a1_right
-        apply eval_list_conj_subset V l m c1_left a1_right
+        apply eval_list_conj_subset V PS QS c1_left a1_right
     case neg =>
-      exact ⟨F, ⟨m, ⟨a1_left_left, c1⟩, a1_left_right⟩, a1_right⟩
+      exact ⟨F, ⟨QS, ⟨a1_left_left, c1⟩, a1_left_right⟩, a1_right⟩
   · intro a1
-    obtain ⟨F, ⟨m, ⟨a1_left_left_left, a1_left_left_right⟩, a1_left_right⟩, a1_right⟩ := a1
-    exact ⟨F, ⟨m, a1_left_left_left, a1_left_right⟩, a1_right⟩
+    obtain ⟨F, ⟨QS, ⟨a1_left_left_left, a1_left_left_right⟩, a1_left_right⟩, a1_right⟩ := a1
+    exact ⟨F, ⟨QS, a1_left_left_left, a1_left_right⟩, a1_right⟩
 
 
 example
   (V : ValuationAsTotalFunction)
   (P Q : Formula_)
-  (l : List Formula_)
-  (h1 : P ∈ l)
-  (h2 : Q ∈ l) :
-  eval V (list_disj l) = true ↔
-    eval V (list_disj (List.filter (fun (R : Formula_) => R = P ∨ R = Q ∨ (¬ (eval V R = true → eval V P = true) ∧ ¬ (eval V R = true → eval V Q = true))) l)) = true :=
+  (FS : List Formula_)
+  (h1 : P ∈ FS)
+  (h2 : Q ∈ FS) :
+  eval V (list_disj FS) = true ↔
+    eval V (list_disj (List.filter (fun (R : Formula_) => R = P ∨ R = Q ∨ (¬ (eval V R = true → eval V P = true) ∧ ¬ (eval V R = true → eval V Q = true))) FS)) = true :=
   by
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_filter]
@@ -199,10 +199,10 @@ example
 
 example
   (V : ValuationAsTotalFunction)
-  (l1 l2 : List Formula_)
-  (h1 : l1 ⊆ l2) :
-  eval V (to_dnf_v3_aux_2 [l1, l2]) = true ↔
-    eval V (to_dnf_v3_aux_2 [l1]) = true :=
+  (PS QS : List Formula_)
+  (h1 : PS ⊆ QS) :
+  eval V (to_dnf_v3_aux_2 [PS, QS]) = true ↔
+    eval V (to_dnf_v3_aux_2 [PS]) = true :=
   by
   unfold to_dnf_v3_aux_2
   simp only [List.map_cons, List.map_nil]
@@ -215,7 +215,7 @@ example
     case inl a1 =>
       exact a1
     case inr a1 =>
-      exact eval_list_conj_subset V l1 l2 h1 a1
+      exact eval_list_conj_subset V PS QS h1 a1
   · intro a1
     left
     exact a1
@@ -223,11 +223,11 @@ example
 
 example
   (V : ValuationAsTotalFunction)
-  (l1 l2 l3 : List Formula_)
-  (h1 : l1 ⊆ l2)
-  (h2 : l2 ⊆ l3) :
-  eval V (to_dnf_v3_aux_2 [l1, l2, l3]) = true ↔
-    eval V (to_dnf_v3_aux_2 [l1]) = true :=
+  (PS QS RS : List Formula_)
+  (h1 : PS ⊆ QS)
+  (h2 : QS ⊆ RS) :
+  eval V (to_dnf_v3_aux_2 [PS, QS, RS]) = true ↔
+    eval V (to_dnf_v3_aux_2 [PS]) = true :=
   by
   unfold to_dnf_v3_aux_2
   simp only [List.map_cons, List.map_nil]
@@ -242,12 +242,12 @@ example
     case inr a1 =>
       cases a1
       case inl a1 =>
-        apply eval_list_conj_subset V l1 l2
+        apply eval_list_conj_subset V PS QS
         · exact h1
         · exact a1
       case inr a1 =>
-        apply eval_list_conj_subset V l1 l3
-        · trans l2
+        apply eval_list_conj_subset V PS RS
+        · trans QS
           · exact h1
           · exact h2
         · exact a1
@@ -258,10 +258,10 @@ example
 
 example
   (V : ValuationAsTotalFunction)
-  (xs ys zs : List Formula_)
-  (h1 : xs ⊆ zs) :
-  eval V (to_dnf_v3_aux_2 [xs, ys, zs]) = true ↔
-  eval V (to_dnf_v3_aux_2 [xs, ys]) = true :=
+  (PS QS RS : List Formula_)
+  (h1 : PS ⊆ RS) :
+  eval V (to_dnf_v3_aux_2 [PS, QS, RS]) = true ↔
+  eval V (to_dnf_v3_aux_2 [PS, QS]) = true :=
   by
   unfold to_dnf_v3_aux_2
   simp only [List.map_cons, List.map_nil]
@@ -281,7 +281,7 @@ example
         exact a1
       case inr a1 =>
         left
-        exact eval_list_conj_subset V xs zs h1 a1
+        exact eval_list_conj_subset V PS RS h1 a1
   · intro a1
     cases a1
     case inl a1 =>
@@ -318,41 +318,41 @@ example
 
 example
   (V : ValuationAsTotalFunction)
-  (xs : List Formula_) :
-  (eval V (list_disj xs) = true) ↔ eval V (list_disj (List.dedup xs)) = true :=
+  (FS : List Formula_) :
+  (eval V (list_disj FS) = true) ↔ eval V (list_disj (List.dedup FS)) = true :=
   by
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_dedup]
 
 
-#eval let xss := [[]]; (List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs)) xss).toString
+#eval let PSS := [[]]; (List.filter (fun (RS : List Formula_) => ¬ (∃ (PS : List Formula_), PS ∈ PSS ∧ List.SSubset PS RS)) PSS).toString
 
-#eval let xss := [[atom_ "P"]]; (List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs)) xss).toString
+#eval let PSS := [[atom_ "P"]]; (List.filter (fun (RS : List Formula_) => ¬ (∃ (PS : List Formula_), PS ∈ PSS ∧ List.SSubset PS RS)) PSS).toString
 
-#eval let xss := [[atom_ "P"], []]; (List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs)) xss).toString
+#eval let PSS := [[atom_ "P"], []]; (List.filter (fun (RS : List Formula_) => ¬ (∃ (PS : List Formula_), PS ∈ PSS ∧ List.SSubset PS RS)) PSS).toString
 
-#eval let xss := [[atom_ "P"], [atom_ "P"]]; (List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs)) xss).toString
+#eval let PSS := [[atom_ "P"], [atom_ "P"]]; (List.filter (fun (RS : List Formula_) => ¬ (∃ (PS : List Formula_), PS ∈ PSS ∧ List.SSubset PS RS)) PSS).toString
 
-#eval let xss := [[atom_ "P"], [atom_ "P", atom_ "Q"]]; (List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs)) xss).toString
+#eval let PSS := [[atom_ "P"], [atom_ "P", atom_ "Q"]]; (List.filter (fun (RS : List Formula_) => ¬ (∃ (PS : List Formula_), PS ∈ PSS ∧ List.SSubset PS RS)) PSS).toString
 
 
 def pure_dnf_simp_2
-  (xss : List (List Formula_)) :
+  (FSS : List (List Formula_)) :
   List (List Formula_) :=
-  List.filter (fun (zs : List Formula_) => ¬ (∃ (xs : List Formula_), xs ∈ xss ∧ List.SSubset xs zs)) xss
+  List.filter (fun (RS : List Formula_) => ¬ (∃ (PS : List Formula_), PS ∈ FSS ∧ List.SSubset PS RS)) FSS
 
 
 lemma eval_pure_dnf_simp_2_left
   (V : ValuationAsTotalFunction)
-  (xss : List (List Formula_))
-  (h1 : eval V (to_dnf_v3_aux_2 xss) = true) :
-  eval V (to_dnf_v3_aux_2 (pure_dnf_simp_2 xss)) = true :=
+  (FSS : List (List Formula_))
+  (h1 : eval V (to_dnf_v3_aux_2 FSS) = true) :
+  eval V (to_dnf_v3_aux_2 (pure_dnf_simp_2 FSS)) = true :=
   by
   unfold to_dnf_v3_aux_2 at h1
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true] at h1
   obtain ⟨F, h1_left, h1_right⟩ := h1
   simp only [List.mem_map] at h1_left
-  obtain ⟨zs, h1_left_left, h1_left_right⟩ := h1_left
+  obtain ⟨RS, h1_left_left, h1_left_right⟩ := h1_left
   rewrite [← h1_left_right] at h1_right
 
   unfold pure_dnf_simp_2
@@ -364,14 +364,14 @@ lemma eval_pure_dnf_simp_2_left
   simp only [not_exists]
   simp only [not_and]
 
-  obtain ⟨xs, s1_left, ⟨s1_right_left, s1_right_right⟩⟩ := List.exists_minimal_subset_of_mem xss zs h1_left_left
-  apply Exists.intro (list_conj xs)
+  obtain ⟨PS, s1_left, ⟨s1_right_left, s1_right_right⟩⟩ := List.exists_minimal_subset_of_mem FSS RS h1_left_left
+  apply Exists.intro (list_conj PS)
   constructor
-  · apply Exists.intro xs
+  · apply Exists.intro PS
     constructor
     · constructor
       · exact s1_left
-      · intro ys a1
+      · intro QS a1
         intro contra
         unfold List.SSubset at contra
         obtain ⟨contra_left, contra_right⟩ := contra
@@ -381,27 +381,27 @@ lemma eval_pure_dnf_simp_2_left
         · exact a1
         · exact contra_left
     · rfl
-  · exact eval_list_conj_subset V xs zs s1_right_left h1_right
+  · exact eval_list_conj_subset V PS RS s1_right_left h1_right
 
 
 lemma eval_dnf_list_of_list_to_formula_subset
   (V : ValuationAsTotalFunction)
-  (xss yss : List (List Formula_))
-  (h1 : xss ⊆ yss)
-  (h2 : eval V (to_dnf_v3_aux_2 xss) = true) :
-  eval V (to_dnf_v3_aux_2 yss) = true :=
+  (PSS QSS : List (List Formula_))
+  (h1 : PSS ⊆ QSS)
+  (h2 : eval V (to_dnf_v3_aux_2 PSS) = true) :
+  eval V (to_dnf_v3_aux_2 QSS) = true :=
   by
   unfold to_dnf_v3_aux_2 at h2
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true] at h2
   simp only [List.mem_map] at h2
-  obtain ⟨F, ⟨xs, h2_left_left, h2_left_right⟩, h2_right⟩ := h2
+  obtain ⟨F, ⟨PS, h2_left_left, h2_left_right⟩, h2_right⟩ := h2
 
   unfold to_dnf_v3_aux_2
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_map]
   apply Exists.intro F
   constructor
-  · apply Exists.intro xs
+  · apply Exists.intro PS
     constructor
     · exact h1 h2_left_left
     · exact h2_left_right
@@ -410,11 +410,11 @@ lemma eval_dnf_list_of_list_to_formula_subset
 
 lemma eval_pure_dnf_simp_2_right
   (V : ValuationAsTotalFunction)
-  (xss : List (List Formula_))
-  (h1 : eval V (to_dnf_v3_aux_2 (pure_dnf_simp_2 xss)) = true) :
-  eval V (to_dnf_v3_aux_2 xss) = true :=
+  (FSS : List (List Formula_))
+  (h1 : eval V (to_dnf_v3_aux_2 (pure_dnf_simp_2 FSS)) = true) :
+  eval V (to_dnf_v3_aux_2 FSS) = true :=
   by
-  apply eval_dnf_list_of_list_to_formula_subset V (pure_dnf_simp_2 xss)
+  apply eval_dnf_list_of_list_to_formula_subset V (pure_dnf_simp_2 FSS)
   · unfold pure_dnf_simp_2
     simp only [List.filter_subset']
   · exact h1
@@ -422,9 +422,9 @@ lemma eval_pure_dnf_simp_2_right
 
 lemma eval_pure_dnf_simp_2
   (V : ValuationAsTotalFunction)
-  (xss : List (List Formula_)) :
-  eval V (to_dnf_v3_aux_2 xss) = true ↔
-    eval V (to_dnf_v3_aux_2 (pure_dnf_simp_2 xss)) = true :=
+  (FSS : List (List Formula_)) :
+  eval V (to_dnf_v3_aux_2 FSS) = true ↔
+    eval V (to_dnf_v3_aux_2 (pure_dnf_simp_2 FSS)) = true :=
   by
   constructor
   · apply eval_pure_dnf_simp_2_left
@@ -432,9 +432,9 @@ lemma eval_pure_dnf_simp_2
 
 
 lemma pure_dnf_simp_2_is_dnf_ind_v1
-  (xss : List (List Formula_))
-  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 xss)) :
-  is_dnf_ind_v1 (to_dnf_v3_aux_2 (pure_dnf_simp_2 xss)) :=
+  (FSS : List (List Formula_))
+  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 FSS)) :
+  is_dnf_ind_v1 (to_dnf_v3_aux_2 (pure_dnf_simp_2 FSS)) :=
   by
   unfold pure_dnf_simp_2
   apply is_dnf_ind_v1_to_dnf_v3_aux_2_filter

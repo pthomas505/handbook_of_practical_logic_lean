@@ -11,12 +11,12 @@ open Formula_
 
 lemma eval_list_conj_eq_true_imp_forall_eval_eq_true
   (V : ValuationAsTotalFunction)
-  (l : List Formula_)
-  (h1 : eval V (list_conj l) = true) :
-  ∀ (F : Formula_), F ∈ l → eval V F = true :=
+  (FS : List Formula_)
+  (h1 : eval V (list_conj FS) = true) :
+  ∀ (F : Formula_), F ∈ FS → eval V F = true :=
   by
   intro F a1
-  induction l
+  induction FS
   case nil =>
     simp only [List.not_mem_nil] at a1
   case cons hd tl ih =>
@@ -47,11 +47,11 @@ lemma eval_list_conj_eq_true_imp_forall_eval_eq_true
 
 lemma forall_eval_eq_true_imp_eval_list_conj_eq_true
   (V : ValuationAsTotalFunction)
-  (l : List Formula_)
-  (h1 : ∀ (F : Formula_), F ∈ l → eval V F = true) :
-  eval V (list_conj l) = true :=
+  (FS : List Formula_)
+  (h1 : ∀ (F : Formula_), F ∈ FS → eval V F = true) :
+  eval V (list_conj FS) = true :=
   by
-  induction l
+  induction FS
   case nil =>
     unfold list_conj
     unfold eval
@@ -82,8 +82,8 @@ lemma forall_eval_eq_true_imp_eval_list_conj_eq_true
 
 lemma eval_list_conj_eq_true_iff_forall_eval_eq_true
   (V : ValuationAsTotalFunction)
-  (l : List Formula_) :
-  eval V (list_conj l) = true ↔ (∀ (F : Formula_), F ∈ l → eval V F = true) :=
+  (FS : List Formula_) :
+  eval V (list_conj FS) = true ↔ (∀ (F : Formula_), F ∈ FS → eval V F = true) :=
   by
   constructor
   · apply eval_list_conj_eq_true_imp_forall_eval_eq_true
@@ -95,8 +95,8 @@ lemma eval_list_conj_eq_true_iff_forall_eval_eq_true
 
 lemma eval_list_conj_union
   (V : ValuationAsTotalFunction)
-  (l1 l2 : List Formula_) :
-  eval V (list_conj (l1 ∪ l2)) = true ↔ (eval V (list_conj l1) = true ∧ eval V (list_conj l2) = true) :=
+  (PS QS : List Formula_) :
+  eval V (list_conj (PS ∪ QS)) = true ↔ (eval V (list_conj PS) = true ∧ eval V (list_conj QS) = true) :=
   by
   simp only [eval_list_conj_eq_true_iff_forall_eval_eq_true]
   simp only [List.mem_union_iff]
@@ -124,10 +124,10 @@ lemma eval_list_conj_union
 
 lemma eval_list_conj_subset
   (V : ValuationAsTotalFunction)
-  (l1 l2 : List Formula_)
-  (h1 : l1 ⊆ l2)
-  (h2 : eval V (list_conj l2) = true) :
-  eval V (list_conj l1) = true :=
+  (PS QS : List Formula_)
+  (h1 : PS ⊆ QS)
+  (h2 : eval V (list_conj QS) = true) :
+  eval V (list_conj PS) = true :=
   by
   simp only [eval_list_conj_eq_true_iff_forall_eval_eq_true] at h2
 
