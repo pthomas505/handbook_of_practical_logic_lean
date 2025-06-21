@@ -8,7 +8,7 @@ open Formula_
 
 
 /--
-  `list_conj l` := If the list of formulas `l` is empty then `true_`. If `l` is not empty then the iterated conjunction of the formulas in `l`.
+  `list_conj FS` := If the list of formulas `FS` is empty then `true_`. If `FS` is not empty then the iterated conjunction of the formulas in `FS`.
 -/
 def list_conj :
   List Formula_ → Formula_

@@ -115,40 +115,40 @@ lemma eval_eq_eval_to_dnf_v3
     · intro a1
       cases a1
       case inl a1 =>
-        obtain ⟨F, ⟨l, a1_left_left, a1_left_right⟩, a1_right⟩ := a1
+        obtain ⟨F, ⟨FS, a1_left_left, a1_left_right⟩, a1_right⟩ := a1
         apply Exists.intro F
         constructor
-        · apply Exists.intro l
+        · apply Exists.intro FS
           constructor
           · left
             exact a1_left_left
           · exact a1_left_right
         · exact a1_right
       case inr a1 =>
-        obtain ⟨F, ⟨l, a1_left_left, a1_left_right⟩, a1_right⟩ := a1
+        obtain ⟨F, ⟨FS, a1_left_left, a1_left_right⟩, a1_right⟩ := a1
         apply Exists.intro F
         constructor
-        · apply Exists.intro l
+        · apply Exists.intro FS
           constructor
           · right
             exact a1_left_left
           · exact a1_left_right
         · exact a1_right
     · intro a1
-      obtain ⟨F, ⟨l, a1_left_left, a1_left_right⟩, a1_right⟩ := a1
+      obtain ⟨F, ⟨FS, a1_left_left, a1_left_right⟩, a1_right⟩ := a1
       cases a1_left_left
       case inl a1_left_left =>
         left
         apply Exists.intro F
         constructor
-        · apply Exists.intro l
+        · apply Exists.intro FS
           exact ⟨a1_left_left, a1_left_right⟩
         · exact a1_right
       case inr a1_left_left =>
         right
         apply Exists.intro F
         constructor
-        · apply Exists.intro l
+        · apply Exists.intro FS
           exact ⟨a1_left_left, a1_left_right⟩
         · exact a1_right
   all_goals
@@ -316,26 +316,26 @@ lemma is_nnf_rec_v1_imp_to_dnf_v3_is_dnf_ind_v1
     apply list_disj_of_is_conj_ind_v1_is_dnf_ind_v1
     intro F a1
     simp only [List.mem_map] at a1
-    obtain ⟨l, a1_left, a1_right⟩ := a1
+    obtain ⟨FS, a1_left, a1_right⟩ := a1
     rewrite [← a1_right]
     apply list_conj_of_list_of_is_constant_ind_or_is_literal_ind_is_conj_ind_v1
     intro P a2
 
-    obtain s1 := mem_all_pairs_v4_union_imp_eq_union (to_dnf_v3_aux_1 phi) (to_dnf_v3_aux_1 psi) l a1_left
-    obtain ⟨l1, l2, l1_mem, l2_mem, eq⟩ := s1
+    obtain s1 := mem_all_pairs_v4_union_imp_eq_union (to_dnf_v3_aux_1 phi) (to_dnf_v3_aux_1 psi) FS a1_left
+    obtain ⟨PS, QS, PS_mem, QS_mem, eq⟩ := s1
     rewrite [← eq] at a2
     simp only [List.mem_union_iff] at a2
 
     cases a2
     case inl a2 =>
-      apply mem_list_mem_to_dnf_v3_aux_1_of_nnf_rec_v1_imp_is_constant_or_literal phi l1
+      apply mem_list_mem_to_dnf_v3_aux_1_of_nnf_rec_v1_imp_is_constant_or_literal phi PS
       · exact h1_left
-      · exact l1_mem
+      · exact PS_mem
       · exact a2
     case inr a2 =>
-      apply mem_list_mem_to_dnf_v3_aux_1_of_nnf_rec_v1_imp_is_constant_or_literal psi l2
+      apply mem_list_mem_to_dnf_v3_aux_1_of_nnf_rec_v1_imp_is_constant_or_literal psi QS
       · exact h1_right
-      · exact l2_mem
+      · exact QS_mem
       · exact a2
   case or_ phi psi =>
     unfold is_nnf_rec_v1 at h1
@@ -347,19 +347,19 @@ lemma is_nnf_rec_v1_imp_to_dnf_v3_is_dnf_ind_v1
     apply list_disj_of_is_conj_ind_v1_is_dnf_ind_v1
     intro F a1
     simp only [List.mem_map, List.mem_union_iff] at a1
-    obtain ⟨l, a1_left, a1_right⟩ := a1
+    obtain ⟨FS, a1_left, a1_right⟩ := a1
     rewrite [← a1_right]
     apply list_conj_of_list_of_is_constant_ind_or_is_literal_ind_is_conj_ind_v1
     intro P a2
 
     cases a1_left
     case inl a1_left =>
-      apply mem_list_mem_to_dnf_v3_aux_1_of_nnf_rec_v1_imp_is_constant_or_literal phi l
+      apply mem_list_mem_to_dnf_v3_aux_1_of_nnf_rec_v1_imp_is_constant_or_literal phi FS
       · exact h1_left
       · exact a1_left
       · exact a2
     case inr a1_left =>
-      apply mem_list_mem_to_dnf_v3_aux_1_of_nnf_rec_v1_imp_is_constant_or_literal psi l
+      apply mem_list_mem_to_dnf_v3_aux_1_of_nnf_rec_v1_imp_is_constant_or_literal psi FS
       · exact h1_right
       · exact a1_left
       · exact a2

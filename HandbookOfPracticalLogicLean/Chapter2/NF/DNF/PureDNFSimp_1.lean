@@ -104,7 +104,7 @@ lemma filter_not_has_complementary_singleton
   List.filter (fun (FS : List Formula_) => ¬ has_complementary FS) [[F]] = [[F]] :=
   by
   simp only [List.filter_eq_self, List.mem_singleton]
-  intro l a1
+  intro FS a1
   rewrite [a1]
   apply decide_eq_true
   apply not_has_complementary_singleton

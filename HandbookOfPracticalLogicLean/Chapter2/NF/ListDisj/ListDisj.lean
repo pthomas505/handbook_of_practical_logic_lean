@@ -8,7 +8,7 @@ open Formula_
 
 
 /--
-  `list_disj l` := If the list of formulas `l` is empty then `false_`. If `l` is not empty then the iterated disjunction of the formulas in `l`.
+  `list_disj FS` := If the list of formulas `FS` is empty then `false_`. If `FS` is not empty then the iterated disjunction of the formulas in `FS`.
 -/
 def list_disj :
   List Formula_ → Formula_
