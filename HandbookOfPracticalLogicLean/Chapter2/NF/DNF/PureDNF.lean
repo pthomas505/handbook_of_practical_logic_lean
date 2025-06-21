@@ -171,14 +171,14 @@ lemma to_dnf_v3_aux_2_singleton
 
 lemma mem_list_mem_to_dnf_v3_aux_1_of_nnf_rec_v1_imp_is_constant_or_literal
   (F : Formula_)
-  (PS : List Formula_)
-  (P : Formula_)
+  (FS : List Formula_)
+  (F_mem : Formula_)
   (h1 : is_nnf_rec_v1 F)
-  (h2 : PS ∈ to_dnf_v3_aux_1 F)
-  (h3 : P ∈ PS) :
-  is_constant_ind P ∨ is_literal_ind P :=
+  (h2 : FS ∈ to_dnf_v3_aux_1 F)
+  (h3 : F_mem ∈ FS) :
+  is_constant_ind F_mem ∨ is_literal_ind F_mem :=
   by
-  induction F generalizing PS
+  induction F generalizing FS
   case false_ =>
     unfold to_dnf_v3_aux_1 at h2
     simp only [List.mem_singleton] at h2
@@ -230,22 +230,22 @@ lemma mem_list_mem_to_dnf_v3_aux_1_of_nnf_rec_v1_imp_is_constant_or_literal
 
     unfold to_dnf_v3_aux_1 at h2
 
-    obtain s1 := mem_all_pairs_v4_union_imp_eq_union (to_dnf_v3_aux_1 phi) (to_dnf_v3_aux_1 psi) PS h2
-    obtain ⟨PS_1, PS_2, PS_1_mem, PS_2_mem, eq⟩ := s1
+    obtain s1 := mem_all_pairs_v4_union_imp_eq_union (to_dnf_v3_aux_1 phi) (to_dnf_v3_aux_1 psi) FS h2
+    obtain ⟨PS, QS, PS_mem, QS_mem, eq⟩ := s1
 
     rewrite [← eq] at h3
     simp only [List.mem_union_iff] at h3
 
     cases h3
     case inl h3 =>
-      apply phi_ih PS_1
+      apply phi_ih PS
       · exact h1_left
-      · exact PS_1_mem
+      · exact PS_mem
       · exact h3
     case inr h3 =>
-      apply psi_ih PS_2
+      apply psi_ih QS
       · exact h1_right
-      · exact PS_2_mem
+      · exact QS_mem
       · exact h3
   case or_ phi psi phi_ih psi_ih =>
     unfold is_nnf_rec_v1 at h1
@@ -256,12 +256,12 @@ lemma mem_list_mem_to_dnf_v3_aux_1_of_nnf_rec_v1_imp_is_constant_or_literal
 
     cases h2
     case inl h2 =>
-      apply phi_ih PS
+      apply phi_ih FS
       · exact h1_left
       · exact h2
       · exact h3
     case inr h2 =>
-      apply psi_ih PS
+      apply psi_ih FS
       · exact h1_right
       · exact h2
       · exact h3
