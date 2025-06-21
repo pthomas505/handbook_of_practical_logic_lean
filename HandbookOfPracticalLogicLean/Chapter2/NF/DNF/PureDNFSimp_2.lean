@@ -215,7 +215,9 @@ example
     case inl a1 =>
       exact a1
     case inr a1 =>
-      exact eval_list_conj_subset V PS QS h1 a1
+      apply eval_list_conj_subset V PS QS
+      · exact h1
+      · exact a1
   · intro a1
     left
     exact a1
@@ -281,7 +283,9 @@ example
         exact a1
       case inr a1 =>
         left
-        exact eval_list_conj_subset V PS RS h1 a1
+        apply eval_list_conj_subset V PS RS
+        · exact h1
+        · exact a1
   · intro a1
     cases a1
     case inl a1 =>
@@ -334,6 +338,9 @@ example
 #eval let PSS := [[atom_ "P"], [atom_ "P"]]; (List.filter (fun (RS : List Formula_) => ¬ (∃ (PS : List Formula_), PS ∈ PSS ∧ List.SSubset PS RS)) PSS).toString
 
 #eval let PSS := [[atom_ "P"], [atom_ "P", atom_ "Q"]]; (List.filter (fun (RS : List Formula_) => ¬ (∃ (PS : List Formula_), PS ∈ PSS ∧ List.SSubset PS RS)) PSS).toString
+
+
+-------------------------------------------------------------------------------
 
 
 def pure_dnf_simp_2
