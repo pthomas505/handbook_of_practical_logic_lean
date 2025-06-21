@@ -68,35 +68,35 @@ lemma eval_eq_eval_to_dnf_v3
     simp only [mem_all_pairs_v4_union_iff_eq_union]
     constructor
     · intro a1
-      obtain ⟨⟨P, ⟨l1, l1_mem, a1_left_left⟩, a1_left_right⟩ , ⟨Q, ⟨l2, l2_mem, a1_right_left⟩, a1_right_right⟩⟩ := a1
+      obtain ⟨⟨P, ⟨PS, PS_mem, a1_left_left⟩, a1_left_right⟩ , ⟨Q, ⟨QS, QS_mem, a1_right_left⟩, a1_right_right⟩⟩ := a1
       rewrite [← a1_left_left] at a1_left_right
       rewrite [← a1_right_left] at a1_right_right
-      apply Exists.intro (list_conj (l1 ∪ l2))
+      apply Exists.intro (list_conj (PS ∪ QS))
       constructor
-      · apply Exists.intro (l1 ∪ l2)
+      · apply Exists.intro (PS ∪ QS)
         constructor
-        · apply Exists.intro l1
-          apply Exists.intro l2
-          exact ⟨l1_mem, l2_mem, rfl⟩
+        · apply Exists.intro PS
+          apply Exists.intro QS
+          exact ⟨PS_mem, QS_mem, rfl⟩
         · rfl
       · simp only [eval_list_conj_union]
         exact ⟨a1_left_right, a1_right_right⟩
     · intro a1
-      obtain ⟨F, ⟨P, ⟨l1, l2, ⟨l1_mem, l2_mem, eq⟩⟩, a1_left⟩, a1_right⟩ := a1
+      obtain ⟨F, ⟨FS, ⟨PS, QS, ⟨PS_mem, QS_mem, eq⟩⟩, a1_left⟩, a1_right⟩ := a1
       rewrite [← a1_left] at a1_right
       rewrite [← eq] at a1_right
       simp only [eval_list_conj_union] at a1_right
       obtain ⟨a1_right_left, a1_right_right⟩ := a1_right
       constructor
-      · apply Exists.intro (list_conj l1)
+      · apply Exists.intro (list_conj PS)
         constructor
-        · apply Exists.intro l1
-          exact ⟨l1_mem, rfl⟩
+        · apply Exists.intro PS
+          exact ⟨PS_mem, rfl⟩
         · exact a1_right_left
-      · apply Exists.intro (list_conj l2)
+      · apply Exists.intro (list_conj QS)
         constructor
-        · apply Exists.intro l2
-          exact ⟨l2_mem, rfl⟩
+        · apply Exists.intro QS
+          exact ⟨QS_mem, rfl⟩
         · exact a1_right_right
   case or_ phi psi phi_ih psi_ih =>
     unfold to_dnf_v3_aux_2 at phi_ih
