@@ -138,7 +138,9 @@ example
       · unfold List.SSubset at c1
         obtain ⟨c1_left, c1_right⟩ := c1
         rewrite [← a1_left_right] at a1_right
-        apply eval_list_conj_subset V PS QS c1_left a1_right
+        apply eval_list_conj_subset V PS QS
+        · exact c1_left
+        · exact a1_right
     case neg =>
       exact ⟨F, ⟨QS, ⟨a1_left_left, c1⟩, a1_left_right⟩, a1_right⟩
   · intro a1
@@ -263,7 +265,7 @@ example
   (PS QS RS : List Formula_)
   (h1 : PS ⊆ RS) :
   eval V (to_dnf_v3_aux_2 [PS, QS, RS]) = true ↔
-  eval V (to_dnf_v3_aux_2 [PS, QS]) = true :=
+    eval V (to_dnf_v3_aux_2 [PS, QS]) = true :=
   by
   unfold to_dnf_v3_aux_2
   simp only [List.map_cons, List.map_nil]
@@ -302,7 +304,7 @@ example
   (P Q : Formula_)
   (h1 : eval V Q = true → eval V P = true) :
   eval V (list_disj [P, Q]) = true ↔
-  eval V (list_disj [P]) = true :=
+    eval V (list_disj [P]) = true :=
   by
   simp only [list_disj]
   simp only [eval]
@@ -323,7 +325,8 @@ example
 example
   (V : ValuationAsTotalFunction)
   (FS : List Formula_) :
-  (eval V (list_disj FS) = true) ↔ eval V (list_disj (List.dedup FS)) = true :=
+  eval V (list_disj FS) = true ↔
+    eval V (list_disj (List.dedup FS)) = true :=
   by
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_dedup]
@@ -343,6 +346,11 @@ example
 -------------------------------------------------------------------------------
 
 
+/--
+  `pure_dnf_simp_2 FSS` := The result of removing every list of formulas from the list of lists of formulas `FSS` that has another list of formulas in `FSS` as a strict subset.
+
+  If `PS` and `QS` are lists of formulas, and `PS` is a subset of `QS`, then the evaluation of the disjunction of `PS` and `QS` is true if and only if the evaluation of `PS` is true. Hence `QS` can be removed from the disjuction.
+-/
 def pure_dnf_simp_2
   (FSS : List (List Formula_)) :
   List (List Formula_) :=
