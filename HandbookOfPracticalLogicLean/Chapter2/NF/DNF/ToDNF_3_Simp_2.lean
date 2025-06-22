@@ -347,14 +347,33 @@ example
 
 
 /--
+  `filterMin ll` := The result of removing every list from the list of lists `ll` that is a superset of another list in `ll`.
+-/
+def filterMin
+  {α : Type}
+  [DecidableEq α]
+  (ll : List (List α)) :
+  List (List α) :=
+  (ll.filter fun (l1 : List α) => ∀ (l2 : List α), l2 ∈ ll → (l2 ⊆ l1 → l1 ⊆ l2)).pwFilter fun (l1 l2 : List α) => ¬ (l1 ⊆ l2 ∧ l2 ⊆ l1)
+
+#eval filterMin [[1], [1]]
+#eval filterMin [[1], [2]]
+#eval filterMin [[2], [1]]
+#eval filterMin [[1], [1, 2]]
+#eval filterMin [[1, 2], [1]]
+#eval filterMin [[1], [1, 2], [2, 3]]
+#eval filterMin [[1], [2, 3], [1, 2]]
+
+
+/--
   `pure_dnf_simp_2 FSS` := The result of removing every list of formulas from the list of lists of formulas `FSS` that has another list of formulas in `FSS` as a strict subset.
 
-  If `PS` and `QS` are lists of formulas, and `PS` is a subset of `QS`, then the evaluation of the disjunction of `PS` and `QS` is true if and only if the evaluation of `PS` is true. Hence `QS` can be removed from the disjuction.
+  If `PS` and `QS` are lists of formulas, and `PS` is a subset of `QS`, then the evaluation of the disjunction of the conjunction of the formulas in `PS` and the conjunction of the formulas in `QS` is true if and only if the evaluation of the conjunction of the formulas in `PS` is true. Hence the conjunction of the formulas in `QS` can be removed from the disjuction.
 -/
 def pure_dnf_simp_2
   (FSS : List (List Formula_)) :
   List (List Formula_) :=
-  List.filter (fun (RS : List Formula_) => ¬ (∃ (PS : List Formula_), PS ∈ FSS ∧ List.SSubset PS RS)) FSS
+  List.filter (fun (QS : List Formula_) => ¬ (∃ (PS : List Formula_), PS ∈ FSS ∧ List.SSubset PS QS)) FSS
 
 
 lemma eval_pure_dnf_simp_2_left
