@@ -356,13 +356,13 @@ def filterMin
   List (List α) :=
   (ll.filter fun (l1 : List α) => ∀ (l2 : List α), l2 ∈ ll → (l2 ⊆ l1 → l1 ⊆ l2)).pwFilter fun (l1 l2 : List α) => ¬ (l1 ⊆ l2 ∧ l2 ⊆ l1)
 
-#eval filterMin [[1], [1]]
-#eval filterMin [[1], [2]]
-#eval filterMin [[2], [1]]
-#eval filterMin [[1], [1, 2]]
-#eval filterMin [[1, 2], [1]]
-#eval filterMin [[1], [1, 2], [2, 3]]
-#eval filterMin [[1], [2, 3], [1, 2]]
+#eval filterMin [[1], [1]] = [[1]]
+#eval filterMin [[1], [2]] = [[1], [2]]
+#eval filterMin [[2], [1]] = [[2], [1]]
+#eval filterMin [[1], [1, 2]] = [[1]]
+#eval filterMin [[1, 2], [1]] == [[1]]
+#eval filterMin [[1], [1, 2], [2, 3]] == [[1], [2, 3]]
+#eval filterMin [[1], [2, 3], [1, 2]] == [[1], [2, 3]]
 
 
 /--
