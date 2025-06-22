@@ -360,9 +360,9 @@ def filterMin
 #eval filterMin [[1], [2]] = [[1], [2]]
 #eval filterMin [[2], [1]] = [[2], [1]]
 #eval filterMin [[1], [1, 2]] = [[1]]
-#eval filterMin [[1, 2], [1]] == [[1]]
-#eval filterMin [[1], [1, 2], [2, 3]] == [[1], [2, 3]]
-#eval filterMin [[1], [2, 3], [1, 2]] == [[1], [2, 3]]
+#eval filterMin [[1, 2], [1]] = [[1]]
+#eval filterMin [[1], [1, 2], [2, 3]] = [[1], [2, 3]]
+#eval filterMin [[1], [2, 3], [1, 2]] = [[1], [2, 3]]
 
 
 /--
