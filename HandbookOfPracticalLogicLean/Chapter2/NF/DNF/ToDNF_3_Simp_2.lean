@@ -8,6 +8,75 @@ set_option autoImplicit false
 open Formula_
 
 
+/--
+  `filterMin ll` := The result of removing from the list of lists `ll` every list that is a proper superset of some list in `ll`.
+-/
+def filterMin
+  {α : Type}
+  [DecidableEq α]
+  (ll : List (List α)) :
+  List (List α) :=
+  ll.filter fun (l1 : List α) => ∀ (l2 : List α), l2 ∈ ll → (l2 ⊆ l1 → l1 ⊆ l2)
+
+example : filterMin [[1], [1]] = [[1], [1]] := by rfl
+example : filterMin [[1], [2]] = [[1], [2]] := by rfl
+example : filterMin [[2], [1]] = [[2], [1]] := by rfl
+example : filterMin [[1], [1, 2]] = [[1]] := by rfl
+example : filterMin [[1, 2], [1]] = [[1]] := by rfl
+example : filterMin [[1], [1, 2], [2, 3]] = [[1], [2, 3]] := by rfl
+example : filterMin [[1], [2, 3], [1, 2]] = [[1], [2, 3]] := by rfl
+
+
+/--
+  `List.dedupSet ll` := The result of removing all except the last occurrence of multiple occurences of lists with identical sets of elements from the list of lists `ll`.
+-/
+def List.dedupSet
+  {α : Type}
+  [DecidableEq α]
+  (ll : List (List α)) :
+  List (List α) :=
+  ll.pwFilter fun (l1 l2 : List α) => ¬ (l1 ⊆ l2 ∧ l2 ⊆ l1)
+
+example : List.dedupSet [[1]] = [[1]] := by rfl
+example : List.dedupSet [[1], [1]] = [[1]] := by rfl
+example : List.dedupSet [[1], [1], [1]] = [[1]] := by rfl
+
+example : List.dedupSet [[1], [2]] = [[1], [2]] := by rfl
+example : List.dedupSet [[2], [1]] = [[2], [1]] := by rfl
+
+example : List.dedupSet [[1, 1, 2], [2, 1], [1]] = [[2, 1], [1]] := by rfl
+
+
+/--
+  `List.SSubset l1 l2` := True if and only if `l1` is a strict subset of `l2`.
+-/
+def List.SSubset
+  {α : Type}
+  (l1 l2 : List α) :
+  Prop :=
+  l1 ⊆ l2 ∧ ¬ l2 ⊆ l1
+
+instance
+  {α : Type}
+  [DecidableEq α]
+  (l1 l2 : List α) :
+  Decidable (List.SSubset l1 l2) :=
+  by
+  unfold List.SSubset
+  infer_instance
+
+
+/--
+  `pure_dnf_simp_2 FSS` := The result of removing from the list of lists of formulas `FSS` every list of formulas that is a proper superset of some list of formulas in `ll`.
+
+  If `PS` and `QS` are lists of formulas, and `PS` is a subset of `QS`, then the evaluation of the disjunction of the conjunction of the formulas in `PS` and the conjunction of the formulas in `QS` is true if and only if the evaluation of the conjunction of the formulas in `PS` is true. Hence the conjunction of the formulas in `QS` can be removed from the disjuction.
+-/
+def pure_dnf_simp_2
+  (FSS : List (List Formula_)) :
+  List (List Formula_) :=
+  List.filter (fun (QS : List Formula_) => ¬ (∃ (PS : List Formula_), PS ∈ FSS ∧ List.SSubset PS QS)) FSS
+
+
 example
   (V : ValuationAsTotalFunction)
   (P Q : Formula_)
@@ -86,25 +155,6 @@ example
     obtain ⟨F, ⟨a1_left_left, a1_left_right⟩, a1_right⟩ := a1
     apply Exists.intro F
     exact ⟨a1_left_left, a1_right⟩
-
-
-/--
-  `List.SSubset l1 l2` := True if and only if `l1` is a strict subset of `l2`.
--/
-def List.SSubset
-  {α : Type}
-  (l1 l2 : List α) :
-  Prop :=
-  l1 ⊆ l2 ∧ ¬ l2 ⊆ l1
-
-instance
-  {α : Type}
-  [DecidableEq α]
-  (l1 l2 : List α) :
-  Decidable (List.SSubset l1 l2) :=
-  by
-  unfold List.SSubset
-  infer_instance
 
 
 example
@@ -344,56 +394,6 @@ example
 
 
 -------------------------------------------------------------------------------
-
-
-/--
-  `filterMin ll` := The result of removing from the list of lists `ll` every list that is a proper superset of some list in `ll`.
--/
-def filterMin
-  {α : Type}
-  [DecidableEq α]
-  (ll : List (List α)) :
-  List (List α) :=
-  ll.filter fun (l1 : List α) => ∀ (l2 : List α), l2 ∈ ll → (l2 ⊆ l1 → l1 ⊆ l2)
-
-example : filterMin [[1], [1]] = [[1], [1]] := by rfl
-example : filterMin [[1], [2]] = [[1], [2]] := by rfl
-example : filterMin [[2], [1]] = [[2], [1]] := by rfl
-example : filterMin [[1], [1, 2]] = [[1]] := by rfl
-example : filterMin [[1, 2], [1]] = [[1]] := by rfl
-example : filterMin [[1], [1, 2], [2, 3]] = [[1], [2, 3]] := by rfl
-example : filterMin [[1], [2, 3], [1, 2]] = [[1], [2, 3]] := by rfl
-
-
-/--
-  `List.dedupSet ll` := The result of removing all except the last occurrence of multiple occurences of lists with identical sets of elements from the list of lists `ll`.
--/
-def List.dedupSet
-  {α : Type}
-  [DecidableEq α]
-  (ll : List (List α)) :
-  List (List α) :=
-  ll.pwFilter fun (l1 l2 : List α) => ¬ (l1 ⊆ l2 ∧ l2 ⊆ l1)
-
-example : List.dedupSet [[1]] = [[1]] := by rfl
-example : List.dedupSet [[1], [1]] = [[1]] := by rfl
-example : List.dedupSet [[1], [1], [1]] = [[1]] := by rfl
-
-example : List.dedupSet [[1], [2]] = [[1], [2]] := by rfl
-example : List.dedupSet [[2], [1]] = [[2], [1]] := by rfl
-
-example : List.dedupSet [[1, 1, 2], [2, 1], [1]] = [[2, 1], [1]] := by rfl
-
-
-/--
-  `pure_dnf_simp_2 FSS` := The result of removing from the list of lists of formulas `FSS` every list of formulas that is a proper superset of some list of formulas in `ll`.
-
-  If `PS` and `QS` are lists of formulas, and `PS` is a subset of `QS`, then the evaluation of the disjunction of the conjunction of the formulas in `PS` and the conjunction of the formulas in `QS` is true if and only if the evaluation of the conjunction of the formulas in `PS` is true. Hence the conjunction of the formulas in `QS` can be removed from the disjuction.
--/
-def pure_dnf_simp_2
-  (FSS : List (List Formula_)) :
-  List (List Formula_) :=
-  List.filter (fun (QS : List Formula_) => ¬ (∃ (PS : List Formula_), PS ∈ FSS ∧ List.SSubset PS QS)) FSS
 
 
 lemma eval_pure_dnf_simp_2_left
