@@ -347,22 +347,43 @@ example
 
 
 /--
-  `filterMin ll` := The result of removing every list from the list of lists `ll` that is a superset of another list in `ll`.
+  `filterMin ll` := The result of removing from the list of lists `ll` every list that is a proper superset of some list in `ll`.
 -/
 def filterMin
   {α : Type}
   [DecidableEq α]
   (ll : List (List α)) :
   List (List α) :=
-  (ll.filter fun (l1 : List α) => ∀ (l2 : List α), l2 ∈ ll → (l2 ⊆ l1 → l1 ⊆ l2)).pwFilter fun (l1 l2 : List α) => ¬ (l1 ⊆ l2 ∧ l2 ⊆ l1)
+  ll.filter fun (l1 : List α) => ∀ (l2 : List α), l2 ∈ ll → (l2 ⊆ l1 → l1 ⊆ l2)
 
-#eval filterMin [[1], [1]] = [[1]]
+#eval filterMin [[1], [1]] = [[1], [1]]
 #eval filterMin [[1], [2]] = [[1], [2]]
 #eval filterMin [[2], [1]] = [[2], [1]]
 #eval filterMin [[1], [1, 2]] = [[1]]
 #eval filterMin [[1, 2], [1]] = [[1]]
 #eval filterMin [[1], [1, 2], [2, 3]] = [[1], [2, 3]]
 #eval filterMin [[1], [2, 3], [1, 2]] = [[1], [2, 3]]
+
+
+/--
+  `List.dedupSet ll` := The result of removing duplicate occurences of lists with identical sets of elements from the list of lists `ll`.
+-/
+def List.dedupSet
+  {α : Type}
+  [DecidableEq α]
+  (ll : List (List α)) :
+  List (List α) :=
+  ll.pwFilter fun (l1 l2 : List α) => ¬ (l1 ⊆ l2 ∧ l2 ⊆ l1)
+
+
+#eval List.dedupSet [[1]] = [[1]]
+#eval List.dedupSet [[1], [1]] = [[1]]
+#eval List.dedupSet [[1], [1], [1]] = [[1]]
+
+#eval List.dedupSet [[1], [2]] = [[1], [2]]
+#eval List.dedupSet [[2], [1]] = [[2], [1]]
+
+#eval List.dedupSet [[1, 1], [1]] = [[1]]
 
 
 /--
