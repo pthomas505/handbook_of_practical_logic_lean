@@ -356,17 +356,17 @@ def filterMin
   List (List α) :=
   ll.filter fun (l1 : List α) => ∀ (l2 : List α), l2 ∈ ll → (l2 ⊆ l1 → l1 ⊆ l2)
 
-#eval filterMin [[1], [1]] = [[1], [1]]
-#eval filterMin [[1], [2]] = [[1], [2]]
-#eval filterMin [[2], [1]] = [[2], [1]]
-#eval filterMin [[1], [1, 2]] = [[1]]
-#eval filterMin [[1, 2], [1]] = [[1]]
-#eval filterMin [[1], [1, 2], [2, 3]] = [[1], [2, 3]]
-#eval filterMin [[1], [2, 3], [1, 2]] = [[1], [2, 3]]
+example : filterMin [[1], [1]] = [[1], [1]] := by rfl
+example : filterMin [[1], [2]] = [[1], [2]] := by rfl
+example : filterMin [[2], [1]] = [[2], [1]] := by rfl
+example : filterMin [[1], [1, 2]] = [[1]] := by rfl
+example : filterMin [[1, 2], [1]] = [[1]] := by rfl
+example : filterMin [[1], [1, 2], [2, 3]] = [[1], [2, 3]] := by rfl
+example : filterMin [[1], [2, 3], [1, 2]] = [[1], [2, 3]] := by rfl
 
 
 /--
-  `List.dedupSet ll` := The result of removing duplicate occurences of lists with identical sets of elements from the list of lists `ll`.
+  `List.dedupSet ll` := The result of removing all except the last occurrence of multiple occurences of lists with identical sets of elements from the list of lists `ll`.
 -/
 def List.dedupSet
   {α : Type}
@@ -375,15 +375,14 @@ def List.dedupSet
   List (List α) :=
   ll.pwFilter fun (l1 l2 : List α) => ¬ (l1 ⊆ l2 ∧ l2 ⊆ l1)
 
+example : List.dedupSet [[1]] = [[1]] := by rfl
+example : List.dedupSet [[1], [1]] = [[1]] := by rfl
+example : List.dedupSet [[1], [1], [1]] = [[1]] := by rfl
 
-#eval List.dedupSet [[1]] = [[1]]
-#eval List.dedupSet [[1], [1]] = [[1]]
-#eval List.dedupSet [[1], [1], [1]] = [[1]]
+example : List.dedupSet [[1], [2]] = [[1], [2]] := by rfl
+example : List.dedupSet [[2], [1]] = [[2], [1]] := by rfl
 
-#eval List.dedupSet [[1], [2]] = [[1], [2]]
-#eval List.dedupSet [[2], [1]] = [[2], [1]]
-
-#eval List.dedupSet [[1, 1], [1]] = [[1]]
+example : List.dedupSet [[1, 1, 2], [2, 1], [1]] = [[2, 1], [1]] := by rfl
 
 
 /--
