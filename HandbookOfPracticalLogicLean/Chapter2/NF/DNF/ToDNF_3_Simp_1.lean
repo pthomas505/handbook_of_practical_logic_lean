@@ -87,7 +87,7 @@ def to_dnf_v3_aux_1_simp_1
 def to_dnf_v3_simp_1
   (F : Formula_) :
   Formula_ :=
-  to_dnf_v3_aux_2 (to_dnf_v3_aux_1_simp_1 F)
+  list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_aux_1_simp_1 F)
 
 
 lemma not_has_complementary_singleton
@@ -179,13 +179,13 @@ lemma has_complementary_imp_eval_list_conj_false
   contradiction
 
 
-lemma eval_to_dnf_v3_aux_2_eq_eval_to_dnf_v3_aux_2_filter_not_has_complementary
+lemma eval_list_of_lists_to_disjunction_of_conjunctions_eq_eval_list_of_lists_to_disjunction_of_conjunctions_filter_not_has_complementary
   (V : ValuationAsTotalFunction)
   (FSS : List (List Formula_)) :
-  eval V (to_dnf_v3_aux_2 FSS) = true ↔
-  eval V (to_dnf_v3_aux_2 (List.filter (fun (FS : List Formula_) => ¬ (has_complementary FS)) FSS)) = true :=
+  eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true ↔
+  eval V (list_of_lists_to_disjunction_of_conjunctions (List.filter (fun (FS : List Formula_) => ¬ (has_complementary FS)) FSS)) = true :=
   by
-  unfold to_dnf_v3_aux_2
+  unfold list_of_lists_to_disjunction_of_conjunctions
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_map, List.mem_filter]
   constructor
@@ -213,12 +213,12 @@ lemma eval_to_dnf_v3_aux_2_eq_eval_to_dnf_v3_aux_2_filter_not_has_complementary
 lemma eval_eq_eval_to_dnf_v3_simp_1_aux
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V F = true ↔ eval V (to_dnf_v3_aux_2 (to_dnf_v3_aux_1_simp_1 F)) = true :=
+  eval V F = true ↔ eval V (list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_aux_1_simp_1 F)) = true :=
   by
   unfold to_dnf_v3_aux_1_simp_1
   unfold to_dnf_v3_aux_1_simp_1_aux
   simp only [eval_eq_eval_to_dnf_v3 V F]
-  apply eval_to_dnf_v3_aux_2_eq_eval_to_dnf_v3_aux_2_filter_not_has_complementary
+  apply eval_list_of_lists_to_disjunction_of_conjunctions_eq_eval_list_of_lists_to_disjunction_of_conjunctions_filter_not_has_complementary
 
 
 lemma eval_eq_eval_to_dnf_v3_simp_1
@@ -235,10 +235,10 @@ lemma eval_eq_eval_to_dnf_v3_simp_1
 
 example
   (PS QS : List Formula_)
-  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 [PS, QS])) :
-  is_dnf_ind_v1 (to_dnf_v3_aux_2 [PS]) :=
+  (h1 : is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions [PS, QS])) :
+  is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions [PS]) :=
   by
-  unfold to_dnf_v3_aux_2 at h1
+  unfold list_of_lists_to_disjunction_of_conjunctions at h1
   simp only [List.map_cons, List.map_nil] at h1
   unfold list_disj at h1
 
@@ -246,7 +246,7 @@ example
   case rule_1 ih =>
     contradiction
   case rule_2 ih_1 ih_2 =>
-    unfold to_dnf_v3_aux_2
+    unfold list_of_lists_to_disjunction_of_conjunctions
     simp only [List.map_cons, List.map_nil]
     unfold list_disj
     apply is_dnf_ind_v1.rule_1
@@ -255,10 +255,10 @@ example
 
 example
   (PS QS : List Formula_)
-  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 [PS, QS])) :
-  is_dnf_ind_v1 (to_dnf_v3_aux_2 [QS]) :=
+  (h1 : is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions [PS, QS])) :
+  is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions [QS]) :=
   by
-  unfold to_dnf_v3_aux_2 at h1
+  unfold list_of_lists_to_disjunction_of_conjunctions at h1
   simp only [List.map_cons, List.map_nil] at h1
   unfold list_disj at h1
 
@@ -266,49 +266,49 @@ example
   case rule_1 ih =>
     contradiction
   case rule_2 ih_1 ih_2 =>
-    unfold to_dnf_v3_aux_2
+    unfold list_of_lists_to_disjunction_of_conjunctions
     simp only [List.map_cons, List.map_nil]
     exact ih_2
 
 
-lemma is_dnf_ind_v1_to_dnf_v3_aux_2_cons_left
+lemma is_dnf_ind_v1_list_of_lists_to_disjunction_of_conjunctions_cons_left
   (hd : List Formula_)
   (tl : List (List Formula_))
-  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 (hd :: tl))) :
-  is_dnf_ind_v1 (to_dnf_v3_aux_2 tl) :=
+  (h1 : is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions (hd :: tl))) :
+  is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions tl) :=
   by
-  unfold to_dnf_v3_aux_2 at h1
+  unfold list_of_lists_to_disjunction_of_conjunctions at h1
   simp only [List.map_cons] at h1
 
-  unfold to_dnf_v3_aux_2
+  unfold list_of_lists_to_disjunction_of_conjunctions
   apply list_disj_cons_is_dnf_ind_v1_imp_list_disj_tail_is_dnf_ind_v1 (list_conj hd)
   exact h1
 
 
-lemma is_dnf_ind_v1_to_dnf_v3_aux_2_cons_right
+lemma is_dnf_ind_v1_list_of_lists_to_disjunction_of_conjunctions_cons_right
   (hd : List Formula_)
   (tl : List (List Formula_))
   (h1 : is_conj_ind_v1 (list_conj hd))
-  (h2 : is_dnf_ind_v1 (to_dnf_v3_aux_2 tl)) :
-  is_dnf_ind_v1 (to_dnf_v3_aux_2 (hd :: tl)) :=
+  (h2 : is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions tl)) :
+  is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions (hd :: tl)) :=
   by
-  unfold to_dnf_v3_aux_2 at h2
+  unfold list_of_lists_to_disjunction_of_conjunctions at h2
 
-  unfold to_dnf_v3_aux_2
+  unfold list_of_lists_to_disjunction_of_conjunctions
   apply hd_is_conj_ind_v1_and_list_disj_tail_is_dnf_ind_v1_imp_list_disj_cons_is_dnf_ind_v1
   · exact h1
   · exact h2
 
 
-lemma is_dnf_ind_v1_to_dnf_v3_aux_2_filter
+lemma is_dnf_ind_v1_list_of_lists_to_disjunction_of_conjunctions_filter
   (FSS : List (List Formula_))
   (pred : List Formula_ → Bool)
-  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 FSS)) :
-  is_dnf_ind_v1 (to_dnf_v3_aux_2 (List.filter pred FSS)) :=
+  (h1 : is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions FSS)) :
+  is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions (List.filter pred FSS)) :=
   by
-  unfold to_dnf_v3_aux_2 at h1
+  unfold list_of_lists_to_disjunction_of_conjunctions at h1
 
-  unfold to_dnf_v3_aux_2
+  unfold list_of_lists_to_disjunction_of_conjunctions
   induction FSS
   case nil =>
     simp only [List.filter_nil]
@@ -332,24 +332,24 @@ lemma is_dnf_ind_v1_to_dnf_v3_aux_2_filter
           contradiction
         case rule_2 ih_1 ih_2 =>
           simp only [List.map_cons]
-          apply is_dnf_ind_v1_to_dnf_v3_aux_2_cons_right
+          apply is_dnf_ind_v1_list_of_lists_to_disjunction_of_conjunctions_cons_right
           · exact ih_1
           · apply ih
             simp only [List.map_cons]
             exact ih_2
     case neg c1 =>
       apply ih
-      exact is_dnf_ind_v1_to_dnf_v3_aux_2_cons_left hd tl h1
+      exact is_dnf_ind_v1_list_of_lists_to_disjunction_of_conjunctions_cons_left hd tl h1
 
 
 lemma is_dnf_ind_v1_to_dnf_v3_simp_1_aux
   (F : Formula_)
   (h1 : is_nnf_rec_v1 F) :
-  is_dnf_ind_v1 (to_dnf_v3_aux_2 (to_dnf_v3_aux_1_simp_1 F)) :=
+  is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_aux_1_simp_1 F)) :=
   by
   unfold to_dnf_v3_aux_1_simp_1
   unfold to_dnf_v3_aux_1_simp_1_aux
-  apply is_dnf_ind_v1_to_dnf_v3_aux_2_filter
+  apply is_dnf_ind_v1_list_of_lists_to_disjunction_of_conjunctions_filter
   exact is_nnf_rec_v1_imp_to_dnf_v3_is_dnf_ind_v1 F h1
 
 

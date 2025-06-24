@@ -162,10 +162,10 @@ example
   (PS : List Formula_)
   (FSS : List (List Formula_))
   (h1 : PS ∈ FSS) :
-  eval V (to_dnf_v3_aux_2 FSS) = true ↔
-    eval V (to_dnf_v3_aux_2 (List.filter (fun (QS : List Formula_) => ¬ List.SSubset PS QS) FSS)) = true :=
+  eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true ↔
+    eval V (list_of_lists_to_disjunction_of_conjunctions (List.filter (fun (QS : List Formula_) => ¬ List.SSubset PS QS) FSS)) = true :=
   by
-  unfold to_dnf_v3_aux_2
+  unfold list_of_lists_to_disjunction_of_conjunctions
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_map, List.mem_filter]
   simp only [decide_eq_true_iff]
@@ -253,10 +253,10 @@ example
   (V : ValuationAsTotalFunction)
   (PS QS : List Formula_)
   (h1 : PS ⊆ QS) :
-  eval V (to_dnf_v3_aux_2 [PS, QS]) = true ↔
-    eval V (to_dnf_v3_aux_2 [PS]) = true :=
+  eval V (list_of_lists_to_disjunction_of_conjunctions [PS, QS]) = true ↔
+    eval V (list_of_lists_to_disjunction_of_conjunctions [PS]) = true :=
   by
-  unfold to_dnf_v3_aux_2
+  unfold list_of_lists_to_disjunction_of_conjunctions
   simp only [List.map_cons, List.map_nil]
   simp only [list_disj]
   simp only [eval]
@@ -280,10 +280,10 @@ example
   (PS QS RS : List Formula_)
   (h1 : PS ⊆ QS)
   (h2 : QS ⊆ RS) :
-  eval V (to_dnf_v3_aux_2 [PS, QS, RS]) = true ↔
-    eval V (to_dnf_v3_aux_2 [PS]) = true :=
+  eval V (list_of_lists_to_disjunction_of_conjunctions [PS, QS, RS]) = true ↔
+    eval V (list_of_lists_to_disjunction_of_conjunctions [PS]) = true :=
   by
-  unfold to_dnf_v3_aux_2
+  unfold list_of_lists_to_disjunction_of_conjunctions
   simp only [List.map_cons, List.map_nil]
   simp only [list_disj]
   simp only [eval]
@@ -314,10 +314,10 @@ example
   (V : ValuationAsTotalFunction)
   (PS QS RS : List Formula_)
   (h1 : PS ⊆ RS) :
-  eval V (to_dnf_v3_aux_2 [PS, QS, RS]) = true ↔
-    eval V (to_dnf_v3_aux_2 [PS, QS]) = true :=
+  eval V (list_of_lists_to_disjunction_of_conjunctions [PS, QS, RS]) = true ↔
+    eval V (list_of_lists_to_disjunction_of_conjunctions [PS, QS]) = true :=
   by
-  unfold to_dnf_v3_aux_2
+  unfold list_of_lists_to_disjunction_of_conjunctions
   simp only [List.map_cons, List.map_nil]
   simp only [list_disj]
   simp only [eval]
@@ -399,10 +399,10 @@ example
 lemma eval_pure_dnf_simp_2_left
   (V : ValuationAsTotalFunction)
   (FSS : List (List Formula_))
-  (h1 : eval V (to_dnf_v3_aux_2 FSS) = true) :
-  eval V (to_dnf_v3_aux_2 (pure_dnf_simp_2 FSS)) = true :=
+  (h1 : eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true) :
+  eval V (list_of_lists_to_disjunction_of_conjunctions (pure_dnf_simp_2 FSS)) = true :=
   by
-  unfold to_dnf_v3_aux_2 at h1
+  unfold list_of_lists_to_disjunction_of_conjunctions at h1
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true] at h1
   obtain ⟨F, h1_left, h1_right⟩ := h1
   simp only [List.mem_map] at h1_left
@@ -410,7 +410,7 @@ lemma eval_pure_dnf_simp_2_left
   rewrite [← h1_left_right] at h1_right
 
   unfold pure_dnf_simp_2
-  unfold to_dnf_v3_aux_2
+  unfold list_of_lists_to_disjunction_of_conjunctions
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_map, List.mem_filter]
   simp only [decide_eq_true_iff]
@@ -442,15 +442,15 @@ lemma eval_dnf_list_of_list_to_formula_subset
   (V : ValuationAsTotalFunction)
   (PSS QSS : List (List Formula_))
   (h1 : PSS ⊆ QSS)
-  (h2 : eval V (to_dnf_v3_aux_2 PSS) = true) :
-  eval V (to_dnf_v3_aux_2 QSS) = true :=
+  (h2 : eval V (list_of_lists_to_disjunction_of_conjunctions PSS) = true) :
+  eval V (list_of_lists_to_disjunction_of_conjunctions QSS) = true :=
   by
-  unfold to_dnf_v3_aux_2 at h2
+  unfold list_of_lists_to_disjunction_of_conjunctions at h2
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true] at h2
   simp only [List.mem_map] at h2
   obtain ⟨F, ⟨PS, h2_left_left, h2_left_right⟩, h2_right⟩ := h2
 
-  unfold to_dnf_v3_aux_2
+  unfold list_of_lists_to_disjunction_of_conjunctions
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_map]
   apply Exists.intro F
@@ -465,8 +465,8 @@ lemma eval_dnf_list_of_list_to_formula_subset
 lemma eval_pure_dnf_simp_2_right
   (V : ValuationAsTotalFunction)
   (FSS : List (List Formula_))
-  (h1 : eval V (to_dnf_v3_aux_2 (pure_dnf_simp_2 FSS)) = true) :
-  eval V (to_dnf_v3_aux_2 FSS) = true :=
+  (h1 : eval V (list_of_lists_to_disjunction_of_conjunctions (pure_dnf_simp_2 FSS)) = true) :
+  eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true :=
   by
   apply eval_dnf_list_of_list_to_formula_subset V (pure_dnf_simp_2 FSS)
   · unfold pure_dnf_simp_2
@@ -477,8 +477,8 @@ lemma eval_pure_dnf_simp_2_right
 lemma eval_pure_dnf_simp_2
   (V : ValuationAsTotalFunction)
   (FSS : List (List Formula_)) :
-  eval V (to_dnf_v3_aux_2 FSS) = true ↔
-    eval V (to_dnf_v3_aux_2 (pure_dnf_simp_2 FSS)) = true :=
+  eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true ↔
+    eval V (list_of_lists_to_disjunction_of_conjunctions (pure_dnf_simp_2 FSS)) = true :=
   by
   constructor
   · apply eval_pure_dnf_simp_2_left
@@ -487,11 +487,11 @@ lemma eval_pure_dnf_simp_2
 
 lemma pure_dnf_simp_2_is_dnf_ind_v1
   (FSS : List (List Formula_))
-  (h1 : is_dnf_ind_v1 (to_dnf_v3_aux_2 FSS)) :
-  is_dnf_ind_v1 (to_dnf_v3_aux_2 (pure_dnf_simp_2 FSS)) :=
+  (h1 : is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions FSS)) :
+  is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions (pure_dnf_simp_2 FSS)) :=
   by
   unfold pure_dnf_simp_2
-  apply is_dnf_ind_v1_to_dnf_v3_aux_2_filter
+  apply is_dnf_ind_v1_list_of_lists_to_disjunction_of_conjunctions_filter
   exact h1
 
 
@@ -514,19 +514,19 @@ def simp_dnf
 example
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V F = true ↔ eval V (to_dnf_v3_aux_2 (simp_dnf F)) = true :=
+  eval V F = true ↔ eval V (list_of_lists_to_disjunction_of_conjunctions (simp_dnf F)) = true :=
   by
   unfold simp_dnf
   split_ifs
   case pos c1 =>
     rewrite [c1]
-    unfold to_dnf_v3_aux_2
+    unfold list_of_lists_to_disjunction_of_conjunctions
     simp only [List.map_nil]
     unfold list_disj
     rfl
   case pos c1 c2 =>
     rewrite [c2]
-    unfold to_dnf_v3_aux_2
+    unfold list_of_lists_to_disjunction_of_conjunctions
     simp only [List.map_cons, List.map_nil]
     unfold list_conj
     unfold list_disj
@@ -540,19 +540,19 @@ example
 
 example
   (F : Formula_) :
-  is_dnf_ind_v1 (to_dnf_v3_aux_2 (simp_dnf F)) :=
+  is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions (simp_dnf F)) :=
   by
   unfold simp_dnf
   split_ifs
   case pos c1 =>
-    unfold to_dnf_v3_aux_2
+    unfold list_of_lists_to_disjunction_of_conjunctions
     simp only [List.map_nil]
     unfold list_disj
     apply is_dnf_ind_v1.rule_1
     apply is_conj_ind_v1.rule_1
     exact is_constant_ind.rule_1
   case pos c1 c2 =>
-    unfold to_dnf_v3_aux_2
+    unfold list_of_lists_to_disjunction_of_conjunctions
     simp only [List.map_cons, List.map_nil]
     unfold list_conj
     unfold list_disj

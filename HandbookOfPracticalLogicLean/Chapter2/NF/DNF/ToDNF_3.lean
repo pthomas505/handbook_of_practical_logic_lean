@@ -25,9 +25,9 @@ def to_dnf_v3_aux_1 :
 
 
 /--
-  Helper function for `to_dnf_v3`.
+  `list_of_lists_to_disjunction_of_conjunctions FSS` := Translates the list of lists of formulas `FSS` to a disjunction of conjunctions.
 -/
-def to_dnf_v3_aux_2
+def list_of_lists_to_disjunction_of_conjunctions
   (FSS : List (List Formula_)) :
   Formula_ :=
   list_disj (List.map list_conj FSS)
@@ -39,10 +39,10 @@ def to_dnf_v3_aux_2
 def to_dnf_v3
   (F : Formula_) :
   Formula_ :=
-  to_dnf_v3_aux_2 (to_dnf_v3_aux_1 F)
+  list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_aux_1 F)
 
 
-#eval (to_dnf_v3_aux_2 [[atom_ "P", atom_ "Q"], [not_ (atom_ "P"), atom_ "R"]]).toString
+#eval (list_of_lists_to_disjunction_of_conjunctions [[atom_ "P", atom_ "Q"], [not_ (atom_ "P"), atom_ "R"]]).toString
 
 
 lemma eval_eq_eval_to_dnf_v3
@@ -53,12 +53,12 @@ lemma eval_eq_eval_to_dnf_v3
   unfold to_dnf_v3
   induction F
   case and_ phi psi phi_ih psi_ih =>
-    unfold to_dnf_v3_aux_2 at phi_ih
+    unfold list_of_lists_to_disjunction_of_conjunctions at phi_ih
 
-    unfold to_dnf_v3_aux_2 at psi_ih
+    unfold list_of_lists_to_disjunction_of_conjunctions at psi_ih
 
     unfold to_dnf_v3_aux_1
-    unfold to_dnf_v3_aux_2
+    unfold list_of_lists_to_disjunction_of_conjunctions
     simp only [eval]
     simp only [bool_iff_prop_and]
     rewrite [phi_ih]
@@ -99,12 +99,12 @@ lemma eval_eq_eval_to_dnf_v3
           exact ⟨QS_mem, rfl⟩
         · exact a1_right_right
   case or_ phi psi phi_ih psi_ih =>
-    unfold to_dnf_v3_aux_2 at phi_ih
+    unfold list_of_lists_to_disjunction_of_conjunctions at phi_ih
 
-    unfold to_dnf_v3_aux_2 at psi_ih
+    unfold list_of_lists_to_disjunction_of_conjunctions at psi_ih
 
     unfold to_dnf_v3_aux_1
-    unfold to_dnf_v3_aux_2
+    unfold list_of_lists_to_disjunction_of_conjunctions
     simp only [eval]
     simp only [bool_iff_prop_or]
     rewrite [phi_ih]
@@ -158,11 +158,11 @@ lemma eval_eq_eval_to_dnf_v3
 -------------------------------------------------------------------------------
 
 
-lemma to_dnf_v3_aux_2_singleton
+lemma list_of_lists_to_disjunction_of_conjunctions_singleton
   (F : Formula_) :
-  to_dnf_v3_aux_2 [[F]] = F :=
+  list_of_lists_to_disjunction_of_conjunctions [[F]] = F :=
   by
-  unfold to_dnf_v3_aux_2
+  unfold list_of_lists_to_disjunction_of_conjunctions
   simp only [List.map_cons, List.map_nil]
   unfold list_conj
   unfold list_disj
@@ -279,28 +279,28 @@ lemma is_nnf_rec_v1_imp_to_dnf_v3_is_dnf_ind_v1
   case false_ =>
     unfold to_dnf_v3
     unfold to_dnf_v3_aux_1
-    simp only [to_dnf_v3_aux_2_singleton]
+    simp only [list_of_lists_to_disjunction_of_conjunctions_singleton]
     apply is_dnf_ind_v1.rule_1
     apply is_conj_ind_v1.rule_1
     apply is_constant_ind.rule_1
   case true_ =>
     unfold to_dnf_v3
     unfold to_dnf_v3_aux_1
-    simp only [to_dnf_v3_aux_2_singleton]
+    simp only [list_of_lists_to_disjunction_of_conjunctions_singleton]
     apply is_dnf_ind_v1.rule_1
     apply is_conj_ind_v1.rule_1
     apply is_constant_ind.rule_2
   case atom_ X =>
     unfold to_dnf_v3
     unfold to_dnf_v3_aux_1
-    simp only [to_dnf_v3_aux_2_singleton]
+    simp only [list_of_lists_to_disjunction_of_conjunctions_singleton]
     apply is_dnf_ind_v1.rule_1
     apply is_conj_ind_v1.rule_2
     apply is_literal_ind.rule_1
   case not_ phi =>
     unfold to_dnf_v3
     unfold to_dnf_v3_aux_1
-    simp only [to_dnf_v3_aux_2_singleton]
+    simp only [list_of_lists_to_disjunction_of_conjunctions_singleton]
     cases phi
     case atom_ X =>
       apply is_dnf_ind_v1.rule_1
@@ -343,7 +343,7 @@ lemma is_nnf_rec_v1_imp_to_dnf_v3_is_dnf_ind_v1
 
     unfold to_dnf_v3
     unfold to_dnf_v3_aux_1
-    unfold to_dnf_v3_aux_2
+    unfold list_of_lists_to_disjunction_of_conjunctions
     apply list_disj_of_is_conj_ind_v1_is_dnf_ind_v1
     intro F a1
     simp only [List.mem_map, List.mem_union_iff] at a1
