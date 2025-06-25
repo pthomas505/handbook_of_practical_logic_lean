@@ -74,7 +74,7 @@ instance
 
 
 /--
-  `pure_dnf_simp_2 FSS` := The result of removing from the list of lists of formulas `FSS` every list of formulas that is a proper superset of some list of formulas in `ll`.
+  `pure_dnf_simp_2 FSS` := The result of removing every list of formulas that is a proper superset of some list of formulas in `FSS` from the list of lists of formulas `FSS`.
 
   If `PS` and `QS` are lists of formulas, and `PS` is a subset of `QS`, then the evaluation of the disjunction of the conjunction of the formulas in `PS` and the conjunction of the formulas in `QS` is true if and only if the evaluation of the conjunction of the formulas in `PS` is true. Hence the conjunction of the formulas in `QS` can be removed from the disjuction.
 -/
