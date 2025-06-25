@@ -89,19 +89,6 @@ example : List.dedupSet [[2], [1], [2]] = [[1], [2]] := by rfl
 example : List.dedupSet [[1, 2], [2, 1, 1]] = [[2, 1, 1]] := by rfl
 
 
-def simp_dnf
-  (F : Formula_) :
-  List (List Formula_) :=
-  if F = false_
-  then []
-  else
-    if F = true_
-    then [[]]
-    else
-      let djs : List (List Formula_) := to_dnf_v3_aux_simp_1 (to_nnf_v1 F)
-      (filter_not_has_proper_subset_in_v2 djs)
-
-
 example
   (V : ValuationAsTotalFunction)
   (P Q : Formula_)
@@ -524,6 +511,19 @@ lemma filter_not_has_proper_subset_in_v2_is_dnf_ind_v1
 
 
 -------------------------------------------------------------------------------
+
+
+def simp_dnf
+  (F : Formula_) :
+  List (List Formula_) :=
+  if F = false_
+  then []
+  else
+    if F = true_
+    then [[]]
+    else
+      let djs : List (List Formula_) := to_dnf_v3_aux_simp_1 (to_nnf_v1 F)
+      (filter_not_has_proper_subset_in_v2 djs)
 
 
 example
