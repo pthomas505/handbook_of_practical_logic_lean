@@ -9,7 +9,7 @@ open Formula_
 
 
 /--
-  `filterMin ll` := The result of removing from the list of lists `ll` every list that is a proper superset of some list in `ll`.
+  `filterMin ll` := The result of removing every list that is a proper superset of some list in `ll` from the list of lists `ll`.
 -/
 def filterMin
   {α : Type}
