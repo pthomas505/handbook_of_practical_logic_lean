@@ -8,27 +8,62 @@ set_option autoImplicit false
 open Formula_
 
 
-/--
-  `filterMin ll` := The result of removing every list that is a proper superset of some list in `ll` from the list of lists `ll`.
+/-
+  If `PS` and `QS` are lists of formulas, and `PS` is a subset of `QS`, then the evaluation of the disjunction of the conjunction of the formulas in `PS` and the conjunction of the formulas in `QS` is true if and only if the evaluation of the conjunction of the formulas in `PS` is true. Hence the conjunction of the formulas in `QS` can be removed from the disjuction.
 -/
-def filterMin
+
+
+/--
+  `filter_not_has_proper_subset_in_v1 ll` := The result of removing every list that has a proper subset in the list of lists `ll` from the list of lists `ll`.
+-/
+def filter_not_has_proper_subset_in_v1
   {α : Type}
   [DecidableEq α]
   (ll : List (List α)) :
   List (List α) :=
   ll.filter fun (l1 : List α) => ∀ (l2 : List α), l2 ∈ ll → (l2 ⊆ l1 → l1 ⊆ l2)
 
-example : filterMin [[1], [1]] = [[1], [1]] := by rfl
-example : filterMin [[1], [2]] = [[1], [2]] := by rfl
-example : filterMin [[2], [1]] = [[2], [1]] := by rfl
-example : filterMin [[1], [1, 2]] = [[1]] := by rfl
-example : filterMin [[1, 2], [1]] = [[1]] := by rfl
-example : filterMin [[1], [1, 2, 2]] = [[1]] := by rfl
-example : filterMin [[1, 2, 2], [1]] = [[1]] := by rfl
-example : filterMin [[1], [1, 1, 2]] = [[1]] := by rfl
-example : filterMin [[1, 1, 2], [1]] = [[1]] := by rfl
-example : filterMin [[1], [1, 2], [2, 3]] = [[1], [2, 3]] := by rfl
-example : filterMin [[1], [2, 3], [1, 2]] = [[1], [2, 3]] := by rfl
+example : filter_not_has_proper_subset_in_v1 [[1], [1]] = [[1], [1]] := by rfl
+example : filter_not_has_proper_subset_in_v1 [[1], [2]] = [[1], [2]] := by rfl
+example : filter_not_has_proper_subset_in_v1 [[2], [1]] = [[2], [1]] := by rfl
+example : filter_not_has_proper_subset_in_v1 [[1], [1, 2]] = [[1]] := by rfl
+example : filter_not_has_proper_subset_in_v1 [[1, 2], [1]] = [[1]] := by rfl
+example : filter_not_has_proper_subset_in_v1 [[1], [1, 2, 2]] = [[1]] := by rfl
+example : filter_not_has_proper_subset_in_v1 [[1, 2, 2], [1]] = [[1]] := by rfl
+example : filter_not_has_proper_subset_in_v1 [[1], [1, 1, 2]] = [[1]] := by rfl
+example : filter_not_has_proper_subset_in_v1 [[1, 1, 2], [1]] = [[1]] := by rfl
+example : filter_not_has_proper_subset_in_v1 [[1], [1, 2], [2, 3]] = [[1], [2, 3]] := by rfl
+example : filter_not_has_proper_subset_in_v1 [[1], [2, 3], [1, 2]] = [[1], [2, 3]] := by rfl
+
+
+/--
+  `List.is_proper_subset_of l1 l2` := True if and only if `l1` is a proper subset of `l2`.
+-/
+def List.is_proper_subset_of
+  {α : Type}
+  (l1 l2 : List α) :
+  Prop :=
+  l1 ⊆ l2 ∧ ¬ l2 ⊆ l1
+
+instance
+  {α : Type}
+  [DecidableEq α]
+  (l1 l2 : List α) :
+  Decidable (List.is_proper_subset_of l1 l2) :=
+  by
+  unfold List.is_proper_subset_of
+  infer_instance
+
+
+/--
+  `filter_not_has_proper_subset_in_v2 ll` := The result of removing every list that has a proper subset in the list of lists `ll` from the list of lists `ll`.
+-/
+def filter_not_has_proper_subset_in_v2
+  {α : Type}
+  [DecidableEq α]
+  (ll : List (List α)) :
+  List (List α) :=
+  List.filter (fun (l1 : List α) => ¬ (∃ (l2 : List α), l2 ∈ ll ∧ List.is_proper_subset_of l2 l1)) ll
 
 
 /--
@@ -54,36 +89,6 @@ example : List.dedupSet [[2], [1], [2]] = [[1], [2]] := by rfl
 example : List.dedupSet [[1, 2], [2, 1, 1]] = [[2, 1, 1]] := by rfl
 
 
-/--
-  `List.SSubset l1 l2` := True if and only if `l1` is a strict subset of `l2`.
--/
-def List.SSubset
-  {α : Type}
-  (l1 l2 : List α) :
-  Prop :=
-  l1 ⊆ l2 ∧ ¬ l2 ⊆ l1
-
-instance
-  {α : Type}
-  [DecidableEq α]
-  (l1 l2 : List α) :
-  Decidable (List.SSubset l1 l2) :=
-  by
-  unfold List.SSubset
-  infer_instance
-
-
-/--
-  `to_dnf_v3_simp_2 FSS` := The result of removing every list of formulas that is a proper superset of some list of formulas in `FSS` from the list of lists of formulas `FSS`.
-
-  If `PS` and `QS` are lists of formulas, and `PS` is a subset of `QS`, then the evaluation of the disjunction of the conjunction of the formulas in `PS` and the conjunction of the formulas in `QS` is true if and only if the evaluation of the conjunction of the formulas in `PS` is true. Hence the conjunction of the formulas in `QS` can be removed from the disjuction.
--/
-def to_dnf_v3_simp_2
-  (FSS : List (List Formula_)) :
-  List (List Formula_) :=
-  List.filter (fun (QS : List Formula_) => ¬ (∃ (PS : List Formula_), PS ∈ FSS ∧ List.SSubset PS QS)) FSS
-
-
 def simp_dnf
   (F : Formula_) :
   List (List Formula_) :=
@@ -94,7 +99,7 @@ def simp_dnf
     then [[]]
     else
       let djs : List (List Formula_) := to_dnf_v3_aux_simp_1 (to_nnf_v1 F)
-      (to_dnf_v3_simp_2 djs)
+      (filter_not_has_proper_subset_in_v2 djs)
 
 
 example
@@ -183,7 +188,7 @@ example
   (FSS : List (List Formula_))
   (h1 : PS ∈ FSS) :
   eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true ↔
-    eval V (list_of_lists_to_disjunction_of_conjunctions (List.filter (fun (QS : List Formula_) => ¬ List.SSubset PS QS) FSS)) = true :=
+    eval V (list_of_lists_to_disjunction_of_conjunctions (List.filter (fun (QS : List Formula_) => ¬ List.is_proper_subset_of PS QS) FSS)) = true :=
   by
   unfold list_of_lists_to_disjunction_of_conjunctions
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
@@ -192,7 +197,7 @@ example
   constructor
   · intro a1
     obtain ⟨F, ⟨QS, a1_left_left, a1_left_right⟩, a1_right⟩ := a1
-    by_cases c1 : List.SSubset PS QS
+    by_cases c1 : List.is_proper_subset_of PS QS
     case pos =>
       apply Exists.intro (list_conj PS)
       constructor
@@ -200,12 +205,12 @@ example
         constructor
         · constructor
           · exact h1
-          · unfold List.SSubset
+          · unfold List.is_proper_subset_of
             intro contra
             obtain ⟨contra_left, contra_right⟩ := contra
             contradiction
         · rfl
-      · unfold List.SSubset at c1
+      · unfold List.is_proper_subset_of at c1
         obtain ⟨c1_left, c1_right⟩ := c1
         rewrite [← a1_left_right] at a1_right
         apply eval_list_conj_subset V PS QS
@@ -402,25 +407,25 @@ example
   simp only [List.mem_dedup]
 
 
-#eval let PSS := [[]]; (List.filter (fun (RS : List Formula_) => ¬ (∃ (PS : List Formula_), PS ∈ PSS ∧ List.SSubset PS RS)) PSS).toString
+#eval let FSS : List (List Formula_):= [[]]; (filter_not_has_proper_subset_in_v2 FSS).toString
 
-#eval let PSS := [[atom_ "P"]]; (List.filter (fun (RS : List Formula_) => ¬ (∃ (PS : List Formula_), PS ∈ PSS ∧ List.SSubset PS RS)) PSS).toString
+#eval let FSS := [[atom_ "P"]]; (filter_not_has_proper_subset_in_v2 FSS).toString
 
-#eval let PSS := [[atom_ "P"], []]; (List.filter (fun (RS : List Formula_) => ¬ (∃ (PS : List Formula_), PS ∈ PSS ∧ List.SSubset PS RS)) PSS).toString
+#eval let FSS := [[atom_ "P"], []]; (filter_not_has_proper_subset_in_v2 FSS).toString
 
-#eval let PSS := [[atom_ "P"], [atom_ "P"]]; (List.filter (fun (RS : List Formula_) => ¬ (∃ (PS : List Formula_), PS ∈ PSS ∧ List.SSubset PS RS)) PSS).toString
+#eval let FSS := [[atom_ "P"], [atom_ "P"]]; (filter_not_has_proper_subset_in_v2 FSS).toString
 
-#eval let PSS := [[atom_ "P"], [atom_ "P", atom_ "Q"]]; (List.filter (fun (RS : List Formula_) => ¬ (∃ (PS : List Formula_), PS ∈ PSS ∧ List.SSubset PS RS)) PSS).toString
+#eval let FSS := [[atom_ "P"], [atom_ "P", atom_ "Q"]]; (filter_not_has_proper_subset_in_v2 FSS).toString
 
 
 -------------------------------------------------------------------------------
 
 
-lemma eval_to_dnf_v3_simp_2_left
+lemma eval_filter_not_has_proper_subset_in_v2_left
   (V : ValuationAsTotalFunction)
   (FSS : List (List Formula_))
   (h1 : eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true) :
-  eval V (list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_simp_2 FSS)) = true :=
+  eval V (list_of_lists_to_disjunction_of_conjunctions (filter_not_has_proper_subset_in_v2 FSS)) = true :=
   by
   unfold list_of_lists_to_disjunction_of_conjunctions at h1
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true] at h1
@@ -429,7 +434,7 @@ lemma eval_to_dnf_v3_simp_2_left
   obtain ⟨RS, h1_left_left, h1_left_right⟩ := h1_left
   rewrite [← h1_left_right] at h1_right
 
-  unfold to_dnf_v3_simp_2
+  unfold filter_not_has_proper_subset_in_v2
   unfold list_of_lists_to_disjunction_of_conjunctions
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_map, List.mem_filter]
@@ -447,7 +452,7 @@ lemma eval_to_dnf_v3_simp_2_left
       · exact s1_left
       · intro QS a1
         intro contra
-        unfold List.SSubset at contra
+        unfold List.is_proper_subset_of at contra
         obtain ⟨contra_left, contra_right⟩ := contra
         apply contra_right
         apply s1_right_right
@@ -482,35 +487,35 @@ lemma eval_dnf_list_of_list_to_formula_subset
   · exact h2_right
 
 
-lemma eval_to_dnf_v3_simp_2_right
+lemma eval_filter_not_has_proper_subset_in_v2_right
   (V : ValuationAsTotalFunction)
   (FSS : List (List Formula_))
-  (h1 : eval V (list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_simp_2 FSS)) = true) :
+  (h1 : eval V (list_of_lists_to_disjunction_of_conjunctions (filter_not_has_proper_subset_in_v2 FSS)) = true) :
   eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true :=
   by
-  apply eval_dnf_list_of_list_to_formula_subset V (to_dnf_v3_simp_2 FSS)
-  · unfold to_dnf_v3_simp_2
+  apply eval_dnf_list_of_list_to_formula_subset V (filter_not_has_proper_subset_in_v2 FSS)
+  · unfold filter_not_has_proper_subset_in_v2
     simp only [List.filter_subset']
   · exact h1
 
 
-lemma eval_to_dnf_v3_simp_2
+lemma eval_filter_not_has_proper_subset_in_v2
   (V : ValuationAsTotalFunction)
   (FSS : List (List Formula_)) :
   eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true ↔
-    eval V (list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_simp_2 FSS)) = true :=
+    eval V (list_of_lists_to_disjunction_of_conjunctions (filter_not_has_proper_subset_in_v2 FSS)) = true :=
   by
   constructor
-  · apply eval_to_dnf_v3_simp_2_left
-  · apply eval_to_dnf_v3_simp_2_right
+  · apply eval_filter_not_has_proper_subset_in_v2_left
+  · apply eval_filter_not_has_proper_subset_in_v2_right
 
 
-lemma to_dnf_v3_simp_2_is_dnf_ind_v1
+lemma filter_not_has_proper_subset_in_v2_is_dnf_ind_v1
   (FSS : List (List Formula_))
   (h1 : is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions FSS)) :
-  is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_simp_2 FSS)) :=
+  is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions (filter_not_has_proper_subset_in_v2 FSS)) :=
   by
-  unfold to_dnf_v3_simp_2
+  unfold filter_not_has_proper_subset_in_v2
   apply is_dnf_ind_v1_list_of_lists_to_disjunction_of_conjunctions_filter
   exact h1
 
@@ -540,7 +545,7 @@ example
     rfl
   case neg c1 c2 =>
     simp only
-    simp only [← eval_to_dnf_v3_simp_2]
+    simp only [← eval_filter_not_has_proper_subset_in_v2]
     simp only [← eval_eq_eval_to_dnf_v3_simp_1_aux]
     simp only [← eval_eq_eval_to_nnf_v1]
 
@@ -568,6 +573,6 @@ example
     exact is_constant_ind.rule_2
   case neg c1 c2 =>
     simp only
-    apply to_dnf_v3_simp_2_is_dnf_ind_v1
+    apply filter_not_has_proper_subset_in_v2_is_dnf_ind_v1
     apply is_dnf_ind_v1_to_dnf_v3_simp_1_aux
     apply to_nnf_v1_is_nnf_rec_v1

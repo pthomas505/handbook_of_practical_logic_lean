@@ -110,8 +110,9 @@ lemma not_has_complementary_singleton
 
 lemma filter_not_has_complementary_singleton
   (F : Formula_) :
-  List.filter (fun (FS : List Formula_) => ¬ has_complementary FS) [[F]] = [[F]] :=
+  filter_not_has_complementary [[F]] = [[F]] :=
   by
+  unfold filter_not_has_complementary
   simp only [List.filter_eq_self, List.mem_singleton]
   intro FS a1
   rewrite [a1]
@@ -183,8 +184,9 @@ lemma eval_list_of_lists_to_disjunction_of_conjunctions_eq_eval_list_of_lists_to
   (V : ValuationAsTotalFunction)
   (FSS : List (List Formula_)) :
   eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true ↔
-  eval V (list_of_lists_to_disjunction_of_conjunctions (List.filter (fun (FS : List Formula_) => ¬ (has_complementary FS)) FSS)) = true :=
+  eval V (list_of_lists_to_disjunction_of_conjunctions (filter_not_has_complementary FSS)) = true :=
   by
+  unfold filter_not_has_complementary
   unfold list_of_lists_to_disjunction_of_conjunctions
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_map, List.mem_filter]
