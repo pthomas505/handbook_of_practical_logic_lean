@@ -74,11 +74,11 @@ instance
 
 
 /--
-  `pure_dnf_simp_2 FSS` := The result of removing every list of formulas that is a proper superset of some list of formulas in `FSS` from the list of lists of formulas `FSS`.
+  `to_dnf_v3_simp_2 FSS` := The result of removing every list of formulas that is a proper superset of some list of formulas in `FSS` from the list of lists of formulas `FSS`.
 
   If `PS` and `QS` are lists of formulas, and `PS` is a subset of `QS`, then the evaluation of the disjunction of the conjunction of the formulas in `PS` and the conjunction of the formulas in `QS` is true if and only if the evaluation of the conjunction of the formulas in `PS` is true. Hence the conjunction of the formulas in `QS` can be removed from the disjuction.
 -/
-def pure_dnf_simp_2
+def to_dnf_v3_simp_2
   (FSS : List (List Formula_)) :
   List (List Formula_) :=
   List.filter (fun (QS : List Formula_) => ¬ (∃ (PS : List Formula_), PS ∈ FSS ∧ List.SSubset PS QS)) FSS
@@ -403,11 +403,11 @@ example
 -------------------------------------------------------------------------------
 
 
-lemma eval_pure_dnf_simp_2_left
+lemma eval_to_dnf_v3_simp_2_left
   (V : ValuationAsTotalFunction)
   (FSS : List (List Formula_))
   (h1 : eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true) :
-  eval V (list_of_lists_to_disjunction_of_conjunctions (pure_dnf_simp_2 FSS)) = true :=
+  eval V (list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_simp_2 FSS)) = true :=
   by
   unfold list_of_lists_to_disjunction_of_conjunctions at h1
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true] at h1
@@ -416,7 +416,7 @@ lemma eval_pure_dnf_simp_2_left
   obtain ⟨RS, h1_left_left, h1_left_right⟩ := h1_left
   rewrite [← h1_left_right] at h1_right
 
-  unfold pure_dnf_simp_2
+  unfold to_dnf_v3_simp_2
   unfold list_of_lists_to_disjunction_of_conjunctions
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_map, List.mem_filter]
@@ -469,35 +469,35 @@ lemma eval_dnf_list_of_list_to_formula_subset
   · exact h2_right
 
 
-lemma eval_pure_dnf_simp_2_right
+lemma eval_to_dnf_v3_simp_2_right
   (V : ValuationAsTotalFunction)
   (FSS : List (List Formula_))
-  (h1 : eval V (list_of_lists_to_disjunction_of_conjunctions (pure_dnf_simp_2 FSS)) = true) :
+  (h1 : eval V (list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_simp_2 FSS)) = true) :
   eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true :=
   by
-  apply eval_dnf_list_of_list_to_formula_subset V (pure_dnf_simp_2 FSS)
-  · unfold pure_dnf_simp_2
+  apply eval_dnf_list_of_list_to_formula_subset V (to_dnf_v3_simp_2 FSS)
+  · unfold to_dnf_v3_simp_2
     simp only [List.filter_subset']
   · exact h1
 
 
-lemma eval_pure_dnf_simp_2
+lemma eval_to_dnf_v3_simp_2
   (V : ValuationAsTotalFunction)
   (FSS : List (List Formula_)) :
   eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true ↔
-    eval V (list_of_lists_to_disjunction_of_conjunctions (pure_dnf_simp_2 FSS)) = true :=
+    eval V (list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_simp_2 FSS)) = true :=
   by
   constructor
-  · apply eval_pure_dnf_simp_2_left
-  · apply eval_pure_dnf_simp_2_right
+  · apply eval_to_dnf_v3_simp_2_left
+  · apply eval_to_dnf_v3_simp_2_right
 
 
-lemma pure_dnf_simp_2_is_dnf_ind_v1
+lemma to_dnf_v3_simp_2_is_dnf_ind_v1
   (FSS : List (List Formula_))
   (h1 : is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions FSS)) :
-  is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions (pure_dnf_simp_2 FSS)) :=
+  is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_simp_2 FSS)) :=
   by
-  unfold pure_dnf_simp_2
+  unfold to_dnf_v3_simp_2
   apply is_dnf_ind_v1_list_of_lists_to_disjunction_of_conjunctions_filter
   exact h1
 
@@ -515,7 +515,7 @@ def simp_dnf
     then [[]]
     else
       let djs : List (List Formula_) := to_dnf_v3_aux_simp_1 (to_nnf_v1 F)
-      (pure_dnf_simp_2 djs)
+      (to_dnf_v3_simp_2 djs)
 
 
 example
@@ -540,7 +540,7 @@ example
     rfl
   case neg c1 c2 =>
     simp only
-    simp only [← eval_pure_dnf_simp_2]
+    simp only [← eval_to_dnf_v3_simp_2]
     simp only [← eval_eq_eval_to_dnf_v3_simp_1_aux]
     simp only [← eval_eq_eval_to_nnf_v1]
 
@@ -568,6 +568,6 @@ example
     exact is_constant_ind.rule_2
   case neg c1 c2 =>
     simp only
-    apply pure_dnf_simp_2_is_dnf_ind_v1
+    apply to_dnf_v3_simp_2_is_dnf_ind_v1
     apply is_dnf_ind_v1_to_dnf_v3_simp_1_aux
     apply to_nnf_v1_is_nnf_rec_v1
