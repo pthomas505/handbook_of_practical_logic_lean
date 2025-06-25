@@ -23,6 +23,10 @@ example : filterMin [[1], [2]] = [[1], [2]] := by rfl
 example : filterMin [[2], [1]] = [[2], [1]] := by rfl
 example : filterMin [[1], [1, 2]] = [[1]] := by rfl
 example : filterMin [[1, 2], [1]] = [[1]] := by rfl
+example : filterMin [[1], [1, 2, 2]] = [[1]] := by rfl
+example : filterMin [[1, 2, 2], [1]] = [[1]] := by rfl
+example : filterMin [[1], [1, 1, 2]] = [[1]] := by rfl
+example : filterMin [[1, 1, 2], [1]] = [[1]] := by rfl
 example : filterMin [[1], [1, 2], [2, 3]] = [[1], [2, 3]] := by rfl
 example : filterMin [[1], [2, 3], [1, 2]] = [[1], [2, 3]] := by rfl
 
