@@ -463,7 +463,7 @@ lemma eval_filter_not_has_proper_subset_in_v2_left
   · exact eval_list_conj_subset V PS RS s1_right_left h1_right
 
 
-lemma eval_dnf_list_of_list_to_formula_subset
+lemma eval_list_of_lists_to_disjunction_of_conjunctions_subset
   (V : ValuationAsTotalFunction)
   (PSS QSS : List (List Formula_))
   (h1 : PSS ⊆ QSS)
@@ -493,7 +493,7 @@ lemma eval_filter_not_has_proper_subset_in_v2_right
   (h1 : eval V (list_of_lists_to_disjunction_of_conjunctions (filter_not_has_proper_subset_in_v2 FSS)) = true) :
   eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true :=
   by
-  apply eval_dnf_list_of_list_to_formula_subset V (filter_not_has_proper_subset_in_v2 FSS)
+  apply eval_list_of_lists_to_disjunction_of_conjunctions_subset V (filter_not_has_proper_subset_in_v2 FSS)
   · unfold filter_not_has_proper_subset_in_v2
     simp only [List.filter_subset']
   · exact h1
@@ -508,6 +508,9 @@ lemma eval_filter_not_has_proper_subset_in_v2
   constructor
   · apply eval_filter_not_has_proper_subset_in_v2_left
   · apply eval_filter_not_has_proper_subset_in_v2_right
+
+
+-------------------------------------------------------------------------------
 
 
 lemma filter_not_has_proper_subset_in_v2_is_dnf_ind_v1
