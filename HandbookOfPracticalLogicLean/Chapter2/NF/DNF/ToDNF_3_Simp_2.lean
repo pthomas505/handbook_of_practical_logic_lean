@@ -84,6 +84,19 @@ def to_dnf_v3_simp_2
   List.filter (fun (QS : List Formula_) => ¬ (∃ (PS : List Formula_), PS ∈ FSS ∧ List.SSubset PS QS)) FSS
 
 
+def simp_dnf
+  (F : Formula_) :
+  List (List Formula_) :=
+  if F = false_
+  then []
+  else
+    if F = true_
+    then [[]]
+    else
+      let djs : List (List Formula_) := to_dnf_v3_aux_simp_1 (to_nnf_v1 F)
+      (to_dnf_v3_simp_2 djs)
+
+
 example
   (V : ValuationAsTotalFunction)
   (P Q : Formula_)
@@ -503,19 +516,6 @@ lemma to_dnf_v3_simp_2_is_dnf_ind_v1
 
 
 -------------------------------------------------------------------------------
-
-
-def simp_dnf
-  (F : Formula_) :
-  List (List Formula_) :=
-  if F = false_
-  then []
-  else
-    if F = true_
-    then [[]]
-    else
-      let djs : List (List Formula_) := to_dnf_v3_aux_simp_1 (to_nnf_v1 F)
-      (to_dnf_v3_simp_2 djs)
 
 
 example
