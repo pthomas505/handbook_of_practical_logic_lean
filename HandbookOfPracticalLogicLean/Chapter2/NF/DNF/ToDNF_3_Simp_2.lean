@@ -513,7 +513,7 @@ lemma filter_not_has_proper_subset_in_v2_is_dnf_ind_v1
 -------------------------------------------------------------------------------
 
 
-def simp_dnf
+def to_dnf_v3_simp_aux
   (F : Formula_) :
   List (List Formula_) :=
   if F = false_
@@ -526,12 +526,19 @@ def simp_dnf
       (filter_not_has_proper_subset_in_v2 djs)
 
 
+def to_dnf_v3_simp
+  (F : Formula_) :
+  Formula_ :=
+  list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_simp_aux F)
+
+
 example
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V F = true ↔ eval V (list_of_lists_to_disjunction_of_conjunctions (simp_dnf F)) = true :=
+  eval V F = true ↔ eval V (to_dnf_v3_simp F) = true :=
   by
-  unfold simp_dnf
+  unfold to_dnf_v3_simp
+  unfold to_dnf_v3_simp_aux
   split_ifs
   case pos c1 =>
     rewrite [c1]
@@ -555,9 +562,10 @@ example
 
 example
   (F : Formula_) :
-  is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions (simp_dnf F)) :=
+  is_dnf_ind_v1 (to_dnf_v3_simp F) :=
   by
-  unfold simp_dnf
+  unfold to_dnf_v3_simp
+  unfold to_dnf_v3_simp_aux
   split_ifs
   case pos c1 =>
     unfold list_of_lists_to_disjunction_of_conjunctions
