@@ -48,6 +48,9 @@ example : List.dedupSet [[1], [1], [1]] = [[1]] := by rfl
 example : List.dedupSet [[1], [2]] = [[1], [2]] := by rfl
 example : List.dedupSet [[2], [1]] = [[2], [1]] := by rfl
 
+example : List.dedupSet [[1], [2], [1]] = [[2], [1]] := by rfl
+example : List.dedupSet [[2], [1], [2]] = [[1], [2]] := by rfl
+
 example : List.dedupSet [[1, 2], [2, 1, 1]] = [[2, 1, 1]] := by rfl
 
 
