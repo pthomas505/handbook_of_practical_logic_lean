@@ -513,6 +513,9 @@ lemma filter_not_has_proper_subset_in_v2_is_dnf_ind_v1
 -------------------------------------------------------------------------------
 
 
+/--
+  Helper function for `to_dnf_v3_simp`.
+-/
 def to_dnf_v3_simp_aux
   (F : Formula_) :
   List (List Formula_) :=
@@ -526,6 +529,9 @@ def to_dnf_v3_simp_aux
       (filter_not_has_proper_subset_in_v2 djs)
 
 
+/--
+  `to_dnf_v3_simp F` := Translates the formula `F` to a simplified logically equivalent formula in disjunctive normal form.
+-/
 def to_dnf_v3_simp
   (F : Formula_) :
   Formula_ :=
