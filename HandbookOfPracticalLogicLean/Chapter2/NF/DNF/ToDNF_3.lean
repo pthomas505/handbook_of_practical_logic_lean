@@ -15,13 +15,13 @@ open Formula_
 /--
   Helper function for `to_dnf_v3`.
 -/
-def to_dnf_v3_aux_1 :
+def to_dnf_v3_aux :
   Formula_ → List (List Formula_)
-  | and_ p q => all_pairs_v4 List.union (to_dnf_v3_aux_1 p) (to_dnf_v3_aux_1 q)
-  | or_ p q => (to_dnf_v3_aux_1 p) ∪ (to_dnf_v3_aux_1 q)
+  | and_ p q => all_pairs_v4 List.union (to_dnf_v3_aux p) (to_dnf_v3_aux q)
+  | or_ p q => (to_dnf_v3_aux p) ∪ (to_dnf_v3_aux q)
   | F => [[F]]
 
-#eval (to_dnf_v3_aux_1 (Formula_| ((p \/ (q /\ r)) /\ (~p \/ ~ r)))).toString
+#eval (to_dnf_v3_aux (Formula_| ((p \/ (q /\ r)) /\ (~p \/ ~ r)))).toString
 
 
 /--
@@ -39,7 +39,7 @@ def list_of_lists_to_disjunction_of_conjunctions
 def to_dnf_v3
   (F : Formula_) :
   Formula_ :=
-  list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_aux_1 F)
+  list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_aux F)
 
 
 #eval (list_of_lists_to_disjunction_of_conjunctions [[atom_ "P", atom_ "Q"], [not_ (atom_ "P"), atom_ "R"]]).toString
@@ -57,7 +57,7 @@ lemma eval_eq_eval_to_dnf_v3
 
     unfold list_of_lists_to_disjunction_of_conjunctions at psi_ih
 
-    unfold to_dnf_v3_aux_1
+    unfold to_dnf_v3_aux
     unfold list_of_lists_to_disjunction_of_conjunctions
     simp only [eval]
     simp only [bool_iff_prop_and]
@@ -103,7 +103,7 @@ lemma eval_eq_eval_to_dnf_v3
 
     unfold list_of_lists_to_disjunction_of_conjunctions at psi_ih
 
-    unfold to_dnf_v3_aux_1
+    unfold to_dnf_v3_aux
     unfold list_of_lists_to_disjunction_of_conjunctions
     simp only [eval]
     simp only [bool_iff_prop_or]
@@ -169,18 +169,18 @@ lemma list_of_lists_to_disjunction_of_conjunctions_singleton
   rfl
 
 
-lemma mem_list_mem_to_dnf_v3_aux_1_of_nnf_rec_v1_imp_is_constant_or_literal
+lemma mem_list_mem_to_dnf_v3_aux_of_nnf_rec_v1_imp_is_constant_or_literal
   (F : Formula_)
   (FS : List Formula_)
   (F_mem : Formula_)
   (h1 : is_nnf_rec_v1 F)
-  (h2 : FS ∈ to_dnf_v3_aux_1 F)
+  (h2 : FS ∈ to_dnf_v3_aux F)
   (h3 : F_mem ∈ FS) :
   is_constant_ind F_mem ∨ is_literal_ind F_mem :=
   by
   induction F generalizing FS
   case false_ =>
-    unfold to_dnf_v3_aux_1 at h2
+    unfold to_dnf_v3_aux at h2
     simp only [List.mem_singleton] at h2
     rewrite [h2] at h3
 
@@ -190,7 +190,7 @@ lemma mem_list_mem_to_dnf_v3_aux_1_of_nnf_rec_v1_imp_is_constant_or_literal
     left
     apply is_constant_ind.rule_1
   case true_ =>
-    unfold to_dnf_v3_aux_1 at h2
+    unfold to_dnf_v3_aux at h2
     simp only [List.mem_singleton] at h2
     rewrite [h2] at h3
 
@@ -200,7 +200,7 @@ lemma mem_list_mem_to_dnf_v3_aux_1_of_nnf_rec_v1_imp_is_constant_or_literal
     left
     apply is_constant_ind.rule_2
   case atom_ X =>
-    unfold to_dnf_v3_aux_1 at h2
+    unfold to_dnf_v3_aux at h2
     simp only [List.mem_singleton] at h2
     rewrite [h2] at h3
 
@@ -210,7 +210,7 @@ lemma mem_list_mem_to_dnf_v3_aux_1_of_nnf_rec_v1_imp_is_constant_or_literal
     right
     apply is_literal_ind.rule_1
   case not_ phi ih =>
-    unfold to_dnf_v3_aux_1 at h2
+    unfold to_dnf_v3_aux at h2
     simp only [List.mem_singleton] at h2
     rewrite [h2] at h3
 
@@ -228,9 +228,9 @@ lemma mem_list_mem_to_dnf_v3_aux_1_of_nnf_rec_v1_imp_is_constant_or_literal
     unfold is_nnf_rec_v1 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
-    unfold to_dnf_v3_aux_1 at h2
+    unfold to_dnf_v3_aux at h2
 
-    obtain s1 := mem_all_pairs_v4_union_imp_eq_union (to_dnf_v3_aux_1 phi) (to_dnf_v3_aux_1 psi) FS h2
+    obtain s1 := mem_all_pairs_v4_union_imp_eq_union (to_dnf_v3_aux phi) (to_dnf_v3_aux psi) FS h2
     obtain ⟨PS, QS, PS_mem, QS_mem, eq⟩ := s1
 
     rewrite [← eq] at h3
@@ -251,7 +251,7 @@ lemma mem_list_mem_to_dnf_v3_aux_1_of_nnf_rec_v1_imp_is_constant_or_literal
     unfold is_nnf_rec_v1 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
 
-    unfold to_dnf_v3_aux_1 at h2
+    unfold to_dnf_v3_aux at h2
     simp only [List.mem_union_iff] at h2
 
     cases h2
@@ -278,28 +278,28 @@ lemma is_nnf_rec_v1_imp_to_dnf_v3_is_dnf_ind_v1
   cases F
   case false_ =>
     unfold to_dnf_v3
-    unfold to_dnf_v3_aux_1
+    unfold to_dnf_v3_aux
     simp only [list_of_lists_to_disjunction_of_conjunctions_singleton]
     apply is_dnf_ind_v1.rule_1
     apply is_conj_ind_v1.rule_1
     apply is_constant_ind.rule_1
   case true_ =>
     unfold to_dnf_v3
-    unfold to_dnf_v3_aux_1
+    unfold to_dnf_v3_aux
     simp only [list_of_lists_to_disjunction_of_conjunctions_singleton]
     apply is_dnf_ind_v1.rule_1
     apply is_conj_ind_v1.rule_1
     apply is_constant_ind.rule_2
   case atom_ X =>
     unfold to_dnf_v3
-    unfold to_dnf_v3_aux_1
+    unfold to_dnf_v3_aux
     simp only [list_of_lists_to_disjunction_of_conjunctions_singleton]
     apply is_dnf_ind_v1.rule_1
     apply is_conj_ind_v1.rule_2
     apply is_literal_ind.rule_1
   case not_ phi =>
     unfold to_dnf_v3
-    unfold to_dnf_v3_aux_1
+    unfold to_dnf_v3_aux
     simp only [list_of_lists_to_disjunction_of_conjunctions_singleton]
     cases phi
     case atom_ X =>
@@ -321,19 +321,19 @@ lemma is_nnf_rec_v1_imp_to_dnf_v3_is_dnf_ind_v1
     apply list_conj_of_list_of_is_constant_ind_or_is_literal_ind_is_conj_ind_v1
     intro P a2
 
-    obtain s1 := mem_all_pairs_v4_union_imp_eq_union (to_dnf_v3_aux_1 phi) (to_dnf_v3_aux_1 psi) FS a1_left
+    obtain s1 := mem_all_pairs_v4_union_imp_eq_union (to_dnf_v3_aux phi) (to_dnf_v3_aux psi) FS a1_left
     obtain ⟨PS, QS, PS_mem, QS_mem, eq⟩ := s1
     rewrite [← eq] at a2
     simp only [List.mem_union_iff] at a2
 
     cases a2
     case inl a2 =>
-      apply mem_list_mem_to_dnf_v3_aux_1_of_nnf_rec_v1_imp_is_constant_or_literal phi PS
+      apply mem_list_mem_to_dnf_v3_aux_of_nnf_rec_v1_imp_is_constant_or_literal phi PS
       · exact h1_left
       · exact PS_mem
       · exact a2
     case inr a2 =>
-      apply mem_list_mem_to_dnf_v3_aux_1_of_nnf_rec_v1_imp_is_constant_or_literal psi QS
+      apply mem_list_mem_to_dnf_v3_aux_of_nnf_rec_v1_imp_is_constant_or_literal psi QS
       · exact h1_right
       · exact QS_mem
       · exact a2
@@ -342,7 +342,7 @@ lemma is_nnf_rec_v1_imp_to_dnf_v3_is_dnf_ind_v1
     obtain ⟨h1_left, h1_right⟩ := h1
 
     unfold to_dnf_v3
-    unfold to_dnf_v3_aux_1
+    unfold to_dnf_v3_aux
     unfold list_of_lists_to_disjunction_of_conjunctions
     apply list_disj_of_is_conj_ind_v1_is_dnf_ind_v1
     intro F a1
@@ -354,12 +354,12 @@ lemma is_nnf_rec_v1_imp_to_dnf_v3_is_dnf_ind_v1
 
     cases a1_left
     case inl a1_left =>
-      apply mem_list_mem_to_dnf_v3_aux_1_of_nnf_rec_v1_imp_is_constant_or_literal phi FS
+      apply mem_list_mem_to_dnf_v3_aux_of_nnf_rec_v1_imp_is_constant_or_literal phi FS
       · exact h1_left
       · exact a1_left
       · exact a2
     case inr a1_left =>
-      apply mem_list_mem_to_dnf_v3_aux_1_of_nnf_rec_v1_imp_is_constant_or_literal psi FS
+      apply mem_list_mem_to_dnf_v3_aux_of_nnf_rec_v1_imp_is_constant_or_literal psi FS
       · exact h1_right
       · exact a1_left
       · exact a2

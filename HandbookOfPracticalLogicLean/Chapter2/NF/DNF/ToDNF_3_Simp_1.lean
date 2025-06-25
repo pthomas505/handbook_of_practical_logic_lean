@@ -60,25 +60,25 @@ instance
 
 
 /--
-  `to_dnf_v3_aux_1_simp_1_aux FSS` := The result of removing every list of formulas that contains complementary formulas from the list of lists of formulas `FSS`.
+  `to_dnf_v3_aux_simp_1_aux FSS` := The result of removing every list of formulas that contains complementary formulas from the list of lists of formulas `FSS`.
 -/
-def to_dnf_v3_aux_1_simp_1_aux
+def to_dnf_v3_aux_simp_1_aux
   (FSS : List (List Formula_)) :
   List (List Formula_) :=
   List.filter (fun (FS : List Formula_) => ¬ (has_complementary FS)) FSS
 
 
 /--
-  `to_dnf_v3_aux_1_simp_1 F` := The result of removing every list of formulas that contains complementary formulas from the list of lists of formulas given by `to_dnf_v3_aux_1 F`.
+  `to_dnf_v3_aux_simp_1 F` := The result of removing every list of formulas that contains complementary formulas from the list of lists of formulas given by `to_dnf_v3_aux F`.
 -/
-def to_dnf_v3_aux_1_simp_1
+def to_dnf_v3_aux_simp_1
   (F : Formula_) :
   List (List Formula_) :=
-  to_dnf_v3_aux_1_simp_1_aux (to_dnf_v3_aux_1 F)
+  to_dnf_v3_aux_simp_1_aux (to_dnf_v3_aux F)
 
 
-#eval (to_dnf_v3_aux_1 (Formula_| ((P \/ (Q /\ R)) /\ (~P \/ ~R)))).toString
-#eval (to_dnf_v3_aux_1_simp_1 (Formula_| ((P \/ (Q /\ R)) /\ (~P \/ ~R)))).toString
+#eval (to_dnf_v3_aux (Formula_| ((P \/ (Q /\ R)) /\ (~P \/ ~R)))).toString
+#eval (to_dnf_v3_aux_simp_1 (Formula_| ((P \/ (Q /\ R)) /\ (~P \/ ~R)))).toString
 
 
 /--
@@ -87,7 +87,7 @@ def to_dnf_v3_aux_1_simp_1
 def to_dnf_v3_simp_1
   (F : Formula_) :
   Formula_ :=
-  list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_aux_1_simp_1 F)
+  list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_aux_simp_1 F)
 
 
 lemma not_has_complementary_singleton
@@ -213,10 +213,10 @@ lemma eval_list_of_lists_to_disjunction_of_conjunctions_eq_eval_list_of_lists_to
 lemma eval_eq_eval_to_dnf_v3_simp_1_aux
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V F = true ↔ eval V (list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_aux_1_simp_1 F)) = true :=
+  eval V F = true ↔ eval V (list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_aux_simp_1 F)) = true :=
   by
-  unfold to_dnf_v3_aux_1_simp_1
-  unfold to_dnf_v3_aux_1_simp_1_aux
+  unfold to_dnf_v3_aux_simp_1
+  unfold to_dnf_v3_aux_simp_1_aux
   simp only [eval_eq_eval_to_dnf_v3 V F]
   apply eval_list_of_lists_to_disjunction_of_conjunctions_eq_eval_list_of_lists_to_disjunction_of_conjunctions_filter_not_has_complementary
 
@@ -345,10 +345,10 @@ lemma is_dnf_ind_v1_list_of_lists_to_disjunction_of_conjunctions_filter
 lemma is_dnf_ind_v1_to_dnf_v3_simp_1_aux
   (F : Formula_)
   (h1 : is_nnf_rec_v1 F) :
-  is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_aux_1_simp_1 F)) :=
+  is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_aux_simp_1 F)) :=
   by
-  unfold to_dnf_v3_aux_1_simp_1
-  unfold to_dnf_v3_aux_1_simp_1_aux
+  unfold to_dnf_v3_aux_simp_1
+  unfold to_dnf_v3_aux_simp_1_aux
   apply is_dnf_ind_v1_list_of_lists_to_disjunction_of_conjunctions_filter
   exact is_nnf_rec_v1_imp_to_dnf_v3_is_dnf_ind_v1 F h1
 

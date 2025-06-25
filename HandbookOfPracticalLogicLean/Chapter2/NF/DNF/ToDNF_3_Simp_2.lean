@@ -507,7 +507,7 @@ def simp_dnf
     if F = true_
     then [[]]
     else
-      let djs : List (List Formula_) := to_dnf_v3_aux_1_simp_1 (to_nnf_v1 F)
+      let djs : List (List Formula_) := to_dnf_v3_aux_simp_1 (to_nnf_v1 F)
       (pure_dnf_simp_2 djs)
 
 
