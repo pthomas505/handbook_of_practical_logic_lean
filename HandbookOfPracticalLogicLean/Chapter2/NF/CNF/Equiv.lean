@@ -65,3 +65,6 @@ example
         contradiction
       case inr s1 =>
         exact s1
+
+
+#lint
