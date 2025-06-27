@@ -39,10 +39,10 @@ theorem theorem_2_10
       intro A a2
       unfold Function.updateITE'
       split_ifs
-      case pos c2 =>
-        rewrite [c2] at h1
+      case pos c1 =>
+        rewrite [c1] at h1
         contradiction
-      case neg c2 =>
+      case neg c1 =>
         rfl
     · exact a1
   · intro a1
