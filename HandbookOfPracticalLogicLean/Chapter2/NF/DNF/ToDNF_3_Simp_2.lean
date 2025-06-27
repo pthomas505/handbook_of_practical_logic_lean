@@ -125,7 +125,9 @@ example
     case inl a1 =>
       exact a1
     case inr a1 =>
-      exact eval_list_conj_subset V PS QS h1 a1
+      apply eval_list_conj_subset V PS QS
+      · exact h1
+      · exact a1
   · intro a1
     left
     exact a1
