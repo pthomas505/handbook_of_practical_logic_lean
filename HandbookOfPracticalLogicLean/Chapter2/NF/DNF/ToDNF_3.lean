@@ -21,7 +21,7 @@ def to_dnf_v3_aux :
   | or_ p q => (to_dnf_v3_aux p) ∪ (to_dnf_v3_aux q)
   | F => [[F]]
 
-#eval (to_dnf_v3_aux (Formula_| ((p \/ (q /\ r)) /\ (~p \/ ~ r)))).toString
+#eval (to_dnf_v3_aux (Formula_| ((p \/ (q /\ r)) /\ (~ p \/ ~ r)))).toString
 
 
 /--
@@ -68,7 +68,7 @@ lemma eval_eq_eval_to_dnf_v3
     simp only [mem_all_pairs_v4_union_iff_eq_union]
     constructor
     · intro a1
-      obtain ⟨⟨P, ⟨PS, PS_mem, a1_left_left⟩, a1_left_right⟩ , ⟨Q, ⟨QS, QS_mem, a1_right_left⟩, a1_right_right⟩⟩ := a1
+      obtain ⟨⟨P, ⟨PS, PS_mem, a1_left_left⟩, a1_left_right⟩, ⟨Q, ⟨QS, QS_mem, a1_right_left⟩, a1_right_right⟩⟩ := a1
       rewrite [← a1_left_left] at a1_left_right
       rewrite [← a1_right_left] at a1_right_right
       apply Exists.intro (list_conj (PS ∪ QS))
