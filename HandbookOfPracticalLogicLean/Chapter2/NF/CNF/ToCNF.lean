@@ -21,7 +21,7 @@ open Formula_
 def to_cnf_v3_aux
   (F : Formula_) :
   List (List Formula_) :=
-  List.map (fun (l : List Formula_) => List.map negate_literal l) (to_dnf_v3_aux (to_nnf_v1 (not_ F)))
+  List.map (fun (FS : List Formula_) => List.map negate_literal FS) (to_dnf_v3_aux (to_nnf_v1 (not_ F)))
 
 #eval (to_cnf_v3_aux (Formula_| ((p \/ (q /\ r)) /\ (~ p \/ ~ r)))).toString
 
@@ -57,6 +57,134 @@ def to_cnf_v3
 
 
 #eval (list_of_lists_to_conjunction_of_disjunctions [[atom_ "P", atom_ "Q"], [not_ (atom_ "P"), atom_ "R"]]).toString
+
+
+lemma de_morgan_1
+  (V : ValuationAsTotalFunction)
+  (P Q : Formula_) :
+  eval V (not_ (and_ P Q)) = true ↔
+    eval V (or_ (not_ P) (not_ Q)) = true :=
+  by
+  simp only [eval]
+  simp only [bool_iff_prop_or]
+  simp only [bool_iff_prop_not]
+  simp only [bool_iff_prop_and]
+  constructor
+  · intro a1
+    by_cases c1 : eval V P = true
+    case pos =>
+      right
+      intro contra
+      apply a1
+      exact ⟨c1, contra⟩
+    case neg =>
+      left
+      exact c1
+  · intro a1
+    intro contra
+    obtain ⟨contra_left, contra_right⟩ := contra
+    cases a1
+    case inl a1 =>
+      apply a1
+      exact contra_left
+    case inr a1 =>
+      apply a1
+      exact contra_right
+
+
+lemma de_morgan_2
+  (V : ValuationAsTotalFunction)
+  (P Q : Formula_) :
+  eval V (not_ (or_ P Q)) = true ↔
+    eval V (and_ (not_ P) (not_ Q)) = true :=
+  by
+  simp only [eval]
+  simp only [bool_iff_prop_and]
+  simp only [bool_iff_prop_not]
+  simp only [bool_iff_prop_or]
+  constructor
+  · intro a1
+    constructor
+    · intro contra
+      apply a1
+      left
+      exact contra
+    · intro contra
+      apply a1
+      right
+      exact contra
+  · intro a1 contra
+    obtain ⟨a1_left, a1_right⟩ := a1
+    cases contra
+    case inl contra =>
+      apply a1_left
+      exact contra
+    case inr contra =>
+      apply a1_right
+      exact contra
+
+
+example
+  (V : ValuationAsTotalFunction)
+  (FS : List Formula_) :
+  eval V (not_ (list_conj FS)) = true ↔
+    eval V (list_disj (List.map not_ FS)) = true :=
+  by
+  simp only [eval]
+  simp only [bool_iff_prop_not]
+  simp only [eval_list_conj_eq_true_iff_forall_eval_eq_true]
+  simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
+  simp only [List.mem_map]
+  constructor
+  · intro a1
+    by_contra contra_1
+    apply a1
+    intro F a2
+    by_contra contra_2
+    apply contra_1
+    apply Exists.intro (not_ F)
+    constructor
+    · apply Exists.intro F
+      constructor
+      · exact a2
+      · rfl
+    · unfold eval
+      simp only [bool_iff_prop_not]
+      exact contra_2
+  · intro a1 contra
+    obtain ⟨P, ⟨Q, a1_left_left, a1_left_right⟩, a1_right⟩ := a1
+    rewrite [← a1_left_right] at a1_right
+    unfold eval at a1_right
+    simp only [bool_iff_prop_not] at a1_right
+    apply a1_right
+    apply contra
+    exact a1_left_left
+
+
+example
+  (V : ValuationAsTotalFunction)
+  (FSS : List (List Formula_))
+  (F : Formula_)
+  (h1 : eval V (not_ F) = true ↔ eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true) :
+  eval V F = true ↔ eval V (list_of_lists_to_conjunction_of_disjunctions (List.map (fun (FS : List Formula_) => List.map not_ FS) FSS)) = true :=
+  by
+  unfold list_of_lists_to_disjunction_of_conjunctions at h1
+  simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true] at h1
+  simp only [List.mem_map] at h1
+
+  unfold list_of_lists_to_conjunction_of_disjunctions
+  simp only [eval_list_conj_eq_true_iff_forall_eval_eq_true]
+  simp only [List.map_map, List.mem_map, Function.comp_apply]
+  constructor
+  · intro a1 P a2
+    obtain ⟨FS, a2_left, a2_right⟩ := a2
+    rewrite [← a2_right]
+    simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
+    simp only [List.mem_map]
+    sorry
+  · sorry
+
+
 
 
 lemma eval_eq_eval_to_cnf_v3
