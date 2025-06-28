@@ -229,37 +229,33 @@ def map_map_not
 example
   (V : ValuationAsTotalFunction)
   (FSS : List (List Formula_)) :
-  eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true ↔
-    eval V (not_ (list_of_lists_to_conjunction_of_disjunctions (map_map_not FSS))) :=
+  eval V (not_ (list_of_lists_to_disjunction_of_conjunctions FSS)) = true ↔
+    eval V (list_of_lists_to_conjunction_of_disjunctions (map_map_not FSS)) :=
   by
   unfold list_of_lists_to_disjunction_of_conjunctions
   unfold list_of_lists_to_conjunction_of_disjunctions
   unfold map_map_not
-  rewrite [de_morgan_list_alt_2]
-  simp only [List.map_map]
-  unfold eval
-  simp only [bool_iff_prop_not]
+  rewrite [de_morgan_list_2]
   simp only [eval_list_conj_eq_true_iff_forall_eval_eq_true]
-  simp only [List.mem_map, Function.comp_apply]
   constructor
-  · intro a1 contra
-    apply a1
-    intro F a2
+  · intro a1 F a2
+    simp only [List.map_map, List.mem_map, Function.comp_apply] at a2
     obtain ⟨FS, a2_left, a2_right⟩ := a2
     rewrite [← a2_right]
-    rewrite [de_morgan_list_1]
-    apply contra
+    rewrite [← de_morgan_list_1]
+    apply a1
+    simp only [List.map_map, List.mem_map, Function.comp_apply]
     apply Exists.intro FS
     constructor
     · exact a2_left
     · rfl
-  · intro a1 contra
-    apply a1
-    intro F a2
+  · intro a1 F a2
+    simp only [List.map_map, List.mem_map, Function.comp_apply] at a2
     obtain ⟨FS, a2_left, a2_right⟩ := a2
     rewrite [← a2_right]
-    rewrite [← de_morgan_list_1]
-    apply contra
+    rewrite [de_morgan_list_1]
+    apply a1
+    simp only [List.map_map, List.mem_map, Function.comp_apply]
     apply Exists.intro FS
     constructor
     · exact a2_left
