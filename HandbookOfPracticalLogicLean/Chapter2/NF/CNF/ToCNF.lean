@@ -124,7 +124,7 @@ lemma de_morgan_2
       exact contra
 
 
-example
+lemma de_morgan_list_1
   (V : ValuationAsTotalFunction)
   (FS : List Formula_) :
   eval V (not_ (list_conj FS)) = true ↔
