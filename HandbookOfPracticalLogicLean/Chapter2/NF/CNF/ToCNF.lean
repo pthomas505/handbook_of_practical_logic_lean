@@ -157,6 +157,39 @@ lemma de_morgan_list_1
       rfl
 
 
+lemma de_morgan_list_2
+  (V : ValuationAsTotalFunction)
+  (FS : List Formula_) :
+  eval V (not_ (list_disj FS)) = true ↔
+    eval V (list_conj (List.map not_ FS)) = true :=
+  by
+  induction FS
+  case nil =>
+    simp only [List.map_nil]
+    simp only [list_disj]
+    simp only [list_conj]
+    simp only [eval]
+    simp only [b_not]
+  case cons hd tl ih =>
+    cases tl
+    case nil =>
+      simp only [List.map_cons, List.map_nil]
+      unfold list_disj
+      unfold list_conj
+      rfl
+    case cons tl_hd tl_tl =>
+      simp only [List.map_cons] at ih
+
+      simp only [List.map_cons]
+      unfold list_disj
+      unfold list_conj
+      simp only [de_morgan_2]
+      unfold eval
+      simp only [bool_iff_prop_and]
+      rewrite [ih]
+      rfl
+
+
 example
   (V : ValuationAsTotalFunction)
   (FSS : List (List Formula_))
