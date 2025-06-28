@@ -190,6 +190,82 @@ lemma de_morgan_list_2
       rfl
 
 
+lemma de_morgan_list_alt_1
+  (V : ValuationAsTotalFunction)
+  (FS : List Formula_) :
+  eval V (list_conj FS) = true ↔
+    eval V (not_ (list_disj (List.map not_ FS))) = true :=
+  by
+  simp only [eval]
+  simp only [bool_iff_prop_not]
+  rewrite [← de_morgan_list_1]
+  simp only [eval]
+  simp only [bool_iff_prop_not]
+  simp only [Bool.not_eq_true, Bool.not_eq_false]
+
+
+lemma de_morgan_list_alt_2
+  (V : ValuationAsTotalFunction)
+  (FS : List Formula_) :
+  eval V (list_disj FS) = true ↔
+    eval V (not_ (list_conj (List.map not_ FS))) = true :=
+  by
+  simp only [eval]
+  simp only [bool_iff_prop_not]
+  rewrite [← de_morgan_list_2]
+  simp only [eval]
+  simp only [bool_iff_prop_not]
+  simp only [Bool.not_eq_true, Bool.not_eq_false]
+
+
+def map_map_not
+  (FSS : List (List Formula_)) :
+  List (List Formula_) :=
+  List.map (List.map not_) FSS
+
+#eval map_map_not ([[atom_ "P", atom_ "Q"], [atom_ "R", atom_ "S"]])
+
+
+example
+  (V : ValuationAsTotalFunction)
+  (FSS : List (List Formula_)) :
+  eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true ↔
+    eval V (not_ (list_of_lists_to_conjunction_of_disjunctions (map_map_not FSS))) :=
+  by
+  unfold list_of_lists_to_disjunction_of_conjunctions
+  unfold list_of_lists_to_conjunction_of_disjunctions
+  unfold map_map_not
+  rewrite [de_morgan_list_alt_2]
+  simp only [List.map_map]
+  unfold eval
+  simp only [bool_iff_prop_not]
+  simp only [eval_list_conj_eq_true_iff_forall_eval_eq_true]
+  simp only [List.mem_map, Function.comp_apply]
+  constructor
+  · intro a1 contra
+    apply a1
+    intro F a2
+    obtain ⟨FS, a2_left, a2_right⟩ := a2
+    rewrite [← a2_right]
+    rewrite [de_morgan_list_1]
+    apply contra
+    apply Exists.intro FS
+    constructor
+    · exact a2_left
+    · rfl
+  · intro a1 contra
+    apply a1
+    intro F a2
+    obtain ⟨FS, a2_left, a2_right⟩ := a2
+    rewrite [← a2_right]
+    rewrite [← de_morgan_list_1]
+    apply contra
+    apply Exists.intro FS
+    constructor
+    · exact a2_left
+    · rfl
+
+
 lemma eval_eq_eval_to_cnf_v3
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
