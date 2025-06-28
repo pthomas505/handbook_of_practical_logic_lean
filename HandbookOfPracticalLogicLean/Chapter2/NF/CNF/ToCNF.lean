@@ -130,35 +130,31 @@ example
   eval V (not_ (list_conj FS)) = true ↔
     eval V (list_disj (List.map not_ FS)) = true :=
   by
-  simp only [eval]
-  simp only [bool_iff_prop_not]
-  simp only [eval_list_conj_eq_true_iff_forall_eval_eq_true]
-  simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
-  simp only [List.mem_map]
-  constructor
-  · intro a1
-    by_contra contra_1
-    apply a1
-    intro F a2
-    by_contra contra_2
-    apply contra_1
-    apply Exists.intro (not_ F)
-    constructor
-    · apply Exists.intro F
-      constructor
-      · exact a2
-      · rfl
-    · unfold eval
-      simp only [bool_iff_prop_not]
-      exact contra_2
-  · intro a1 contra
-    obtain ⟨P, ⟨Q, a1_left_left, a1_left_right⟩, a1_right⟩ := a1
-    rewrite [← a1_left_right] at a1_right
-    unfold eval at a1_right
-    simp only [bool_iff_prop_not] at a1_right
-    apply a1_right
-    apply contra
-    exact a1_left_left
+  induction FS
+  case nil =>
+    simp only [List.map_nil]
+    simp only [list_conj]
+    simp only [list_disj]
+    simp only [eval]
+    simp only [b_not]
+  case cons hd tl ih =>
+    cases tl
+    case nil =>
+      simp only [List.map_cons, List.map_nil]
+      unfold list_conj
+      unfold list_disj
+      rfl
+    case cons tl_hd tl_tl =>
+      simp only [List.map_cons] at ih
+
+      simp only [List.map_cons]
+      unfold list_conj
+      unfold list_disj
+      simp only [de_morgan_1]
+      unfold eval
+      simp only [bool_iff_prop_or]
+      rewrite [ih]
+      rfl
 
 
 example
