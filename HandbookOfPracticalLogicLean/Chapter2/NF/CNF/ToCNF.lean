@@ -262,6 +262,32 @@ example
     · rfl
 
 
+example
+  (V : ValuationAsTotalFunction)
+  (FSS : List (List Formula_)) :
+  eval V (not_ (list_of_lists_to_conjunction_of_disjunctions FSS)) = true ↔
+    eval V (list_of_lists_to_disjunction_of_conjunctions (map_map_not FSS)) :=
+  by
+  unfold list_of_lists_to_conjunction_of_disjunctions
+  unfold list_of_lists_to_disjunction_of_conjunctions
+  unfold map_map_not
+  rewrite [de_morgan_list_1]
+  simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
+  simp only [List.map_map, List.mem_map, Function.comp_apply]
+  simp only [exists_exists_and_eq_and]
+  constructor
+  · intro a1
+    obtain ⟨FS, a1_left, a1_right⟩ := a1
+    rewrite [de_morgan_list_2] at a1_right
+    apply Exists.intro FS
+    exact ⟨a1_left, a1_right⟩
+  · intro a1
+    obtain ⟨FS, a1_left, a1_right⟩ := a1
+    rewrite [← de_morgan_list_2] at a1_right
+    apply Exists.intro FS
+    exact ⟨a1_left, a1_right⟩
+
+
 lemma eval_eq_eval_to_cnf_v3
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
