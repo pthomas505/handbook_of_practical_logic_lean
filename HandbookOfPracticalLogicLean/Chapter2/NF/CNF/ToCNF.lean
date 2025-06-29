@@ -302,8 +302,10 @@ lemma eval_eq_eval_to_cnf_v3
   simp only [eval]
   simp only [bool_iff_prop_not]
   rewrite [← eval_eq_eval_to_dnf_v3_aux]
-
-  sorry
+  simp only [← eval_eq_eval_to_nnf_v1]
+  simp only [eval]
+  simp only [bool_iff_prop_not]
+  simp only [Bool.not_eq_true, Bool.not_eq_false]
 
 
 -------------------------------------------------------------------------------
