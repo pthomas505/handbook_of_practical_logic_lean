@@ -15,13 +15,21 @@ set_option autoImplicit false
 open Formula_
 
 
+def map_map_not
+  (FSS : List (List Formula_)) :
+  List (List Formula_) :=
+  List.map (List.map not_) FSS
+
+#eval map_map_not ([[atom_ "P", atom_ "Q"], [atom_ "R", atom_ "S"]])
+
+
 /--
   Helper function for `to_cnf_v3`.
 -/
 def to_cnf_v3_aux
   (F : Formula_) :
   List (List Formula_) :=
-  List.map (fun (FS : List Formula_) => List.map negate_literal FS) (to_dnf_v3_aux (to_nnf_v1 (not_ F)))
+  map_map_not (to_dnf_v3_aux (to_nnf_v1 (not_ F)))
 
 #eval (to_cnf_v3_aux (Formula_| ((p \/ (q /\ r)) /\ (~ p \/ ~ r)))).toString
 
@@ -218,14 +226,6 @@ lemma de_morgan_list_alt_2
   simp only [Bool.not_eq_true, Bool.not_eq_false]
 
 
-def map_map_not
-  (FSS : List (List Formula_)) :
-  List (List Formula_) :=
-  List.map (List.map not_) FSS
-
-#eval map_map_not ([[atom_ "P", atom_ "Q"], [atom_ "R", atom_ "S"]])
-
-
 lemma de_morgan_list_of_lists_1
   (V : ValuationAsTotalFunction)
   (FSS : List (List Formula_)) :
@@ -290,7 +290,21 @@ lemma eval_eq_eval_to_cnf_v3
   (F : Formula_) :
   eval V F = true ↔ eval V (to_cnf_v3 F) = true :=
   by
-  sorry
+  induction F
+  case and_ phi psi phi_ih psi_ih =>
+    simp only [eval]
+    simp only [bool_iff_prop_and]
+    rewrite [phi_ih]
+    rewrite [psi_ih]
+    unfold to_cnf_v3
+    unfold to_cnf_v3_aux
+    unfold to_nnf_v1
+    simp only [to_nnf_neg_v1]
+    simp only [to_dnf_v3_aux]
+    unfold map_map_not
+    sorry
+  all_goals
+    sorry
 
 
 -------------------------------------------------------------------------------
