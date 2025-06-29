@@ -10,6 +10,9 @@ set_option autoImplicit false
 open Formula_
 
 
+/--
+  `map_map_not FSS` := Transforms every formula `F` in the list of lists of formulas `FSS` to `not_ F`.
+-/
 def map_map_not
   (FSS : List (List Formula_)) :
   List (List Formula_) :=
@@ -234,3 +237,6 @@ lemma de_morgan_list_of_lists_2
     rewrite [← de_morgan_list_2] at a1_right
     apply Exists.intro FS
     exact ⟨a1_left, a1_right⟩
+
+
+#lint
