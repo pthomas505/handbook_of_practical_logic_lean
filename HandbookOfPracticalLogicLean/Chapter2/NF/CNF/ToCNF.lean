@@ -226,7 +226,7 @@ def map_map_not
 #eval map_map_not ([[atom_ "P", atom_ "Q"], [atom_ "R", atom_ "S"]])
 
 
-example
+lemma de_morgan_list_of_lists_1
   (V : ValuationAsTotalFunction)
   (FSS : List (List Formula_)) :
   eval V (not_ (list_of_lists_to_disjunction_of_conjunctions FSS)) = true ↔
@@ -237,32 +237,29 @@ example
   unfold map_map_not
   rewrite [de_morgan_list_2]
   simp only [eval_list_conj_eq_true_iff_forall_eval_eq_true]
+  simp only [List.map_map, List.mem_map, Function.comp_apply]
   constructor
   · intro a1 F a2
-    simp only [List.map_map, List.mem_map, Function.comp_apply] at a2
     obtain ⟨FS, a2_left, a2_right⟩ := a2
     rewrite [← a2_right]
     rewrite [← de_morgan_list_1]
     apply a1
-    simp only [List.map_map, List.mem_map, Function.comp_apply]
     apply Exists.intro FS
     constructor
     · exact a2_left
     · rfl
   · intro a1 F a2
-    simp only [List.map_map, List.mem_map, Function.comp_apply] at a2
     obtain ⟨FS, a2_left, a2_right⟩ := a2
     rewrite [← a2_right]
     rewrite [de_morgan_list_1]
     apply a1
-    simp only [List.map_map, List.mem_map, Function.comp_apply]
     apply Exists.intro FS
     constructor
     · exact a2_left
     · rfl
 
 
-example
+lemma de_morgan_list_of_lists_2
   (V : ValuationAsTotalFunction)
   (FSS : List (List Formula_)) :
   eval V (not_ (list_of_lists_to_conjunction_of_disjunctions FSS)) = true ↔
