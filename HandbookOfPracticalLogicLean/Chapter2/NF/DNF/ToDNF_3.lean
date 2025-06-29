@@ -1,6 +1,7 @@
 import MathlibExtraLean.AllPairs
 
 import HandbookOfPracticalLogicLean.Chapter2.NF.NF
+import HandbookOfPracticalLogicLean.Chapter2.NF.ListOfListsTo
 import HandbookOfPracticalLogicLean.Chapter2.NF.DNF.ToDNF_1
 import HandbookOfPracticalLogicLean.Chapter2.NF.ListConj.Semantics
 import HandbookOfPracticalLogicLean.Chapter2.NF.ListDisj.Semantics
@@ -22,15 +23,6 @@ def to_dnf_v3_aux :
   | F => [[F]]
 
 #eval (to_dnf_v3_aux (Formula_| ((p \/ (q /\ r)) /\ (~ p \/ ~ r)))).toString
-
-
-/--
-  `list_of_lists_to_disjunction_of_conjunctions FSS` := Translates the list of lists of formulas `FSS` to a disjunction of conjunctions.
--/
-def list_of_lists_to_disjunction_of_conjunctions
-  (FSS : List (List Formula_)) :
-  Formula_ :=
-  list_disj (List.map list_conj FSS)
 
 
 /--

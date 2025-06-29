@@ -1,3 +1,5 @@
+import HandbookOfPracticalLogicLean.Chapter2.NF.ListOfListsTo
+
 import HandbookOfPracticalLogicLean.Chapter2.NF.ListConj.Semantics
 import HandbookOfPracticalLogicLean.Chapter2.NF.ListDisj.Semantics
 
@@ -178,9 +180,11 @@ lemma de_morgan_list_alt_2
 lemma de_morgan_list_of_lists_1
   (V : ValuationAsTotalFunction)
   (FSS : List (List Formula_)) :
-  eval V (not_ (list_disj (List.map list_conj FSS))) = true ↔
-    eval V (list_conj (List.map list_disj (map_map_not FSS))) :=
+  eval V (not_ (list_of_lists_to_disjunction_of_conjunctions FSS)) = true ↔
+    eval V (list_of_lists_to_conjunction_of_disjunctions (map_map_not FSS)) :=
   by
+  unfold list_of_lists_to_disjunction_of_conjunctions
+  unfold list_of_lists_to_conjunction_of_disjunctions
   unfold map_map_not
   rewrite [de_morgan_list_2]
   simp only [eval_list_conj_eq_true_iff_forall_eval_eq_true]
@@ -209,9 +213,11 @@ lemma de_morgan_list_of_lists_1
 lemma de_morgan_list_of_lists_2
   (V : ValuationAsTotalFunction)
   (FSS : List (List Formula_)) :
-  eval V (not_ (list_conj (List.map list_disj FSS))) = true ↔
-    eval V (list_disj (List.map list_conj (map_map_not FSS))) :=
+  eval V (not_ (list_of_lists_to_conjunction_of_disjunctions FSS)) = true ↔
+    eval V (list_of_lists_to_disjunction_of_conjunctions (map_map_not FSS)) :=
   by
+  unfold list_of_lists_to_conjunction_of_disjunctions
+  unfold list_of_lists_to_disjunction_of_conjunctions
   unfold map_map_not
   rewrite [de_morgan_list_1]
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
