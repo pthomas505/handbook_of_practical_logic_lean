@@ -296,6 +296,13 @@ lemma eval_eq_eval_to_cnf_v3
   (F : Formula_) :
   eval V F = true ↔ eval V (to_cnf_v3 F) = true :=
   by
+  unfold to_cnf_v3
+  unfold to_cnf_v3_aux
+  rewrite [← de_morgan_list_of_lists_1]
+  simp only [eval]
+  simp only [bool_iff_prop_not]
+  rewrite [← eval_eq_eval_to_dnf_v3_aux]
+
   sorry
 
 

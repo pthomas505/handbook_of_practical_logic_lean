@@ -45,12 +45,11 @@ def to_dnf_v3
 #eval (list_of_lists_to_disjunction_of_conjunctions [[atom_ "P", atom_ "Q"], [not_ (atom_ "P"), atom_ "R"]]).toString
 
 
-lemma eval_eq_eval_to_dnf_v3
+lemma eval_eq_eval_to_dnf_v3_aux
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V F = true ↔ eval V (to_dnf_v3 F) = true :=
+  eval V F = true ↔ eval V (list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_aux F)) = true :=
   by
-  unfold to_dnf_v3
   induction F
   case and_ phi psi phi_ih psi_ih =>
     unfold list_of_lists_to_disjunction_of_conjunctions at phi_ih
@@ -153,6 +152,15 @@ lemma eval_eq_eval_to_dnf_v3
         · exact a1_right
   all_goals
     rfl
+
+
+lemma eval_eq_eval_to_dnf_v3
+  (V : ValuationAsTotalFunction)
+  (F : Formula_) :
+  eval V F = true ↔ eval V (to_dnf_v3 F) = true :=
+  by
+  unfold to_dnf_v3
+  apply eval_eq_eval_to_dnf_v3_aux
 
 
 -------------------------------------------------------------------------------
