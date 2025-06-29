@@ -23,6 +23,12 @@ def map_map_not
 #eval map_map_not ([[atom_ "P", atom_ "Q"], [atom_ "R", atom_ "S"]])
 
 
+def map_map_negate_literal
+  (FSS : List (List Formula_)) :
+  List (List Formula_) :=
+  List.map (List.map negate_literal) FSS
+
+
 /--
   Helper function for `to_cnf_v3`.
 -/
@@ -290,21 +296,7 @@ lemma eval_eq_eval_to_cnf_v3
   (F : Formula_) :
   eval V F = true ↔ eval V (to_cnf_v3 F) = true :=
   by
-  induction F
-  case and_ phi psi phi_ih psi_ih =>
-    simp only [eval]
-    simp only [bool_iff_prop_and]
-    rewrite [phi_ih]
-    rewrite [psi_ih]
-    unfold to_cnf_v3
-    unfold to_cnf_v3_aux
-    unfold to_nnf_v1
-    simp only [to_nnf_neg_v1]
-    simp only [to_dnf_v3_aux]
-    unfold map_map_not
-    sorry
-  all_goals
-    sorry
+  sorry
 
 
 -------------------------------------------------------------------------------
