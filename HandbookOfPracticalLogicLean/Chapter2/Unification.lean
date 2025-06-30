@@ -71,15 +71,15 @@ def pattern_match_aux
     match pattern_match_aux σ phi phi' with
     | none => none
     | some σ' => pattern_match_aux σ' psi psi'
-  | or_ phi psi, and_ phi' psi' =>
+  | or_ phi psi, or_ phi' psi' =>
     match pattern_match_aux σ phi phi' with
     | none => none
     | some σ' => pattern_match_aux σ' psi psi'
-  | imp_ phi psi, and_ phi' psi' =>
+  | imp_ phi psi, imp_ phi' psi' =>
     match pattern_match_aux σ phi phi' with
     | none => none
     | some σ' => pattern_match_aux σ' psi psi'
-  | iff_ phi psi, and_ phi' psi' =>
+  | iff_ phi psi, iff_ phi' psi' =>
     match pattern_match_aux σ phi phi' with
     | none => none
     | some σ' => pattern_match_aux σ' psi psi'
