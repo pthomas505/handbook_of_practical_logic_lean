@@ -8,12 +8,12 @@ open Formula_
 
 
 def is_unifier
-  (τ : String → Formula_)
+  (σ : String → Formula_)
   (pairs : List (Formula_ × Formula_)) :
   Prop :=
   ∀ (p : (Formula_ × Formula_)), p ∈ pairs →
-    replace_atom_all_rec τ p.fst =
-      replace_atom_all_rec τ p.snd
+    replace_atom_all_rec σ p.fst =
+      replace_atom_all_rec σ p.snd
 
 
 lemma replace_atom_all_rec_compose
