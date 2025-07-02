@@ -142,6 +142,7 @@ inductive Proof : Type
   | ax_3 : Proof
     -- modus ponens
   | mp : Proof → Proof → Formula_ → Proof
+    -- alternatively to having `sub` change `mp` to `mp : Proof → Formula_ → Proof → Formula_ → Formula_ → Proof`
     -- substitution
   | sub : Proof → Unifier → Formula_ → Proof
 
