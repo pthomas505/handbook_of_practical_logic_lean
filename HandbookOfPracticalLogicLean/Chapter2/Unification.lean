@@ -1,5 +1,6 @@
 import HandbookOfPracticalLogicLean.Chapter2.Replace
 
+import Init.Data.List
 import Batteries.Data.HashMap
 
 
@@ -101,7 +102,62 @@ def pattern_match
 -------------------------------------------------------------------------------
 
 
-def Unifier : Type := List (String × Formula_)
+def Formula_.rename_atoms
+  (σ : Batteries.HashMap String String) :
+  Formula_ → Formula_
+  | false_ => false_
+  | true_ => true_
+  | atom_ X =>
+      match Batteries.HashMap.find? σ X with
+      | some Y => atom_ Y
+      | none => atom_ X
+  | not_ phi => not_ (phi.rename_atoms σ)
+  | and_ phi psi => and_ (phi.rename_atoms σ) (psi.rename_atoms σ)
+  | or_ phi psi => or_ (phi.rename_atoms σ) (psi.rename_atoms σ)
+  | imp_ phi psi => imp_ (phi.rename_atoms σ) (psi.rename_atoms σ)
+  | iff_ phi psi => iff_ (phi.rename_atoms σ) (psi.rename_atoms σ)
+
+
+def Formula_.rename_atoms_to_nat
+  (F : Formula_)
+  (start : Nat) :
+  Formula_ :=
+  let dedup_atom_list := F.atom_list.dedup
+  let index_list : List Nat := List.range' start dedup_atom_list.length
+  let index_as_string_list : List String := List.map Nat.repr index_list
+  let atom_index_as_string_pair_list : List (String × String) := List.zip dedup_atom_list index_as_string_list
+  let string_to_index_string_map := Batteries.HashMap.ofList atom_index_as_string_pair_list
+  F.rename_atoms string_to_index_string_map
+
+#eval Formula_.rename_atoms_to_nat (Formula_| ((P -> Q) -> P)) 1
+
+
+def mk_formula_list_atoms_disjoint
+  (start : Nat) :
+  List Formula_ → List Formula_
+  | [] => []
+  | hd :: tl => (hd.rename_atoms_to_nat start) :: mk_formula_list_atoms_disjoint (start + hd.atom_list.dedup.length) tl
+
+  #eval let F := (Formula_| ((P -> Q) -> P)); (mk_formula_list_atoms_disjoint 1 [F, F, F, F]).map toString
+
+
+lemma mk_formula_list_atoms_disjoint_length
+  (start : Nat)
+  (FS : List Formula_) :
+  (mk_formula_list_atoms_disjoint start FS).length = FS.length :=
+  by
+  induction FS generalizing start
+  case nil =>
+    unfold mk_formula_list_atoms_disjoint
+    rfl
+  case cons hd tl ih =>
+    unfold mk_formula_list_atoms_disjoint
+    simp only [List.length_cons]
+    rewrite [ih]
+    rfl
+
+
+def Unifier : Type := Batteries.HashMap String String
 
 
 def unify_formulas
@@ -111,7 +167,6 @@ def unify_formulas
 
 
 structure unified_mp : Type where
-  (sigma : Unifier)
   (major : Formula_)
   (minor : Formula_)
   (consequent : Formula_)
@@ -120,31 +175,39 @@ structure unified_mp : Type where
 def unify_formulas_mp
   (major minor : Formula_) :
   Option unified_mp :=
-  sorry
-  /-
-  Let `major_renamed` be the result of consistently renaming the meta variables in `major` to ensure that none of the names in `major_renamed` occur in `minor`.
+  let renamed := mk_formula_list_atoms_disjoint 1 [major, minor]
+  have : 0 < renamed.length :=
+  by
+    unfold renamed
+    rewrite [mk_formula_list_atoms_disjoint_length]
+    simp only [List.length_cons, List.length_singleton, List.length_nil]
+    simp only [zero_add, Nat.reduceAdd, Nat.ofNat_pos]
+  let major_renamed : Formula_ := renamed[0]
 
-  Let `M` be a meta variable with a name that does not occur in `major_renamed` or `minor`.
+  have : 1 < renamed.length :=
+  by
+    unfold renamed
+    rewrite [mk_formula_list_atoms_disjoint_length]
+    simp only [List.length_cons, List.length_singleton, List.length_nil]
+    simp only [zero_add, Nat.reduceAdd, Nat.one_lt_ofNat]
+  let minor_renamed : Formula_ := renamed[1]
 
-  Call `unify_formulas` with `major_renamed` and `minor -> M` to obtain a substitution mapping `σ` or `none`.
+  let consequent : Formula_ := atom_ Nat.zero.repr
 
-  If `σ` then return `{σ, (σ major_renamed), (σ minor), (σ M) }`.
-  If `none` then return `none`.
-  -/
+  match unify_formulas major_renamed (imp_ minor_renamed consequent) with
+  | some σ =>
+      let major_unified := major_renamed.rename_atoms σ
+      let minor_unified := minor_renamed.rename_atoms σ
+      let consequent_unified := consequent.rename_atoms σ
+      some ⟨major_unified, minor_unified, consequent_unified⟩
+  | none => none
 
 
 inductive Proof : Type
-    -- axiom scheme 1
   | ax_1 : Proof
-    -- axiom scheme 2
   | ax_2 : Proof
-    -- axiom scheme 3
   | ax_3 : Proof
-    -- modus ponens
-  | mp : Proof → Proof → Formula_ → Proof
-    -- alternatively to having `sub` change `mp` to `mp : Proof → Formula_ → Proof → Formula_ → Formula_ → Proof`
-    -- substitution
-  | sub : Proof → Unifier → Formula_ → Proof
+  | mp : Proof → Formula_ → Proof → Formula_ → Formula_ → Proof
 
 open Proof
 
@@ -158,18 +221,7 @@ def Proof.formula :
   | ax_1 => schema_1
   | ax_2 => schema_2
   | ax_3 => schema_3
-  | mp _ _ F => F
-  | sub _ _ F => F
-
-
-def Proof.depth :
-  Proof → Nat
-  | ax_1 => 1
-  | ax_2 => 1
-  | ax_3 => 1
-  | mp major minor _ =>
-      (max major.depth minor.depth) + 1
-  | sub child _ _ => child.depth + 1
+  | mp _ _ _ _ F => F
 
 
 def unify_proofs_mp
@@ -177,12 +229,7 @@ def unify_proofs_mp
   Option Proof :=
   match unify_formulas_mp major_proof.formula minor_proof.formula with
   | some result =>
-      let major_sigma := List.filter (fun (p : String × Formula_) => p.fst ∈ result.major.atom_list) result.sigma
-      let minor_sigma := List.filter (fun (p : String × Formula_) => p.fst ∈ result.minor.atom_list) result.sigma
-      some (mp
-              (sub major_proof major_sigma result.major)
-              (sub minor_proof minor_sigma result.minor)
-              result.consequent)
+      some (mp major_proof result.major minor_proof result.minor result.consequent)
   | none => none
 
 
