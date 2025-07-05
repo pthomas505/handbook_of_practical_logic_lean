@@ -125,6 +125,29 @@ def replace_atom_all_rec
   | iff_ phi psi => iff_ (replace_atom_all_rec τ phi) (replace_atom_all_rec τ psi)
 
 
+lemma replace_atom_all_rec_id
+  (F : Formula_) :
+  replace_atom_all_rec (fun (X : String) => atom_ X) F = F :=
+  by
+  induction F
+  case false_ | true_ | atom_ X =>
+    unfold replace_atom_all_rec
+    rfl
+  case not_ phi ih =>
+    unfold replace_atom_all_rec
+    rewrite [ih]
+    rfl
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    unfold replace_atom_all_rec
+    rewrite [phi_ih]
+    rewrite [psi_ih]
+    rfl
+
+
 theorem theorem_2_3_all
   (V : ValuationAsTotalFunction)
   (τ : String → Formula_)
