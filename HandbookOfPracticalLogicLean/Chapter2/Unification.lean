@@ -1,4 +1,7 @@
 import HandbookOfPracticalLogicLean.Chapter2.Replace
+import HandbookOfPracticalLogicLean.Chapter2.SubFormula
+
+import Batteries.Data.HashMap
 
 
 set_option autoImplicit false
@@ -92,3 +95,26 @@ def is_most_general_unifier
   (S : Set (Formula_ × Formula_)) :
   Prop :=
   is_unifier σ S ∧ ∀ (τ : Instantiation), is_unifier τ S → is_more_general_instantiation σ τ
+
+
+example
+  (A : String)
+  (F : Formula_)
+  (h1 : is_proper_subformula (atom_ A) F) :
+  ∀ (σ : Instantiation), ¬ is_unifier σ { (atom_ A, F) } :=
+  by
+  unfold is_unifier
+  intro σ contra
+  induction F
+  case false_ | true_ =>
+    unfold is_proper_subformula at h1
+    unfold is_subformula at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+    contradiction
+  case atom_ X =>
+    unfold is_proper_subformula at h1
+    unfold is_subformula at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+    contradiction
+  all_goals
+    sorry
