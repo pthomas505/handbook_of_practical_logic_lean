@@ -97,6 +97,57 @@ def is_most_general_unifier
   is_unifier σ S ∧ ∀ (τ : Instantiation), is_unifier τ S → is_more_general_instantiation σ τ
 
 
+lemma is_subformula_imp_is_subformula_replace_atom_all_rec
+  (F F' : Formula_)
+  (σ : Instantiation)
+  (h1 : is_subformula F F') :
+  is_subformula (replace_atom_all_rec σ F) (replace_atom_all_rec σ F') :=
+  by
+  induction F'
+  case false_ | true_ | atom_ X =>
+    unfold is_subformula at h1
+    rewrite [h1]
+    apply is_subformula_refl
+  case not_ phi ih =>
+    unfold is_subformula at h1
+
+    cases h1
+    case inl h1 =>
+      rewrite [h1]
+      apply is_subformula_refl
+    case inr h1 =>
+      simp only [replace_atom_all_rec]
+      unfold is_subformula
+      right
+      apply ih
+      exact h1
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    unfold is_subformula at h1
+
+    cases h1
+    case inl h1 =>
+      rewrite [h1]
+      apply is_subformula_refl
+    case inr h1 =>
+      simp only [replace_atom_all_rec]
+      unfold is_subformula
+      right
+
+      cases h1
+      case inl h1 =>
+        left
+        apply phi_ih
+        exact h1
+      case inr h1 =>
+        right
+        apply psi_ih
+        exact h1
+
+
 example
   (A : String)
   (F : Formula_)
