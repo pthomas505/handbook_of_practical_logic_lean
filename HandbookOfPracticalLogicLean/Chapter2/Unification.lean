@@ -151,18 +151,14 @@ lemma is_subformula_imp_is_subformula_replace_atom_all_rec
 example
   (A : String)
   (F : Formula_)
+  (σ : Instantiation)
   (h1 : is_proper_subformula (atom_ A) F) :
-  ∀ (σ : Instantiation), ¬ is_unifier σ { (atom_ A, F) } :=
+  ¬ is_unifier σ { (atom_ A, F) } :=
   by
   unfold is_unifier
-  intro σ contra
+  intro contra
   induction F
-  case false_ | true_ =>
-    unfold is_proper_subformula at h1
-    unfold is_subformula at h1
-    obtain ⟨h1_left, h1_right⟩ := h1
-    contradiction
-  case atom_ X =>
+  case false_ | true_ | atom_ X =>
     unfold is_proper_subformula at h1
     unfold is_subformula at h1
     obtain ⟨h1_left, h1_right⟩ := h1
