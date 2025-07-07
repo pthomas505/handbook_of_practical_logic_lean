@@ -151,27 +151,52 @@ lemma is_subformula_trans
 
 
 /--
-  `is_proper_subformula F F'` := True if and only if `F` is a proper subformula of the formula `F'`.
+  `is_proper_subformula_v1 F F'` := True if and only if the formula `F` is a proper subformula of the formula `F'`.
 -/
-def is_proper_subformula
+def is_proper_subformula_v1
+  (F : Formula_) :
+  Formula_ → Prop
+  | false_ => False
+  | true_ => False
+  | atom_ _ => False
+  | not_ phi =>
+    is_subformula F phi
+  | and_ phi psi =>
+    is_subformula F phi ∨
+    is_subformula F psi
+  | or_ phi psi =>
+    is_subformula F phi ∨
+    is_subformula F psi
+  | imp_ phi psi =>
+    is_subformula F phi ∨
+    is_subformula F psi
+  | iff_ phi psi =>
+    is_subformula F phi ∨
+    is_subformula F psi
+
+
+/--
+  `is_proper_subformula_v2 F F'` := True if and only if the formula `F` is a proper subformula of the formula `F'`.
+-/
+def is_proper_subformula_v2
   (F F' : Formula_) :
   Prop :=
   is_subformula F F' ∧ ¬ F = F'
 
 instance
   (F F' : Formula_) :
-  Decidable (is_proper_subformula F F') :=
+  Decidable (is_proper_subformula_v2 F F') :=
   by
-  unfold is_proper_subformula
+  unfold is_proper_subformula_v2
   infer_instance
 
 
 example
   (F F' : Formula_)
   (h1 : ¬ is_subformula F F') :
-  ¬ is_proper_subformula F F' :=
+  ¬ is_proper_subformula_v2 F F' :=
   by
-  unfold is_proper_subformula
+  unfold is_proper_subformula_v2
   intro contra
   obtain ⟨contra_left, contra_right⟩ := contra
   apply h1

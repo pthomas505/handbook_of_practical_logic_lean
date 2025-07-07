@@ -152,14 +152,24 @@ example
   (A : String)
   (F : Formula_)
   (σ : Instantiation)
-  (h1 : is_proper_subformula (atom_ A) F) :
+  (h1 : is_proper_subformula_v2 (atom_ A) F) :
+  is_proper_subformula_v2 (replace_atom_all_rec σ (atom_ A)) (replace_atom_all_rec σ F) :=
+  by
+  sorry
+
+
+example
+  (A : String)
+  (F : Formula_)
+  (σ : Instantiation)
+  (h1 : is_proper_subformula_v2 (atom_ A) F) :
   ¬ is_unifier σ { (atom_ A, F) } :=
   by
   unfold is_unifier
   intro contra
   induction F
   case false_ | true_ | atom_ X =>
-    unfold is_proper_subformula at h1
+    unfold is_proper_subformula_v2 at h1
     unfold is_subformula at h1
     obtain ⟨h1_left, h1_right⟩ := h1
     contradiction
