@@ -307,10 +307,10 @@ lemma is_proper_subformula_v1_imp_lt_size
   (h1 : is_proper_subformula_v1 F F') :
   F.size < F'.size :=
   by
-  induction F'
+  cases F'
   case false_ | true_ | atom_ X =>
     simp only [is_proper_subformula_v1] at h1
-  case not_ phi ih =>
+  case not_ phi =>
     simp only [is_proper_subformula_v1] at h1
 
     obtain s1 := is_subformula_imp_le_size F phi h1
@@ -318,10 +318,10 @@ lemma is_proper_subformula_v1_imp_lt_size
     simp only [size]
     apply lt_add_one
   case
-      and_ phi psi phi_ih psi_ih
-    | or_ phi psi phi_ih psi_ih
-    | imp_ phi psi phi_ih psi_ih
-    | iff_ phi psi phi_ih psi_ih =>
+      and_ phi psi
+    | or_ phi psi
+    | imp_ phi psi
+    | iff_ phi psi =>
     simp only [is_proper_subformula_v1] at h1
 
     cases h1
