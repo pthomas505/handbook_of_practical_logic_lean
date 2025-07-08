@@ -228,4 +228,89 @@ example
   exact contra_left
 
 
+lemma is_proper_subformula_v2_imp_is_proper_subformula_v1
+  (F F' : Formula_)
+  (h1 : is_proper_subformula_v2 F F') :
+  is_proper_subformula_v1 F F' :=
+  by
+  cases F'
+  case false_ | true_ | atom_ X =>
+    unfold is_proper_subformula_v2 at h1
+    unfold is_subformula at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+    contradiction
+  all_goals
+    unfold is_proper_subformula_v2 at h1
+    unfold is_subformula at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
+    simp only [is_proper_subformula_v1]
+    cases h1_left
+    case inl h1_left =>
+      contradiction
+    case inr h1_left =>
+      exact h1_left
+
+
+example
+  (F F' : Formula_)
+  (h1 : is_proper_subformula_v1 F F') :
+  F.size < F'.size :=
+  by
+  induction F'
+  case false_ | true_ | atom_ X =>
+    simp only [is_proper_subformula_v1] at h1
+  case not_ phi ih =>
+    simp only [is_proper_subformula_v1] at h1
+
+    by_cases c1 : F = phi
+    case pos =>
+      rewrite [c1]
+      simp only [size]
+      apply lt_add_one
+    case neg =>
+      trans phi.size
+      · apply ih
+        apply is_proper_subformula_v2_imp_is_proper_subformula_v1
+        unfold is_proper_subformula_v2
+        exact ⟨h1, c1⟩
+      · simp only [size]
+        apply lt_add_one
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    simp only [is_proper_subformula_v1] at h1
+
+    cases h1
+    case inl h1 =>
+      by_cases c1 : F = phi
+      case pos =>
+        rewrite [c1]
+        simp only [size]
+        linarith
+      case neg =>
+        trans phi.size
+        · apply phi_ih
+          apply is_proper_subformula_v2_imp_is_proper_subformula_v1
+          unfold is_proper_subformula_v2
+          exact ⟨h1, c1⟩
+        · simp only [size]
+          linarith
+    case inr h1 =>
+      by_cases c1 : F = psi
+      case pos =>
+        rewrite [c1]
+        simp only [size]
+        linarith
+      case neg =>
+        trans psi.size
+        · apply psi_ih
+          apply is_proper_subformula_v2_imp_is_proper_subformula_v1
+          unfold is_proper_subformula_v2
+          exact ⟨h1, c1⟩
+        · simp only [size]
+          linarith
+
 #lint
