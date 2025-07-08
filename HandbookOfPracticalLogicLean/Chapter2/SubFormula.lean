@@ -252,7 +252,57 @@ lemma is_proper_subformula_v2_imp_is_proper_subformula_v1
       exact h1_left
 
 
-example
+lemma is_subformula_imp_le_size
+  (F F' : Formula_)
+  (h1 : is_subformula F F') :
+  F.size <= F'.size :=
+  by
+  induction F'
+  case false_ | true_ | atom_ X =>
+    unfold is_subformula at h1
+    rewrite [h1]
+    apply le_refl
+  case not_ phi ih =>
+    unfold is_subformula at h1
+
+    cases h1
+    case inl h1 =>
+      rewrite [h1]
+      apply le_refl
+    case inr h1 =>
+      trans phi.size
+      apply ih
+      · exact h1
+      · simp only [size]
+        apply Nat.le_add_right
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    unfold is_subformula at h1
+
+    cases h1
+    case inl h1 =>
+      rewrite [h1]
+      apply le_refl
+    case inr h1 =>
+      cases h1
+      case inl h1 =>
+        trans phi.size
+        · apply phi_ih
+          exact h1
+        · simp only [size]
+          linarith
+      case inr h1 =>
+        trans psi.size
+        · apply psi_ih
+          exact h1
+        · simp only [size]
+          linarith
+
+
+lemma is_proper_subformula_v1_imp_lt_size
   (F F' : Formula_)
   (h1 : is_proper_subformula_v1 F F') :
   F.size < F'.size :=
@@ -263,19 +313,10 @@ example
   case not_ phi ih =>
     simp only [is_proper_subformula_v1] at h1
 
-    by_cases c1 : F = phi
-    case pos =>
-      rewrite [c1]
-      simp only [size]
-      apply lt_add_one
-    case neg =>
-      trans phi.size
-      · apply ih
-        apply is_proper_subformula_v2_imp_is_proper_subformula_v1
-        unfold is_proper_subformula_v2
-        exact ⟨h1, c1⟩
-      · simp only [size]
-        apply lt_add_one
+    obtain s1 := is_subformula_imp_le_size F phi h1
+    apply lt_of_le_of_lt s1
+    simp only [size]
+    apply lt_add_one
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih
@@ -285,32 +326,15 @@ example
 
     cases h1
     case inl h1 =>
-      by_cases c1 : F = phi
-      case pos =>
-        rewrite [c1]
-        simp only [size]
-        linarith
-      case neg =>
-        trans phi.size
-        · apply phi_ih
-          apply is_proper_subformula_v2_imp_is_proper_subformula_v1
-          unfold is_proper_subformula_v2
-          exact ⟨h1, c1⟩
-        · simp only [size]
-          linarith
+      obtain s1 := is_subformula_imp_le_size F phi h1
+      apply lt_of_le_of_lt s1
+      simp only [size]
+      linarith
     case inr h1 =>
-      by_cases c1 : F = psi
-      case pos =>
-        rewrite [c1]
-        simp only [size]
-        linarith
-      case neg =>
-        trans psi.size
-        · apply psi_ih
-          apply is_proper_subformula_v2_imp_is_proper_subformula_v1
-          unfold is_proper_subformula_v2
-          exact ⟨h1, c1⟩
-        · simp only [size]
-          linarith
+      obtain s1 := is_subformula_imp_le_size F psi h1
+      apply lt_of_le_of_lt s1
+      simp only [size]
+      linarith
+
 
 #lint
