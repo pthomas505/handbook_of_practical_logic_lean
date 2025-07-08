@@ -249,8 +249,8 @@ lemma to_nnf_neg_v2_is_nnf_rec_v1_iff_to_nnf_v2_is_nnf_rec_v1
 
 lemma to_nnf_v2_is_nnf_rec_v1
   (F : Formula_)
-  (h1 : ¬ is_proper_subformula false_ F)
-  (h2 : ¬ is_proper_subformula true_ F) :
+  (h1 : ¬ is_proper_subformula_v2 false_ F)
+  (h2 : ¬ is_proper_subformula_v2 true_ F) :
   (to_nnf_v2 F).is_nnf_rec_v1 :=
   by
   induction F
@@ -259,41 +259,41 @@ lemma to_nnf_v2_is_nnf_rec_v1
     unfold is_nnf_rec_v1
     exact trivial
   all_goals
-    unfold is_proper_subformula at h1
+    unfold is_proper_subformula_v2 at h1
     unfold is_subformula at h1
 
-    unfold is_proper_subformula at h2
+    unfold is_proper_subformula_v2 at h2
     unfold is_subformula at h2
 
     unfold to_nnf_v2
   case not_ phi ih =>
     rewrite [to_nnf_neg_v2_is_nnf_rec_v1_iff_to_nnf_v2_is_nnf_rec_v1]
     apply ih
-    · unfold is_proper_subformula
+    · unfold is_proper_subformula_v2
       tauto
-    · unfold is_proper_subformula
+    · unfold is_proper_subformula_v2
       tauto
     · tauto
     · tauto
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih =>
-    unfold is_proper_subformula at phi_ih
-    unfold is_proper_subformula at psi_ih
+    unfold is_proper_subformula_v2 at phi_ih
+    unfold is_proper_subformula_v2 at psi_ih
 
     unfold is_nnf_rec_v1
     tauto
   case imp_ phi psi phi_ih psi_ih =>
-    unfold is_proper_subformula at phi_ih
-    unfold is_proper_subformula at psi_ih
+    unfold is_proper_subformula_v2 at phi_ih
+    unfold is_proper_subformula_v2 at psi_ih
 
     unfold is_nnf_rec_v1
     rewrite [to_nnf_neg_v2_is_nnf_rec_v1_iff_to_nnf_v2_is_nnf_rec_v1]
     all_goals
       tauto
   case iff_ phi psi phi_ih psi_ih =>
-    unfold is_proper_subformula at phi_ih
-    unfold is_proper_subformula at psi_ih
+    unfold is_proper_subformula_v2 at phi_ih
+    unfold is_proper_subformula_v2 at psi_ih
 
     simp only [is_nnf_rec_v1]
     rewrite [to_nnf_neg_v2_is_nnf_rec_v1_iff_to_nnf_v2_is_nnf_rec_v1]
