@@ -337,4 +337,70 @@ lemma is_proper_subformula_v1_imp_lt_size
       linarith
 
 
+lemma is_proper_subformula_v1_imp_is_subformula
+  (F F' : Formula_)
+  (h1 : is_proper_subformula_v1 F F') :
+  is_subformula F F' :=
+  by
+  cases F'
+  case false_ | true_ | atom_ X =>
+    simp only [is_proper_subformula_v1] at h1
+  case not_ phi =>
+    simp only [is_proper_subformula_v1] at h1
+
+    unfold is_subformula
+    right
+    exact h1
+  case
+      and_ phi psi
+    | or_ phi psi
+    | imp_ phi psi
+    | iff_ phi psi =>
+    simp only [is_proper_subformula_v1] at h1
+
+    unfold is_subformula
+    cases h1
+    case inl h1 =>
+      right
+      left
+      exact h1
+    case inr h1 =>
+      right
+      right
+      exact h1
+
+
+lemma not_is_proper_subformula_v1_self
+  (F : Formula_) :
+  ¬ is_proper_subformula_v1 F F :=
+  by
+  intro contra
+  obtain s1 := is_proper_subformula_v1_imp_lt_size F F contra
+  simp only [lt_self_iff_false] at s1
+
+
+lemma is_proper_subformula_v1_imp_neq
+  (F F' : Formula_)
+  (h1 : is_proper_subformula_v1 F F') :
+  ¬ F = F' :=
+  by
+  intro contra
+  rewrite [contra] at h1
+  apply not_is_proper_subformula_v1_self F'
+  exact h1
+
+
+lemma is_proper_subformula_v1_imp_is_proper_subformula_v2
+  (F F' : Formula_)
+  (h1 : is_proper_subformula_v1 F F') :
+  is_proper_subformula_v2 F F' :=
+  by
+  unfold is_proper_subformula_v2
+  constructor
+  · apply is_proper_subformula_v1_imp_is_subformula
+    exact h1
+  · apply is_proper_subformula_v1_imp_neq
+    exact h1
+
+
 #lint
