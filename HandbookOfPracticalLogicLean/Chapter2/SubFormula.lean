@@ -403,4 +403,43 @@ lemma is_proper_subformula_v1_imp_is_proper_subformula_v2
     exact h1
 
 
+lemma is_proper_subformula_v1_iff_is_proper_subformula_v2
+  (F F' : Formula_) :
+  is_proper_subformula_v1 F F' ↔ is_proper_subformula_v2 F F' :=
+  by
+  constructor
+  · apply is_proper_subformula_v1_imp_is_proper_subformula_v2
+  · apply is_proper_subformula_v2_imp_is_proper_subformula_v1
+
+
+example
+  (F F' : Formula_)
+  (h1 : is_subformula F F')
+  (h2 : is_subformula F' F) :
+  F = F' :=
+  by
+  cases F'
+  case false_ | true_ | atom_ X =>
+    unfold is_subformula at h1
+    exact h1
+  case not_ phi =>
+    unfold is_subformula at h1
+
+    cases h1
+    case inl h1 =>
+      exact h1
+    case inr h1 =>
+      have s1 : phi.not_.size ≤ phi.size :=
+      by
+        apply is_subformula_imp_le_size
+        apply is_subformula_trans (not_ phi) F
+        · exact h2
+        · exact h1
+
+      simp only [size] at s1
+      linarith
+  all_goals
+    sorry
+
+
 #lint
