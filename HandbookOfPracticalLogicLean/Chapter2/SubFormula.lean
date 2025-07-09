@@ -225,7 +225,20 @@ lemma is_subformula_imp_le_size
           linarith
 
 
-example
+lemma is_subformula_size_antisymm
+  (F F' : Formula_)
+  (h1 : is_subformula F F')
+  (h2 : is_subformula F' F) :
+  F.size = F'.size :=
+  by
+  apply Nat.le_antisymm
+  · apply is_subformula_imp_le_size
+    exact h1
+  · apply is_subformula_imp_le_size
+    exact h2
+
+
+lemma is_subformula_antisymm
   (F F' : Formula_)
   (h1 : is_subformula F F')
   (h2 : is_subformula F' F) :
@@ -251,8 +264,118 @@ example
 
       simp only [size] at s1
       linarith
-  all_goals
-    sorry
+  case and_ phi psi =>
+    unfold is_subformula at h1
+
+    cases h1
+    case inl h1 =>
+      exact h1
+    case inr h1 =>
+      cases h1
+      case inl h1 =>
+        have s1 : (and_ phi psi).size ≤ phi.size :=
+        by
+          apply is_subformula_imp_le_size
+          apply is_subformula_trans (and_ phi psi) F
+          · exact h2
+          · exact h1
+
+        simp only [size] at s1
+        linarith
+      case inr h1 =>
+        have s1 : (and_ phi psi).size ≤ psi.size :=
+        by
+          apply is_subformula_imp_le_size
+          apply is_subformula_trans (and_ phi psi) F
+          · exact h2
+          · exact h1
+
+        simp only [size] at s1
+        linarith
+  case or_ phi psi =>
+    unfold is_subformula at h1
+
+    cases h1
+    case inl h1 =>
+      exact h1
+    case inr h1 =>
+      cases h1
+      case inl h1 =>
+        have s1 : (or_ phi psi).size ≤ phi.size :=
+        by
+          apply is_subformula_imp_le_size
+          apply is_subformula_trans (or_ phi psi) F
+          · exact h2
+          · exact h1
+
+        simp only [size] at s1
+        linarith
+      case inr h1 =>
+        have s1 : (or_ phi psi).size ≤ psi.size :=
+        by
+          apply is_subformula_imp_le_size
+          apply is_subformula_trans (or_ phi psi) F
+          · exact h2
+          · exact h1
+
+        simp only [size] at s1
+        linarith
+  case imp_ phi psi =>
+    unfold is_subformula at h1
+
+    cases h1
+    case inl h1 =>
+      exact h1
+    case inr h1 =>
+      cases h1
+      case inl h1 =>
+        have s1 : (imp_ phi psi).size ≤ phi.size :=
+        by
+          apply is_subformula_imp_le_size
+          apply is_subformula_trans (imp_ phi psi) F
+          · exact h2
+          · exact h1
+
+        simp only [size] at s1
+        linarith
+      case inr h1 =>
+        have s1 : (imp_ phi psi).size ≤ psi.size :=
+        by
+          apply is_subformula_imp_le_size
+          apply is_subformula_trans (imp_ phi psi) F
+          · exact h2
+          · exact h1
+
+        simp only [size] at s1
+        linarith
+  case iff_ phi psi =>
+    unfold is_subformula at h1
+
+    cases h1
+    case inl h1 =>
+      exact h1
+    case inr h1 =>
+      cases h1
+      case inl h1 =>
+        have s1 : (iff_ phi psi).size ≤ phi.size :=
+        by
+          apply is_subformula_imp_le_size
+          apply is_subformula_trans (iff_ phi psi) F
+          · exact h2
+          · exact h1
+
+        simp only [size] at s1
+        linarith
+      case inr h1 =>
+        have s1 : (iff_ phi psi).size ≤ psi.size :=
+        by
+          apply is_subformula_imp_le_size
+          apply is_subformula_trans (iff_ phi psi) F
+          · exact h2
+          · exact h1
+
+        simp only [size] at s1
+        linarith
 
 
 -------------------------------------------------------------------------------
