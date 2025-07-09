@@ -178,7 +178,7 @@ lemma is_subformula_trans
 lemma is_subformula_imp_le_size
   (F F' : Formula_)
   (h1 : is_subformula F F') :
-  F.size <= F'.size :=
+  F.size ≤ F'.size :=
   by
   induction F'
   case false_ | true_ | atom_ X =>
