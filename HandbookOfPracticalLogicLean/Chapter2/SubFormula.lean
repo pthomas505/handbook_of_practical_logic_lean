@@ -255,6 +255,9 @@ example
     sorry
 
 
+-------------------------------------------------------------------------------
+
+
 /--
   `is_proper_subformula_v1 F F'` := True if and only if the formula `F` is a proper subformula of the formula `F'`.
 -/
