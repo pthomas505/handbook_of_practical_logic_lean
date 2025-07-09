@@ -175,6 +175,86 @@ lemma is_subformula_trans
         exact h2
 
 
+lemma is_subformula_imp_le_size
+  (F F' : Formula_)
+  (h1 : is_subformula F F') :
+  F.size <= F'.size :=
+  by
+  induction F'
+  case false_ | true_ | atom_ X =>
+    unfold is_subformula at h1
+    rewrite [h1]
+    apply le_refl
+  case not_ phi ih =>
+    unfold is_subformula at h1
+
+    cases h1
+    case inl h1 =>
+      rewrite [h1]
+      apply le_refl
+    case inr h1 =>
+      trans phi.size
+      apply ih
+      · exact h1
+      · simp only [size]
+        apply Nat.le_add_right
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    unfold is_subformula at h1
+
+    cases h1
+    case inl h1 =>
+      rewrite [h1]
+      apply le_refl
+    case inr h1 =>
+      cases h1
+      case inl h1 =>
+        trans phi.size
+        · apply phi_ih
+          exact h1
+        · simp only [size]
+          linarith
+      case inr h1 =>
+        trans psi.size
+        · apply psi_ih
+          exact h1
+        · simp only [size]
+          linarith
+
+
+example
+  (F F' : Formula_)
+  (h1 : is_subformula F F')
+  (h2 : is_subformula F' F) :
+  F = F' :=
+  by
+  cases F'
+  case false_ | true_ | atom_ X =>
+    unfold is_subformula at h1
+    exact h1
+  case not_ phi =>
+    unfold is_subformula at h1
+
+    cases h1
+    case inl h1 =>
+      exact h1
+    case inr h1 =>
+      have s1 : phi.not_.size ≤ phi.size :=
+      by
+        apply is_subformula_imp_le_size
+        apply is_subformula_trans (not_ phi) F
+        · exact h2
+        · exact h1
+
+      simp only [size] at s1
+      linarith
+  all_goals
+    sorry
+
+
 /--
   `is_proper_subformula_v1 F F'` := True if and only if the formula `F` is a proper subformula of the formula `F'`.
 -/
@@ -250,56 +330,6 @@ lemma is_proper_subformula_v2_imp_is_proper_subformula_v1
       contradiction
     case inr h1_left =>
       exact h1_left
-
-
-lemma is_subformula_imp_le_size
-  (F F' : Formula_)
-  (h1 : is_subformula F F') :
-  F.size <= F'.size :=
-  by
-  induction F'
-  case false_ | true_ | atom_ X =>
-    unfold is_subformula at h1
-    rewrite [h1]
-    apply le_refl
-  case not_ phi ih =>
-    unfold is_subformula at h1
-
-    cases h1
-    case inl h1 =>
-      rewrite [h1]
-      apply le_refl
-    case inr h1 =>
-      trans phi.size
-      apply ih
-      · exact h1
-      · simp only [size]
-        apply Nat.le_add_right
-  case
-      and_ phi psi phi_ih psi_ih
-    | or_ phi psi phi_ih psi_ih
-    | imp_ phi psi phi_ih psi_ih
-    | iff_ phi psi phi_ih psi_ih =>
-    unfold is_subformula at h1
-
-    cases h1
-    case inl h1 =>
-      rewrite [h1]
-      apply le_refl
-    case inr h1 =>
-      cases h1
-      case inl h1 =>
-        trans phi.size
-        · apply phi_ih
-          exact h1
-        · simp only [size]
-          linarith
-      case inr h1 =>
-        trans psi.size
-        · apply psi_ih
-          exact h1
-        · simp only [size]
-          linarith
 
 
 lemma is_proper_subformula_v1_imp_lt_size
@@ -410,36 +440,6 @@ lemma is_proper_subformula_v1_iff_is_proper_subformula_v2
   constructor
   · apply is_proper_subformula_v1_imp_is_proper_subformula_v2
   · apply is_proper_subformula_v2_imp_is_proper_subformula_v1
-
-
-example
-  (F F' : Formula_)
-  (h1 : is_subformula F F')
-  (h2 : is_subformula F' F) :
-  F = F' :=
-  by
-  cases F'
-  case false_ | true_ | atom_ X =>
-    unfold is_subformula at h1
-    exact h1
-  case not_ phi =>
-    unfold is_subformula at h1
-
-    cases h1
-    case inl h1 =>
-      exact h1
-    case inr h1 =>
-      have s1 : phi.not_.size ≤ phi.size :=
-      by
-        apply is_subformula_imp_le_size
-        apply is_subformula_trans (not_ phi) F
-        · exact h2
-        · exact h1
-
-      simp only [size] at s1
-      linarith
-  all_goals
-    sorry
 
 
 #lint
