@@ -568,4 +568,51 @@ lemma is_proper_subformula_v1_iff_is_proper_subformula_v2
   · apply is_proper_subformula_v2_imp_is_proper_subformula_v1
 
 
+-------------------------------------------------------------------------------
+
+
+example
+  (F F' F'' : Formula_)
+  (h1 : is_subformula F F')
+  (h2 : is_proper_subformula_v2 F' F'') :
+  is_proper_subformula_v2 F F'' :=
+  by
+  unfold is_proper_subformula_v2 at h2
+  obtain ⟨h2_left, h2_right⟩ := h2
+
+  unfold is_proper_subformula_v2
+  constructor
+  · apply is_subformula_trans F F'
+    · exact h1
+    · exact h2_left
+  · intro contra
+    rewrite [contra] at h1
+    apply h2_right
+    apply is_subformula_antisymm
+    · exact h2_left
+    · exact h1
+
+
+example
+  (F F' F'' : Formula_)
+  (h1 : is_proper_subformula_v2 F F')
+  (h2 : is_subformula F' F'') :
+  is_proper_subformula_v2 F F'' :=
+  by
+  unfold is_proper_subformula_v2 at h1
+  obtain ⟨h1_left, h1_right⟩ := h1
+
+  unfold is_proper_subformula_v2
+  constructor
+  · apply is_subformula_trans F F'
+    · exact h1_left
+    · exact h2
+  · intro contra
+    rewrite [← contra] at h2
+    apply h1_right
+    apply is_subformula_antisymm
+    · exact h1_left
+    · exact h2
+
+
 #lint
