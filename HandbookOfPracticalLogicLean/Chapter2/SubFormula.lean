@@ -378,6 +378,16 @@ lemma is_subformula_antisymm
         linarith
 
 
+lemma not_is_subformula_not
+  (F : Formula_) :
+  ¬ is_subformula (not_ F) F :=
+  by
+  intro contra
+  obtain s1 := is_subformula_imp_le_size (not_ F) F contra
+  simp only [size] at s1
+  linarith
+
+
 -------------------------------------------------------------------------------
 
 
@@ -575,6 +585,23 @@ lemma is_proper_subformula_v1_iff_is_proper_subformula_v2
   constructor
   · apply is_proper_subformula_v1_imp_is_proper_subformula_v2
   · apply is_proper_subformula_v2_imp_is_proper_subformula_v1
+
+
+-------------------------------------------------------------------------------
+
+
+lemma is_proper_subformula_v2_left_right_imp_not_is_subformula_right_left
+  (F F' : Formula_)
+  (h1 : is_proper_subformula_v2 F F') :
+  ¬ is_subformula F' F :=
+  by
+  unfold is_proper_subformula_v2 at h1
+  obtain ⟨h1_left, h1_right⟩ := h1
+  intro contra
+  apply h1_right
+  apply is_subformula_antisymm
+  · exact h1_left
+  · exact contra
 
 
 -------------------------------------------------------------------------------

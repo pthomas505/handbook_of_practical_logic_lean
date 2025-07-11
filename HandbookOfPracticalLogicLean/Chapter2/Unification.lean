@@ -149,13 +149,56 @@ lemma is_subformula_imp_is_subformula_replace_atom_all_rec
 
 
 example
-  (A : String)
-  (F : Formula_)
+  (F F' : Formula_)
   (σ : Instantiation)
-  (h1 : is_proper_subformula_v2 (atom_ A) F) :
-  is_proper_subformula_v2 (replace_atom_all_rec σ (atom_ A)) (replace_atom_all_rec σ F) :=
+  (h1 : is_proper_subformula_v2 F F') :
+  ¬ replace_atom_all_rec σ F = replace_atom_all_rec σ F' :=
   by
-  sorry
+  cases F'
+  case false_ | true_ | atom_ X =>
+    unfold is_proper_subformula_v2 at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+    unfold is_subformula at h1_left
+    contradiction
+  case not_ phi =>
+    unfold is_proper_subformula_v2 at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+    unfold is_subformula at h1_left
+
+    cases h1_left
+    case inl h1_left =>
+      contradiction
+    case inr h1_left =>
+      obtain s1 := is_subformula_imp_is_subformula_replace_atom_all_rec F phi σ h1_left
+      intro contra
+      rewrite [contra] at s1
+      simp only [replace_atom_all_rec] at s1
+      apply not_is_subformula_not (replace_atom_all_rec σ phi)
+      exact s1
+  case and_ phi psi =>
+    unfold is_proper_subformula_v2 at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+    unfold is_subformula at h1_left
+
+    cases h1_left
+    case inl h1_left =>
+      contradiction
+    case inr h1_left =>
+      cases h1_left
+      case inl h1_left =>
+        obtain s1 := is_subformula_imp_is_subformula_replace_atom_all_rec F phi σ h1_left
+        intro contra
+        rewrite [contra] at s1
+        simp only [replace_atom_all_rec] at s1
+        sorry
+      case inr h1_left =>
+        obtain s1 := is_subformula_imp_is_subformula_replace_atom_all_rec F psi σ h1_left
+        intro contra
+        rewrite [contra] at s1
+        simp only [replace_atom_all_rec] at s1
+        sorry
+  all_goals
+    sorry
 
 
 example
