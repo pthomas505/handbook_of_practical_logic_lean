@@ -443,30 +443,6 @@ example
   exact contra_left
 
 
-lemma is_proper_subformula_v2_imp_is_proper_subformula_v1
-  (F F' : Formula_)
-  (h1 : is_proper_subformula_v2 F F') :
-  is_proper_subformula_v1 F F' :=
-  by
-  cases F'
-  case false_ | true_ | atom_ X =>
-    unfold is_proper_subformula_v2 at h1
-    unfold is_subformula at h1
-    obtain ⟨h1_left, h1_right⟩ := h1
-    contradiction
-  all_goals
-    unfold is_proper_subformula_v2 at h1
-    unfold is_subformula at h1
-    obtain ⟨h1_left, h1_right⟩ := h1
-
-    simp only [is_proper_subformula_v1]
-    cases h1_left
-    case inl h1_left =>
-      contradiction
-    case inr h1_left =>
-      exact h1_left
-
-
 lemma is_proper_subformula_v1_imp_lt_size
   (F F' : Formula_)
   (h1 : is_proper_subformula_v1 F F') :
@@ -566,6 +542,30 @@ lemma is_proper_subformula_v1_imp_is_proper_subformula_v2
     exact h1
   · apply is_proper_subformula_v1_imp_neq
     exact h1
+
+
+lemma is_proper_subformula_v2_imp_is_proper_subformula_v1
+  (F F' : Formula_)
+  (h1 : is_proper_subformula_v2 F F') :
+  is_proper_subformula_v1 F F' :=
+  by
+  cases F'
+  case false_ | true_ | atom_ X =>
+    unfold is_proper_subformula_v2 at h1
+    unfold is_subformula at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+    contradiction
+  all_goals
+    unfold is_proper_subformula_v2 at h1
+    unfold is_subformula at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+
+    simp only [is_proper_subformula_v1]
+    cases h1_left
+    case inl h1_left =>
+      contradiction
+    case inr h1_left =>
+      exact h1_left
 
 
 lemma is_proper_subformula_v1_iff_is_proper_subformula_v2
