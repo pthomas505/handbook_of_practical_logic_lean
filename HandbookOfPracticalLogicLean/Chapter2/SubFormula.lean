@@ -443,6 +443,39 @@ example
   exact contra_left
 
 
+lemma is_proper_subformula_v1_imp_is_subformula
+  (F F' : Formula_)
+  (h1 : is_proper_subformula_v1 F F') :
+  is_subformula F F' :=
+  by
+  cases F'
+  case false_ | true_ | atom_ X =>
+    simp only [is_proper_subformula_v1] at h1
+  case not_ phi =>
+    simp only [is_proper_subformula_v1] at h1
+
+    unfold is_subformula
+    right
+    exact h1
+  case
+      and_ phi psi
+    | or_ phi psi
+    | imp_ phi psi
+    | iff_ phi psi =>
+    simp only [is_proper_subformula_v1] at h1
+
+    unfold is_subformula
+    cases h1
+    case inl h1 =>
+      right
+      left
+      exact h1
+    case inr h1 =>
+      right
+      right
+      exact h1
+
+
 lemma is_proper_subformula_v1_imp_lt_size
   (F F' : Formula_)
   (h1 : is_proper_subformula_v1 F F') :
@@ -476,39 +509,6 @@ lemma is_proper_subformula_v1_imp_lt_size
       apply lt_of_le_of_lt s1
       simp only [size]
       linarith
-
-
-lemma is_proper_subformula_v1_imp_is_subformula
-  (F F' : Formula_)
-  (h1 : is_proper_subformula_v1 F F') :
-  is_subformula F F' :=
-  by
-  cases F'
-  case false_ | true_ | atom_ X =>
-    simp only [is_proper_subformula_v1] at h1
-  case not_ phi =>
-    simp only [is_proper_subformula_v1] at h1
-
-    unfold is_subformula
-    right
-    exact h1
-  case
-      and_ phi psi
-    | or_ phi psi
-    | imp_ phi psi
-    | iff_ phi psi =>
-    simp only [is_proper_subformula_v1] at h1
-
-    unfold is_subformula
-    cases h1
-    case inl h1 =>
-      right
-      left
-      exact h1
-    case inr h1 =>
-      right
-      right
-      exact h1
 
 
 lemma not_is_proper_subformula_v1_self
