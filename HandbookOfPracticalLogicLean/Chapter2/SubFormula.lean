@@ -405,6 +405,15 @@ def is_proper_subformula_v1
     is_subformula F phi ∨
     is_subformula F psi
 
+instance
+  (F F' : Formula_) :
+  Decidable (is_proper_subformula_v1 F F') :=
+  by
+  induction F'
+  all_goals
+    simp only [is_proper_subformula_v1]
+    infer_instance
+
 
 /--
   `is_proper_subformula_v2 F F'` := True if and only if the formula `F` is a proper subformula of the formula `F'`.
