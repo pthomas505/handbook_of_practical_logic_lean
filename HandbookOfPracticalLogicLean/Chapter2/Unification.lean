@@ -201,6 +201,24 @@ lemma is_proper_subformula_v2_imp_replace_atom_all_rec_not_eq
     sorry
 
 
+lemma is_proper_subformula_v2_imp_is_proper_subformula_v2_replace_atom_all_rec
+  (F F' : Formula_)
+  (σ : Instantiation)
+  (h1 : is_proper_subformula_v2 F F') :
+  is_proper_subformula_v2 (replace_atom_all_rec σ F) (replace_atom_all_rec σ F') :=
+  by
+  unfold is_proper_subformula_v2 at h1
+  obtain ⟨h1_left, h1_right⟩ := h1
+
+  unfold is_proper_subformula_v2
+  constructor
+  · apply is_subformula_imp_is_subformula_replace_atom_all_rec
+    exact h1_left
+  · apply is_proper_subformula_v2_imp_replace_atom_all_rec_not_eq
+    unfold is_proper_subformula_v2
+    exact ⟨h1_left, h1_right⟩
+
+
 example
   (F F' : Formula_)
   (σ : Instantiation)
