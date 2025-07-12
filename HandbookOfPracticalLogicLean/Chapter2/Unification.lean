@@ -148,7 +148,7 @@ lemma is_subformula_imp_is_subformula_replace_atom_all_rec
         exact h1
 
 
-example
+lemma is_proper_subformula_v2_imp_replace_atom_all_rec_not_eq
   (F F' : Formula_)
   (σ : Instantiation)
   (h1 : is_proper_subformula_v2 F F') :
@@ -202,19 +202,17 @@ example
 
 
 example
-  (A : String)
-  (F : Formula_)
+  (F F' : Formula_)
   (σ : Instantiation)
-  (h1 : is_proper_subformula_v2 (atom_ A) F) :
-  ¬ is_unifier σ { (atom_ A, F) } :=
+  (h1 : is_proper_subformula_v2 F F') :
+  ¬ is_unifier σ { (F, F') } :=
   by
   unfold is_unifier
+  simp only [Set.mem_singleton_iff]
   intro contra
-  induction F
-  case false_ | true_ | atom_ X =>
-    unfold is_proper_subformula_v2 at h1
-    unfold is_subformula at h1
-    obtain ⟨h1_left, h1_right⟩ := h1
-    contradiction
-  all_goals
-    sorry
+  apply is_proper_subformula_v2_imp_replace_atom_all_rec_not_eq F F' σ
+  · exact h1
+  · specialize contra (F, F')
+    simp only at contra
+    apply contra
+    exact trivial
