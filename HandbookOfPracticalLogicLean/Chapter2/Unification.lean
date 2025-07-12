@@ -115,6 +115,7 @@ def is_small_step
 
 def Environment : Type := String → Formula_
 
+
 def is_small_step
   (E : Environment)
   (X Y : String) :
