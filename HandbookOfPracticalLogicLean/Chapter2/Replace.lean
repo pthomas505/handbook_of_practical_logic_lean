@@ -2,6 +2,8 @@ import MathlibExtraLean.FunctionUpdateITE
 
 import HandbookOfPracticalLogicLean.Chapter2.Semantics
 
+import Batteries.Data.HashMap
+
 import Mathlib.Tactic
 
 
@@ -107,6 +109,9 @@ theorem corollary_2_6_one
 
   apply theorem_2_5_one
   apply h1
+
+
+-------------------------------------------------------------------------------
 
 
 /--
@@ -242,6 +247,31 @@ example
   apply corollary_2_6_all
   intro A a1
   apply h1
+
+
+-------------------------------------------------------------------------------
+
+
+/--
+  `replace_atom_all_rec_opt τ F` := The simultaneous replacement of each atom in the formula `F` using the hashmap from strings to formulas `τ`.
+-/
+def replace_atom_all_rec_opt
+  (τ : Batteries.HashMap String Formula_) :
+  Formula_ → Formula_
+  | false_ => false_
+  | true_ => true_
+  | atom_ X =>
+    match Batteries.HashMap.find? τ X with
+    | none => atom_ X
+    | some F => F
+  | not_ phi => not_ (replace_atom_all_rec_opt τ phi)
+  | and_ phi psi => and_ (replace_atom_all_rec_opt τ phi) (replace_atom_all_rec_opt τ psi)
+  | or_ phi psi => or_ (replace_atom_all_rec_opt τ phi) (replace_atom_all_rec_opt τ psi)
+  | imp_ phi psi => imp_ (replace_atom_all_rec_opt τ phi) (replace_atom_all_rec_opt τ psi)
+  | iff_ phi psi => iff_ (replace_atom_all_rec_opt τ phi) (replace_atom_all_rec_opt τ psi)
+
+
+-------------------------------------------------------------------------------
 
 
 /--
