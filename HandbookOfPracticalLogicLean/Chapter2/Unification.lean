@@ -153,7 +153,7 @@ instance
       infer_instance
 
 
-def has_cycle
+def Environment.has_cycle
   (E : Environment) :
   Prop :=
   ∃ (X : String), ∃ (l : List String), List.Chain (is_small_step E) X (l ++ [X])
