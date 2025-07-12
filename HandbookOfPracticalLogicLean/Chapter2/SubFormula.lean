@@ -238,10 +238,10 @@ lemma is_subformula_size_antisymm
     exact h2
 
 
-lemma is_subformula_antisymm
+lemma is_subformula_and_eq_size_imp_eq
   (F F' : Formula_)
   (h1 : is_subformula F F')
-  (h2 : is_subformula F' F) :
+  (h2 : size F = size F') :
   F = F' :=
   by
   cases F'
@@ -249,23 +249,22 @@ lemma is_subformula_antisymm
     unfold is_subformula at h1
     exact h1
   case not_ phi =>
-    unfold is_subformula at h1
+    simp only [is_subformula] at h1
 
     cases h1
     case inl h1 =>
       exact h1
     case inr h1 =>
-      have s1 : phi.not_.size ≤ phi.size :=
-      by
-        apply is_subformula_imp_le_size
-        apply is_subformula_trans (not_ phi) F
-        · exact h2
-        · exact h1
-
+      obtain s1 := is_subformula_imp_le_size F phi h1
+      rewrite [h2] at s1
       simp only [size] at s1
       linarith
-  case and_ phi psi =>
-    unfold is_subformula at h1
+  case
+      and_ phi psi
+    | or_ phi psi
+    | imp_ phi psi
+    | iff_ phi psi =>
+    simp only [is_subformula] at h1
 
     cases h1
     case inl h1 =>
@@ -273,109 +272,28 @@ lemma is_subformula_antisymm
     case inr h1 =>
       cases h1
       case inl h1 =>
-        have s1 : (and_ phi psi).size ≤ phi.size :=
-        by
-          apply is_subformula_imp_le_size
-          apply is_subformula_trans (and_ phi psi) F
-          · exact h2
-          · exact h1
-
+        obtain s1 := is_subformula_imp_le_size F phi h1
+        rewrite [h2] at s1
         simp only [size] at s1
         linarith
       case inr h1 =>
-        have s1 : (and_ phi psi).size ≤ psi.size :=
-        by
-          apply is_subformula_imp_le_size
-          apply is_subformula_trans (and_ phi psi) F
-          · exact h2
-          · exact h1
-
+        obtain s1 := is_subformula_imp_le_size F psi h1
+        rewrite [h2] at s1
         simp only [size] at s1
         linarith
-  case or_ phi psi =>
-    unfold is_subformula at h1
 
-    cases h1
-    case inl h1 =>
-      exact h1
-    case inr h1 =>
-      cases h1
-      case inl h1 =>
-        have s1 : (or_ phi psi).size ≤ phi.size :=
-        by
-          apply is_subformula_imp_le_size
-          apply is_subformula_trans (or_ phi psi) F
-          · exact h2
-          · exact h1
 
-        simp only [size] at s1
-        linarith
-      case inr h1 =>
-        have s1 : (or_ phi psi).size ≤ psi.size :=
-        by
-          apply is_subformula_imp_le_size
-          apply is_subformula_trans (or_ phi psi) F
-          · exact h2
-          · exact h1
-
-        simp only [size] at s1
-        linarith
-  case imp_ phi psi =>
-    unfold is_subformula at h1
-
-    cases h1
-    case inl h1 =>
-      exact h1
-    case inr h1 =>
-      cases h1
-      case inl h1 =>
-        have s1 : (imp_ phi psi).size ≤ phi.size :=
-        by
-          apply is_subformula_imp_le_size
-          apply is_subformula_trans (imp_ phi psi) F
-          · exact h2
-          · exact h1
-
-        simp only [size] at s1
-        linarith
-      case inr h1 =>
-        have s1 : (imp_ phi psi).size ≤ psi.size :=
-        by
-          apply is_subformula_imp_le_size
-          apply is_subformula_trans (imp_ phi psi) F
-          · exact h2
-          · exact h1
-
-        simp only [size] at s1
-        linarith
-  case iff_ phi psi =>
-    unfold is_subformula at h1
-
-    cases h1
-    case inl h1 =>
-      exact h1
-    case inr h1 =>
-      cases h1
-      case inl h1 =>
-        have s1 : (iff_ phi psi).size ≤ phi.size :=
-        by
-          apply is_subformula_imp_le_size
-          apply is_subformula_trans (iff_ phi psi) F
-          · exact h2
-          · exact h1
-
-        simp only [size] at s1
-        linarith
-      case inr h1 =>
-        have s1 : (iff_ phi psi).size ≤ psi.size :=
-        by
-          apply is_subformula_imp_le_size
-          apply is_subformula_trans (iff_ phi psi) F
-          · exact h2
-          · exact h1
-
-        simp only [size] at s1
-        linarith
+lemma is_subformula_antisymm
+  (F F' : Formula_)
+  (h1 : is_subformula F F')
+  (h2 : is_subformula F' F) :
+  F = F' :=
+  by
+  apply is_subformula_and_eq_size_imp_eq
+  · exact h1
+  · apply is_subformula_size_antisymm
+    · exact h1
+    · exact h2
 
 
 lemma not_is_subformula_not
