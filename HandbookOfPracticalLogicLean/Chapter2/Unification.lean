@@ -97,6 +97,68 @@ def is_most_general_unifier
   is_unifier σ S ∧ ∀ (τ : Instantiation), is_unifier τ S → is_more_general_instantiation σ τ
 
 
+/-
+def Environment : Type := Batteries.HashMap String Formula_
+
+def is_small_step
+  (E : Environment)
+  (X Y : String) :
+  Prop :=
+  match E.find? X with
+  | none => False
+  | some F =>
+    if atom_occurs_in Y F
+    then True
+    else False
+-/
+
+
+def Environment : Type := String → Formula_
+
+def is_small_step
+  (E : Environment)
+  (X Y : String) :
+  Prop :=
+  atom_occurs_in Y (E X)
+
+instance
+  (E : Environment)
+  (X Y : String) :
+  Decidable (is_small_step E X Y) :=
+  by
+  unfold is_small_step
+  infer_instance
+
+
+def is_big_step
+  (E : Environment) :
+  List String → Prop
+  | [] => False
+  | [_] => False
+  | X :: Y :: tl => is_small_step E X Y ∧ is_big_step E (Y :: tl)
+
+instance
+  (E : Environment)
+  (l : List String) :
+  Decidable (is_big_step E l) :=
+  by
+  induction l
+  case nil =>
+    unfold is_big_step
+    infer_instance
+  case cons hd tl ih =>
+    cases tl
+    all_goals
+      unfold is_big_step
+      infer_instance
+
+
+def has_cycle
+  (E : Environment) :
+  Prop :=
+  ∃ (X : String), ∃ (l : List String), List.Chain (is_small_step E) X (l ++ [X])
+
+
 lemma is_subformula_imp_is_subformula_replace_atom_all_rec
   (F F' : Formula_)
   (σ : Instantiation)
