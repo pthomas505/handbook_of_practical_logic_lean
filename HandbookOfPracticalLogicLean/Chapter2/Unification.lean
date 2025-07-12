@@ -131,32 +131,26 @@ instance
 
 
 def is_big_step
-  (E : Environment) :
-  List String → Prop
-  | [] => False
-  | [_] => False
-  | X :: Y :: tl => is_small_step E X Y ∧ is_big_step E (Y :: tl)
+  (E : Environment)
+  (X Y : String)
+  (l : List String) :
+  Prop :=
+  List.Chain (is_small_step E) X (l ++ [Y])
 
 instance
   (E : Environment)
+  (X Y : String)
   (l : List String) :
-  Decidable (is_big_step E l) :=
+  Decidable (is_big_step E X Y l) :=
   by
-  induction l
-  case nil =>
-    unfold is_big_step
-    infer_instance
-  case cons hd tl ih =>
-    cases tl
-    all_goals
-      unfold is_big_step
-      infer_instance
+  unfold is_big_step
+  infer_instance
 
 
 def Environment.has_cycle
   (E : Environment) :
   Prop :=
-  ∃ (X : String), ∃ (l : List String), List.Chain (is_small_step E) X (l ++ [X])
+  ∃ (X : String), ∃ (l : List String), is_big_step E X X l
 
 
 lemma is_subformula_imp_is_subformula_replace_atom_all_rec
