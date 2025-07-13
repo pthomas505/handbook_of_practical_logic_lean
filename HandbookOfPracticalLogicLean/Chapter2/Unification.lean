@@ -97,8 +97,8 @@ def is_most_general_unifier
   is_unifier σ S ∧ ∀ (τ : Instantiation), is_unifier τ S → is_more_general_instantiation σ τ
 
 
-/-
 def Environment : Type := Batteries.HashMap String Formula_
+
 
 def is_small_step
   (E : Environment)
@@ -106,13 +106,23 @@ def is_small_step
   Prop :=
   match E.find? X with
   | none => False
-  | some F =>
-    if atom_occurs_in Y F
-    then True
-    else False
--/
+  | some F => atom_occurs_in Y F
 
+instance
+  (E : Environment)
+  (X Y : String) :
+  Decidable (is_small_step E X Y) :=
+  by
+  unfold is_small_step
+  cases Batteries.HashMap.find? E X
+  case none =>
+    simp only
+    infer_instance
+  case some F =>
+    simp only
+    infer_instance
 
+/-
 def Environment : Type := String → Formula_
 
 
@@ -129,9 +139,30 @@ instance
   by
   unfold is_small_step
   infer_instance
+-/
 
 
-def is_big_step
+lemma is_small_step_refl
+  (E : Environment)
+  (X : String)
+  (F : Formula_)
+  (h1 : atom_occurs_in X F)
+  (h2 : E.find? X = some F) :
+  is_small_step E X X :=
+  by
+  unfold is_small_step
+  cases c1 : Batteries.HashMap.find? E X
+  case none =>
+    rewrite [c1] at h2
+    contradiction
+  case some F' =>
+    rewrite [c1] at h2
+    cases h2
+    simp only
+    exact h1
+
+
+def is_one_or_more_small_steps
   (E : Environment)
   (X Y : String)
   (l : List String) :
@@ -142,16 +173,54 @@ instance
   (E : Environment)
   (X Y : String)
   (l : List String) :
-  Decidable (is_big_step E X Y l) :=
+  Decidable (is_one_or_more_small_steps E X Y l) :=
   by
-  unfold is_big_step
+  unfold is_one_or_more_small_steps
   infer_instance
+
+
+example
+  (E : Environment)
+  (X : String)
+  (F : Formula_)
+  (h1 : atom_occurs_in X F)
+  (h2 : E.find? X = some F) :
+  is_one_or_more_small_steps E X X [] :=
+  by
+  unfold is_one_or_more_small_steps
+  simp only [List.nil_append, List.chain_cons, List.Chain.nil]
+  constructor
+  · exact is_small_step_refl E X F h1 h2
+  · exact trivial
 
 
 def Environment.has_cycle
   (E : Environment) :
   Prop :=
-  ∃ (X : String), ∃ (l : List String), is_big_step E X X l
+  ∃ (X : String), ∃ (l : List String), is_one_or_more_small_steps E X X l
+
+
+def is_zero_or_more_small_steps
+  (E : Environment)
+  (X : String)
+  (F : Formula_) :
+  Prop :=
+  atom_occurs_in X F ∨ ∃ (Y : String), ∃ (l : List String), is_one_or_more_small_steps E X Y l
+
+
+example
+  (E : Environment)
+  (X : String)
+  (F : Formula_)
+  (h1 : ¬ E.has_cycle)
+  (h2 : ¬ atom_occurs_in X F)
+  (h3 : ∀ (Y : String), ∀ (l : List String), atom_occurs_in Y F → ¬ is_one_or_more_small_steps E X Y l) :
+  let E' : Environment := Batteries.HashMap.insert E X F
+  ¬ E'.has_cycle :=
+  by
+  unfold Environment.has_cycle at h1
+  simp only [not_exists] at h1
+  sorry
 
 
 lemma is_subformula_imp_is_subformula_replace_atom_all_rec
