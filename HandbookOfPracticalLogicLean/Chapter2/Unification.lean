@@ -97,14 +97,15 @@ def is_most_general_unifier
   is_unifier σ S ∧ ∀ (τ : Instantiation), is_unifier τ S → is_more_general_instantiation σ τ
 
 
-def Environment : Type := Batteries.HashMap String Formula_
+--def Environment : Type := Batteries.HashMap String Formula_
+def Environment : Type := Std.HashMap String Formula_
 
 
 def is_small_step
   (E : Environment)
   (X Y : String) :
   Prop :=
-  match E.find? X with
+  match E.get? X with
   | none => False
   | some F => atom_occurs_in Y F
 
@@ -114,7 +115,7 @@ instance
   Decidable (is_small_step E X Y) :=
   by
   unfold is_small_step
-  cases Batteries.HashMap.find? E X
+  cases E.get? X
   case none =>
     simp only
     infer_instance
@@ -147,11 +148,11 @@ lemma is_small_step_refl
   (X : String)
   (F : Formula_)
   (h1 : atom_occurs_in X F)
-  (h2 : E.find? X = some F) :
+  (h2 : E.get? X = some F) :
   is_small_step E X X :=
   by
   unfold is_small_step
-  cases c1 : Batteries.HashMap.find? E X
+  cases c1 : E.get? X
   case none =>
     rewrite [c1] at h2
     contradiction
@@ -179,12 +180,12 @@ instance
   infer_instance
 
 
-example
+lemma is_one_or_more_small_steps_refl
   (E : Environment)
   (X : String)
   (F : Formula_)
   (h1 : atom_occurs_in X F)
-  (h2 : E.find? X = some F) :
+  (h2 : E.get? X = some F) :
   is_one_or_more_small_steps E X X [] :=
   by
   unfold is_one_or_more_small_steps
@@ -198,6 +199,22 @@ def Environment.has_cycle
   (E : Environment) :
   Prop :=
   ∃ (X : String), ∃ (l : List String), is_one_or_more_small_steps E X X l
+
+
+example
+  (E : Environment)
+  (X : String)
+  (F : Formula_)
+  (h1 : atom_occurs_in X F) :
+  let E' : Environment := E.insert X F
+  E'.has_cycle :=
+  by
+  unfold Environment.has_cycle
+  apply Exists.intro X
+  apply Exists.intro []
+  apply is_one_or_more_small_steps_refl (E.insert X F) X F
+  · exact h1
+  · simp only [Std.HashMap.get?_eq_getElem?, Std.HashMap.getElem?_insert_self]
 
 
 def is_zero_or_more_small_steps
@@ -215,7 +232,7 @@ example
   (h1 : ¬ E.has_cycle)
   (h2 : ¬ atom_occurs_in X F)
   (h3 : ∀ (Y : String), ∀ (l : List String), atom_occurs_in Y F → ¬ is_one_or_more_small_steps E X Y l) :
-  let E' : Environment := Batteries.HashMap.insert E X F
+  let E' : Environment := E.insert X F
   ¬ E'.has_cycle :=
   by
   unfold Environment.has_cycle at h1
