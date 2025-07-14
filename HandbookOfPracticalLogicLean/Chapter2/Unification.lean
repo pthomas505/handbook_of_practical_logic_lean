@@ -98,7 +98,17 @@ def is_most_general_unifier
 
 
 --def Environment : Type := Batteries.HashMap String Formula_
-def Environment : Type := Std.HashMap String Formula_
+--def Environment : Type := Std.HashMap String Formula_
+def Environment : Type := List (String × Formula_)
+
+
+def Environment.get?
+  (E : Environment)
+  (X : String) :
+  Option Formula_ :=
+  match E.find? (fun (step : String × Formula_) => step.fst = X) with
+  | none => none
+  | some step => step.snd
 
 
 def is_small_step
@@ -122,6 +132,7 @@ instance
   case some F =>
     simp only
     infer_instance
+
 
 /-
 def Environment : Type := String → Formula_
@@ -163,6 +174,37 @@ lemma is_small_step_refl
     exact h1
 
 
+lemma not_is_small_step_nil
+  (X Y : String) :
+  ¬ is_small_step [] X Y :=
+  by
+  unfold is_small_step
+  unfold Environment.get?
+  simp only [List.find?_nil]
+  intro contra
+  exact contra
+
+
+theorem not_is_small_step_singleton_refl
+  (X Y : String)
+  (F : Formula_)
+  (h1 : ¬ atom_occurs_in X F) :
+  ¬ is_small_step [(X, F)] Y Y :=
+  by
+  intro contra
+  unfold is_small_step at contra
+  unfold Environment.get? at contra
+  simp only [List.find?_singleton] at contra
+  split_ifs at contra
+  case pos c1 =>
+    simp only at contra
+    simp only [decide_eq_true_iff] at c1
+    rewrite [c1] at h1
+    contradiction
+  case neg c1 =>
+    simp only at contra
+
+
 def is_one_or_more_small_steps
   (E : Environment)
   (X Y : String)
@@ -202,19 +244,18 @@ def Environment.has_cycle
 
 
 example
-  (E : Environment)
   (X : String)
   (F : Formula_)
   (h1 : atom_occurs_in X F) :
-  let E' : Environment := E.insert X F
-  E'.has_cycle :=
+  Environment.has_cycle [(X, F)]:=
   by
   unfold Environment.has_cycle
   apply Exists.intro X
   apply Exists.intro []
-  apply is_one_or_more_small_steps_refl (E.insert X F) X F
+  apply is_one_or_more_small_steps_refl [(X, F)] X F
   · exact h1
-  · simp only [Std.HashMap.get?_eq_getElem?, Std.HashMap.getElem?_insert_self]
+  · unfold Environment.get?
+    simp only [decide_true, List.find?_cons_of_pos]
 
 
 def is_zero_or_more_small_steps
@@ -225,6 +266,47 @@ def is_zero_or_more_small_steps
   atom_occurs_in X F ∨ ∃ (Y : String), ∃ (l : List String), is_one_or_more_small_steps E X Y l
 
 
+lemma not_has_cycle_nil :
+  ¬ Environment.has_cycle [] :=
+  by
+  unfold Environment.has_cycle
+  simp only [not_exists]
+  intro X l contra
+  unfold is_one_or_more_small_steps at contra
+  cases l
+  case nil =>
+    simp only [List.nil_append, List.chain_cons] at contra
+    obtain ⟨contra_left, contra_right⟩ := contra
+    unfold is_small_step at contra_left
+    unfold Environment.get? at contra_left
+    simp only [List.find?_nil] at contra_left
+  case cons hd tl =>
+    simp only [List.cons_append, List.chain_cons] at contra
+    obtain ⟨contra_left, contra_right⟩ := contra
+    unfold is_small_step at contra_left
+    unfold Environment.get? at contra_left
+    simp only [List.find?_nil] at contra_left
+
+
+example
+  (X : String)
+  (F : Formula_)
+  (h1 : ¬ atom_occurs_in X F) :
+  ¬ Environment.has_cycle [(X, F)] :=
+  by
+  unfold Environment.has_cycle
+  simp only [not_exists]
+  intro Y l contra
+  unfold is_one_or_more_small_steps at contra
+  cases l
+  case nil =>
+    simp only [List.nil_append, List.chain_cons] at contra
+    obtain ⟨contra_left, contra_right⟩ := contra
+    exact not_is_small_step_singleton_refl X Y F h1 contra_left
+  case cons hd tl =>
+    sorry
+
+
 example
   (E : Environment)
   (X : String)
@@ -232,12 +314,22 @@ example
   (h1 : ¬ E.has_cycle)
   (h2 : ¬ atom_occurs_in X F)
   (h3 : ∀ (Y : String), ∀ (l : List String), atom_occurs_in Y F → ¬ is_one_or_more_small_steps E X Y l) :
-  let E' : Environment := E.insert X F
+  let E' : Environment := (X, F) :: E
   ¬ E'.has_cycle :=
   by
-  unfold Environment.has_cycle at h1
-  simp only [not_exists] at h1
+  simp only
+  unfold Environment.has_cycle
+  intro contra
+  obtain ⟨Z, l, contra⟩ := contra
+  induction l
+  case nil =>
+    unfold is_one_or_more_small_steps at contra
+    simp at contra
+    sorry
   sorry
+
+
+-------------------------------------------------------------------------------
 
 
 lemma is_subformula_imp_is_subformula_replace_atom_all_rec
