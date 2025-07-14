@@ -98,6 +98,7 @@ def is_most_general_unifier
 -------------------------------------------------------------------------------
 
 
+/-
 --def Environment : Type := Std.HashMap String Formula_
 def Environment : Type := List (String × Formula_)
 
@@ -309,6 +310,7 @@ example
     simp at contra
     sorry
   sorry
+-/
 
 
 -------------------------------------------------------------------------------
