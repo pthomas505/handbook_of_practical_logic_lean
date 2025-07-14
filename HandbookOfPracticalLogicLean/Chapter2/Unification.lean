@@ -263,15 +263,11 @@ lemma not_has_cycle_nil :
   case nil =>
     simp only [List.nil_append, List.chain_cons] at contra
     obtain ⟨contra_left, contra_right⟩ := contra
-    unfold is_small_step at contra_left
-    unfold Environment.get? at contra_left
-    simp only [List.find?_nil] at contra_left
+    exact not_is_small_step_nil X X contra_left
   case cons hd tl =>
     simp only [List.cons_append, List.chain_cons] at contra
     obtain ⟨contra_left, contra_right⟩ := contra
-    unfold is_small_step at contra_left
-    unfold Environment.get? at contra_left
-    simp only [List.find?_nil] at contra_left
+    exact not_is_small_step_nil X hd contra_left
 
 
 example
