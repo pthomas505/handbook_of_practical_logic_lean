@@ -316,6 +316,108 @@ example
 -------------------------------------------------------------------------------
 
 
+def decidable_is_small_step
+  (E : List (String × Formula_))
+  (X Y : String) :
+  Prop :=
+  match E with
+  | [] => False
+  | hd :: tl => (hd.fst = X ∧ atom_occurs_in Y hd.snd) ∨
+    decidable_is_small_step tl X Y
+
+
+instance
+  (E : List (String × Formula_))
+  (X Y : String) :
+  Decidable (decidable_is_small_step E X Y) :=
+  by
+  induction E
+  all_goals
+    unfold decidable_is_small_step
+    infer_instance
+
+
+def is_small_step
+  (E : List (String × Formula_))
+  (X Y : String) :
+  Prop :=
+  ∃ (F : Formula_), (X, F) ∈ E ∧ atom_occurs_in Y F
+
+
+example
+  (E : List (String × Formula_))
+  (X Y : String)
+  (h1 : decidable_is_small_step E X Y) :
+  is_small_step E X Y :=
+  by
+  induction E
+  case nil =>
+    unfold decidable_is_small_step at h1
+    contradiction
+  case cons hd tl ih =>
+    unfold decidable_is_small_step at h1
+
+    cases h1
+    case inl h1 =>
+      obtain ⟨h1_left, h1_right⟩ := h1
+
+      unfold is_small_step
+      apply Exists.intro hd.2
+      rewrite [← h1_left]
+      simp only [List.mem_cons]
+      constructor
+      · left
+        exact trivial
+      · exact h1_right
+    case inr h1 =>
+      specialize ih h1
+      unfold is_small_step at ih
+      obtain ⟨F, ih_left, ih_right⟩ := ih
+
+      unfold is_small_step
+      apply Exists.intro F
+      constructor
+      · simp only [List.mem_cons]
+        right
+        exact ih_left
+      · exact ih_right
+
+
+example
+  (E : List (String × Formula_))
+  (X Y : String)
+  (h1 : is_small_step E X Y) :
+  decidable_is_small_step E X Y :=
+  by
+  induction E
+  case nil =>
+    unfold is_small_step at h1
+    simp only [List.not_mem_nil] at h1
+    obtain ⟨F, h1_left, h1_right⟩ := h1
+    contradiction
+  case cons hd tl ih =>
+    unfold is_small_step at h1
+    obtain ⟨F, h1_left, h1_right⟩ := h1
+    simp only [List.mem_cons] at h1_left
+
+    cases h1_left
+    case inl h1_left =>
+      rewrite [← h1_left]
+      unfold decidable_is_small_step
+      simp only
+      left
+      exact ⟨trivial, h1_right⟩
+    case inr h1_left =>
+      unfold decidable_is_small_step
+      right
+      apply ih
+      unfold is_small_step
+      apply Exists.intro F
+      exact ⟨h1_left, h1_right⟩
+
+
+-------------------------------------------------------------------------------
+
 lemma is_subformula_imp_is_subformula_replace_atom_all_rec
   (F F' : Formula_)
   (σ : Instantiation)
