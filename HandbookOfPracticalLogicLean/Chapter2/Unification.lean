@@ -1,8 +1,6 @@
 import HandbookOfPracticalLogicLean.Chapter2.Replace
 import HandbookOfPracticalLogicLean.Chapter2.SubFormula
 
-import Batteries.Data.HashMap
-
 
 set_option autoImplicit false
 
@@ -97,7 +95,9 @@ def is_most_general_unifier
   is_unifier σ S ∧ ∀ (τ : Instantiation), is_unifier τ S → is_more_general_instantiation σ τ
 
 
---def Environment : Type := Batteries.HashMap String Formula_
+-------------------------------------------------------------------------------
+
+
 --def Environment : Type := Std.HashMap String Formula_
 def Environment : Type := List (String × Formula_)
 
@@ -134,24 +134,38 @@ instance
     infer_instance
 
 
-/-
-def Environment : Type := String → Formula_
-
-
-def is_small_step
+def is_one_or_more_small_steps
   (E : Environment)
-  (X Y : String) :
+  (X Y : String)
+  (l : List String) :
   Prop :=
-  atom_occurs_in Y (E X)
+  List.Chain (is_small_step E) X (l ++ [Y])
 
 instance
   (E : Environment)
-  (X Y : String) :
-  Decidable (is_small_step E X Y) :=
+  (X Y : String)
+  (l : List String) :
+  Decidable (is_one_or_more_small_steps E X Y l) :=
   by
-  unfold is_small_step
+  unfold is_one_or_more_small_steps
   infer_instance
--/
+
+
+def is_zero_or_more_small_steps
+  (E : Environment)
+  (X : String)
+  (F : Formula_) :
+  Prop :=
+  atom_occurs_in X F ∨ ∃ (Y : String), ∃ (l : List String), is_one_or_more_small_steps E X Y l
+
+
+def Environment.has_cycle
+  (E : Environment) :
+  Prop :=
+  ∃ (X : String), ∃ (l : List String), is_one_or_more_small_steps E X X l
+
+
+-------------------------------------------------------------------------------
 
 
 lemma is_small_step_refl
@@ -172,6 +186,39 @@ lemma is_small_step_refl
     cases h2
     simp only
     exact h1
+
+
+lemma is_one_or_more_small_steps_refl_nil
+  (E : Environment)
+  (X : String)
+  (F : Formula_)
+  (h1 : atom_occurs_in X F)
+  (h2 : E.get? X = some F) :
+  is_one_or_more_small_steps E X X [] :=
+  by
+  unfold is_one_or_more_small_steps
+  simp only [List.nil_append, List.chain_cons, List.Chain.nil]
+  constructor
+  · exact is_small_step_refl E X F h1 h2
+  · exact trivial
+
+
+example
+  (X : String)
+  (F : Formula_)
+  (h1 : atom_occurs_in X F) :
+  Environment.has_cycle [(X, F)]:=
+  by
+  unfold Environment.has_cycle
+  apply Exists.intro X
+  apply Exists.intro []
+  apply is_one_or_more_small_steps_refl_nil [(X, F)] X F
+  · exact h1
+  · unfold Environment.get?
+    simp only [decide_true, List.find?_cons_of_pos]
+
+
+-------------------------------------------------------------------------------
 
 
 lemma not_is_small_step_nil
@@ -203,67 +250,6 @@ theorem not_is_small_step_singleton_refl
     contradiction
   case neg c1 =>
     simp only at contra
-
-
-def is_one_or_more_small_steps
-  (E : Environment)
-  (X Y : String)
-  (l : List String) :
-  Prop :=
-  List.Chain (is_small_step E) X (l ++ [Y])
-
-instance
-  (E : Environment)
-  (X Y : String)
-  (l : List String) :
-  Decidable (is_one_or_more_small_steps E X Y l) :=
-  by
-  unfold is_one_or_more_small_steps
-  infer_instance
-
-
-lemma is_one_or_more_small_steps_refl
-  (E : Environment)
-  (X : String)
-  (F : Formula_)
-  (h1 : atom_occurs_in X F)
-  (h2 : E.get? X = some F) :
-  is_one_or_more_small_steps E X X [] :=
-  by
-  unfold is_one_or_more_small_steps
-  simp only [List.nil_append, List.chain_cons, List.Chain.nil]
-  constructor
-  · exact is_small_step_refl E X F h1 h2
-  · exact trivial
-
-
-def Environment.has_cycle
-  (E : Environment) :
-  Prop :=
-  ∃ (X : String), ∃ (l : List String), is_one_or_more_small_steps E X X l
-
-
-example
-  (X : String)
-  (F : Formula_)
-  (h1 : atom_occurs_in X F) :
-  Environment.has_cycle [(X, F)]:=
-  by
-  unfold Environment.has_cycle
-  apply Exists.intro X
-  apply Exists.intro []
-  apply is_one_or_more_small_steps_refl [(X, F)] X F
-  · exact h1
-  · unfold Environment.get?
-    simp only [decide_true, List.find?_cons_of_pos]
-
-
-def is_zero_or_more_small_steps
-  (E : Environment)
-  (X : String)
-  (F : Formula_) :
-  Prop :=
-  atom_occurs_in X F ∨ ∃ (Y : String), ∃ (l : List String), is_one_or_more_small_steps E X Y l
 
 
 lemma not_has_cycle_nil :
