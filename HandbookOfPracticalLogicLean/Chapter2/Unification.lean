@@ -462,7 +462,7 @@ def is_zero_or_more_small_steps
   atom_occurs_in X F ∨ ∃ (Y : String), ∃ (l : List String), is_one_or_more_small_steps E X Y l
 
 
-def Environment.has_cycle
+def has_cycle
   (E : List (String × Formula_)) :
   Prop :=
   ∃ (X : String), ∃ (l : List String), is_one_or_more_small_steps E X X l
@@ -483,9 +483,9 @@ lemma not_is_small_step_nil
 
 
 lemma not_has_cycle_nil :
-  ¬ Environment.has_cycle [] :=
+  ¬ has_cycle [] :=
   by
-  unfold Environment.has_cycle
+  unfold has_cycle
   simp only [not_exists]
   intro X l contra
   unfold is_one_or_more_small_steps at contra
@@ -543,9 +543,9 @@ example
   (X : String)
   (F : Formula_)
   (h1 : ¬ atom_occurs_in X F) :
-  ¬ Environment.has_cycle [(X, F)] :=
+  ¬ has_cycle [(X, F)] :=
   by
-  unfold Environment.has_cycle
+  unfold has_cycle
   simp only [not_exists]
   intro Y l contra
   unfold is_one_or_more_small_steps at contra
@@ -571,6 +571,18 @@ example
       rewrite [contra] at contra_left_right
       contradiction
     · exact contra_right
+
+
+example
+  (E : List (String × Formula_))
+  (X : String)
+  (F : Formula_)
+  (h1 : ¬ has_cycle E)
+  (h2 : ¬ atom_occurs_in X F)
+  (h3 : ∀ (Y : String), ∀ (l : List String), atom_occurs_in Y F → ¬ is_one_or_more_small_steps E X Y l) :
+  ¬ has_cycle ((X, F) :: E) :=
+  by
+  sorry
 
 
 -------------------------------------------------------------------------------
