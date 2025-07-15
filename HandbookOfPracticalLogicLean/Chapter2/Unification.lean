@@ -539,7 +539,7 @@ lemma not_nil_not_eq_imp_not_is_one_or_more_small_steps_singleton
     contradiction
 
 
-example
+lemma not_has_cycle_singleton
   (X : String)
   (F : Formula_)
   (h1 : ¬ atom_occurs_in X F) :
@@ -582,18 +582,22 @@ example
   (h3 : ∀ (Y : String), ∀ (l : List String), atom_occurs_in Y F → ¬ is_one_or_more_small_steps E X Y l) :
   ¬ has_cycle ((X, F) :: E) :=
   by
+  unfold has_cycle at h1
+  simp only [not_exists] at h1
+  unfold is_one_or_more_small_steps at h1
+
+  unfold is_one_or_more_small_steps at h3
+
+  obtain s1 := not_has_cycle_singleton X F h2
+  unfold has_cycle at s1
+  simp only [not_exists] at s1
+  unfold is_one_or_more_small_steps at s1
+
   unfold has_cycle
   simp only [not_exists]
   intro Y l contra
   unfold is_one_or_more_small_steps at contra
-  induction l
-  case nil =>
-    simp only [List.nil_append, List.chain_cons] at contra
-    obtain ⟨contra_left, contra_right⟩ := contra
-    unfold is_small_step_v1 at contra_left
-    sorry
-  case cons hd tl ih =>
-    sorry
+  sorry
 
 
 -------------------------------------------------------------------------------
