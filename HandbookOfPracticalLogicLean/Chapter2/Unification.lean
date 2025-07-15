@@ -208,7 +208,7 @@ example
   (X : String)
   (F : Formula_)
   (h1 : atom_occurs_in X F) :
-  Environment.has_cycle [(X, F)]:=
+  Environment.has_cycle [(X, F)] :=
   by
   unfold Environment.has_cycle
   apply Exists.intro X
