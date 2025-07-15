@@ -332,7 +332,6 @@ def is_small_step_v2
   | hd :: tl => (hd.fst = X ∧ atom_occurs_in Y hd.snd) ∨
     is_small_step_v2 tl X Y
 
-
 instance
   (E : List (String × Formula_))
   (X Y : String) :
@@ -427,6 +426,99 @@ lemma is_small_step_v1_iff_is_small_step_v2
 
 
 -------------------------------------------------------------------------------
+
+
+instance
+  (E : List (String × Formula_))
+  (X Y : String) :
+  Decidable (is_small_step_v1 E X Y) :=
+  by
+  simp only [is_small_step_v1_iff_is_small_step_v2]
+  infer_instance
+
+
+def is_one_or_more_small_steps
+  (E : List (String × Formula_))
+  (X Y : String)
+  (l : List String) :
+  Prop :=
+  List.Chain (is_small_step_v1 E) X (l ++ [Y])
+
+instance
+  (E : List (String × Formula_))
+  (X Y : String)
+  (l : List String) :
+  Decidable (is_one_or_more_small_steps E X Y l) :=
+  by
+  unfold is_one_or_more_small_steps
+  infer_instance
+
+
+def is_zero_or_more_small_steps
+  (E : List (String × Formula_))
+  (X : String)
+  (F : Formula_) :
+  Prop :=
+  atom_occurs_in X F ∨ ∃ (Y : String), ∃ (l : List String), is_one_or_more_small_steps E X Y l
+
+
+def Environment.has_cycle
+  (E : List (String × Formula_)) :
+  Prop :=
+  ∃ (X : String), ∃ (l : List String), is_one_or_more_small_steps E X X l
+
+
+-------------------------------------------------------------------------------
+
+
+lemma not_is_small_step_nil
+  (X Y : String) :
+  ¬ is_small_step_v1 [] X Y :=
+  by
+  unfold is_small_step_v1
+  simp only [not_exists]
+  intro F contra
+  obtain ⟨contra_left, contra_right⟩ := contra
+  simp only [List.not_mem_nil] at contra_left
+
+
+theorem not_is_small_step_singleton_refl
+  (X Y : String)
+  (F : Formula_)
+  (h1 : ¬ atom_occurs_in X F) :
+  ¬ is_small_step_v1 [(X, F)] Y Y :=
+  by
+  unfold is_small_step_v1
+  simp only [not_exists]
+  simp only [List.mem_singleton, Prod.mk.injEq]
+  intro F' contra
+  obtain ⟨⟨contra_left_left, contra_left_right⟩, contra_right⟩ := contra
+  apply h1
+  rewrite [← contra_left_left]
+  rewrite [← contra_left_right]
+  exact contra_right
+
+
+lemma not_has_cycle_nil :
+  ¬ Environment.has_cycle [] :=
+  by
+  unfold Environment.has_cycle
+  simp only [not_exists]
+  intro X l contra
+  unfold is_one_or_more_small_steps at contra
+  cases l
+  case nil =>
+    simp only [List.nil_append, List.chain_cons] at contra
+    obtain ⟨contra_left, contra_right⟩ := contra
+    exact not_is_small_step_nil X X contra_left
+  case cons hd tl =>
+    simp only [List.cons_append, List.chain_cons] at contra
+    obtain ⟨contra_left, contra_right⟩ := contra
+    exact not_is_small_step_nil X hd contra_left
+
+
+-------------------------------------------------------------------------------
+
 
 lemma is_subformula_imp_is_subformula_replace_atom_all_rec
   (F F' : Formula_)
