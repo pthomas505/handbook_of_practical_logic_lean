@@ -573,6 +573,19 @@ lemma not_has_cycle_singleton
     · exact contra_right
 
 
+lemma is_small_step_refl
+  (E : List (String × Formula_))
+  (X Y : String)
+  (F : Formula_)
+  (h1 : (X, F) ∈ E)
+  (h2 : atom_occurs_in Y F) :
+  is_small_step_v1 E X Y :=
+  by
+  unfold is_small_step_v1
+  apply Exists.intro F
+  exact ⟨h1, h2⟩
+
+
 example
   (E : List (String × Formula_))
   (X : String)
@@ -597,7 +610,32 @@ example
   simp only [not_exists]
   intro Y l contra
   unfold is_one_or_more_small_steps at contra
-  sorry
+
+  induction l
+  case nil =>
+    simp only [List.nil_append, List.chain_cons] at contra
+    obtain ⟨contra_left, contra_right⟩ := contra
+    clear contra_right
+    unfold is_small_step_v1 at contra_left
+    obtain ⟨F', contra_left_left, contra_left_right⟩ := contra_left
+    simp only [List.mem_cons, Prod.mk.injEq] at contra_left_left
+    cases contra_left_left
+    case inl contra_left_left =>
+      obtain ⟨contra_left_left_left, contra_left_left_right⟩ := contra_left_left
+      rewrite [contra_left_left_left] at contra_left_right
+      rewrite [contra_left_left_right] at contra_left_right
+      contradiction
+    case inr contra_left_left =>
+      specialize h1 Y []
+      simp only [List.nil_append, List.chain_cons] at h1
+      apply h1
+      constructor
+      · unfold is_small_step_v1
+        apply Exists.intro F'
+        exact ⟨contra_left_left, contra_left_right⟩
+      · simp only [List.Chain.nil]
+  case cons hd tl ih =>
+    sorry
 
 
 -------------------------------------------------------------------------------
