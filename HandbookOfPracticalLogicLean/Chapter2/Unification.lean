@@ -582,7 +582,18 @@ example
   (h3 : ∀ (Y : String), ∀ (l : List String), atom_occurs_in Y F → ¬ is_one_or_more_small_steps E X Y l) :
   ¬ has_cycle ((X, F) :: E) :=
   by
-  sorry
+  unfold has_cycle
+  simp only [not_exists]
+  intro Y l contra
+  unfold is_one_or_more_small_steps at contra
+  induction l
+  case nil =>
+    simp only [List.nil_append, List.chain_cons] at contra
+    obtain ⟨contra_left, contra_right⟩ := contra
+    unfold is_small_step_v1 at contra_left
+    sorry
+  case cons hd tl ih =>
+    sorry
 
 
 -------------------------------------------------------------------------------
