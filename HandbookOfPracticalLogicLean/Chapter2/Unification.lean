@@ -117,6 +117,10 @@ example
   are_equivalent_equation_sets { (F, F') } ((reduce (F, F')).get h1) :=
   by
   cases F
+  case false_ | true_ | atom_ X =>
+    simp only [reduce] at h1
+    simp only [Option.isSome_none] at h1
+    contradiction
   case not_ phi =>
     cases F'
     case not_ phi' =>
