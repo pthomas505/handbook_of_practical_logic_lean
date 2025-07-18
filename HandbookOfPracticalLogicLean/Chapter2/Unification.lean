@@ -101,6 +101,80 @@ def are_equivalent_equation_sets
   ∀ (σ : Instantiation), (is_unifier σ S ↔ is_unifier σ S')
 
 
+example
+  (phi phi' : Formula_) :
+  are_equivalent_equation_sets { (not_ phi, not_ phi') } { (phi, phi') } :=
+  by
+  unfold are_equivalent_equation_sets
+  intro σ
+  unfold is_unifier
+  simp only [Set.mem_singleton_iff]
+  constructor
+  · intro a1 p a2
+    specialize a1 (not_ phi, not_ phi')
+    simp only at a1
+    unfold replace_atom_all_rec at a1
+    specialize a1 trivial
+    simp only [not_.injEq] at a1
+
+    rewrite [a2]
+    simp only
+    exact a1
+  · intro a1 p a2
+    rewrite [a2]
+    simp only
+    unfold replace_atom_all_rec
+    simp only [not_.injEq]
+    specialize a1 (phi, phi')
+    simp only at a1
+    apply a1
+    exact trivial
+
+
+example
+  (phi psi phi' psi' : Formula_) :
+  are_equivalent_equation_sets { (and_ phi psi, and_ phi' psi') } { (phi, phi'), (psi, psi') } :=
+  by
+  unfold are_equivalent_equation_sets
+  intro σ
+  unfold is_unifier
+  simp only [Set.mem_singleton_iff, Set.mem_insert_iff]
+  constructor
+  · intro a1 p a2
+    specialize a1 (phi.and_ psi, phi'.and_ psi')
+    simp only at a1
+    unfold replace_atom_all_rec at a1
+    specialize a1 trivial
+    simp only [and_.injEq] at a1
+    obtain ⟨a1_left, a1_right⟩ := a1
+
+    cases a2
+    case inl a2 =>
+      rewrite [a2]
+      simp only
+      exact a1_left
+    case inr a2 =>
+      rewrite [a2]
+      simp only
+      exact a1_right
+  · intro a1 p a2
+    rewrite [a2]
+    simp only
+    unfold replace_atom_all_rec
+    simp only [and_.injEq]
+    constructor
+    · specialize a1 (phi, phi')
+      simp only at a1
+      apply a1
+      left
+      exact trivial
+    · specialize a1 (psi, psi')
+      simp only at a1
+      apply a1
+      right
+      exact trivial
+
+
 def reduce :
   (Formula_ × Formula_) → Option (Set (Formula_ × Formula_))
   | (false_, false_) => Option.some { (false_, false_) }
