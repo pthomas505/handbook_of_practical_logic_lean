@@ -95,6 +95,93 @@ def is_most_general_unifier
   is_unifier σ S ∧ ∀ (τ : Instantiation), is_unifier τ S → is_more_general_instantiation σ τ
 
 
+def are_equivalent_equation_sets
+  (S S' : Set (Formula_ × Formula_)) :
+  Prop :=
+  ∀ (σ : Instantiation), (is_unifier σ S ↔ is_unifier σ S')
+
+
+def reduce :
+  (Formula_ × Formula_) → Option (Set (Formula_ × Formula_))
+  | (false_, false_) => Option.some { (false_, false_) }
+  | (true_, true_) => Option.some { (true_, true_) }
+  | (atom_ X, atom_ X') => Option.some { (atom_ X, atom_ X') }
+  | (not_ phi, not_ phi') => reduce (phi, phi')
+  | (and_ phi psi, and_ phi' psi')
+  | (or_ phi psi, or_ phi' psi')
+  | (imp_ phi psi, imp_ phi' psi')
+  | (iff_ phi psi, iff_ phi' psi') => do
+      let eq_1 ← reduce (phi, psi)
+      let eq_2 ← reduce (phi', psi')
+      return (eq_1 ∪ eq_2)
+  | _ => Option.none
+
+
+example
+  (F F' : Formula_)
+  (h1 : (reduce (F, F')).isSome) :
+  are_equivalent_equation_sets { (F, F') } ((reduce (F, F')).get h1) :=
+  by
+  unfold are_equivalent_equation_sets
+  intro σ
+  constructor
+  intro a1
+  induction F generalizing F'
+  case false_ =>
+    cases F'
+    case false_ =>
+      unfold reduce
+      exact a1
+    all_goals
+      unfold reduce at h1
+      simp only [Option.isSome_none] at h1
+      contradiction
+  case true_ =>
+    cases F'
+    case true_ =>
+      unfold reduce
+      exact a1
+    all_goals
+      unfold reduce at h1
+      simp only [Option.isSome_none] at h1
+      contradiction
+  case atom_ X =>
+    cases F'
+    case atom_ X' =>
+      unfold reduce
+      exact a1
+    all_goals
+      unfold reduce at h1
+      simp only [Option.isSome_none] at h1
+      contradiction
+  case not_ phi ih =>
+    cases F'
+    case not_ phi' =>
+      unfold reduce at h1
+      specialize ih phi' h1
+      unfold reduce
+      apply ih
+      unfold is_unifier at a1
+      unfold is_unifier
+      simp only [Set.mem_singleton_iff] at a1
+      specialize a1 (not_ phi, not_ phi')
+      simp only at a1
+      simp only [replace_atom_all_rec] at a1
+      simp only [not_.injEq] at a1
+      intro p a2
+      simp only [Set.mem_singleton_iff] at a2
+      rewrite [a2]
+      simp only [replace_atom_all_rec]
+      apply a1
+      exact trivial
+    all_goals
+      unfold reduce at h1
+      simp only [Option.isSome_none] at h1
+      contradiction
+  all_goals
+    sorry
+
+
 -------------------------------------------------------------------------------
 
 
