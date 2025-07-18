@@ -111,8 +111,8 @@ def reduce :
   | (or_ phi psi, or_ phi' psi')
   | (imp_ phi psi, imp_ phi' psi')
   | (iff_ phi psi, iff_ phi' psi') => do
-      let eq_1 ← reduce (phi, psi)
-      let eq_2 ← reduce (phi', psi')
+      let eq_1 ← reduce (phi, phi')
+      let eq_2 ← reduce (psi, psi')
       return (eq_1 ∪ eq_2)
   | _ => Option.none
 
@@ -174,6 +174,84 @@ example
       simp only [replace_atom_all_rec]
       apply a1
       exact trivial
+    all_goals
+      unfold reduce at h1
+      simp only [Option.isSome_none] at h1
+      contradiction
+  case and_ phi psi phi_ih psi_ih =>
+    cases F'
+    case and_ phi' psi' =>
+      specialize phi_ih phi'
+      specialize psi_ih psi'
+
+      unfold is_unifier at a1
+      simp only [Set.mem_singleton_iff] at a1
+      specialize a1 (phi.and_ psi, phi'.and_ psi')
+      simp only at a1
+      specialize a1 trivial
+      unfold replace_atom_all_rec at a1
+      simp only [and_.injEq] at a1
+      obtain ⟨a1_left, a1_right⟩ := a1
+
+      unfold reduce at h1
+      cases c1 : reduce (phi, phi')
+      case none =>
+        rewrite [c1] at h1
+        simp only [Option.pure_def, Option.bind_eq_bind, Option.none_bind, Option.isSome_none] at h1
+        contradiction
+      case some eq_1 =>
+        rewrite [c1] at h1
+        simp only [Option.pure_def, Option.bind_eq_bind, Option.some_bind] at h1
+        cases c2 : reduce (psi, psi')
+        case none =>
+          rewrite [c2] at h1
+          simp only [Option.none_bind, Option.isSome_none] at h1
+          contradiction
+        case some eq_2 =>
+          rewrite [c1] at phi_ih
+          simp only [Option.isSome_some, Option.get_some] at phi_ih
+          specialize phi_ih trivial
+          unfold is_unifier at phi_ih
+          simp only [Set.mem_singleton_iff] at phi_ih
+
+          rewrite [c2] at psi_ih
+          simp only [Option.isSome_some, Option.get_some] at psi_ih
+          specialize psi_ih trivial
+          unfold is_unifier at psi_ih
+          simp only [Set.mem_singleton_iff] at psi_ih
+
+          rewrite [c2] at h1
+          simp only [Option.some_bind, Option.isSome_some] at h1
+          unfold reduce
+          unfold is_unifier
+          intro p a2
+
+          have s1 : (∀ (p : Formula_ × Formula_), p = (phi, phi') → replace_atom_all_rec σ p.1 = replace_atom_all_rec σ p.2) :=
+          by
+            intro p a3
+            rewrite [a3]
+            simp only
+            exact a1_left
+
+          have s2 : (∀ (p : Formula_ × Formula_), p = (psi, psi') → replace_atom_all_rec σ p.1 = replace_atom_all_rec σ p.2) :=
+          by
+            intro p a3
+            rewrite [a3]
+            simp only
+            exact a1_right
+
+          specialize phi_ih s1
+          specialize psi_ih s2
+
+          simp only [Option.pure_def, Option.bind_eq_bind] at a2
+          simp_all only [Option.some_bind, Option.get_some, Set.mem_union]
+          cases a2
+          case inl a2 =>
+            apply phi_ih
+            exact a2
+          case inr a2 =>
+            apply psi_ih
+            exact a2
     all_goals
       unfold reduce at h1
       simp only [Option.isSome_none] at h1
