@@ -166,7 +166,11 @@ example
         simp only at a1
         unfold replace_atom_all_rec at a1
         specialize a1 trivial
-        simp only [and_.injEq] at a1
+        first
+          | simp only [and_.injEq] at a1
+          | simp only [or_.injEq] at a1
+          | simp only [imp_.injEq] at a1
+          | simp only [iff_.injEq] at a1
         obtain ⟨a1_left, a1_right⟩ := a1
 
         cases a2
@@ -182,7 +186,11 @@ example
         rewrite [a2]
         simp only
         unfold replace_atom_all_rec
-        simp only [and_.injEq]
+        first
+        | simp only [and_.injEq]
+        | simp only [or_.injEq]
+        | simp only [imp_.injEq]
+        | simp only [iff_.injEq]
         constructor
         · specialize a1 (phi, phi')
           simp only at a1
