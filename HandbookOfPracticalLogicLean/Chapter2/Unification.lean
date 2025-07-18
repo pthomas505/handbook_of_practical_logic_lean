@@ -162,7 +162,7 @@ example
       simp only [Set.mem_singleton_iff]
       constructor
       · intro a1 p a2
-        specialize a1 (phi.and_ psi, phi'.and_ psi')
+        specialize a1 (and_ phi psi, and_ phi' psi')
         simp only at a1
         unfold replace_atom_all_rec at a1
         specialize a1 trivial
