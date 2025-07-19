@@ -296,6 +296,9 @@ lemma is_subformula_antisymm
     · exact h2
 
 
+-------------------------------------------------------------------------------
+
+
 lemma not_is_subformula_not
   (F : Formula_) :
   ¬ is_subformula (not_ F) F :=
@@ -332,45 +335,22 @@ lemma not_is_subformula_and_right
 -------------------------------------------------------------------------------
 
 
-lemma not_is_subformula_and_left
+lemma not_is_subformula_or_left
   (P Q : Formula_) :
-  ¬ is_subformula (and_ P Q) P :=
+  ¬ is_subformula (or_ P Q) P :=
   by
   intro contra
-  obtain s1 := is_subformula_imp_le_size (and_ P Q) P contra
+  obtain s1 := is_subformula_imp_le_size (or_ P Q) P contra
   simp only [size] at s1
   linarith
 
 
-lemma not_is_subformula_and_right
+lemma not_is_subformula_or_right
   (P Q : Formula_) :
-  ¬ is_subformula (and_ P Q) Q :=
+  ¬ is_subformula (or_ P Q) Q :=
   by
   intro contra
-  obtain s1 := is_subformula_imp_le_size (and_ P Q) Q contra
-  simp only [size] at s1
-  linarith
-
-
--------------------------------------------------------------------------------
-
-
-lemma not_is_subformula_and_left
-  (P Q : Formula_) :
-  ¬ is_subformula (and_ P Q) P :=
-  by
-  intro contra
-  obtain s1 := is_subformula_imp_le_size (and_ P Q) P contra
-  simp only [size] at s1
-  linarith
-
-
-lemma not_is_subformula_and_right
-  (P Q : Formula_) :
-  ¬ is_subformula (and_ P Q) Q :=
-  by
-  intro contra
-  obtain s1 := is_subformula_imp_le_size (and_ P Q) Q contra
+  obtain s1 := is_subformula_imp_le_size (or_ P Q) Q contra
   simp only [size] at s1
   linarith
 
@@ -378,22 +358,45 @@ lemma not_is_subformula_and_right
 -------------------------------------------------------------------------------
 
 
-lemma not_is_subformula_and_left
+lemma not_is_subformula_imp_left
   (P Q : Formula_) :
-  ¬ is_subformula (and_ P Q) P :=
+  ¬ is_subformula (imp_ P Q) P :=
   by
   intro contra
-  obtain s1 := is_subformula_imp_le_size (and_ P Q) P contra
+  obtain s1 := is_subformula_imp_le_size (imp_ P Q) P contra
   simp only [size] at s1
   linarith
 
 
-lemma not_is_subformula_and_right
+lemma not_is_subformula_imp_right
   (P Q : Formula_) :
-  ¬ is_subformula (and_ P Q) Q :=
+  ¬ is_subformula (imp_ P Q) Q :=
   by
   intro contra
-  obtain s1 := is_subformula_imp_le_size (and_ P Q) Q contra
+  obtain s1 := is_subformula_imp_le_size (imp_ P Q) Q contra
+  simp only [size] at s1
+  linarith
+
+
+-------------------------------------------------------------------------------
+
+
+lemma not_is_subformula_iff_left
+  (P Q : Formula_) :
+  ¬ is_subformula (iff_ P Q) P :=
+  by
+  intro contra
+  obtain s1 := is_subformula_imp_le_size (iff_ P Q) P contra
+  simp only [size] at s1
+  linarith
+
+
+lemma not_is_subformula_iff_right
+  (P Q : Formula_) :
+  ¬ is_subformula (iff_ P Q) Q :=
+  by
+  intro contra
+  obtain s1 := is_subformula_imp_le_size (iff_ P Q) Q contra
   simp only [size] at s1
   linarith
 
