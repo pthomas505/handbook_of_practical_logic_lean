@@ -741,6 +741,23 @@ theorem not_is_small_step_singleton_refl
   exact contra_right
 
 
+example
+  (X Y : String)
+  (F : Formula_)
+  (l : List String)
+  (h1 : ¬ l = []) :
+  ¬ List.Chain (is_small_step_v1 [(X, F)]) Y l :=
+  by
+  induction l
+  case nil =>
+    contradiction
+  case cons hd tl ih =>
+    simp only [List.chain_cons]
+    intro contra
+    obtain ⟨contra_left, contra_right⟩ := contra
+    sorry
+
+
 lemma not_nil_not_eq_imp_not_is_one_or_more_small_steps_singleton
   (X Y : String)
   (F : Formula_)
@@ -749,11 +766,11 @@ lemma not_nil_not_eq_imp_not_is_one_or_more_small_steps_singleton
   (h2 : ¬ Y = X) :
   ¬ List.Chain (is_small_step_v1 [(X, F)]) Y l :=
   by
-  intro contra_1
   cases l
   case nil =>
     contradiction
   case cons hd tl =>
+    intro contra_1
     simp only [List.chain_cons] at contra_1
     obtain ⟨contra_1_left, contra_1_right⟩ := contra_1
     apply not_is_small_step_singleton_right X Y F hd
