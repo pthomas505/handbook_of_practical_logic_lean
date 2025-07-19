@@ -840,7 +840,11 @@ lemma is_proper_subformula_v2_imp_replace_atom_all_rec_not_eq
       simp only [replace_atom_all_rec] at s1
       apply not_is_subformula_not (replace_atom_all_rec σ phi)
       exact s1
-  case and_ phi psi =>
+  case
+      and_ phi psi
+    | or_ phi psi
+    | imp_ phi psi
+    | iff_ phi psi =>
     unfold is_proper_subformula_v2 at h1
     obtain ⟨h1_left, h1_right⟩ := h1
     unfold is_subformula at h1_left
@@ -855,15 +859,21 @@ lemma is_proper_subformula_v2_imp_replace_atom_all_rec_not_eq
         intro contra
         rewrite [contra] at s1
         simp only [replace_atom_all_rec] at s1
-        sorry
+        first
+        | exact not_is_subformula_and_left (replace_atom_all_rec σ phi) (replace_atom_all_rec σ psi) s1
+        | exact not_is_subformula_or_left (replace_atom_all_rec σ phi) (replace_atom_all_rec σ psi) s1
+        | exact not_is_subformula_imp_left (replace_atom_all_rec σ phi) (replace_atom_all_rec σ psi) s1
+        | exact not_is_subformula_iff_left (replace_atom_all_rec σ phi) (replace_atom_all_rec σ psi) s1
       case inr h1_left =>
         obtain s1 := is_subformula_imp_is_subformula_replace_atom_all_rec F psi σ h1_left
         intro contra
         rewrite [contra] at s1
         simp only [replace_atom_all_rec] at s1
-        sorry
-  all_goals
-    sorry
+        first
+        | exact not_is_subformula_and_right (replace_atom_all_rec σ phi) (replace_atom_all_rec σ psi) s1
+        | exact not_is_subformula_or_right (replace_atom_all_rec σ phi) (replace_atom_all_rec σ psi) s1
+        | exact not_is_subformula_imp_right (replace_atom_all_rec σ phi) (replace_atom_all_rec σ psi) s1
+        | exact not_is_subformula_iff_right (replace_atom_all_rec σ phi) (replace_atom_all_rec σ psi) s1
 
 
 lemma is_proper_subformula_v2_imp_is_proper_subformula_v2_replace_atom_all_rec
