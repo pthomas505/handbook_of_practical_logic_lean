@@ -672,11 +672,10 @@ lemma not_nil_not_eq_imp_not_is_one_or_more_small_steps_singleton
   case cons hd tl =>
     simp only [List.chain_cons] at contra
     obtain ⟨contra_left, contra_right⟩ := contra
-    unfold is_small_step_v1 at contra_left
-    obtain ⟨F', contra_left_left, contra_left_right⟩ := contra_left
-    simp only [List.mem_singleton, Prod.mk.injEq] at contra_left_left
-    obtain ⟨contra_left_left_left, contra_left_left_right⟩ := contra_left_left
-    contradiction
+    apply not_is_small_step_singleton X Y hd F
+    · left
+      exact h2
+    · exact contra_left
 
 
 lemma not_has_cycle_singleton
