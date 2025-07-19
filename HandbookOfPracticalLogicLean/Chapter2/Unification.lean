@@ -603,6 +603,166 @@ lemma not_is_small_step_nil
   simp only [List.not_mem_nil] at contra_left
 
 
+lemma not_is_small_step_singleton_left
+  (X Y : String)
+  (F : Formula_)
+  (Z : String)
+  (h1 : ¬ is_small_step_v1 [(X, F)] Y Z) :
+  ¬ (Y = X ∧ atom_occurs_in Z F) :=
+  by
+  unfold is_small_step_v1 at h1
+  simp only [not_exists] at h1
+  simp only [List.mem_singleton] at h1
+  simp only [Prod.mk.injEq] at h1
+  specialize h1 F
+
+  intro contra
+  obtain ⟨contra_left, contra_right⟩ := contra
+  apply h1
+  constructor
+  · constructor
+    · exact contra_left
+    · rfl
+  · exact contra_right
+
+
+lemma not_is_small_step_singleton_right
+  (X Y : String)
+  (F : Formula_)
+  (Z : String)
+  (h1 : ¬ (Y = X ∧ atom_occurs_in Z F)) :
+  ¬ is_small_step_v1 [(X, F)] Y Z :=
+  by
+  unfold is_small_step_v1
+  simp only [not_exists]
+  simp only [List.mem_singleton]
+  simp only [Prod.mk.injEq]
+  intro F' contra
+  obtain ⟨⟨contra_left_left, contra_left_right⟩, contra_right⟩ := contra
+  apply h1
+  rewrite [← contra_left_right]
+  exact ⟨contra_left_left, contra_right⟩
+
+
+lemma not_is_small_step_singleton
+  (X Y : String)
+  (F : Formula_)
+  (Z : String) :
+  (¬ is_small_step_v1 [(X, F)] Y Z) ↔ ¬ (Y = X ∧ atom_occurs_in Z F) :=
+  by
+  constructor
+  · apply not_is_small_step_singleton_left
+  · apply not_is_small_step_singleton_right
+
+
+lemma not_is_small_step_append_left
+  (E_1 E_2 : List (String × Formula_))
+  (X Y : String)
+  (h1 : ¬ is_small_step_v1 (E_1 ++ E_2) X Y) :
+  (¬ is_small_step_v1 E_1 X Y) ∧ (¬ is_small_step_v1 E_2 X Y) :=
+  by
+  unfold is_small_step_v1 at h1
+  simp only [not_exists] at h1
+  simp only [List.mem_append] at h1
+
+  unfold is_small_step_v1
+  simp only [not_exists]
+  constructor
+  · intro F contra
+    obtain ⟨contra_left, contra_right⟩ := contra
+    specialize h1 F
+    apply h1
+    constructor
+    · left
+      exact contra_left
+    · exact contra_right
+  · intro F contra
+    obtain ⟨contra_left, contra_right⟩ := contra
+    specialize h1 F
+    apply h1
+    constructor
+    · right
+      exact contra_left
+    · exact contra_right
+
+
+lemma not_is_small_step_append_right
+  (E_1 E_2 : List (String × Formula_))
+  (X Y : String)
+  (h1 : ¬ is_small_step_v1 E_1 X Y)
+  (h2 : ¬ is_small_step_v1 E_2 X Y) :
+  ¬ is_small_step_v1 (E_1 ++ E_2) X Y :=
+  by
+  unfold is_small_step_v1 at h1
+  simp only [not_exists] at h1
+
+  unfold is_small_step_v1 at h2
+  simp only [not_exists] at h2
+
+  unfold is_small_step_v1
+  simp only [not_exists]
+  simp only [List.mem_append]
+  intro F contra
+  obtain ⟨contra_left, contra_right⟩ := contra
+  cases contra_left
+  case inl contra_left =>
+    apply h1 F
+    exact ⟨contra_left, contra_right⟩
+  case inr contra_left =>
+    apply h2 F
+    exact ⟨contra_left, contra_right⟩
+
+
+lemma not_is_small_step_append
+  (E_1 E_2 : List (String × Formula_))
+  (X Y : String) :
+  (¬ is_small_step_v1 (E_1 ++ E_2) X Y) ↔ (¬ is_small_step_v1 E_1 X Y ∧ ¬ is_small_step_v1 E_2 X Y) :=
+  by
+  constructor
+  · apply not_is_small_step_append_left
+  · intro a1
+    obtain ⟨a1_left, a1_right⟩ := a1
+    apply not_is_small_step_append_right
+    · exact a1_left
+    · exact a1_right
+
+
+theorem not_is_small_step_singleton_refl
+  (X Y : String)
+  (F : Formula_)
+  (h1 : ¬ atom_occurs_in X F) :
+  ¬ is_small_step_v1 [(X, F)] Y Y :=
+  by
+  simp only [not_is_small_step_singleton]
+  intro contra
+  obtain ⟨contra_left, contra_right⟩ := contra
+  apply h1
+  rewrite [← contra_left]
+  exact contra_right
+
+
+lemma not_nil_not_eq_imp_not_is_one_or_more_small_steps_singleton
+  (X Y : String)
+  (F : Formula_)
+  (l : List String)
+  (h1 : ¬ l = [])
+  (h2 : ¬ Y = X) :
+  ¬ List.Chain (is_small_step_v1 [(X, F)]) Y l :=
+  by
+  intro contra_1
+  cases l
+  case nil =>
+    contradiction
+  case cons hd tl =>
+    simp only [List.chain_cons] at contra_1
+    obtain ⟨contra_1_left, contra_1_right⟩ := contra_1
+    apply not_is_small_step_singleton_right X Y F hd
+    · intro contra_2
+      obtain ⟨contra_2_left, contra_2_right⟩ := contra_2
+      contradiction
+    · exact contra_1_left
+
+
 lemma not_has_cycle_nil :
   ¬ has_cycle [] :=
   by
@@ -619,64 +779,6 @@ lemma not_has_cycle_nil :
     simp only [List.cons_append, List.chain_cons] at contra
     obtain ⟨contra_left, contra_right⟩ := contra
     exact not_is_small_step_nil X hd contra_left
-
-
-theorem not_is_small_step_singleton
-  (X Y : String)
-  (F : Formula_)
-  (Z : String)
-  (h1 : ¬ Y = X ∨ ¬ atom_occurs_in Z F) :
-  ¬ is_small_step_v1 [(X, F)] Y Z :=
-  by
-  unfold is_small_step_v1
-  simp only [not_exists]
-  simp only [List.mem_singleton, Prod.mk.injEq]
-  intro F' contra
-  obtain ⟨⟨contra_left_left, contra_left_right⟩, contra_right⟩ := contra
-  cases h1
-  case inl h1 =>
-    contradiction
-  case inr h1 =>
-    rewrite [← contra_left_right] at h1
-    contradiction
-
-
-theorem not_is_small_step_singleton_refl
-  (X Y : String)
-  (F : Formula_)
-  (h1 : ¬ atom_occurs_in X F) :
-  ¬ is_small_step_v1 [(X, F)] Y Y :=
-  by
-  apply not_is_small_step_singleton
-  by_cases c1 : Y = X
-  case pos =>
-    right
-    rewrite [c1]
-    exact h1
-  case neg =>
-    left
-    exact c1
-
-
-lemma not_nil_not_eq_imp_not_is_one_or_more_small_steps_singleton
-  (X Y : String)
-  (F : Formula_)
-  (l : List String)
-  (h1 : ¬ l = [])
-  (h2 : ¬ Y = X) :
-  ¬ List.Chain (is_small_step_v1 [(X, F)]) Y l :=
-  by
-  intro contra
-  cases l
-  case nil =>
-    contradiction
-  case cons hd tl =>
-    simp only [List.chain_cons] at contra
-    obtain ⟨contra_left, contra_right⟩ := contra
-    apply not_is_small_step_singleton X Y F hd
-    · left
-      exact h2
-    · exact contra_left
 
 
 lemma not_has_cycle_singleton
@@ -711,19 +813,6 @@ lemma not_has_cycle_singleton
       rewrite [contra] at contra_left_right
       contradiction
     · exact contra_right
-
-
-lemma is_small_step_refl
-  (E : List (String × Formula_))
-  (X Y : String)
-  (F : Formula_)
-  (h1 : (X, F) ∈ E)
-  (h2 : atom_occurs_in Y F) :
-  is_small_step_v1 E X Y :=
-  by
-  unfold is_small_step_v1
-  apply Exists.intro F
-  exact ⟨h1, h2⟩
 
 
 example
