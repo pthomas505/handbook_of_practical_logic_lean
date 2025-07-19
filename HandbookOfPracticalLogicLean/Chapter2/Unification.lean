@@ -621,21 +621,40 @@ lemma not_has_cycle_nil :
     exact not_is_small_step_nil X hd contra_left
 
 
-theorem not_is_small_step_singleton_refl
-  (X Y : String)
+theorem not_is_small_step_singleton
+  (X Y Z : String)
   (F : Formula_)
-  (h1 : ¬ atom_occurs_in X F) :
-  ¬ is_small_step_v1 [(X, F)] Y Y :=
+  (h1 : ¬ Y = X ∨ ¬ atom_occurs_in Z F) :
+  ¬ is_small_step_v1 [(X, F)] Y Z :=
   by
   unfold is_small_step_v1
   simp only [not_exists]
   simp only [List.mem_singleton, Prod.mk.injEq]
   intro F' contra
   obtain ⟨⟨contra_left_left, contra_left_right⟩, contra_right⟩ := contra
-  apply h1
-  rewrite [← contra_left_left]
-  rewrite [← contra_left_right]
-  exact contra_right
+  cases h1
+  case inl h1 =>
+    contradiction
+  case inr h1 =>
+    rewrite [← contra_left_right] at h1
+    contradiction
+
+
+theorem not_is_small_step_singleton_refl
+  (X Y : String)
+  (F : Formula_)
+  (h1 : ¬ atom_occurs_in X F) :
+  ¬ is_small_step_v1 [(X, F)] Y Y :=
+  by
+  apply not_is_small_step_singleton
+  by_cases c1 : Y = X
+  case pos =>
+    right
+    rewrite [c1]
+    exact h1
+  case neg =>
+    left
+    exact c1
 
 
 lemma not_nil_not_eq_imp_not_is_one_or_more_small_steps_singleton
