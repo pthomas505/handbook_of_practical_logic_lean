@@ -622,8 +622,9 @@ lemma not_has_cycle_nil :
 
 
 theorem not_is_small_step_singleton
-  (X Y Z : String)
+  (X Y : String)
   (F : Formula_)
+  (Z : String)
   (h1 : ¬ Y = X ∨ ¬ atom_occurs_in Z F) :
   ¬ is_small_step_v1 [(X, F)] Y Z :=
   by
@@ -672,7 +673,7 @@ lemma not_nil_not_eq_imp_not_is_one_or_more_small_steps_singleton
   case cons hd tl =>
     simp only [List.chain_cons] at contra
     obtain ⟨contra_left, contra_right⟩ := contra
-    apply not_is_small_step_singleton X Y hd F
+    apply not_is_small_step_singleton X Y F hd
     · left
       exact h2
     · exact contra_left
@@ -688,12 +689,12 @@ lemma not_has_cycle_singleton
   simp only [not_exists]
   intro Y l contra
   unfold is_one_or_more_small_steps at contra
-  induction l
+  cases l
   case nil =>
     simp only [List.nil_append, List.chain_cons] at contra
     obtain ⟨contra_left, contra_right⟩ := contra
     exact not_is_small_step_singleton_refl X Y F h1 contra_left
-  case cons hd tl ih =>
+  case cons hd tl =>
     simp only [List.cons_append, List.chain_cons] at contra
     obtain ⟨contra_left, contra_right⟩ := contra
     unfold is_small_step_v1 at contra_left
