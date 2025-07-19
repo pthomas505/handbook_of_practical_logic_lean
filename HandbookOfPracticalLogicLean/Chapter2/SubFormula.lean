@@ -316,6 +316,16 @@ lemma not_is_subformula_and_left
   linarith
 
 
+lemma not_is_subformula_and_right
+  (P Q : Formula_) :
+  ¬ is_subformula (and_ P Q) Q :=
+  by
+  intro contra
+  obtain s1 := is_subformula_imp_le_size (and_ P Q) Q contra
+  simp only [size] at s1
+  linarith
+
+
 -------------------------------------------------------------------------------
 
 

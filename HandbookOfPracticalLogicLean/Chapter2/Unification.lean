@@ -111,6 +111,16 @@ def reduce :
   | _ => Option.none
 
 
+def are_reducible :
+  (Formula_ × Formula_) → Prop
+  | (not_ _, not_ _)
+  | (and_ _ _, and_ _ _)
+  | (or_ _ _, or_ _ _)
+  | (imp_ _ _, imp_ _ _)
+  | (iff_ _ _, iff_ _ _) => True
+  | _ => False
+
+
 example
   (F F' : Formula_)
   (h1 : (reduce (F, F')).isSome) :
