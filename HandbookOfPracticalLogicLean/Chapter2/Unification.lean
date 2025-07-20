@@ -755,6 +755,37 @@ lemma is_small_step_append_left
     exact ⟨h1_left, h1_right⟩
 
 
+lemma is_small_step_append_right
+  (E_1 E_2 : List (String × Formula_))
+  (X Y : String)
+  (h1 : is_small_step_v1 E_1 X Y ∨ is_small_step_v1 E_2 X Y) :
+  is_small_step_v1 (E_1 ++ E_2) X Y :=
+  by
+  unfold is_small_step_v1
+
+  cases h1
+  case inl h1 =>
+    unfold is_small_step_v1 at h1
+    obtain ⟨F, h1_left, h1_right⟩ := h1
+
+    apply Exists.intro F
+    constructor
+    · simp only [List.mem_append]
+      left
+      exact h1_left
+    · exact h1_right
+  case inr h1 =>
+    unfold is_small_step_v1 at h1
+    obtain ⟨F, h1_left, h1_right⟩ := h1
+
+    apply Exists.intro F
+    constructor
+    · simp only [List.mem_append]
+      right
+      exact h1_left
+    · exact h1_right
+
+
 lemma not_is_small_step_append_left
   (E_1 E_2 : List (String × Formula_))
   (X Y : String)
