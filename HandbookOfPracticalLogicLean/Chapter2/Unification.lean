@@ -870,7 +870,7 @@ lemma not_has_cycle_nil :
     exact not_is_small_step_nil X hd contra_left
 
 
-lemma has_cycle_singleton
+lemma has_cycle_singleton_left
   (X : String)
   (F : Formula_)
   (h1 : has_cycle [(X, F)]) :
@@ -893,6 +893,31 @@ lemma has_cycle_singleton
     · exact h1_left
     · unfold is_one_or_more_small_steps
       exact h1_right
+
+
+lemma has_cycle_singleton_right
+  (X : String)
+  (F : Formula_)
+  (h1 : atom_occurs_in X F) :
+  has_cycle [(X, F)] :=
+  by
+  unfold has_cycle
+  apply Exists.intro X
+  apply Exists.intro []
+  unfold is_one_or_more_small_steps
+  simp only [List.nil_append, List.chain_cons, List.Chain.nil]
+  simp only [is_small_step_v1_singleton]
+  exact ⟨⟨trivial, h1⟩, trivial⟩
+
+
+lemma has_cycle_singleton
+  (X : String)
+  (F : Formula_) :
+  has_cycle [(X, F)] ↔ atom_occurs_in X F :=
+  by
+  constructor
+  · apply has_cycle_singleton_left
+  · apply has_cycle_singleton_right
 
 
 example
