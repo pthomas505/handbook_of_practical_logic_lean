@@ -661,7 +661,7 @@ lemma is_small_step_v1_singleton
 -------------------------------------------------------------------------------
 
 
-theorem is_small_step_v1_singleton_refl
+lemma is_small_step_v1_singleton_refl
   (X Y : String)
   (F : Formula_)
   (h1 : is_small_step_v1 [(X, F)] Y Y) :
