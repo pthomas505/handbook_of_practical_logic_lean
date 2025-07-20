@@ -768,33 +768,69 @@ lemma is_one_or_more_small_steps_trans
     exact ⟨h2_left, h3_right⟩
 
 
+lemma is_small_step_v1_singleton_trans
+  (X A B C : String)
+  (F : Formula_)
+  (h1 : is_small_step_v1 [(X, F)] A B)
+  (h2 : is_small_step_v1 [(X, F)] B C) :
+  is_small_step_v1 [(X, F)] A C :=
+  by
+  simp only [is_small_step_v1_singleton] at h1
+  obtain ⟨h1_left, h1_right⟩ := h1
+
+  simp only [is_small_step_v1_singleton] at h2
+  obtain ⟨h2_left, h2_right⟩ := h2
+
+  simp only [is_small_step_v1_singleton]
+  exact ⟨h1_left, h2_right⟩
+
+
+lemma is_small_step_v1_is_one_or_more_small_steps_trans
+  (X A B C : String)
+  (F : Formula_)
+  (l : List String)
+  (h1 : is_small_step_v1 [(X, F)] A B)
+  (h2 : is_one_or_more_small_steps [(X, F)] B C l) :
+  is_small_step_v1 [(X, F)] A C :=
+  by
+  unfold is_one_or_more_small_steps at h2
+  induction l generalizing B
+  case nil =>
+    simp only [List.nil_append, List.chain_cons, List.Chain.nil] at h2
+    obtain ⟨h2_left, h2_right⟩ := h2
+    apply is_small_step_v1_singleton_trans X A B
+    · exact h1
+    · exact h2_left
+  case cons hd tl ih =>
+    simp only [List.cons_append, List.chain_cons] at h2
+    obtain ⟨h2_left, h2_right⟩ := h2
+    apply ih hd
+    · apply is_small_step_v1_singleton_trans X A B
+      · exact h1
+      · exact h2_left
+    · exact h2_right
+
+
 example
   (X Y Z : String)
   (F : Formula_)
   (l : List String)
-  (h1 : ¬ Y = X ∨ ¬ atom_occurs_in Z F) :
-  ¬ is_one_or_more_small_steps [(X, F)] Y Z l :=
+  (h1 : is_one_or_more_small_steps [(X, F)] Y Z l) :
+  is_small_step_v1 [(X, F)] Y Z :=
   by
-  unfold is_one_or_more_small_steps
-  cases l
+  unfold is_one_or_more_small_steps at h1
+  induction l
   case nil =>
-    simp only [List.nil_append, List.chain_cons, List.Chain.nil]
-    intro contra
-    obtain ⟨contra_left, contra_right⟩ := contra
-    apply not_is_small_step_singleton_right X Y F Z
-    · simp only [de_morgan_prop_1]
-      exact h1
-    · exact contra_left
-  case cons hd tl =>
-    simp only [List.cons_append, List.chain_cons]
-    intro contra
-    obtain ⟨contra_left, contra_right⟩ := contra
-    apply not_is_small_step_singleton_right X Y F hd
-    · simp only [de_morgan_prop_1]
-      unfold is_small_step_v1 at contra_left
-
-      exact h1
-    · exact contra_left
+    simp only [List.nil_append, List.chain_cons, List.Chain.nil] at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+    exact h1_left
+  case cons hd tl ih =>
+    simp only [List.cons_append, List.chain_cons] at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+    apply is_small_step_v1_is_one_or_more_small_steps_trans X Y hd Z F tl
+    · exact h1_left
+    · unfold is_one_or_more_small_steps
+      exact h1_right
 
 
 lemma not_nil_not_eq_imp_not_is_one_or_more_small_steps_singleton
