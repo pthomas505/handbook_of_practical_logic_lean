@@ -673,6 +673,23 @@ lemma is_small_step_v1_singleton_refl
   exact h1_right
 
 
+lemma is_small_step_v1_singleton_trans
+  (X A B C : String)
+  (F : Formula_)
+  (h1 : is_small_step_v1 [(X, F)] A B)
+  (h2 : is_small_step_v1 [(X, F)] B C) :
+  is_small_step_v1 [(X, F)] A C :=
+  by
+  simp only [is_small_step_v1_singleton] at h1
+  obtain ⟨h1_left, h1_right⟩ := h1
+
+  simp only [is_small_step_v1_singleton] at h2
+  obtain ⟨h2_left, h2_right⟩ := h2
+
+  simp only [is_small_step_v1_singleton]
+  exact ⟨h1_left, h2_right⟩
+
+
 -------------------------------------------------------------------------------
 
 
@@ -785,23 +802,6 @@ lemma is_one_or_more_small_steps_trans
     unfold is_one_or_more_small_steps
     simp only [List.cons_append, List.chain_cons]
     exact ⟨h2_left, h3_right⟩
-
-
-lemma is_small_step_v1_singleton_trans
-  (X A B C : String)
-  (F : Formula_)
-  (h1 : is_small_step_v1 [(X, F)] A B)
-  (h2 : is_small_step_v1 [(X, F)] B C) :
-  is_small_step_v1 [(X, F)] A C :=
-  by
-  simp only [is_small_step_v1_singleton] at h1
-  obtain ⟨h1_left, h1_right⟩ := h1
-
-  simp only [is_small_step_v1_singleton] at h2
-  obtain ⟨h2_left, h2_right⟩ := h2
-
-  simp only [is_small_step_v1_singleton]
-  exact ⟨h1_left, h2_right⟩
 
 
 lemma is_small_step_v1_is_one_or_more_small_steps_trans
