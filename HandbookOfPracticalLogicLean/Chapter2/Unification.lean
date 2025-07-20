@@ -661,18 +661,16 @@ lemma is_small_step_v1_singleton
 -------------------------------------------------------------------------------
 
 
-theorem not_is_small_step_singleton_refl
+theorem is_small_step_v1_singleton_refl
   (X Y : String)
   (F : Formula_)
-  (h1 : ¬ atom_occurs_in X F) :
-  ¬ is_small_step_v1 [(X, F)] Y Y :=
+  (h1 : is_small_step_v1 [(X, F)] Y Y) :
+  atom_occurs_in X F :=
   by
-  simp only [not_is_small_step_singleton]
-  intro contra
-  obtain ⟨contra_left, contra_right⟩ := contra
-  apply h1
-  rewrite [← contra_left]
-  exact contra_right
+  simp only [is_small_step_v1_singleton] at h1
+  obtain ⟨h1_left, h1_right⟩ := h1
+  rewrite [← h1_left]
+  exact h1_right
 
 
 -------------------------------------------------------------------------------
