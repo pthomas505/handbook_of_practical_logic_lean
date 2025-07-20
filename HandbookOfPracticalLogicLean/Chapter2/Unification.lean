@@ -607,7 +607,7 @@ lemma not_is_small_step_nil
 -------------------------------------------------------------------------------
 
 
-lemma is_small_step_singleton_left
+lemma is_small_step_v1_singleton_left
   (X Y : String)
   (F : Formula_)
   (Z : String)
@@ -625,7 +625,7 @@ lemma is_small_step_singleton_left
     exact h1_right
 
 
-lemma is_small_step_singleton_right
+lemma is_small_step_v1_singleton_right
   (X Y : String)
   (F : Formula_)
   (Z : String)
@@ -643,17 +643,17 @@ lemma is_small_step_singleton_right
   · exact h2
 
 
-lemma is_small_step_singleton
+lemma is_small_step_v1_singleton
   (X Y : String)
   (F : Formula_)
   (Z : String) :
   (is_small_step_v1 [(X, F)] Y Z) ↔ (Y = X ∧ atom_occurs_in Z F) :=
   by
   constructor
-  · apply is_small_step_singleton_left
+  · apply is_small_step_v1_singleton_left
   · intro a1
     obtain ⟨a1_left, a1_right⟩ := a1
-    apply is_small_step_singleton_right
+    apply is_small_step_v1_singleton_right
     · exact a1_left
     · exact a1_right
 
@@ -678,7 +678,7 @@ theorem not_is_small_step_singleton_refl
 -------------------------------------------------------------------------------
 
 
-lemma is_small_step_append_right
+lemma is_small_step_v1_append_left
   (E_1 E_2 : List (String × Formula_))
   (X Y : String)
   (h1 : is_small_step_v1 E_1 X Y ∨ is_small_step_v1 E_2 X Y) :
@@ -709,7 +709,7 @@ lemma is_small_step_append_right
     · exact h1_right
 
 
-lemma is_small_step_append_left
+lemma is_small_step_v1_append_right
   (E_1 E_2 : List (String × Formula_))
   (X Y : String)
   (h1 : is_small_step_v1 (E_1 ++ E_2) X Y) :
@@ -731,7 +731,7 @@ lemma is_small_step_append_left
     exact ⟨h1_left, h1_right⟩
 
 
-example
+lemma is_small_step_v1_append
   (E_1 E_2 : List (String × Formula_))
   (X Y : String) :
   (is_small_step_v1 (E_1 ++ E_2) X Y) ↔ (is_small_step_v1 E_1 X Y ∨ is_small_step_v1 E_2 X Y) :=
