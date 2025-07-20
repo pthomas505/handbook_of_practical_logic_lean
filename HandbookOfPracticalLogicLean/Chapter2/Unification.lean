@@ -1,3 +1,4 @@
+import HandbookOfPracticalLogicLean.Chapter2.DeMorgan
 import HandbookOfPracticalLogicLean.Chapter2.Replace
 import HandbookOfPracticalLogicLean.Chapter2.SubFormula
 
@@ -780,26 +781,32 @@ lemma is_one_or_more_small_steps_trans
 
 
 example
-  (E : List (String × Formula_))
   (X Y Z : String)
   (F : Formula_)
   (l : List String)
-  (h1 : ¬ l = [])
-  (h2 : ¬ Y = X) :
+  (h1 : ¬ Y = X) :
   ¬ is_one_or_more_small_steps [(X, F)] Y Z l :=
   by
+  unfold is_one_or_more_small_steps
   cases l
   case nil =>
-    unfold is_one_or_more_small_steps
     simp only [List.nil_append, List.chain_cons, List.Chain.nil]
     intro contra
     obtain ⟨contra_left, contra_right⟩ := contra
     apply not_is_small_step_singleton_right X Y F Z
-    · sorry
-    · sorry
+    · simp only [de_morgan_prop_1]
+      left
+      exact h1
+    · exact contra_left
   case cons hd tl =>
-    unfold is_one_or_more_small_steps
-    sorry
+    simp only [List.cons_append, List.chain_cons]
+    intro contra
+    obtain ⟨contra_left, contra_right⟩ := contra
+    apply not_is_small_step_singleton_right X Y F hd
+    · simp only [de_morgan_prop_1]
+      left
+      exact h1
+    · exact contra_left
 
 
 lemma not_nil_not_eq_imp_not_is_one_or_more_small_steps_singleton
