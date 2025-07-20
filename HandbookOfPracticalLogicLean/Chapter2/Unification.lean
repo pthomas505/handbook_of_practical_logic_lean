@@ -607,6 +607,60 @@ lemma not_is_small_step_nil
 -------------------------------------------------------------------------------
 
 
+lemma is_small_step_singleton_left
+  (X Y : String)
+  (F : Formula_)
+  (Z : String)
+  (h1 : is_small_step_v1 [(X, F)] Y Z) :
+  Y = X ∧ atom_occurs_in Z F :=
+  by
+  unfold is_small_step_v1 at h1
+  obtain ⟨F', h1_left, h1_right⟩ := h1
+  simp only [List.mem_singleton, Prod.mk.injEq] at h1_left
+  obtain ⟨h1_left_left, h1_left_right⟩ := h1_left
+
+  constructor
+  · exact h1_left_left
+  · rewrite [← h1_left_right]
+    exact h1_right
+
+
+lemma is_small_step_singleton_right
+  (X Y : String)
+  (F : Formula_)
+  (Z : String)
+  (h1 : Y = X)
+  (h2 : atom_occurs_in Z F) :
+  is_small_step_v1 [(X, F)] Y Z :=
+  by
+  unfold is_small_step_v1
+  apply Exists.intro F
+  constructor
+  · simp only [List.mem_singleton, Prod.mk.injEq]
+    constructor
+    · exact h1
+    · exact trivial
+  · exact h2
+
+
+lemma is_small_step_singleton
+  (X Y : String)
+  (F : Formula_)
+  (Z : String) :
+  (is_small_step_v1 [(X, F)] Y Z) ↔ (Y = X ∧ atom_occurs_in Z F) :=
+  by
+  constructor
+  · apply is_small_step_singleton_left
+  · intro a1
+    obtain ⟨a1_left, a1_right⟩ := a1
+    apply is_small_step_singleton_right
+    · exact a1_left
+    · exact a1_right
+
+
+-------------------------------------------------------------------------------
+
+
 lemma not_is_small_step_singleton_left
   (X Y : String)
   (F : Formula_)
@@ -784,7 +838,7 @@ example
   (X Y Z : String)
   (F : Formula_)
   (l : List String)
-  (h1 : ¬ Y = X) :
+  (h1 : ¬ Y = X ∨ ¬ atom_occurs_in Z F) :
   ¬ is_one_or_more_small_steps [(X, F)] Y Z l :=
   by
   unfold is_one_or_more_small_steps
@@ -795,7 +849,6 @@ example
     obtain ⟨contra_left, contra_right⟩ := contra
     apply not_is_small_step_singleton_right X Y F Z
     · simp only [de_morgan_prop_1]
-      left
       exact h1
     · exact contra_left
   case cons hd tl =>
@@ -804,7 +857,8 @@ example
     obtain ⟨contra_left, contra_right⟩ := contra
     apply not_is_small_step_singleton_right X Y F hd
     · simp only [de_morgan_prop_1]
-      left
+      unfold is_small_step_v1 at contra_left
+
       exact h1
     · exact contra_left
 
