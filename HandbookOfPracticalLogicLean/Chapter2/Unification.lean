@@ -779,6 +779,29 @@ lemma is_one_or_more_small_steps_trans
     exact ⟨h2_left, h3_right⟩
 
 
+example
+  (E : List (String × Formula_))
+  (X Y Z : String)
+  (F : Formula_)
+  (l : List String)
+  (h1 : ¬ l = [])
+  (h2 : ¬ Y = X) :
+  ¬ is_one_or_more_small_steps [(X, F)] Y Z l :=
+  by
+  cases l
+  case nil =>
+    unfold is_one_or_more_small_steps
+    simp only [List.nil_append, List.chain_cons, List.Chain.nil]
+    intro contra
+    obtain ⟨contra_left, contra_right⟩ := contra
+    apply not_is_small_step_singleton_right X Y F Z
+    · sorry
+    · sorry
+  case cons hd tl =>
+    unfold is_one_or_more_small_steps
+    sorry
+
+
 lemma not_nil_not_eq_imp_not_is_one_or_more_small_steps_singleton
   (X Y : String)
   (F : Formula_)
