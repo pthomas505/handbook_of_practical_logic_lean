@@ -742,6 +742,25 @@ lemma is_small_step_v1_append
 -------------------------------------------------------------------------------
 
 
+lemma not_is_one_or_more_small_steps_nil
+  (X Y : String)
+  (l : List String) :
+  ¬ is_one_or_more_small_steps [] X Y l :=
+  by
+  unfold is_one_or_more_small_steps
+  cases l
+  case nil =>
+    simp only [List.nil_append, List.chain_cons, List.Chain.nil]
+    intro contra
+    obtain ⟨contra_left, contra_right⟩ := contra
+    simp only [not_is_small_step_nil] at contra_left
+  case cons hd tl =>
+    simp only [List.cons_append, List.chain_cons]
+    intro contra
+    obtain ⟨contra_left, contra_right⟩ := contra
+    simp only [not_is_small_step_nil] at contra_left
+
+
 lemma is_one_or_more_small_steps_trans
   (E : List (String × Formula_))
   (X Y Z : String)
@@ -833,28 +852,6 @@ example
       exact h1_right
 
 
-lemma not_nil_not_eq_imp_not_is_one_or_more_small_steps_singleton
-  (X Y : String)
-  (F : Formula_)
-  (l : List String)
-  (h1 : ¬ l = [])
-  (h2 : ¬ Y = X) :
-  ¬ List.Chain (is_small_step_v1 [(X, F)]) Y l :=
-  by
-  cases l
-  case nil =>
-    contradiction
-  case cons hd tl =>
-    intro contra_1
-    simp only [List.chain_cons] at contra_1
-    obtain ⟨contra_1_left, contra_1_right⟩ := contra_1
-    apply not_is_small_step_singleton_right X Y F hd
-    · intro contra_2
-      obtain ⟨contra_2_left, contra_2_right⟩ := contra_2
-      contradiction
-    · exact contra_1_left
-
-
 lemma not_has_cycle_nil :
   ¬ has_cycle [] :=
   by
@@ -864,7 +861,7 @@ lemma not_has_cycle_nil :
   unfold is_one_or_more_small_steps at contra
   cases l
   case nil =>
-    simp only [List.nil_append, List.chain_cons] at contra
+    simp only [List.nil_append, List.chain_cons, List.Chain.nil] at contra
     obtain ⟨contra_left, contra_right⟩ := contra
     exact not_is_small_step_nil X X contra_left
   case cons hd tl =>
@@ -873,38 +870,29 @@ lemma not_has_cycle_nil :
     exact not_is_small_step_nil X hd contra_left
 
 
-lemma not_has_cycle_singleton
+lemma has_cycle_singleton
   (X : String)
   (F : Formula_)
-  (h1 : ¬ atom_occurs_in X F) :
-  ¬ has_cycle [(X, F)] :=
+  (h1 : has_cycle [(X, F)]) :
+  atom_occurs_in X F :=
   by
-  unfold has_cycle
-  simp only [not_exists]
-  intro Y l contra
-  unfold is_one_or_more_small_steps at contra
+  unfold has_cycle at h1
+  unfold is_one_or_more_small_steps at h1
+  obtain ⟨Y, l, h1⟩ := h1
   cases l
   case nil =>
-    simp only [List.nil_append, List.chain_cons] at contra
-    obtain ⟨contra_left, contra_right⟩ := contra
-    exact not_is_small_step_singleton_refl X Y F h1 contra_left
+    simp only [List.nil_append, List.chain_cons, List.Chain.nil] at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+    apply is_small_step_v1_singleton_refl X Y
+    exact h1_left
   case cons hd tl =>
-    simp only [List.cons_append, List.chain_cons] at contra
-    obtain ⟨contra_left, contra_right⟩ := contra
-    unfold is_small_step_v1 at contra_left
-    obtain ⟨F', contra_left_left, contra_left_right⟩ := contra_left
-    simp only [List.mem_singleton, Prod.mk.injEq] at contra_left_left
-    obtain ⟨contra_left_left_left, contra_left_left_right⟩ := contra_left_left
-    rewrite [contra_left_left_right] at contra_left_right
-    apply not_nil_not_eq_imp_not_is_one_or_more_small_steps_singleton X hd F (tl ++ [Y])
-    · simp only [List.append_eq_nil, List.cons_ne_self]
-      intro contra
-      obtain ⟨contra_left, contra_right⟩ := contra
-      contradiction
-    · intro contra
-      rewrite [contra] at contra_left_right
-      contradiction
-    · exact contra_right
+    simp only [List.cons_append, List.chain_cons] at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+    apply is_small_step_v1_singleton_refl X Y
+    apply is_small_step_v1_is_one_or_more_small_steps_trans X Y hd Y F tl
+    · exact h1_left
+    · unfold is_one_or_more_small_steps
+      exact h1_right
 
 
 example
