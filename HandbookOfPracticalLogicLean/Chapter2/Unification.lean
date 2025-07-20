@@ -830,7 +830,7 @@ lemma is_small_step_v1_is_one_or_more_small_steps_trans
     · exact h2_right
 
 
-example
+lemma is_one_or_more_small_steps_singleton_contract
   (X Y Z : String)
   (F : Formula_)
   (l : List String)
@@ -852,6 +852,9 @@ example
       exact h1_right
 
 
+-------------------------------------------------------------------------------
+
+
 lemma not_has_cycle_nil :
   ¬ has_cycle [] :=
   by
@@ -868,6 +871,9 @@ lemma not_has_cycle_nil :
     simp only [List.cons_append, List.chain_cons] at contra
     obtain ⟨contra_left, contra_right⟩ := contra
     exact not_is_small_step_nil X hd contra_left
+
+
+-------------------------------------------------------------------------------
 
 
 lemma has_cycle_singleton_left
@@ -918,6 +924,9 @@ lemma has_cycle_singleton
   constructor
   · apply has_cycle_singleton_left
   · apply has_cycle_singleton_right
+
+
+-------------------------------------------------------------------------------
 
 
 example
