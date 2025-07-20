@@ -603,6 +603,9 @@ lemma not_is_small_step_nil
   simp only [List.not_mem_nil] at contra_left
 
 
+-------------------------------------------------------------------------------
+
+
 lemma not_is_small_step_singleton_left
   (X Y : String)
   (F : Formula_)
@@ -653,6 +656,26 @@ lemma not_is_small_step_singleton
   constructor
   · apply not_is_small_step_singleton_left
   · apply not_is_small_step_singleton_right
+
+
+-------------------------------------------------------------------------------
+
+
+theorem not_is_small_step_singleton_refl
+  (X Y : String)
+  (F : Formula_)
+  (h1 : ¬ atom_occurs_in X F) :
+  ¬ is_small_step_v1 [(X, F)] Y Y :=
+  by
+  simp only [not_is_small_step_singleton]
+  intro contra
+  obtain ⟨contra_left, contra_right⟩ := contra
+  apply h1
+  rewrite [← contra_left]
+  exact contra_right
+
+
+-------------------------------------------------------------------------------
 
 
 lemma not_is_small_step_append_left
@@ -727,35 +750,33 @@ lemma not_is_small_step_append
     · exact a1_right
 
 
-theorem not_is_small_step_singleton_refl
-  (X Y : String)
-  (F : Formula_)
-  (h1 : ¬ atom_occurs_in X F) :
-  ¬ is_small_step_v1 [(X, F)] Y Y :=
-  by
-  simp only [not_is_small_step_singleton]
-  intro contra
-  obtain ⟨contra_left, contra_right⟩ := contra
-  apply h1
-  rewrite [← contra_left]
-  exact contra_right
+-------------------------------------------------------------------------------
 
 
-example
-  (X Y : String)
-  (F : Formula_)
+lemma is_one_or_more_small_steps_trans
+  (E : List (String × Formula_))
+  (X Y Z : String)
   (l : List String)
-  (h1 : ¬ l = []) :
-  ¬ List.Chain (is_small_step_v1 [(X, F)]) Y l :=
+  (h1 : ¬ l = [])
+  (h2 : is_one_or_more_small_steps E X Y l)
+  (h3 : is_one_or_more_small_steps E Y Z l) :
+  is_one_or_more_small_steps E X Z l :=
   by
-  induction l
+  cases l
   case nil =>
     contradiction
-  case cons hd tl ih =>
-    simp only [List.chain_cons]
-    intro contra
-    obtain ⟨contra_left, contra_right⟩ := contra
-    sorry
+  case cons hd tl =>
+    unfold is_one_or_more_small_steps at h2
+    simp only [List.cons_append, List.chain_cons] at h2
+    obtain ⟨h2_left, h2_right⟩ := h2
+
+    unfold is_one_or_more_small_steps at h3
+    simp only [List.cons_append, List.chain_cons] at h3
+    obtain ⟨h3_left, h3_right⟩ := h3
+
+    unfold is_one_or_more_small_steps
+    simp only [List.cons_append, List.chain_cons]
+    exact ⟨h2_left, h3_right⟩
 
 
 lemma not_nil_not_eq_imp_not_is_one_or_more_small_steps_singleton
