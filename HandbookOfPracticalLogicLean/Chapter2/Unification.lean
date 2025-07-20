@@ -786,6 +786,16 @@ lemma is_small_step_append_right
     · exact h1_right
 
 
+example
+  (E_1 E_2 : List (String × Formula_))
+  (X Y : String) :
+  (is_small_step_v1 (E_1 ++ E_2) X Y) ↔ (is_small_step_v1 E_1 X Y ∨ is_small_step_v1 E_2 X Y) :=
+  by
+  constructor
+  · apply is_small_step_append_left
+  · apply is_small_step_append_right
+
+
 lemma not_is_small_step_append_left
   (E_1 E_2 : List (String × Formula_))
   (X Y : String)
