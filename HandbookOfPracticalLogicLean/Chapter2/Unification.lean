@@ -733,6 +733,28 @@ theorem not_is_small_step_singleton_refl
 -------------------------------------------------------------------------------
 
 
+lemma is_small_step_append_left
+  (E_1 E_2 : List (String × Formula_))
+  (X Y : String)
+  (h1 : is_small_step_v1 (E_1 ++ E_2) X Y) :
+  (is_small_step_v1 E_1 X Y) ∨ (is_small_step_v1 E_2 X Y) :=
+  by
+  unfold is_small_step_v1 at h1
+  obtain ⟨F, h1_left, h1_right⟩ := h1
+  simp only [List.mem_append] at h1_left
+
+  unfold is_small_step_v1
+  cases h1_left
+  case inl h1_left =>
+    left
+    apply Exists.intro F
+    exact ⟨h1_left, h1_right⟩
+  case inr h1_left =>
+    right
+    apply Exists.intro F
+    exact ⟨h1_left, h1_right⟩
+
+
 lemma not_is_small_step_append_left
   (E_1 E_2 : List (String × Formula_))
   (X Y : String)
