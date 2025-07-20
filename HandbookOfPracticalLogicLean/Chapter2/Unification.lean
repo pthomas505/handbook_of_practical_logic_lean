@@ -944,11 +944,6 @@ example
 
   unfold is_one_or_more_small_steps at h3
 
-  obtain s1 := not_has_cycle_singleton X F h2
-  unfold has_cycle at s1
-  simp only [not_exists] at s1
-  unfold is_one_or_more_small_steps at s1
-
   unfold has_cycle
   simp only [not_exists]
   intro Y l contra
