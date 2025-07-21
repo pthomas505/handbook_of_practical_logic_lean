@@ -929,6 +929,50 @@ lemma has_cycle_singleton
 -------------------------------------------------------------------------------
 
 
+lemma is_small_step_v1_refl_imp_has_cycle
+  (E : List (String × Formula_))
+  (X : String)
+  (h1 : is_small_step_v1 E X X) :
+  has_cycle E :=
+  by
+  unfold has_cycle
+  apply Exists.intro X
+  apply Exists.intro []
+  unfold is_one_or_more_small_steps
+  simp only [List.nil_append, List.chain_cons, List.Chain.nil]
+  exact ⟨h1, trivial⟩
+
+
+example
+  (E : List (String × Formula_))
+  (X : String)
+  (F : Formula_)
+  (h1 : has_cycle ((X, F) :: E)) :
+  has_cycle E ∨
+  atom_occurs_in X F ∨
+  (∃ (Y : String), ∃ (l : List String), atom_occurs_in Y F ∧ is_one_or_more_small_steps E X Y l) :=
+  by
+  unfold has_cycle at h1
+  obtain ⟨Y, l, h1⟩ := h1
+  induction l
+  case nil =>
+    unfold is_one_or_more_small_steps at h1
+    simp only [List.nil_append, List.chain_cons, List.Chain.nil] at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+    rewrite [← List.singleton_append] at h1_left
+    simp only [is_small_step_v1_append] at h1_left
+    cases h1_left
+    case inl h1_left =>
+      right
+      left
+      apply is_small_step_v1_singleton_refl X Y
+      exact h1_left
+    case inr h1_left =>
+      left
+      exact is_small_step_v1_refl_imp_has_cycle E Y h1_left
+  sorry
+
+
 example
   (E : List (String × Formula_))
   (X : String)
