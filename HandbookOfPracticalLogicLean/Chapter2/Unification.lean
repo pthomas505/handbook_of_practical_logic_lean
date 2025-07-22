@@ -547,9 +547,6 @@ lemma is_small_step_v1_iff_is_small_step_v2
   · apply is_small_step_v2_imp_is_small_step_v1
 
 
--------------------------------------------------------------------------------
-
-
 instance
   (E : List (String × Formula_))
   (X Y : String) :
@@ -557,6 +554,9 @@ instance
   by
   simp only [is_small_step_v1_iff_is_small_step_v2]
   infer_instance
+
+
+-------------------------------------------------------------------------------
 
 
 def is_one_or_more_small_steps
@@ -574,14 +574,6 @@ instance
   by
   unfold is_one_or_more_small_steps
   infer_instance
-
-
-def is_zero_or_more_small_steps
-  (E : List (String × Formula_))
-  (X : String)
-  (F : Formula_) :
-  Prop :=
-  atom_occurs_in X F ∨ ∃ (Y : String), ∃ (l : List String), is_one_or_more_small_steps E X Y l
 
 
 def has_cycle
@@ -754,6 +746,60 @@ lemma is_small_step_v1_append
   constructor
   · apply is_small_step_v1_append_left
   · apply is_small_step_v1_append_right
+
+
+-------------------------------------------------------------------------------
+
+
+def env_to_step_list_aux
+  (X : String)
+  (F : Formula_) :
+  List (String × String) :=
+  List.map (fun (Y : String) => (X, Y)) (atom_list F)
+
+
+def env_to_step_list :
+  List (String × Formula_) → List (String × String)
+  | [] => []
+  | (X, F) :: tl => (env_to_step_list_aux X F) ++ (env_to_step_list tl)
+
+
+example
+  (E : List (String × Formula_))
+  (X Y : String)
+  (h1 : is_small_step_v1 E X Y) :
+  (X, Y) ∈ env_to_step_list E :=
+  by
+  induction E
+  case nil =>
+    unfold is_small_step_v1 at h1
+    obtain ⟨F, h1_left, h1_right⟩ := h1
+    simp only [List.not_mem_nil] at h1_left
+  case cons hd tl ih =>
+    rewrite [← List.singleton_append] at h1
+    simp only [is_small_step_v1_append] at h1
+    unfold is_small_step_v1 at h1
+    simp only [List.mem_singleton] at h1
+
+    unfold env_to_step_list
+    unfold env_to_step_list_aux
+    simp only [List.mem_append, List.mem_map, Prod.mk.injEq]
+    cases h1
+    case inl h1 =>
+      obtain ⟨F, h1_left, h1_right⟩ := h1
+      left
+      apply Exists.intro Y
+      rewrite [← h1_left]
+      simp only
+      simp only [← atom_occurs_in_iff_mem_atom_list]
+      exact ⟨h1_right, ⟨trivial, trivial⟩⟩
+    case inr h1 =>
+      obtain ⟨F, h1_left, h1_right⟩ := h1
+      right
+      apply ih
+      unfold is_small_step_v1
+      apply Exists.intro F
+      exact ⟨h1_left, h1_right⟩
 
 
 -------------------------------------------------------------------------------
@@ -950,7 +996,7 @@ example
   (h1 : has_cycle ((X, F) :: E)) :
   has_cycle E ∨
   atom_occurs_in X F ∨
-  (∃ (Y : String), ∃ (l : List String), atom_occurs_in Y F ∧ is_one_or_more_small_steps E X Y l) :=
+  (∃ (Y : String), ∃ (l : List String), atom_occurs_in Y F ∧ is_one_or_more_small_steps E Y X l) :=
   by
   unfold has_cycle at h1
   obtain ⟨Y, l, h1⟩ := h1
@@ -961,6 +1007,7 @@ example
     obtain ⟨h1_left, h1_right⟩ := h1
     rewrite [← List.singleton_append] at h1_left
     simp only [is_small_step_v1_append] at h1_left
+
     cases h1_left
     case inl h1_left =>
       right
@@ -970,7 +1017,26 @@ example
     case inr h1_left =>
       left
       exact is_small_step_v1_refl_imp_has_cycle E Y h1_left
-  sorry
+  case cons hd tl ih =>
+    unfold is_one_or_more_small_steps at h1
+    simp only [List.cons_append, List.chain_cons] at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
+    rewrite [← List.singleton_append] at h1_left
+    simp only [is_small_step_v1_append] at h1_left
+
+    have s1 : is_one_or_more_small_steps ((X, F) :: E) hd Y tl :=
+    by
+      unfold is_one_or_more_small_steps
+      exact h1_right
+    clear h1_right
+
+    apply ih
+
+    cases h1_left
+    case inl h1_left =>
+      sorry
+    case inr h1_left =>
+      sorry
 
 
 example
@@ -979,7 +1045,7 @@ example
   (F : Formula_)
   (h1 : ¬ has_cycle E)
   (h2 : ¬ atom_occurs_in X F)
-  (h3 : ∀ (Y : String), ∀ (l : List String), atom_occurs_in Y F → ¬ is_one_or_more_small_steps E X Y l) :
+  (h3 : ∀ (Y : String), ∀ (l : List String), atom_occurs_in Y F → ¬ is_one_or_more_small_steps E Y X l) :
   ¬ has_cycle ((X, F) :: E) :=
   by
   unfold has_cycle at h1
