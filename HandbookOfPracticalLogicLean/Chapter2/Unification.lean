@@ -1035,12 +1035,15 @@ example
   (X : String)
   (F : Formula_)
   (h1 : has_cycle ((X, F) :: E)) :
-  has_cycle E ∨
-  atom_occurs_in X F ∨
-  (∃ (Y : String), ∃ (l : List String), atom_occurs_in Y F ∧ is_one_or_more_small_steps E Y X l) :=
+  has_cycle [(X, F)] ∨
+    has_cycle E ∨
+      ∃ (Y : String), ∃ (l : List String), atom_occurs_in Y F ∧ is_one_or_more_small_steps E Y X l :=
   by
   unfold has_cycle at h1
   obtain ⟨Y, l, h1⟩ := h1
+
+  simp only [has_cycle_singleton]
+
   induction l
   case nil =>
     unfold is_one_or_more_small_steps at h1
@@ -1051,13 +1054,14 @@ example
 
     cases h1_left
     case inl h1_left =>
-      right
       left
       apply is_small_step_v1_singleton_refl X Y
       exact h1_left
     case inr h1_left =>
+      right
       left
-      exact is_small_step_v1_refl_imp_has_cycle E Y h1_left
+      apply is_small_step_v1_refl_imp_has_cycle E Y
+      exact h1_left
   case cons hd tl ih =>
     unfold is_one_or_more_small_steps at h1
     simp only [List.cons_append, List.chain_cons] at h1
