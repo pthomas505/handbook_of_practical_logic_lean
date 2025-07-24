@@ -802,6 +802,47 @@ example
       exact ⟨h1_left, h1_right⟩
 
 
+example
+  (E : List (String × Formula_))
+  (X Y : String)
+  (h1 : (X, Y) ∈ env_to_step_list E) :
+  is_small_step_v1 E X Y :=
+  by
+  induction E
+  case nil =>
+    unfold env_to_step_list at h1
+    simp only [List.not_mem_nil] at h1
+  case cons hd tl ih =>
+    unfold env_to_step_list at h1
+    unfold env_to_step_list_aux at h1
+    simp only [List.mem_append, List.mem_map, Prod.mk.injEq] at h1
+
+    unfold is_small_step_v1
+    simp only [List.mem_cons]
+    cases h1
+    case inl h1 =>
+      obtain ⟨Z, h1_left, ⟨h1_right_left, h1_right_right⟩⟩ := h1
+
+      apply Exists.intro hd.snd
+      rewrite [← h1_right_left]
+      rewrite [← h1_right_right]
+      constructor
+      · left
+        simp only [Prod.mk.eta]
+      · simp only [atom_occurs_in_iff_mem_atom_list]
+        exact h1_left
+    case inr h1 =>
+      specialize ih h1
+      unfold is_small_step_v1 at ih
+      obtain ⟨F, ih_left, ih_right⟩ := ih
+
+      apply Exists.intro F
+      constructor
+      · right
+        exact ih_left
+      · exact ih_right
+
+
 -------------------------------------------------------------------------------
 
 
