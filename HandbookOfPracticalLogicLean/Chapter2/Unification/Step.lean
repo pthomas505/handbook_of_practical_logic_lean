@@ -1,6 +1,4 @@
-import HandbookOfPracticalLogicLean.Chapter2.DeMorgan
-import HandbookOfPracticalLogicLean.Chapter2.Replace
-import HandbookOfPracticalLogicLean.Chapter2.SubFormula
+import HandbookOfPracticalLogicLean.Chapter2.Atom
 
 
 set_option autoImplicit false
