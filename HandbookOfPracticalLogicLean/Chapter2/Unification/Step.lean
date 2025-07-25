@@ -1,0 +1,9 @@
+import HandbookOfPracticalLogicLean.Chapter2.DeMorgan
+import HandbookOfPracticalLogicLean.Chapter2.Replace
+import HandbookOfPracticalLogicLean.Chapter2.SubFormula
+
+
+set_option autoImplicit false
+
+
+open Formula_
