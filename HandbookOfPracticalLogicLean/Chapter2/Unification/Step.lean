@@ -167,7 +167,7 @@ def env_to_step_list :
   | (X, F) :: tl => (env_to_step_list_aux X F) ++ (env_to_step_list tl)
 
 
-example
+lemma is_small_step_v1_imp_mem_env_to_step_list
   (E : List (String × Formula_))
   (X Y : String)
   (h1 : is_small_step_v1 E X Y) :
@@ -202,7 +202,7 @@ example
       exact ⟨h1_left, h1_right⟩
 
 
-example
+lemma mem_env_to_step_list_imp_is_small_step_v1
   (E : List (String × Formula_))
   (X Y : String)
   (h1 : (X, Y) ∈ env_to_step_list E) :
