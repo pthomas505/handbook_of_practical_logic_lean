@@ -243,6 +243,16 @@ lemma mem_env_to_step_list_imp_is_small_step_v1
       · exact ih_right
 
 
+lemma is_small_step_v1_iff_mem_env_to_step_list
+  (E : List (String × Formula_))
+  (X Y : String) :
+  is_small_step_v1 E X Y ↔ (X, Y) ∈ env_to_step_list E :=
+  by
+  constructor
+  · apply is_small_step_v1_imp_mem_env_to_step_list
+  · apply mem_env_to_step_list_imp_is_small_step_v1
+
+
 -------------------------------------------------------------------------------
 
 
