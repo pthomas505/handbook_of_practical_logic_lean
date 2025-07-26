@@ -293,15 +293,6 @@ instance
 #eval List.prodChain (· = ·) [(0, 1), (1, 2), (3, 4)]
 
 
-def List.prodCycle
-  {α : Type}
-  (R : α → α → Prop)
-  [DecidableRel R]
-  (l : List (α × α)) :
-  Prop :=
-  ∃ (a : α × α), a ∈ l ∧ R a.fst a.snd ∧ List.prodChain R l
-
-
 -------------------------------------------------------------------------------
 
 
