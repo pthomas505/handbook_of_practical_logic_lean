@@ -179,25 +179,22 @@ example
     obtain ⟨F, h1_left, h1_right⟩ := h1
     simp only [List.not_mem_nil] at h1_left
   case cons hd tl ih =>
-    rewrite [← List.singleton_append] at h1
-    simp only [is_small_step_v1_append] at h1
     unfold is_small_step_v1 at h1
-    simp only [List.mem_singleton] at h1
+    obtain ⟨F, h1_left, h1_right⟩ := h1
+    simp only [List.mem_cons] at h1_left
 
     unfold env_to_step_list
     unfold env_to_step_list_aux
     simp only [List.mem_append, List.mem_map, Prod.mk.injEq]
-    cases h1
-    case inl h1 =>
-      obtain ⟨F, h1_left, h1_right⟩ := h1
+    cases h1_left
+    case inl h1_left =>
       left
       apply Exists.intro Y
       rewrite [← h1_left]
       simp only
       simp only [← atom_occurs_in_iff_mem_atom_list]
       exact ⟨h1_right, ⟨trivial, trivial⟩⟩
-    case inr h1 =>
-      obtain ⟨F, h1_left, h1_right⟩ := h1
+    case inr h1_left =>
       right
       apply ih
       unfold is_small_step_v1
