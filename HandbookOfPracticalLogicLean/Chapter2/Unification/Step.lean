@@ -256,6 +256,55 @@ lemma is_small_step_v1_iff_mem_env_to_step_list
 -------------------------------------------------------------------------------
 
 
+def List.prodChain
+  {α : Type}
+  (R : α → α → Prop)
+  [DecidableRel R] :
+  List (α × α) → Prop
+  | [] => False
+  | [_] => True
+  | a :: b :: tl => R a.snd b.fst ∧ List.prodChain R (b :: tl)
+
+instance
+  {α : Type}
+  (R : α → α → Prop)
+  (l : List (α × α))
+  (h1 : DecidableRel R) :
+  Decidable (List.prodChain R l) :=
+  by
+  induction l
+  case nil =>
+    unfold List.prodChain
+    infer_instance
+  case cons hd tl ih =>
+    cases tl
+    case nil =>
+      unfold List.prodChain
+      infer_instance
+    case cons tl_hd tl_tl =>
+      unfold List.prodChain
+      infer_instance
+
+
+#eval List.prodChain (· = ·) [(0, 1)]
+#eval List.prodChain (· = ·) [(0, 1), (1, 2)]
+#eval List.prodChain (· = ·) [(0, 1), (2, 3)]
+#eval List.prodChain (· = ·) [(0, 1), (1, 2), (2, 3)]
+#eval List.prodChain (· = ·) [(0, 1), (1, 2), (3, 4)]
+
+
+def List.prodCycle
+  {α : Type}
+  (R : α → α → Prop)
+  [DecidableRel R]
+  (l : List (α × α)) :
+  Prop :=
+  ∃ (a : α × α), a ∈ l ∧ R a.fst a.snd ∧ List.prodChain R l
+
+
+-------------------------------------------------------------------------------
+
+
 inductive List.is_cycle {α : Type} : (List (α × α)) → Prop
   | refl
     (a : α × α) :
