@@ -249,6 +249,23 @@ example
 -------------------------------------------------------------------------------
 
 
+inductive List.is_cycle {α : Type} : (List (α × α)) → Prop
+  | refl
+    (a : α × α) :
+    a.snd = a.fst →
+    is_cycle [a]
+
+  | trans
+    (a b : α × α)
+    (l : List (α × α)) :
+    b.snd = a.fst →
+    List.Chain' (fun (p1 p2 : α × α) => p1.snd = p2.fst) l →
+    is_cycle (a :: (l ++ [b]))
+
+
+-------------------------------------------------------------------------------
+
+
 lemma not_is_small_step_nil
   (X Y : String) :
   ¬ is_small_step_v1 [] X Y :=
@@ -410,23 +427,6 @@ lemma is_small_step_v1_append
   constructor
   · apply is_small_step_v1_append_left
   · apply is_small_step_v1_append_right
-
-
--------------------------------------------------------------------------------
-
-
-inductive List.is_cycle {α : Type} : (List (α × α)) → Prop
-  | refl
-    (a : α × α) :
-    a.snd = a.fst →
-    is_cycle [a]
-
-  | trans
-    (a b : α × α)
-    (l : List (α × α)) :
-    b.snd = a.fst →
-    List.Chain' (fun (p1 p2 : α × α) => p1.snd = p2.fst) l →
-    is_cycle (a :: (l ++ [b]))
 
 
 -------------------------------------------------------------------------------
