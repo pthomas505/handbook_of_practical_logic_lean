@@ -3,6 +3,8 @@
 import HandbookOfPracticalLogicLean.Chapter2.Replace
 import HandbookOfPracticalLogicLean.Chapter2.SubFormula
 
+import MathlibExtraLean.FunctionUpdateITE
+
 
 set_option autoImplicit false
 
@@ -371,3 +373,61 @@ example
 
 
 -------------------------------------------------------------------------------
+
+
+def eliminate
+  (X : String)
+  (F : Formula_)
+  (L : List (Formula_ × Formula_)) :
+  List (Formula_ × Formula_) :=
+  let σ : Instantiation := Function.updateITE atom_ X F
+  L.map (fun (eq : Formula_ × Formula_) => (replace_atom_all_rec σ eq.fst, replace_atom_all_rec σ eq.snd))
+
+
+lemma is_unifier_union
+  (σ : Instantiation)
+  (S T : Set (Formula_ × Formula_)) :
+  is_unifier σ (S ∪ T) ↔ (is_unifier σ S ∧ is_unifier σ T):=
+  by
+  unfold is_unifier
+  constructor
+  · intro a1
+    constructor
+    · intro p a2
+      apply a1
+      simp only [Set.mem_union]
+      left
+      exact a2
+    · intro p a2
+      apply a1
+      simp only [Set.mem_union]
+      right
+      exact a2
+  · intro a1 p a2
+    obtain ⟨a1_left, a1_right⟩ := a1
+    simp only [Set.mem_union] at a2
+    cases a2
+    case inl a2 =>
+      apply a1_left
+      exact a2
+    case inr a2 =>
+      apply a1_right
+      exact a2
+
+
+example
+  (X : String)
+  (F : Formula_)
+  (L : List (Formula_ × Formula_)) :
+  are_equivalent_equation_sets ({(atom_ X, F)} ∪ (eliminate X F L).toFinset) ({(atom_ X, F)} ∪ L.toFinset) :=
+  by
+  induction L
+  case nil =>
+    unfold are_equivalent_equation_sets
+    intro σ
+    unfold eliminate
+    simp only [List.map_nil, List.toFinset_nil, Finset.coe_empty, Set.union_empty]
+  case cons hd tl ih =>
+    unfold are_equivalent_equation_sets at ih
+    simp only [is_unifier_union] at ih
+    sorry
