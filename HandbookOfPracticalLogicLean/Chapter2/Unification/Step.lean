@@ -154,6 +154,101 @@ def has_cycle_v1
 -------------------------------------------------------------------------------
 
 
+def env_to_step_list_aux
+  (X : String)
+  (F : Formula_) :
+  List (String × String) :=
+  List.map (fun (Y : String) => (X, Y)) (atom_list F)
+
+
+def env_to_step_list :
+  List (String × Formula_) → List (String × String)
+  | [] => []
+  | (X, F) :: tl => (env_to_step_list_aux X F) ++ (env_to_step_list tl)
+
+
+example
+  (E : List (String × Formula_))
+  (X Y : String)
+  (h1 : is_small_step_v1 E X Y) :
+  (X, Y) ∈ env_to_step_list E :=
+  by
+  induction E
+  case nil =>
+    unfold is_small_step_v1 at h1
+    obtain ⟨F, h1_left, h1_right⟩ := h1
+    simp only [List.not_mem_nil] at h1_left
+  case cons hd tl ih =>
+    rewrite [← List.singleton_append] at h1
+    simp only [is_small_step_v1_append] at h1
+    unfold is_small_step_v1 at h1
+    simp only [List.mem_singleton] at h1
+
+    unfold env_to_step_list
+    unfold env_to_step_list_aux
+    simp only [List.mem_append, List.mem_map, Prod.mk.injEq]
+    cases h1
+    case inl h1 =>
+      obtain ⟨F, h1_left, h1_right⟩ := h1
+      left
+      apply Exists.intro Y
+      rewrite [← h1_left]
+      simp only
+      simp only [← atom_occurs_in_iff_mem_atom_list]
+      exact ⟨h1_right, ⟨trivial, trivial⟩⟩
+    case inr h1 =>
+      obtain ⟨F, h1_left, h1_right⟩ := h1
+      right
+      apply ih
+      unfold is_small_step_v1
+      apply Exists.intro F
+      exact ⟨h1_left, h1_right⟩
+
+
+example
+  (E : List (String × Formula_))
+  (X Y : String)
+  (h1 : (X, Y) ∈ env_to_step_list E) :
+  is_small_step_v1 E X Y :=
+  by
+  induction E
+  case nil =>
+    unfold env_to_step_list at h1
+    simp only [List.not_mem_nil] at h1
+  case cons hd tl ih =>
+    unfold env_to_step_list at h1
+    unfold env_to_step_list_aux at h1
+    simp only [List.mem_append, List.mem_map, Prod.mk.injEq] at h1
+
+    unfold is_small_step_v1
+    simp only [List.mem_cons]
+    cases h1
+    case inl h1 =>
+      obtain ⟨Z, h1_left, ⟨h1_right_left, h1_right_right⟩⟩ := h1
+
+      apply Exists.intro hd.snd
+      rewrite [← h1_right_left]
+      rewrite [← h1_right_right]
+      constructor
+      · left
+        simp only [Prod.mk.eta]
+      · simp only [atom_occurs_in_iff_mem_atom_list]
+        exact h1_left
+    case inr h1 =>
+      specialize ih h1
+      unfold is_small_step_v1 at ih
+      obtain ⟨F, ih_left, ih_right⟩ := ih
+
+      apply Exists.intro F
+      constructor
+      · right
+        exact ih_left
+      · exact ih_right
+
+
+-------------------------------------------------------------------------------
+
+
 lemma not_is_small_step_nil
   (X Y : String) :
   ¬ is_small_step_v1 [] X Y :=
@@ -315,101 +410,6 @@ lemma is_small_step_v1_append
   constructor
   · apply is_small_step_v1_append_left
   · apply is_small_step_v1_append_right
-
-
--------------------------------------------------------------------------------
-
-
-def env_to_step_list_aux
-  (X : String)
-  (F : Formula_) :
-  List (String × String) :=
-  List.map (fun (Y : String) => (X, Y)) (atom_list F)
-
-
-def env_to_step_list :
-  List (String × Formula_) → List (String × String)
-  | [] => []
-  | (X, F) :: tl => (env_to_step_list_aux X F) ++ (env_to_step_list tl)
-
-
-example
-  (E : List (String × Formula_))
-  (X Y : String)
-  (h1 : is_small_step_v1 E X Y) :
-  (X, Y) ∈ env_to_step_list E :=
-  by
-  induction E
-  case nil =>
-    unfold is_small_step_v1 at h1
-    obtain ⟨F, h1_left, h1_right⟩ := h1
-    simp only [List.not_mem_nil] at h1_left
-  case cons hd tl ih =>
-    rewrite [← List.singleton_append] at h1
-    simp only [is_small_step_v1_append] at h1
-    unfold is_small_step_v1 at h1
-    simp only [List.mem_singleton] at h1
-
-    unfold env_to_step_list
-    unfold env_to_step_list_aux
-    simp only [List.mem_append, List.mem_map, Prod.mk.injEq]
-    cases h1
-    case inl h1 =>
-      obtain ⟨F, h1_left, h1_right⟩ := h1
-      left
-      apply Exists.intro Y
-      rewrite [← h1_left]
-      simp only
-      simp only [← atom_occurs_in_iff_mem_atom_list]
-      exact ⟨h1_right, ⟨trivial, trivial⟩⟩
-    case inr h1 =>
-      obtain ⟨F, h1_left, h1_right⟩ := h1
-      right
-      apply ih
-      unfold is_small_step_v1
-      apply Exists.intro F
-      exact ⟨h1_left, h1_right⟩
-
-
-example
-  (E : List (String × Formula_))
-  (X Y : String)
-  (h1 : (X, Y) ∈ env_to_step_list E) :
-  is_small_step_v1 E X Y :=
-  by
-  induction E
-  case nil =>
-    unfold env_to_step_list at h1
-    simp only [List.not_mem_nil] at h1
-  case cons hd tl ih =>
-    unfold env_to_step_list at h1
-    unfold env_to_step_list_aux at h1
-    simp only [List.mem_append, List.mem_map, Prod.mk.injEq] at h1
-
-    unfold is_small_step_v1
-    simp only [List.mem_cons]
-    cases h1
-    case inl h1 =>
-      obtain ⟨Z, h1_left, ⟨h1_right_left, h1_right_right⟩⟩ := h1
-
-      apply Exists.intro hd.snd
-      rewrite [← h1_right_left]
-      rewrite [← h1_right_right]
-      constructor
-      · left
-        simp only [Prod.mk.eta]
-      · simp only [atom_occurs_in_iff_mem_atom_list]
-        exact h1_left
-    case inr h1 =>
-      specialize ih h1
-      unfold is_small_step_v1 at ih
-      obtain ⟨F, ih_left, ih_right⟩ := ih
-
-      apply Exists.intro F
-      constructor
-      · right
-        exact ih_left
-      · exact ih_right
 
 
 -------------------------------------------------------------------------------
