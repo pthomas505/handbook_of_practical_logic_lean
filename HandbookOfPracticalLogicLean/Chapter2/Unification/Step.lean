@@ -293,21 +293,56 @@ instance
 #eval List.prodChain (· = ·) [(0, 1), (1, 2), (3, 4)]
 
 
+def List.prodCycle
+  {α : Type}
+  [DecidableEq α]
+  (R : α → α → Prop)
+  [DecidableRel R]
+  (l : List (α × α)) :
+  Prop :=
+  if h1 : l = []
+  then False
+  else R (l.getLast h1).snd (l.head h1).fst ∧
+    List.prodChain R l
+
+instance
+  {α : Type}
+  [DecidableEq α]
+  (R : α → α → Prop)
+  (l : List (α × α))
+  (h1 : DecidableRel R) :
+  Decidable (List.prodCycle R l) :=
+  by
+  unfold List.prodCycle
+  infer_instance
+
+
+#eval List.prodCycle (· = ·) ([] : List (ℕ × ℕ))
+#eval List.prodCycle (· = ·) [(0, 0)]
+#eval List.prodCycle (· = ·) [(0, 1)]
+#eval List.prodCycle (· = ·) [(0, 1), (1, 0)]
+#eval List.prodCycle (· = ·) [(0, 1), (1, 2)]
+#eval List.prodCycle (· = ·) [(0, 1), (2, 0)]
+
+
 -------------------------------------------------------------------------------
 
 
-inductive List.is_cycle {α : Type} : (List (α × α)) → Prop
+inductive is_cycle
+  {α : Type}
+  (R : α → α → Prop) :
+  (List (α × α)) → Prop
   | refl
     (a : α × α) :
-    a.snd = a.fst →
-    is_cycle [a]
+    R a.snd a.fst →
+    is_cycle R [a]
 
   | trans
     (a b : α × α)
     (l : List (α × α)) :
-    b.snd = a.fst →
-    List.Chain' (fun (p1 p2 : α × α) => p1.snd = p2.fst) l →
-    is_cycle (a :: (l ++ [b]))
+    R b.snd a.fst →
+    List.Chain' (fun (p1 p2 : α × α) => R p1.snd p2.fst) l →
+    is_cycle R (a :: (l ++ [b]))
 
 
 -------------------------------------------------------------------------------
