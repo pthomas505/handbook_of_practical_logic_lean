@@ -145,7 +145,7 @@ instance
   infer_instance
 
 
-def has_cycle
+def has_cycle_v1
   (E : List (String × Formula_)) :
   Prop :=
   ∃ (X : String), ∃ (l : List String), is_big_step_v1 E X X l
@@ -529,9 +529,9 @@ lemma is_one_or_more_small_steps_singleton_contract
 
 
 lemma not_has_cycle_nil :
-  ¬ has_cycle [] :=
+  ¬ has_cycle_v1 [] :=
   by
-  unfold has_cycle
+  unfold has_cycle_v1
   simp only [not_exists]
   intro X l contra
   unfold is_big_step_v1 at contra
@@ -552,10 +552,10 @@ lemma not_has_cycle_nil :
 lemma has_cycle_singleton_left
   (X : String)
   (F : Formula_)
-  (h1 : has_cycle [(X, F)]) :
+  (h1 : has_cycle_v1 [(X, F)]) :
   atom_occurs_in X F :=
   by
-  unfold has_cycle at h1
+  unfold has_cycle_v1 at h1
   unfold is_big_step_v1 at h1
   obtain ⟨Y, l, h1⟩ := h1
   cases l
@@ -578,9 +578,9 @@ lemma has_cycle_singleton_right
   (X : String)
   (F : Formula_)
   (h1 : atom_occurs_in X F) :
-  has_cycle [(X, F)] :=
+  has_cycle_v1 [(X, F)] :=
   by
-  unfold has_cycle
+  unfold has_cycle_v1
   apply Exists.intro X
   apply Exists.intro []
   unfold is_big_step_v1
@@ -592,7 +592,7 @@ lemma has_cycle_singleton_right
 lemma has_cycle_singleton
   (X : String)
   (F : Formula_) :
-  has_cycle [(X, F)] ↔ atom_occurs_in X F :=
+  has_cycle_v1 [(X, F)] ↔ atom_occurs_in X F :=
   by
   constructor
   · apply has_cycle_singleton_left
@@ -606,9 +606,9 @@ lemma is_small_step_v1_refl_imp_has_cycle
   (E : List (String × Formula_))
   (X : String)
   (h1 : is_small_step_v1 E X X) :
-  has_cycle E :=
+  has_cycle_v1 E :=
   by
-  unfold has_cycle
+  unfold has_cycle_v1
   apply Exists.intro X
   apply Exists.intro []
   unfold is_big_step_v1
@@ -623,7 +623,7 @@ example
   (l : List String)
   (h1 : is_big_step_v1 ((X, F) :: E) Y Y l)
   (h2 : ¬ atom_occurs_in X F)
-  (h3 : ¬ has_cycle E) :
+  (h3 : ¬ has_cycle_v1 E) :
   sorry :=
   by
   induction l
@@ -648,7 +648,7 @@ example
     rewrite [← List.singleton_append] at h1_left
     simp only [is_small_step_v1_append] at h1_left
 
-    unfold has_cycle at h3
+    unfold has_cycle_v1 at h3
     simp only [not_exists] at h3
     unfold is_big_step_v1 at h3
 
@@ -673,12 +673,12 @@ example
   (E : List (String × Formula_))
   (X : String)
   (F : Formula_)
-  (h1 : has_cycle ((X, F) :: E))
+  (h1 : has_cycle_v1 ((X, F) :: E))
   (h2 : ¬ atom_occurs_in X F)
-  (h3 : ¬ has_cycle E) :
+  (h3 : ¬ has_cycle_v1 E) :
   ∃ (Y : String), ∃ (l : List String), atom_occurs_in Y F ∧ is_big_step_v1 E Y X l :=
   by
-  unfold has_cycle at h1
+  unfold has_cycle_v1 at h1
   obtain ⟨Y, l, h1⟩ := h1
 
   induction l
@@ -727,18 +727,18 @@ example
   (E : List (String × Formula_))
   (X : String)
   (F : Formula_)
-  (h1 : ¬ has_cycle E)
+  (h1 : ¬ has_cycle_v1 E)
   (h2 : ¬ atom_occurs_in X F)
   (h3 : ∀ (Y : String), ∀ (l : List String), atom_occurs_in Y F → ¬ is_big_step_v1 E Y X l) :
-  ¬ has_cycle ((X, F) :: E) :=
+  ¬ has_cycle_v1 ((X, F) :: E) :=
   by
-  unfold has_cycle at h1
+  unfold has_cycle_v1 at h1
   simp only [not_exists] at h1
   unfold is_big_step_v1 at h1
 
   unfold is_big_step_v1 at h3
 
-  unfold has_cycle
+  unfold has_cycle_v1
   simp only [not_exists]
   intro Y l contra
   unfold is_big_step_v1 at contra
