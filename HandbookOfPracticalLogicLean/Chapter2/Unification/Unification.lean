@@ -366,3 +366,6 @@ example
     simp only at contra
     apply contra
     exact trivial
+
+
+-------------------------------------------------------------------------------

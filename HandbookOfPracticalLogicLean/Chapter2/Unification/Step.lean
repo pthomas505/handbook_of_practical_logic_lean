@@ -293,6 +293,14 @@ instance
 #eval List.prodChain (· = ·) [(0, 1), (1, 2), (3, 4)]
 
 
+def is_big_step_v3
+  (E : List (String × Formula_))
+  (l : List (String × String)) :
+  Prop :=
+  List.prodChain (· = ·) l ∧
+    ∀ (step : String × String), step ∈ l → step ∈ env_to_step_list E
+
+
 -------------------------------------------------------------------------------
 
 
@@ -326,6 +334,15 @@ instance
 #eval List.prodCycle (· = ·) [(0, 1), (1, 0)]
 #eval List.prodCycle (· = ·) [(0, 1), (1, 2)]
 #eval List.prodCycle (· = ·) [(0, 1), (2, 0)]
+
+
+-------------------------------------------------------------------------------
+
+
+def has_cycle_v3
+  (E : List (String × Formula_)) :
+  Prop :=
+  ∃ (l : List (String × String)), (∀ (step : String × String), step ∈ l → step ∈ env_to_step_list E) ∧ List.prodCycle (· = ·) l
 
 
 -------------------------------------------------------------------------------
