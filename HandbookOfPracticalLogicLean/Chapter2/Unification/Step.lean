@@ -128,7 +128,7 @@ instance
 -------------------------------------------------------------------------------
 
 
-def is_one_or_more_small_steps
+def is_big_step_v1
   (E : List (String × Formula_))
   (X Y : String)
   (l : List String) :
@@ -139,16 +139,16 @@ instance
   (E : List (String × Formula_))
   (X Y : String)
   (l : List String) :
-  Decidable (is_one_or_more_small_steps E X Y l) :=
+  Decidable (is_big_step_v1 E X Y l) :=
   by
-  unfold is_one_or_more_small_steps
+  unfold is_big_step_v1
   infer_instance
 
 
 def has_cycle
   (E : List (String × Formula_)) :
   Prop :=
-  ∃ (X : String), ∃ (l : List String), is_one_or_more_small_steps E X X l
+  ∃ (X : String), ∃ (l : List String), is_big_step_v1 E X X l
 
 
 -------------------------------------------------------------------------------
@@ -435,9 +435,9 @@ inductive List.is_cycle {α : Type} : (List (α × α)) → Prop
 lemma not_is_one_or_more_small_steps_nil
   (X Y : String)
   (l : List String) :
-  ¬ is_one_or_more_small_steps [] X Y l :=
+  ¬ is_big_step_v1 [] X Y l :=
   by
-  unfold is_one_or_more_small_steps
+  unfold is_big_step_v1
   cases l
   case nil =>
     simp only [List.nil_append, List.chain_cons, List.Chain.nil]
@@ -456,23 +456,23 @@ lemma is_one_or_more_small_steps_trans
   (X Y Z : String)
   (l : List String)
   (h1 : ¬ l = [])
-  (h2 : is_one_or_more_small_steps E X Y l)
-  (h3 : is_one_or_more_small_steps E Y Z l) :
-  is_one_or_more_small_steps E X Z l :=
+  (h2 : is_big_step_v1 E X Y l)
+  (h3 : is_big_step_v1 E Y Z l) :
+  is_big_step_v1 E X Z l :=
   by
   cases l
   case nil =>
     contradiction
   case cons hd tl =>
-    unfold is_one_or_more_small_steps at h2
+    unfold is_big_step_v1 at h2
     simp only [List.cons_append, List.chain_cons] at h2
     obtain ⟨h2_left, h2_right⟩ := h2
 
-    unfold is_one_or_more_small_steps at h3
+    unfold is_big_step_v1 at h3
     simp only [List.cons_append, List.chain_cons] at h3
     obtain ⟨h3_left, h3_right⟩ := h3
 
-    unfold is_one_or_more_small_steps
+    unfold is_big_step_v1
     simp only [List.cons_append, List.chain_cons]
     exact ⟨h2_left, h3_right⟩
 
@@ -482,10 +482,10 @@ lemma is_small_step_v1_is_one_or_more_small_steps_trans
   (F : Formula_)
   (l : List String)
   (h1 : is_small_step_v1 [(X, F)] A B)
-  (h2 : is_one_or_more_small_steps [(X, F)] B C l) :
+  (h2 : is_big_step_v1 [(X, F)] B C l) :
   is_small_step_v1 [(X, F)] A C :=
   by
-  unfold is_one_or_more_small_steps at h2
+  unfold is_big_step_v1 at h2
   induction l generalizing B
   case nil =>
     simp only [List.nil_append, List.chain_cons, List.Chain.nil] at h2
@@ -507,10 +507,10 @@ lemma is_one_or_more_small_steps_singleton_contract
   (X Y Z : String)
   (F : Formula_)
   (l : List String)
-  (h1 : is_one_or_more_small_steps [(X, F)] Y Z l) :
+  (h1 : is_big_step_v1 [(X, F)] Y Z l) :
   is_small_step_v1 [(X, F)] Y Z :=
   by
-  unfold is_one_or_more_small_steps at h1
+  unfold is_big_step_v1 at h1
   induction l
   case nil =>
     simp only [List.nil_append, List.chain_cons, List.Chain.nil] at h1
@@ -521,7 +521,7 @@ lemma is_one_or_more_small_steps_singleton_contract
     obtain ⟨h1_left, h1_right⟩ := h1
     apply is_small_step_v1_is_one_or_more_small_steps_trans X Y hd Z F tl
     · exact h1_left
-    · unfold is_one_or_more_small_steps
+    · unfold is_big_step_v1
       exact h1_right
 
 
@@ -534,7 +534,7 @@ lemma not_has_cycle_nil :
   unfold has_cycle
   simp only [not_exists]
   intro X l contra
-  unfold is_one_or_more_small_steps at contra
+  unfold is_big_step_v1 at contra
   cases l
   case nil =>
     simp only [List.nil_append, List.chain_cons, List.Chain.nil] at contra
@@ -556,7 +556,7 @@ lemma has_cycle_singleton_left
   atom_occurs_in X F :=
   by
   unfold has_cycle at h1
-  unfold is_one_or_more_small_steps at h1
+  unfold is_big_step_v1 at h1
   obtain ⟨Y, l, h1⟩ := h1
   cases l
   case nil =>
@@ -570,7 +570,7 @@ lemma has_cycle_singleton_left
     apply is_small_step_v1_singleton_refl X Y
     apply is_small_step_v1_is_one_or_more_small_steps_trans X Y hd Y F tl
     · exact h1_left
-    · unfold is_one_or_more_small_steps
+    · unfold is_big_step_v1
       exact h1_right
 
 
@@ -583,7 +583,7 @@ lemma has_cycle_singleton_right
   unfold has_cycle
   apply Exists.intro X
   apply Exists.intro []
-  unfold is_one_or_more_small_steps
+  unfold is_big_step_v1
   simp only [List.nil_append, List.chain_cons, List.Chain.nil]
   simp only [is_small_step_v1_singleton]
   exact ⟨⟨trivial, h1⟩, trivial⟩
@@ -611,7 +611,7 @@ lemma is_small_step_v1_refl_imp_has_cycle
   unfold has_cycle
   apply Exists.intro X
   apply Exists.intro []
-  unfold is_one_or_more_small_steps
+  unfold is_big_step_v1
   simp only [List.nil_append, List.chain_cons, List.Chain.nil]
   exact ⟨h1, trivial⟩
 
@@ -621,14 +621,14 @@ example
   (X Y : String)
   (F : Formula_)
   (l : List String)
-  (h1 : is_one_or_more_small_steps ((X, F) :: E) Y Y l)
+  (h1 : is_big_step_v1 ((X, F) :: E) Y Y l)
   (h2 : ¬ atom_occurs_in X F)
   (h3 : ¬ has_cycle E) :
   sorry :=
   by
   induction l
   case nil =>
-    unfold is_one_or_more_small_steps at h1
+    unfold is_big_step_v1 at h1
     simp only [List.nil_append, List.chain_cons, List.Chain.nil] at h1
     obtain ⟨h1_left, h1_right⟩ := h1
     rewrite [← List.singleton_append] at h1_left
@@ -642,7 +642,7 @@ example
       obtain s1 := is_small_step_v1_refl_imp_has_cycle E Y h1_left
       contradiction
   case cons hd tl ih =>
-    unfold is_one_or_more_small_steps at h1
+    unfold is_big_step_v1 at h1
     simp only [List.cons_append, List.chain_cons] at h1
     obtain ⟨h1_left, h1_right⟩ := h1
     rewrite [← List.singleton_append] at h1_left
@@ -650,9 +650,9 @@ example
 
     unfold has_cycle at h3
     simp only [not_exists] at h3
-    unfold is_one_or_more_small_steps at h3
+    unfold is_big_step_v1 at h3
 
-    unfold is_one_or_more_small_steps at ih
+    unfold is_big_step_v1 at ih
 
     cases h1_left
     case inl h1_left =>
@@ -676,14 +676,14 @@ example
   (h1 : has_cycle ((X, F) :: E))
   (h2 : ¬ atom_occurs_in X F)
   (h3 : ¬ has_cycle E) :
-  ∃ (Y : String), ∃ (l : List String), atom_occurs_in Y F ∧ is_one_or_more_small_steps E Y X l :=
+  ∃ (Y : String), ∃ (l : List String), atom_occurs_in Y F ∧ is_big_step_v1 E Y X l :=
   by
   unfold has_cycle at h1
   obtain ⟨Y, l, h1⟩ := h1
 
   induction l
   case nil =>
-    unfold is_one_or_more_small_steps at h1
+    unfold is_big_step_v1 at h1
     simp only [List.nil_append, List.chain_cons, List.Chain.nil] at h1
     obtain ⟨h1_left, h1_right⟩ := h1
     rewrite [← List.singleton_append] at h1_left
@@ -701,7 +701,7 @@ example
       apply is_small_step_v1_refl_imp_has_cycle E Y
       exact h1_left
   case cons hd tl ih =>
-    unfold is_one_or_more_small_steps at h1
+    unfold is_big_step_v1 at h1
     simp only [List.cons_append, List.chain_cons] at h1
     obtain ⟨h1_left, h1_right⟩ := h1
     rewrite [← List.singleton_append] at h1_left
@@ -715,7 +715,7 @@ example
       apply Exists.intro tl
       constructor
       · exact h1_left_right
-      · unfold is_one_or_more_small_steps
+      · unfold is_big_step_v1
         rewrite [← h1_left_left]
         sorry
     case inr h1_left =>
@@ -729,19 +729,19 @@ example
   (F : Formula_)
   (h1 : ¬ has_cycle E)
   (h2 : ¬ atom_occurs_in X F)
-  (h3 : ∀ (Y : String), ∀ (l : List String), atom_occurs_in Y F → ¬ is_one_or_more_small_steps E Y X l) :
+  (h3 : ∀ (Y : String), ∀ (l : List String), atom_occurs_in Y F → ¬ is_big_step_v1 E Y X l) :
   ¬ has_cycle ((X, F) :: E) :=
   by
   unfold has_cycle at h1
   simp only [not_exists] at h1
-  unfold is_one_or_more_small_steps at h1
+  unfold is_big_step_v1 at h1
 
-  unfold is_one_or_more_small_steps at h3
+  unfold is_big_step_v1 at h3
 
   unfold has_cycle
   simp only [not_exists]
   intro Y l contra
-  unfold is_one_or_more_small_steps at contra
+  unfold is_big_step_v1 at contra
 
   induction l
   case nil =>
