@@ -328,26 +328,6 @@ instance
 -------------------------------------------------------------------------------
 
 
-inductive is_cycle
-  {α : Type}
-  (R : α → α → Prop) :
-  (List (α × α)) → Prop
-  | refl
-    (a : α × α) :
-    R a.snd a.fst →
-    is_cycle R [a]
-
-  | trans
-    (a b : α × α)
-    (l : List (α × α)) :
-    R b.snd a.fst →
-    List.Chain' (fun (p1 p2 : α × α) => R p1.snd p2.fst) l →
-    is_cycle R (a :: (l ++ [b]))
-
-
--------------------------------------------------------------------------------
-
-
 lemma not_is_small_step_nil
   (X Y : String) :
   ¬ is_small_step_v1 [] X Y :=
