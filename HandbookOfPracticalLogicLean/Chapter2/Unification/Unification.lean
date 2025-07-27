@@ -376,3 +376,177 @@ example
 
 
 -------------------------------------------------------------------------------
+
+
+def var_elim
+  (X : String)
+  (F : Formula_)
+  (L : List (Formula_ × Formula_)) :
+  List (Formula_ × Formula_) :=
+  let σ : Instantiation := Function.updateITE atom_ X F
+  L.map (fun (eq : Formula_ × Formula_) => (replace_atom_all_rec σ eq.fst, replace_atom_all_rec σ eq.snd))
+
+
+lemma is_unifier_singleton
+  (σ : Instantiation)
+  (F F' : Formula_) :
+  is_unifier σ [(F, F')] ↔ replace_atom_all_rec σ F = replace_atom_all_rec σ F' :=
+  by
+  unfold is_unifier
+  simp only [List.mem_singleton]
+  constructor
+  · intro a1
+    specialize a1 (F, F')
+    simp only at a1
+    specialize a1 trivial
+    exact a1
+  · intro a1 p a2
+    rewrite [a2]
+    simp only
+    exact a1
+
+
+lemma is_unifier_singleton_refl
+  (σ : Instantiation)
+  (F : Formula_) :
+  is_unifier σ [(F, F)] :=
+  by
+  rewrite [is_unifier_singleton]
+  rfl
+
+
+lemma is_unifier_singleton_comm
+  (σ : Instantiation)
+  (F F' : Formula_) :
+  is_unifier σ [(F, F')] ↔ is_unifier σ [(F', F)] :=
+  by
+  simp only [is_unifier_singleton]
+  exact eq_comm
+
+
+lemma is_unifier_singleton_trans
+  (σ : Instantiation)
+  (F F' F'' : Formula_)
+  (h1 : is_unifier σ [(F, F')])
+  (h2 : is_unifier σ [(F', F'')]) :
+  is_unifier σ [(F, F'')] :=
+  by
+  simp only [is_unifier_singleton] at h1
+
+  simp only [is_unifier_singleton] at h2
+
+  simp only [is_unifier_singleton]
+  trans (replace_atom_all_rec σ F')
+  · apply h1
+  · apply h2
+
+
+lemma is_unifier_append
+  (σ : Instantiation)
+  (L L' : List (Formula_ × Formula_)) :
+  is_unifier σ (L ++ L') ↔ (is_unifier σ L ∧ is_unifier σ L') :=
+  by
+  unfold is_unifier
+  simp only [List.mem_append]
+  constructor
+  · intro a1
+    constructor
+    · intro p a2
+      apply a1
+      left
+      exact a2
+    · intro p a2
+      apply a1
+      right
+      exact a2
+  · intro a1 p a2
+    obtain ⟨a1_left, a1_right⟩ := a1
+
+    cases a2
+    case inl a2 =>
+      apply a1_left
+      exact a2
+    case inr a2 =>
+      apply a1_right
+      exact a2
+
+
+theorem extracted_1
+  (Y : String)
+  (F F_1 F_2 : Formula_)
+  (σ : Instantiation)
+  (h1 : ¬ atom_occurs_in Y F)
+  (h2 : is_unifier σ [(atom_ Y, F)])
+  (h3 : is_unifier σ [(F_1, F_2)]) :
+  is_unifier σ [(replace_atom_all_rec (Function.updateITE atom_ Y F) F_1, replace_atom_all_rec (Function.updateITE atom_ Y F) F_2)] :=
+  by
+  induction F_1 generalizing F_2
+  case atom_ X =>
+    cases F_2
+    case atom_ X' =>
+      unfold replace_atom_all_rec
+      simp only [Function.updateITE]
+      split_ifs
+      case pos c1 c2 =>
+        apply is_unifier_singleton_refl
+      case neg c1 c2 =>
+        rewrite [c1] at h3
+        apply is_unifier_singleton_trans σ F (atom_ Y) (atom_ X')
+        · rewrite [is_unifier_singleton_comm]
+          exact h2
+        · exact h3
+      case pos c1 c2 =>
+        rewrite [c2] at h3
+        apply is_unifier_singleton_trans σ (atom_ X) (atom_ Y) F
+        · exact h3
+        · exact h2
+      case neg c1 c2 =>
+        exact h3
+    all_goals
+      sorry
+  all_goals
+    sorry
+
+
+example
+  (X : String)
+  (F : Formula_)
+  (F_1 F_2 : Formula_)
+  (h1 : ¬ atom_occurs_in X F) :
+  are_equivalent_equation_lists ((atom_ X, F) :: [(F_1, F_2)]) ((atom_ X, F) :: (var_elim X F [(F_1, F_2)])) :=
+  by
+  unfold are_equivalent_equation_lists
+  intro σ
+  constructor
+  · intro a1
+    rewrite [← List.singleton_append] at a1
+    rewrite [is_unifier_append] at a1
+    obtain ⟨a1_left, a1_right⟩ := a1
+    rewrite [← List.singleton_append]
+    rewrite [is_unifier_append]
+    constructor
+    · exact a1_left
+    · unfold var_elim
+      simp only [List.map_cons, List.map_nil]
+      sorry
+  · intro a1
+    rewrite [← List.singleton_append] at a1
+    rewrite [is_unifier_append] at a1
+    obtain ⟨a1_left, a1_right⟩ := a1
+    rewrite [← List.singleton_append]
+    rewrite [is_unifier_append]
+    constructor
+    · exact a1_left
+    · unfold var_elim at a1_right
+      simp only [List.map_cons, List.map_nil] at a1_right
+      sorry
+
+
+example
+  (X : String)
+  (F : Formula_)
+  (L : List (Formula_ × Formula_))
+  (h1 : ¬ atom_occurs_in X F) :
+  are_equivalent_equation_lists ((atom_ X, F) :: L) ((atom_ X, F) :: (var_elim X F L)) :=
+  by
+  sorry
