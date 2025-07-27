@@ -378,6 +378,11 @@ example
 -------------------------------------------------------------------------------
 
 
+/-
+  Let `X` be a variable, `F` be a formula, and `L : List (Formula_ × Formula_)` be a list of equations. If `(X, F) ∈ L` then every instantiation that is a unifier of `L` is also a unifier of `(X, F)`. Hence every instantiation that is a unifier of `L` maps `X` and `F` to the same formula. Let `L'` be the replacement of every occurrence of `X` in `L` by `F`. Then every instantiation that is a unifier of `L` maps `X` and `F` in `L` to the same formula that it maps `F` in `L'` to. Therefore `L` and `L'` are equivalent equation lists.
+-/
+
+
 def var_elim
   (X : String)
   (F : Formula_)
@@ -385,6 +390,60 @@ def var_elim
   List (Formula_ × Formula_) :=
   let σ : Instantiation := Function.updateITE atom_ X F
   L.map (fun (eq : Formula_ × Formula_) => (replace_atom_all_rec σ eq.fst, replace_atom_all_rec σ eq.snd))
+
+
+example
+  (X : String)
+  (F : Formula_)
+  (L : List (Formula_ × Formula_))
+  (σ : Instantiation)
+  (h1 : is_unifier σ ((atom_ X, F) :: L)) :
+  σ X = replace_atom_all_rec σ F :=
+  by
+  unfold is_unifier at h1
+  simp only [List.mem_cons] at h1
+  specialize h1 (atom_ X, F)
+  simp only at h1
+  simp only [replace_atom_all_rec] at h1
+  apply h1
+  left
+  exact trivial
+
+
+example
+  (Y : String)
+  (F : Formula_)
+  (H : Formula_)
+  (σ : Instantiation)
+  (h1 : σ Y = replace_atom_all_rec σ F) :
+  replace_atom_all_rec σ H = replace_atom_all_rec σ (replace_atom_all_rec (Function.updateITE atom_ Y F) H) :=
+  by
+  induction H
+  case false_ | true_ =>
+    simp only [replace_atom_all_rec]
+  case atom_ X =>
+    simp only [replace_atom_all_rec]
+    unfold Function.updateITE
+    split_ifs
+    case pos c1 =>
+      rewrite [c1]
+      exact h1
+    case neg c1 =>
+      unfold replace_atom_all_rec
+      rfl
+  case not_ phi ih =>
+    simp only [replace_atom_all_rec]
+    rewrite [ih]
+    rfl
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    simp only [replace_atom_all_rec]
+    rewrite [phi_ih]
+    rewrite [psi_ih]
+    rfl
 
 
 lemma is_unifier_singleton
