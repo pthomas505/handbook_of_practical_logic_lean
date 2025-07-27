@@ -16,13 +16,13 @@ def Instantiation : Type := String → Formula_
 
 
 /--
-  `is_unifier σ S` := True if and only if the instantiation `σ` is a unifier of the set of pairs of formulas `S`.
+  `is_unifier σ L` := True if and only if the instantiation `σ` is a unifier of the list of pairs of formulas `L`.
 -/
 def is_unifier
   (σ : Instantiation)
-  (S : Set (Formula_ × Formula_)) :
+  (L : List (Formula_ × Formula_)) :
   Prop :=
-  ∀ (p : (Formula_ × Formula_)), p ∈ S →
+  ∀ (p : (Formula_ × Formula_)), p ∈ L →
     replace_atom_all_rec σ p.fst =
       replace_atom_all_rec σ p.snd
 
@@ -56,16 +56,17 @@ lemma replace_atom_all_rec_compose
 
 example
   (σ τ : Instantiation)
-  (S : Set (Formula_ × Formula_))
-  (h1 : is_unifier σ S) :
-  is_unifier ((replace_atom_all_rec τ) ∘ σ) S :=
+  (L : List (Formula_ × Formula_))
+  (h1 : is_unifier σ L) :
+  is_unifier ((replace_atom_all_rec τ) ∘ σ) L :=
   by
   unfold is_unifier at h1
   unfold is_unifier
   intro p a1
   simp only [replace_atom_all_rec_compose]
-  rewrite [h1 p a1]
-  rfl
+  congr 1
+  apply h1
+  exact a1
 
 
 /--
@@ -90,28 +91,28 @@ example
 
 
 /--
-  `is_most_general_unifier σ S` := True if and only if the instantiation `σ` is a most general unifier (MGU) of the set of pairs of formulas `S`.
+  `is_most_general_unifier σ L` := True if and only if the instantiation `σ` is a most general unifier (MGU) of the list of pairs of formulas `L`.
 -/
 def is_most_general_unifier
   (σ : Instantiation)
-  (S : Set (Formula_ × Formula_)) :
+  (L : List (Formula_ × Formula_)) :
   Prop :=
-  is_unifier σ S ∧ ∀ (τ : Instantiation), is_unifier τ S → is_more_general_instantiation σ τ
+  is_unifier σ L ∧ ∀ (τ : Instantiation), is_unifier τ L → is_more_general_instantiation σ τ
 
 
-def are_equivalent_equation_sets
-  (S S' : Set (Formula_ × Formula_)) :
+def are_equivalent_equation_lists
+  (L L' : List (Formula_ × Formula_)) :
   Prop :=
-  ∀ (σ : Instantiation), (is_unifier σ S ↔ is_unifier σ S')
+  ∀ (σ : Instantiation), (is_unifier σ L ↔ is_unifier σ L')
 
 
 def reduce :
-  (Formula_ × Formula_) → Option (Set (Formula_ × Formula_))
-  | (not_ phi, not_ phi') => Option.some { (phi, phi') }
+  (Formula_ × Formula_) → Option (List (Formula_ × Formula_))
+  | (not_ phi, not_ phi') => Option.some [(phi, phi')]
   | (and_ phi psi, and_ phi' psi')
   | (or_ phi psi, or_ phi' psi')
   | (imp_ phi psi, imp_ phi' psi')
-  | (iff_ phi psi, iff_ phi' psi') => Option.some { (phi, phi'), (psi, psi') }
+  | (iff_ phi psi, iff_ phi' psi') => Option.some ([(phi, phi')] ∪ [(psi, psi')])
   | _ => Option.none
 
 
@@ -128,7 +129,7 @@ def are_reducible :
 example
   (F F' : Formula_)
   (h1 : (reduce (F, F')).isSome) :
-  are_equivalent_equation_sets { (F, F') } ((reduce (F, F')).get h1) :=
+  are_equivalent_equation_lists [(F, F')] ((reduce (F, F')).get h1) :=
   by
   cases F
   case false_ | true_ | atom_ X =>
@@ -139,11 +140,11 @@ example
     cases F'
     case not_ phi' =>
       simp only [reduce]
-      unfold are_equivalent_equation_sets
+      unfold are_equivalent_equation_lists
       intro σ
       unfold is_unifier
       simp only [Option.get_some]
-      simp only [Set.mem_singleton_iff]
+      simp only [List.mem_singleton]
       constructor
       · intro a1 p a2
         specialize a1 (not_ phi, not_ phi')
@@ -172,12 +173,14 @@ example
     cases F'
     case and_ phi' psi' =>
       simp only [reduce]
-      unfold are_equivalent_equation_sets
+      unfold are_equivalent_equation_lists
       intro σ
       unfold is_unifier
       simp only [Option.get_some]
-      simp only [Set.mem_insert_iff]
-      simp only [Set.mem_singleton_iff]
+      simp only [List.cons_union]
+      simp only [List.nil_union]
+      simp only [List.mem_insert_iff]
+      simp only [List.mem_singleton]
       constructor
       · intro a1 p a2
         specialize a1 (and_ phi psi, and_ phi' psi')
@@ -359,10 +362,10 @@ example
   (F F' : Formula_)
   (σ : Instantiation)
   (h1 : is_proper_subformula_v2 F F') :
-  ¬ is_unifier σ { (F, F') } :=
+  ¬ is_unifier σ [(F, F')] :=
   by
   unfold is_unifier
-  simp only [Set.mem_singleton_iff]
+  simp only [List.mem_singleton]
   intro contra
   apply is_proper_subformula_v2_imp_replace_atom_all_rec_not_eq F F' σ
   · exact h1
@@ -373,61 +376,3 @@ example
 
 
 -------------------------------------------------------------------------------
-
-
-def eliminate
-  (X : String)
-  (F : Formula_)
-  (L : List (Formula_ × Formula_)) :
-  List (Formula_ × Formula_) :=
-  let σ : Instantiation := Function.updateITE atom_ X F
-  L.map (fun (eq : Formula_ × Formula_) => (replace_atom_all_rec σ eq.fst, replace_atom_all_rec σ eq.snd))
-
-
-lemma is_unifier_union
-  (σ : Instantiation)
-  (S T : Set (Formula_ × Formula_)) :
-  is_unifier σ (S ∪ T) ↔ (is_unifier σ S ∧ is_unifier σ T):=
-  by
-  unfold is_unifier
-  constructor
-  · intro a1
-    constructor
-    · intro p a2
-      apply a1
-      simp only [Set.mem_union]
-      left
-      exact a2
-    · intro p a2
-      apply a1
-      simp only [Set.mem_union]
-      right
-      exact a2
-  · intro a1 p a2
-    obtain ⟨a1_left, a1_right⟩ := a1
-    simp only [Set.mem_union] at a2
-    cases a2
-    case inl a2 =>
-      apply a1_left
-      exact a2
-    case inr a2 =>
-      apply a1_right
-      exact a2
-
-
-example
-  (X : String)
-  (F : Formula_)
-  (L : List (Formula_ × Formula_)) :
-  are_equivalent_equation_sets ({(atom_ X, F)} ∪ (eliminate X F L).toFinset) ({(atom_ X, F)} ∪ L.toFinset) :=
-  by
-  induction L
-  case nil =>
-    unfold are_equivalent_equation_sets
-    intro σ
-    unfold eliminate
-    simp only [List.map_nil, List.toFinset_nil, Finset.coe_empty, Set.union_empty]
-  case cons hd tl ih =>
-    unfold are_equivalent_equation_sets at ih
-    simp only [is_unifier_union] at ih
-    sorry
