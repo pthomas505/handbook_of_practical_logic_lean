@@ -490,6 +490,39 @@ example
   exact h2
 
 
+example
+  (σ : Instantiation)
+  (X : String)
+  (F : Formula_)
+  (F_1 F_2 : Formula_)
+  (h1 : is_unifier σ [(atom_ X, F)]) :
+  is_unifier σ [(F_1, F_2)] ↔ is_unifier σ ([(replace_atom_one_rec X F F_1, replace_atom_one_rec X F F_2)]) :=
+  by
+  simp only [is_unifier_singleton] at h1
+  simp only [replace_atom_all_rec] at h1
+
+  simp only [is_unifier_singleton]
+
+  obtain s1 := replace_atom_all_rec_eq_replace_atom_all_rec_of_replace_atom_one_rec σ X F F_1 h1
+  rewrite [← s1]
+
+  obtain s2 := replace_atom_all_rec_eq_replace_atom_all_rec_of_replace_atom_one_rec σ X F F_2 h1
+  rewrite [← s2]
+
+  rfl
+
+
+example
+  (σ : Instantiation)
+  (X : String)
+  (F : Formula_)
+  (L : List (Formula_ × Formula_))
+  (h1 : is_unifier σ [(atom_ X, F)]) :
+  is_unifier σ L ↔ is_unifier σ (var_elim X F L) :=
+  by
+  sorry
+
+
 lemma is_unifier_singleton_refl
   (σ : Instantiation)
   (F : Formula_) :
