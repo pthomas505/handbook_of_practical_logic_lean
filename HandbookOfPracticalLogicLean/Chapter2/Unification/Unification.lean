@@ -411,14 +411,14 @@ example
 
 
 example
-  (Y : String)
+  (X' : String)
+  (F' : Formula_)
   (F : Formula_)
-  (H : Formula_)
   (σ : Instantiation)
-  (h1 : σ Y = replace_atom_all_rec σ F) :
-  replace_atom_all_rec σ H = replace_atom_all_rec σ (replace_atom_all_rec (Function.updateITE atom_ Y F) H) :=
+  (h1 : σ X' = replace_atom_all_rec σ F') :
+  replace_atom_all_rec σ F = replace_atom_all_rec σ (replace_atom_all_rec (Function.updateITE atom_ X' F') F) :=
   by
-  induction H
+  induction F
   case false_ | true_ =>
     simp only [replace_atom_all_rec]
   case atom_ X =>
