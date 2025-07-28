@@ -388,8 +388,7 @@ def var_elim
   (F : Formula_)
   (L : List (Formula_ × Formula_)) :
   List (Formula_ × Formula_) :=
-  let σ : Instantiation := Function.updateITE atom_ X F
-  L.map (fun (eq : Formula_ × Formula_) => (replace_atom_all_rec σ eq.fst, replace_atom_all_rec σ eq.snd))
+  L.map (fun (eq : Formula_ × Formula_) => (replace_atom_one_rec X F eq.fst, replace_atom_one_rec X F eq.snd))
 
 
 example
