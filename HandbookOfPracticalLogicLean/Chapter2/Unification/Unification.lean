@@ -28,8 +28,8 @@ def is_unifier
 
 
 lemma replace_atom_all_rec_compose
-  (F : Formula_)
-  (σ τ : Instantiation) :
+  (σ τ : Instantiation)
+  (F : Formula_) :
   replace_atom_all_rec ((replace_atom_all_rec τ) ∘ σ) F =
     replace_atom_all_rec τ (replace_atom_all_rec σ F) :=
   by
@@ -227,8 +227,8 @@ example
 
 
 lemma is_subformula_imp_is_subformula_replace_atom_all_rec
-  (F F' : Formula_)
   (σ : Instantiation)
+  (F F' : Formula_)
   (h1 : is_subformula F F') :
   is_subformula (replace_atom_all_rec σ F) (replace_atom_all_rec σ F') :=
   by
@@ -278,8 +278,8 @@ lemma is_subformula_imp_is_subformula_replace_atom_all_rec
 
 
 lemma is_proper_subformula_v2_imp_replace_atom_all_rec_not_eq
-  (F F' : Formula_)
   (σ : Instantiation)
+  (F F' : Formula_)
   (h1 : is_proper_subformula_v2 F F') :
   ¬ replace_atom_all_rec σ F = replace_atom_all_rec σ F' :=
   by
@@ -298,7 +298,7 @@ lemma is_proper_subformula_v2_imp_replace_atom_all_rec_not_eq
     case inl h1_left =>
       contradiction
     case inr h1_left =>
-      obtain s1 := is_subformula_imp_is_subformula_replace_atom_all_rec F phi σ h1_left
+      obtain s1 := is_subformula_imp_is_subformula_replace_atom_all_rec σ F phi h1_left
       intro contra
       rewrite [contra] at s1
       simp only [replace_atom_all_rec] at s1
@@ -319,7 +319,7 @@ lemma is_proper_subformula_v2_imp_replace_atom_all_rec_not_eq
     case inr h1_left =>
       cases h1_left
       case inl h1_left =>
-        obtain s1 := is_subformula_imp_is_subformula_replace_atom_all_rec F phi σ h1_left
+        obtain s1 := is_subformula_imp_is_subformula_replace_atom_all_rec σ F phi h1_left
         intro contra
         rewrite [contra] at s1
         simp only [replace_atom_all_rec] at s1
@@ -329,7 +329,7 @@ lemma is_proper_subformula_v2_imp_replace_atom_all_rec_not_eq
         | exact not_is_subformula_imp_left (replace_atom_all_rec σ phi) (replace_atom_all_rec σ psi) s1
         | exact not_is_subformula_iff_left (replace_atom_all_rec σ phi) (replace_atom_all_rec σ psi) s1
       case inr h1_left =>
-        obtain s1 := is_subformula_imp_is_subformula_replace_atom_all_rec F psi σ h1_left
+        obtain s1 := is_subformula_imp_is_subformula_replace_atom_all_rec σ F psi h1_left
         intro contra
         rewrite [contra] at s1
         simp only [replace_atom_all_rec] at s1
@@ -341,8 +341,8 @@ lemma is_proper_subformula_v2_imp_replace_atom_all_rec_not_eq
 
 
 lemma is_proper_subformula_v2_imp_is_proper_subformula_v2_replace_atom_all_rec
-  (F F' : Formula_)
   (σ : Instantiation)
+  (F F' : Formula_)
   (h1 : is_proper_subformula_v2 F F') :
   is_proper_subformula_v2 (replace_atom_all_rec σ F) (replace_atom_all_rec σ F') :=
   by
@@ -359,15 +359,15 @@ lemma is_proper_subformula_v2_imp_is_proper_subformula_v2_replace_atom_all_rec
 
 
 example
-  (F F' : Formula_)
   (σ : Instantiation)
+  (F F' : Formula_)
   (h1 : is_proper_subformula_v2 F F') :
   ¬ is_unifier σ [(F, F')] :=
   by
   unfold is_unifier
   simp only [List.mem_singleton]
   intro contra
-  apply is_proper_subformula_v2_imp_replace_atom_all_rec_not_eq F F' σ
+  apply is_proper_subformula_v2_imp_replace_atom_all_rec_not_eq σ F F'
   · exact h1
   · specialize contra (F, F')
     simp only at contra
@@ -393,10 +393,10 @@ def var_elim
 
 
 example
+  (σ : Instantiation)
   (X : String)
   (F : Formula_)
   (L : List (Formula_ × Formula_))
-  (σ : Instantiation)
   (h1 : is_unifier σ ((atom_ X, F) :: L)) :
   σ X = replace_atom_all_rec σ F :=
   by
@@ -410,13 +410,14 @@ example
   exact trivial
 
 
-example
+lemma replace_atom_all_rec_eq_replace_atom_all_rec_var_elim
+  (σ : Instantiation)
   (X' : String)
   (F' : Formula_)
   (F : Formula_)
-  (σ : Instantiation)
   (h1 : σ X' = replace_atom_all_rec σ F') :
-  replace_atom_all_rec σ F = replace_atom_all_rec σ (replace_atom_all_rec (Function.updateITE atom_ X' F') F) :=
+  replace_atom_all_rec σ F =
+    replace_atom_all_rec σ (replace_atom_all_rec (Function.updateITE atom_ X' F') F) :=
   by
   induction F
   case false_ | true_ =>
@@ -463,6 +464,31 @@ lemma is_unifier_singleton
     rewrite [a2]
     simp only
     exact a1
+
+
+example
+  (σ : Instantiation)
+  (X : String)
+  (F : Formula_)
+  (F_1 F_2 : Formula_)
+  (h1 : is_unifier σ [(atom_ X, F)])
+  (h2 : is_unifier σ [(F_1, F_2)]) :
+  is_unifier σ ([(replace_atom_all_rec (Function.updateITE atom_ X F) F_1, replace_atom_all_rec (Function.updateITE atom_ X F) F_2)]) :=
+  by
+  simp only [is_unifier_singleton] at h1
+  simp only [replace_atom_all_rec] at h1
+
+  simp only [is_unifier_singleton] at h2
+
+  simp only [is_unifier_singleton]
+
+  obtain s1 := replace_atom_all_rec_eq_replace_atom_all_rec_var_elim σ X F F_1 h1
+  rewrite [← s1]
+
+  obtain s2 := replace_atom_all_rec_eq_replace_atom_all_rec_var_elim σ X F F_2 h1
+  rewrite [← s2]
+
+  exact h2
 
 
 lemma is_unifier_singleton_refl
@@ -531,9 +557,9 @@ lemma is_unifier_append
 
 
 theorem extracted_1
+  (σ : Instantiation)
   (Y : String)
   (F F_1 F_2 : Formula_)
-  (σ : Instantiation)
   (h1 : ¬ atom_occurs_in Y F)
   (h2 : is_unifier σ [(atom_ Y, F)])
   (h3 : is_unifier σ [(F_1, F_2)]) :
