@@ -410,24 +410,24 @@ example
   exact trivial
 
 
-lemma replace_atom_all_rec_eq_replace_atom_all_rec_var_elim
+lemma replace_atom_all_rec_eq_replace_atom_all_rec_of_replace_atom_one_rec
   (σ : Instantiation)
   (X' : String)
   (F' : Formula_)
   (F : Formula_)
   (h1 : σ X' = replace_atom_all_rec σ F') :
   replace_atom_all_rec σ F =
-    replace_atom_all_rec σ (replace_atom_all_rec (Function.updateITE atom_ X' F') F) :=
+    replace_atom_all_rec σ (replace_atom_one_rec X' F' F) :=
   by
   induction F
   case false_ | true_ =>
     simp only [replace_atom_all_rec]
   case atom_ X =>
     simp only [replace_atom_all_rec]
-    unfold Function.updateITE
+    unfold replace_atom_one_rec
     split_ifs
     case pos c1 =>
-      rewrite [c1]
+      rewrite [← c1]
       exact h1
     case neg c1 =>
       unfold replace_atom_all_rec
@@ -473,7 +473,7 @@ example
   (F_1 F_2 : Formula_)
   (h1 : is_unifier σ [(atom_ X, F)])
   (h2 : is_unifier σ [(F_1, F_2)]) :
-  is_unifier σ ([(replace_atom_all_rec (Function.updateITE atom_ X F) F_1, replace_atom_all_rec (Function.updateITE atom_ X F) F_2)]) :=
+  is_unifier σ ([(replace_atom_one_rec X F F_1, replace_atom_one_rec X F F_2)]) :=
   by
   simp only [is_unifier_singleton] at h1
   simp only [replace_atom_all_rec] at h1
@@ -482,10 +482,10 @@ example
 
   simp only [is_unifier_singleton]
 
-  obtain s1 := replace_atom_all_rec_eq_replace_atom_all_rec_var_elim σ X F F_1 h1
+  obtain s1 := replace_atom_all_rec_eq_replace_atom_all_rec_of_replace_atom_one_rec σ X F F_1 h1
   rewrite [← s1]
 
-  obtain s2 := replace_atom_all_rec_eq_replace_atom_all_rec_var_elim σ X F F_2 h1
+  obtain s2 := replace_atom_all_rec_eq_replace_atom_all_rec_of_replace_atom_one_rec σ X F F_2 h1
   rewrite [← s2]
 
   exact h2
