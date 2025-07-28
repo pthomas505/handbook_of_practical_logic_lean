@@ -552,7 +552,7 @@ lemma is_unifier_append
       exact a2
 
 
-example
+lemma is_unifier_iff_is_unifier_var_elim
   (σ : Instantiation)
   (X : String)
   (F : Formula_)
@@ -578,3 +578,29 @@ example
     rewrite [ih]
     unfold var_elim
     rfl
+
+
+example
+  (X : String)
+  (F : Formula_)
+  (L : List (Formula_ × Formula_)) :
+  are_equivalent_equation_lists ((atom_ X, F) :: L) ((atom_ X, F) :: var_elim X F L) :=
+  by
+  unfold are_equivalent_equation_lists
+  intro σ
+  rewrite [← List.singleton_append]
+  rewrite [is_unifier_append]
+  conv => right; rewrite [← List.singleton_append]; rewrite [is_unifier_append]
+  constructor
+  · intro a1
+    obtain ⟨a1_left, a1_right⟩ := a1
+    constructor
+    · exact a1_left
+    · simp only [← is_unifier_iff_is_unifier_var_elim σ X F L a1_left]
+      exact a1_right
+  · intro a1
+    obtain ⟨a1_left, a1_right⟩ := a1
+    constructor
+    · exact a1_left
+    · simp only [is_unifier_iff_is_unifier_var_elim σ X F L a1_left]
+      exact a1_right
