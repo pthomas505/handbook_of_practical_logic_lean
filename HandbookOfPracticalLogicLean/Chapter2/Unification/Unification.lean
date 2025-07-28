@@ -449,7 +449,7 @@ lemma replace_atom_all_rec_eq_replace_atom_all_rec_of_replace_atom_one_rec
 lemma is_unifier_singleton
   (σ : Instantiation)
   (F F' : Formula_) :
-  is_unifier σ [(F, F')] ↔ replace_atom_all_rec σ F = replace_atom_all_rec σ F' :=
+  is_unifier σ [(F, F')] ↔ (replace_atom_all_rec σ F = replace_atom_all_rec σ F') :=
   by
   unfold is_unifier
   simp only [List.mem_singleton]
@@ -463,31 +463,6 @@ lemma is_unifier_singleton
     rewrite [a2]
     simp only
     exact a1
-
-
-example
-  (σ : Instantiation)
-  (X : String)
-  (F : Formula_)
-  (F_1 F_2 : Formula_)
-  (h1 : is_unifier σ [(atom_ X, F)])
-  (h2 : is_unifier σ [(F_1, F_2)]) :
-  is_unifier σ ([(replace_atom_one_rec X F F_1, replace_atom_one_rec X F F_2)]) :=
-  by
-  simp only [is_unifier_singleton] at h1
-  simp only [replace_atom_all_rec] at h1
-
-  simp only [is_unifier_singleton] at h2
-
-  simp only [is_unifier_singleton]
-
-  obtain s1 := replace_atom_all_rec_eq_replace_atom_all_rec_of_replace_atom_one_rec σ X F F_1 h1
-  rewrite [← s1]
-
-  obtain s2 := replace_atom_all_rec_eq_replace_atom_all_rec_of_replace_atom_one_rec σ X F F_2 h1
-  rewrite [← s2]
-
-  exact h2
 
 
 example
