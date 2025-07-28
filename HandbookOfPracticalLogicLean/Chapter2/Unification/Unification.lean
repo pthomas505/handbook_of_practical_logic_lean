@@ -465,7 +465,7 @@ lemma is_unifier_singleton
     exact a1
 
 
-example
+lemma is_unifier_iff_is_unifier_replace_atom_one_rec_singleton
   (σ : Instantiation)
   (X : String)
   (F : Formula_)
@@ -485,17 +485,6 @@ example
   rewrite [← s2]
 
   rfl
-
-
-example
-  (σ : Instantiation)
-  (X : String)
-  (F : Formula_)
-  (L : List (Formula_ × Formula_))
-  (h1 : is_unifier σ [(atom_ X, F)]) :
-  is_unifier σ L ↔ is_unifier σ (var_elim X F L) :=
-  by
-  sorry
 
 
 lemma is_unifier_singleton_refl
@@ -561,6 +550,34 @@ lemma is_unifier_append
     case inr a2 =>
       apply a1_right
       exact a2
+
+
+example
+  (σ : Instantiation)
+  (X : String)
+  (F : Formula_)
+  (L : List (Formula_ × Formula_))
+  (h1 : is_unifier σ [(atom_ X, F)]) :
+  is_unifier σ L ↔ is_unifier σ (var_elim X F L) :=
+  by
+  induction L
+  case nil =>
+    unfold var_elim
+    simp only [List.map_nil]
+  case cons hd tl ih =>
+    unfold var_elim
+    simp only [List.map_cons]
+    rewrite [← List.singleton_append]
+    rewrite [is_unifier_append]
+    conv => right; rewrite [← List.singleton_append]; rewrite [is_unifier_append]
+
+    obtain s1 := is_unifier_iff_is_unifier_replace_atom_one_rec_singleton σ X F hd.fst hd.snd h1
+    simp only [Prod.mk.eta] at s1
+    rewrite [← s1]
+
+    rewrite [ih]
+    unfold var_elim
+    rfl
 
 
 theorem extracted_1
