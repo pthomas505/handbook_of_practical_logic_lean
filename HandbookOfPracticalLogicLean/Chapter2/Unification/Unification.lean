@@ -3,8 +3,6 @@
 import HandbookOfPracticalLogicLean.Chapter2.Replace
 import HandbookOfPracticalLogicLean.Chapter2.SubFormula
 
-import MathlibExtraLean.FunctionUpdateITE
-
 
 set_option autoImplicit false
 
@@ -485,41 +483,6 @@ lemma is_unifier_iff_is_unifier_replace_atom_one_rec_singleton
   rewrite [← s2]
 
   rfl
-
-
-lemma is_unifier_singleton_refl
-  (σ : Instantiation)
-  (F : Formula_) :
-  is_unifier σ [(F, F)] :=
-  by
-  rewrite [is_unifier_singleton]
-  rfl
-
-
-lemma is_unifier_singleton_comm
-  (σ : Instantiation)
-  (F F' : Formula_) :
-  is_unifier σ [(F, F')] ↔ is_unifier σ [(F', F)] :=
-  by
-  simp only [is_unifier_singleton]
-  exact eq_comm
-
-
-lemma is_unifier_singleton_trans
-  (σ : Instantiation)
-  (F F' F'' : Formula_)
-  (h1 : is_unifier σ [(F, F')])
-  (h2 : is_unifier σ [(F', F'')]) :
-  is_unifier σ [(F, F'')] :=
-  by
-  simp only [is_unifier_singleton] at h1
-
-  simp only [is_unifier_singleton] at h2
-
-  simp only [is_unifier_singleton]
-  trans (replace_atom_all_rec σ F')
-  · apply h1
-  · apply h2
 
 
 lemma is_unifier_append
