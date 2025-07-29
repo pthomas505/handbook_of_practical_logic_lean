@@ -224,6 +224,55 @@ example
 -------------------------------------------------------------------------------
 
 
+lemma is_unifier_singleton
+  (σ : Instantiation)
+  (F F' : Formula_) :
+  is_unifier σ [(F, F')] ↔ (replace_atom_all_rec σ F = replace_atom_all_rec σ F') :=
+  by
+  unfold is_unifier
+  simp only [List.mem_singleton]
+  constructor
+  · intro a1
+    specialize a1 (F, F')
+    simp only at a1
+    specialize a1 trivial
+    exact a1
+  · intro a1 p a2
+    rewrite [a2]
+    simp only
+    exact a1
+
+
+lemma is_unifier_append
+  (σ : Instantiation)
+  (L L' : List (Formula_ × Formula_)) :
+  is_unifier σ (L ++ L') ↔ (is_unifier σ L ∧ is_unifier σ L') :=
+  by
+  unfold is_unifier
+  simp only [List.mem_append]
+  constructor
+  · intro a1
+    constructor
+    · intro p a2
+      apply a1
+      left
+      exact a2
+    · intro p a2
+      apply a1
+      right
+      exact a2
+  · intro a1 p a2
+    obtain ⟨a1_left, a1_right⟩ := a1
+
+    cases a2
+    case inl a2 =>
+      apply a1_left
+      exact a2
+    case inr a2 =>
+      apply a1_right
+      exact a2
+
+
 lemma is_subformula_imp_is_subformula_replace_atom_all_rec
   (σ : Instantiation)
   (F F' : Formula_)
@@ -444,25 +493,6 @@ lemma replace_atom_all_rec_eq_replace_atom_all_rec_of_replace_atom_one_rec
     rfl
 
 
-lemma is_unifier_singleton
-  (σ : Instantiation)
-  (F F' : Formula_) :
-  is_unifier σ [(F, F')] ↔ (replace_atom_all_rec σ F = replace_atom_all_rec σ F') :=
-  by
-  unfold is_unifier
-  simp only [List.mem_singleton]
-  constructor
-  · intro a1
-    specialize a1 (F, F')
-    simp only at a1
-    specialize a1 trivial
-    exact a1
-  · intro a1 p a2
-    rewrite [a2]
-    simp only
-    exact a1
-
-
 lemma is_unifier_iff_is_unifier_replace_atom_one_rec_singleton
   (σ : Instantiation)
   (X : String)
@@ -483,36 +513,6 @@ lemma is_unifier_iff_is_unifier_replace_atom_one_rec_singleton
   rewrite [← s2]
 
   rfl
-
-
-lemma is_unifier_append
-  (σ : Instantiation)
-  (L L' : List (Formula_ × Formula_)) :
-  is_unifier σ (L ++ L') ↔ (is_unifier σ L ∧ is_unifier σ L') :=
-  by
-  unfold is_unifier
-  simp only [List.mem_append]
-  constructor
-  · intro a1
-    constructor
-    · intro p a2
-      apply a1
-      left
-      exact a2
-    · intro p a2
-      apply a1
-      right
-      exact a2
-  · intro a1 p a2
-    obtain ⟨a1_left, a1_right⟩ := a1
-
-    cases a2
-    case inl a2 =>
-      apply a1_left
-      exact a2
-    case inr a2 =>
-      apply a1_right
-      exact a2
 
 
 lemma is_unifier_iff_is_unifier_var_elim
