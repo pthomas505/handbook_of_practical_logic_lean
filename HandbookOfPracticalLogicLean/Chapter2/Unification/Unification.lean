@@ -570,3 +570,6 @@ example
     · exact a1_left
     · simp only [is_unifier_iff_is_unifier_var_elim σ X F L a1_left]
       exact a1_right
+
+
+-------------------------------------------------------------------------------
