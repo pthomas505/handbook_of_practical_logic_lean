@@ -273,6 +273,9 @@ lemma is_unifier_append
       exact a2
 
 
+-------------------------------------------------------------------------------
+
+
 lemma is_subformula_imp_is_subformula_replace_atom_all_rec
   (σ : Instantiation)
   (F F' : Formula_)
