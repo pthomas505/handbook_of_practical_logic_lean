@@ -10,6 +10,24 @@ open Formula_
 
 
 /--
+  `Formula_.is_atom F` := True if and only if the formula `F` is an `atom_`.
+-/
+def Formula_.is_atom :
+  Formula_ → Prop
+| atom_ _ => True
+| _ => False
+
+instance
+  (F : Formula_) :
+  Decidable (is_atom F) :=
+  by
+  cases F
+  all_goals
+    unfold is_atom
+    infer_instance
+
+
+/--
   `Formula_.atom_set F` := The set of all of the atoms that have an occurrence in the formula `F`.
 -/
 def Formula_.atom_set :
