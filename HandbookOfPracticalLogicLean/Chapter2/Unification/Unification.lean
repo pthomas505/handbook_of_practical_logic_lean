@@ -573,3 +573,25 @@ example
 
 
 -------------------------------------------------------------------------------
+
+
+structure Multiequation : Type where
+  (S : List Formula_)
+  (M : List Formula_)
+  (rule_1 : ¬ S = [])
+  (rule_2 : ∀ (F : Formula_), F ∈ S → F.is_atom)
+  (rule_3 : ∀ (F : Formula_), F ∈ M → (¬ F = false_ ∧ ¬ F = true_ ∧ ¬ F.is_atom))
+
+
+def is_multiequation_unifier
+  (σ : Instantiation)
+  (S_M : Multiequation) :
+  Prop :=
+  ∃ (F : Formula_),
+    (∀ (F' : Formula_), F' ∈ S_M.S ∪ S_M.M → replace_atom_all_rec σ F' = F)
+
+
+def multiequation_relation
+  (L : List (Formula_ × Formula_)) :
+  Formula_ → Formula_ → Prop :=
+  Relation.EqvGen (fun (F_1 F_2 : Formula_) => (F_1, F_2) ∈ L)
