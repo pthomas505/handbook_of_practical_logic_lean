@@ -13,6 +13,11 @@ open Formula_
 def Instantiation : Type := String → Formula_
 
 
+structure Equation : Type where
+  (lhs : Formula_)
+  (rhs : Formula_)
+
+
 /--
   `is_unifier σ L` := True if and only if the instantiation `σ` is a unifier of the list of pairs of formulas `L`.
 -/
@@ -59,6 +64,7 @@ example
   is_unifier ((replace_atom_all_rec τ) ∘ σ) L :=
   by
   unfold is_unifier at h1
+
   unfold is_unifier
   intro p a1
   simp only [replace_atom_all_rec_compose]
