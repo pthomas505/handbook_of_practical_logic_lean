@@ -10,7 +10,7 @@ set_option autoImplicit false
 open Formula_
 
 
-def Instantiation : Type := String → Formula_
+def Substitution : Type := String → Formula_
 
 
 structure Equation : Type where
@@ -19,10 +19,10 @@ structure Equation : Type where
 
 
 /--
-  `is_unifier σ L` := True if and only if the instantiation `σ` is a unifier of the list of pairs of formulas `L`.
+  `is_unifier σ L` := True if and only if the substitution `σ` is a unifier of the list of pairs of formulas `L`.
 -/
 def is_unifier
-  (σ : Instantiation)
+  (σ : Substitution)
   (L : List (Formula_ × Formula_)) :
   Prop :=
   ∀ (p : (Formula_ × Formula_)), p ∈ L →
@@ -31,7 +31,7 @@ def is_unifier
 
 
 lemma replace_atom_all_rec_compose
-  (σ τ : Instantiation)
+  (σ τ : Substitution)
   (F : Formula_) :
   replace_atom_all_rec ((replace_atom_all_rec τ) ∘ σ) F =
     replace_atom_all_rec τ (replace_atom_all_rec σ F) :=
@@ -58,7 +58,7 @@ lemma replace_atom_all_rec_compose
 
 
 example
-  (σ τ : Instantiation)
+  (σ τ : Substitution)
   (L : List (Formula_ × Formula_))
   (h1 : is_unifier σ L) :
   is_unifier ((replace_atom_all_rec τ) ∘ σ) L :=
@@ -74,20 +74,20 @@ example
 
 
 /--
-  `is_more_general_instantiation σ τ` := True if and only if the instantiation `σ` is more general than the instantiation `τ`.
+  `is_more_general_substitution σ τ` := True if and only if the substitution `σ` is more general than the substitution `τ`.
   `σ ≤ τ`
 -/
-def is_more_general_instantiation
-  (σ τ : Instantiation) :
+def is_more_general_substitution
+  (σ τ : Substitution) :
   Prop :=
-  ∃ (δ : Instantiation), replace_atom_all_rec τ = (replace_atom_all_rec δ) ∘ (replace_atom_all_rec σ)
+  ∃ (δ : Substitution), replace_atom_all_rec τ = (replace_atom_all_rec δ) ∘ (replace_atom_all_rec σ)
 
 
 example
-  (σ : Instantiation) :
-  is_more_general_instantiation σ σ :=
+  (σ : Substitution) :
+  is_more_general_substitution σ σ :=
   by
-  unfold is_more_general_instantiation
+  unfold is_more_general_substitution
   apply Exists.intro (fun (X : String) => (atom_ X))
   funext F
   simp only [Function.comp_apply]
@@ -95,19 +95,19 @@ example
 
 
 /--
-  `is_most_general_unifier σ L` := True if and only if the instantiation `σ` is a most general unifier (MGU) of the list of pairs of formulas `L`.
+  `is_most_general_unifier σ L` := True if and only if the substitution `σ` is a most general unifier (MGU) of the list of pairs of formulas `L`.
 -/
 def is_most_general_unifier
-  (σ : Instantiation)
+  (σ : Substitution)
   (L : List (Formula_ × Formula_)) :
   Prop :=
-  is_unifier σ L ∧ ∀ (τ : Instantiation), is_unifier τ L → is_more_general_instantiation σ τ
+  is_unifier σ L ∧ ∀ (τ : Substitution), is_unifier τ L → is_more_general_substitution σ τ
 
 
 def are_equivalent_equation_lists
   (L L' : List (Formula_ × Formula_)) :
   Prop :=
-  ∀ (σ : Instantiation), (is_unifier σ L ↔ is_unifier σ L')
+  ∀ (σ : Substitution), (is_unifier σ L ↔ is_unifier σ L')
 
 
 def reduce :
@@ -231,7 +231,7 @@ example
 
 
 lemma is_unifier_singleton
-  (σ : Instantiation)
+  (σ : Substitution)
   (F F' : Formula_) :
   is_unifier σ [(F, F')] ↔ (replace_atom_all_rec σ F = replace_atom_all_rec σ F') :=
   by
@@ -250,7 +250,7 @@ lemma is_unifier_singleton
 
 
 lemma is_unifier_append
-  (σ : Instantiation)
+  (σ : Substitution)
   (L L' : List (Formula_ × Formula_)) :
   is_unifier σ (L ++ L') ↔ (is_unifier σ L ∧ is_unifier σ L') :=
   by
@@ -283,7 +283,7 @@ lemma is_unifier_append
 
 
 lemma is_subformula_imp_is_subformula_replace_atom_all_rec
-  (σ : Instantiation)
+  (σ : Substitution)
   (F F' : Formula_)
   (h1 : is_subformula F F') :
   is_subformula (replace_atom_all_rec σ F) (replace_atom_all_rec σ F') :=
@@ -334,7 +334,7 @@ lemma is_subformula_imp_is_subformula_replace_atom_all_rec
 
 
 lemma is_proper_subformula_v2_imp_replace_atom_all_rec_not_eq
-  (σ : Instantiation)
+  (σ : Substitution)
   (F F' : Formula_)
   (h1 : is_proper_subformula_v2 F F') :
   ¬ replace_atom_all_rec σ F = replace_atom_all_rec σ F' :=
@@ -397,7 +397,7 @@ lemma is_proper_subformula_v2_imp_replace_atom_all_rec_not_eq
 
 
 lemma is_proper_subformula_v2_imp_is_proper_subformula_v2_replace_atom_all_rec
-  (σ : Instantiation)
+  (σ : Substitution)
   (F F' : Formula_)
   (h1 : is_proper_subformula_v2 F F') :
   is_proper_subformula_v2 (replace_atom_all_rec σ F) (replace_atom_all_rec σ F') :=
@@ -415,7 +415,7 @@ lemma is_proper_subformula_v2_imp_is_proper_subformula_v2_replace_atom_all_rec
 
 
 example
-  (σ : Instantiation)
+  (σ : Substitution)
   (F F' : Formula_)
   (h1 : is_proper_subformula_v2 F F') :
   ¬ is_unifier σ [(F, F')] :=
@@ -435,7 +435,7 @@ example
 
 
 /-
-  Let `X` be a variable, `F` be a formula, and `L : List (Formula_ × Formula_)` be a list of equations. If `(X, F) ∈ L` then every instantiation that is a unifier of `L` is also a unifier of `(X, F)`. Hence every instantiation that is a unifier of `L` maps `X` and `F` to the same formula. Let `L'` be the replacement of every occurrence of `X` in `L` by `F`. Then every instantiation that is a unifier of `L` maps `X` and `F` in `L` to the same formula that it maps `F` in `L'` to. Therefore `L` and `L'` are equivalent equation lists.
+  Let `X` be a variable, `F` be a formula, and `L : List (Formula_ × Formula_)` be a list of equations. If `(X, F) ∈ L` then every substitution that is a unifier of `L` is also a unifier of `(X, F)`. Hence every substitution that is a unifier of `L` maps `X` and `F` to the same formula. Let `L'` be the replacement of every occurrence of `X` in `L` by `F`. Then every substitution that is a unifier of `L` maps `X` and `F` in `L` to the same formula that it maps `F` in `L'` to. Therefore `L` and `L'` are equivalent equation lists.
 -/
 
 
@@ -448,7 +448,7 @@ def var_elim
 
 
 example
-  (σ : Instantiation)
+  (σ : Substitution)
   (X : String)
   (F : Formula_)
   (L : List (Formula_ × Formula_))
@@ -466,7 +466,7 @@ example
 
 
 lemma replace_atom_all_rec_eq_replace_atom_all_rec_of_replace_atom_one_rec
-  (σ : Instantiation)
+  (σ : Substitution)
   (X' : String)
   (F' : Formula_)
   (F : Formula_)
@@ -503,7 +503,7 @@ lemma replace_atom_all_rec_eq_replace_atom_all_rec_of_replace_atom_one_rec
 
 
 lemma is_unifier_iff_is_unifier_replace_atom_one_rec_singleton
-  (σ : Instantiation)
+  (σ : Substitution)
   (X : String)
   (F : Formula_)
   (F_1 F_2 : Formula_)
@@ -525,7 +525,7 @@ lemma is_unifier_iff_is_unifier_replace_atom_one_rec_singleton
 
 
 lemma is_unifier_iff_is_unifier_var_elim
-  (σ : Instantiation)
+  (σ : Substitution)
   (X : String)
   (F : Formula_)
   (L : List (Formula_ × Formula_))
@@ -590,7 +590,7 @@ structure Multiequation : Type where
 
 
 def is_multiequation_unifier
-  (σ : Instantiation)
+  (σ : Substitution)
   (S_M : Multiequation) :
   Prop :=
   ∃ (F : Formula_),
