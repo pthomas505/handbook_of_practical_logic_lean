@@ -177,30 +177,16 @@ example
       simp only [List.nil_union]
       simp only [List.mem_insert_iff]
       simp only [List.mem_singleton]
+      simp only [forall_eq_or_imp]
+      simp only [forall_eq]
+      simp only [replace_atom_all_rec]
       constructor
-      · intro a1 E a2
-        simp only [forall_eq] at a1
-        simp only [replace_atom_all_rec] at a1
+      · intro a1
         injection a1 with a1_left a1_right
-
-        cases a2
-        case inl a2 =>
-          rewrite [a2]
-          simp only
-          exact a1_left
-        case inr a2 =>
-          rewrite [a2]
-          simp only
-          exact a1_right
-      · intro a1 E a2
-        simp only [forall_eq_or_imp] at a1
-        simp only [forall_eq] at a1
+        exact ⟨a1_left, a1_right⟩
+      · intro a1
         obtain ⟨a1_left, a1_right⟩ := a1
-
-        rewrite [a2]
-        simp only
-        simp only [replace_atom_all_rec]
-        congr 1
+        congr
     all_goals
       simp only [reduce] at h1
       simp only [Option.isSome_none] at h1
