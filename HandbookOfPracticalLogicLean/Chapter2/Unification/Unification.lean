@@ -49,8 +49,6 @@ def is_equation_list_unifier
   ∀ (E : Equation), E ∈ L → is_equation_unifier σ E
 
 
-
-
 lemma is_equation_unifier_replace_atom_all_rec_compose
   (σ τ : Substitution)
   (E : Equation)
