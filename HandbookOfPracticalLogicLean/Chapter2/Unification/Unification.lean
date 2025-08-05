@@ -49,31 +49,6 @@ def is_equation_list_unifier
   ∀ (E : Equation), E ∈ L → is_equation_unifier σ E
 
 
-lemma replace_atom_all_rec_compose
-  (σ τ : Substitution)
-  (F : Formula_) :
-  replace_atom_all_rec ((replace_atom_all_rec τ) ∘ σ) F =
-    replace_atom_all_rec τ (replace_atom_all_rec σ F) :=
-  by
-  induction F
-  case false_ | true_ =>
-    simp only [replace_atom_all_rec]
-  case atom_ X =>
-    simp only [replace_atom_all_rec]
-    exact Function.comp_apply
-  case not_ phi ih =>
-    simp only [replace_atom_all_rec]
-    rewrite [ih]
-    rfl
-  case
-      and_ phi psi phi_ih psi_ih
-    | or_ phi psi phi_ih psi_ih
-    | imp_ phi psi phi_ih psi_ih
-    | iff_ phi psi phi_ih psi_ih =>
-    simp only [replace_atom_all_rec]
-    rewrite [phi_ih]
-    rewrite [psi_ih]
-    rfl
 
 
 lemma is_equation_unifier_replace_atom_all_rec_compose
