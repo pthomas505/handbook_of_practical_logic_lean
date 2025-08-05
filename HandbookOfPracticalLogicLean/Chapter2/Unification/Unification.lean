@@ -140,6 +140,12 @@ example
   (h1 : (reduce ⟨lhs, rhs⟩).isSome) :
   are_equivalent_equation_lists [⟨lhs, rhs⟩] ((reduce ⟨lhs, rhs⟩).get h1) :=
   by
+  unfold are_equivalent_equation_lists
+  intro σ
+  unfold is_equation_list_unifier
+  simp only [List.mem_singleton]
+  unfold is_equation_unifier
+
   cases lhs
   case false_ | true_ | atom_ X =>
     simp only [reduce] at h1
@@ -149,32 +155,15 @@ example
     cases rhs
     case not_ phi' =>
       simp only [reduce]
-      unfold are_equivalent_equation_lists
-      intro σ
-      unfold is_equation_list_unifier
-      unfold is_equation_unifier
       simp only [Option.get_some]
       simp only [List.mem_singleton]
+      simp only [forall_eq]
+      simp only [replace_atom_all_rec]
       constructor
-      · intro a1 E a2
-        specialize a1 ⟨not_ phi, not_ phi'⟩
-        simp only at a1
-        unfold replace_atom_all_rec at a1
-        specialize a1 trivial
-        simp only [not_.injEq] at a1
-
-        rewrite [a2]
-        simp only
-        exact a1
-      · intro a1 E a2
-        rewrite [a2]
-        simp only
-        unfold replace_atom_all_rec
-        simp only [not_.injEq]
-        specialize a1 ⟨phi, phi'⟩
-        simp only at a1
-        apply a1
-        exact trivial
+      · intro a1
+        injection a1
+      · intro a1
+        congr! 1
     all_goals
       simp only [reduce] at h1
       simp only [Option.isSome_none] at h1
@@ -183,10 +172,6 @@ example
     cases rhs
     case and_ phi' psi' =>
       simp only [reduce]
-      unfold are_equivalent_equation_lists
-      intro σ
-      unfold is_equation_list_unifier
-      unfold is_equation_unifier
       simp only [Option.get_some]
       simp only [List.cons_union]
       simp only [List.nil_union]
@@ -194,12 +179,9 @@ example
       simp only [List.mem_singleton]
       constructor
       · intro a1 E a2
-        specialize a1 ⟨and_ phi psi, and_ phi' psi'⟩
-        simp only at a1
-        unfold replace_atom_all_rec at a1
-        specialize a1 trivial
-        simp only [and_.injEq] at a1
-        obtain ⟨a1_left, a1_right⟩ := a1
+        simp only [forall_eq] at a1
+        simp only [replace_atom_all_rec] at a1
+        injection a1 with a1_left a1_right
 
         cases a2
         case inl a2 =>
@@ -211,21 +193,14 @@ example
           simp only
           exact a1_right
       · intro a1 E a2
+        simp only [forall_eq_or_imp] at a1
+        simp only [forall_eq] at a1
+        obtain ⟨a1_left, a1_right⟩ := a1
+
         rewrite [a2]
         simp only
-        unfold replace_atom_all_rec
-        simp only [and_.injEq]
-        constructor
-        · specialize a1 ⟨phi, phi'⟩
-          simp only at a1
-          apply a1
-          left
-          exact trivial
-        · specialize a1 ⟨psi, psi'⟩
-          simp only at a1
-          apply a1
-          right
-          exact trivial
+        simp only [replace_atom_all_rec]
+        congr 1
     all_goals
       simp only [reduce] at h1
       simp only [Option.isSome_none] at h1
