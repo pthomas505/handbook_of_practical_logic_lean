@@ -147,50 +147,40 @@ example
   unfold is_equation_unifier
 
   cases lhs
-  case false_ | true_ | atom_ X =>
-    simp only [reduce] at h1
-    simp only [Option.isSome_none] at h1
-    contradiction
-  case not_ phi =>
+  all_goals
     cases rhs
-    case not_ phi' =>
-      simp only [reduce]
-      simp only [Option.get_some]
-      simp only [List.mem_singleton]
-      simp only [forall_eq]
-      simp only [replace_atom_all_rec]
-      constructor
-      · intro a1
-        injection a1
-      · intro a1
-        congr! 1
-    all_goals
+    any_goals
       simp only [reduce] at h1
       simp only [Option.isSome_none] at h1
       contradiction
-  case and_ phi psi =>
-    cases rhs
-    case and_ phi' psi' =>
-      simp only [reduce]
-      simp only [Option.get_some]
-      simp only [List.cons_union]
-      simp only [List.nil_union]
-      simp only [List.mem_insert_iff]
-      simp only [List.mem_singleton]
-      simp only [forall_eq_or_imp]
-      simp only [forall_eq]
-      simp only [replace_atom_all_rec]
-      constructor
-      · intro a1
-        injection a1 with a1_left a1_right
-        exact ⟨a1_left, a1_right⟩
-      · intro a1
-        obtain ⟨a1_left, a1_right⟩ := a1
-        congr
-    all_goals
-      simp only [reduce] at h1
-      simp only [Option.isSome_none] at h1
-      contradiction
+  case not_ phi psi =>
+    simp only [reduce]
+    simp only [Option.get_some]
+    simp only [List.mem_singleton]
+    simp only [forall_eq]
+    simp only [replace_atom_all_rec]
+    constructor
+    · intro a1
+      injection a1
+    · intro a1
+      congr
+  case and_ phi psi phi' psi' =>
+    simp only [reduce]
+    simp only [Option.get_some]
+    simp only [List.cons_union]
+    simp only [List.nil_union]
+    simp only [List.mem_insert_iff]
+    simp only [List.mem_singleton]
+    simp only [forall_eq_or_imp]
+    simp only [forall_eq]
+    simp only [replace_atom_all_rec]
+    constructor
+    · intro a1
+      injection a1 with a1_left a1_right
+      exact ⟨a1_left, a1_right⟩
+    · intro a1
+      obtain ⟨a1_left, a1_right⟩ := a1
+      congr
   all_goals
     sorry
 
