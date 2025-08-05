@@ -164,7 +164,11 @@ example
       injection a1
     · intro a1
       congr
-  case and_ phi psi phi' psi' =>
+  case
+      and_ phi psi phi' psi'
+    | or_ phi psi phi' psi'
+    | imp_ phi psi phi' psi'
+    | iff_ phi psi phi' psi' =>
     simp only [reduce]
     simp only [Option.get_some]
     simp only [List.cons_union]
@@ -181,8 +185,6 @@ example
     · intro a1
       obtain ⟨a1_left, a1_right⟩ := a1
       congr
-  all_goals
-    sorry
 
 
 -------------------------------------------------------------------------------
