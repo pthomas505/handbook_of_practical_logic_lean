@@ -26,6 +26,7 @@ def equation_list_formula_list
 
 #eval equation_list_formula_list []
 #eval equation_list_formula_list [⟨atom_ "P", atom_ "Q"⟩]
+#eval equation_list_formula_list [⟨atom_ "P", atom_ "Q"⟩, ⟨atom_ "Q", atom_ "R"⟩]
 #eval equation_list_formula_list [⟨atom_ "P", atom_ "Q"⟩, ⟨atom_ "R", atom_ "S"⟩]
 
 
