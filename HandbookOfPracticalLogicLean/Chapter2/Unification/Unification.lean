@@ -16,18 +16,37 @@ def Substitution : Type := String → Formula_
 structure Equation : Type where
   (lhs : Formula_)
   (rhs : Formula_)
+  deriving Inhabited, DecidableEq, Repr
+
+
+def equation_list_formula_list
+  (L : List Equation) :
+  List Formula_ :=
+  List.foldr (fun (next : Equation) (prev : List Formula_) => next.lhs :: next.rhs :: prev) [] L
+
+#eval equation_list_formula_list []
+#eval equation_list_formula_list [⟨atom_ "P", atom_ "Q"⟩]
+#eval equation_list_formula_list [⟨atom_ "P", atom_ "Q"⟩, ⟨atom_ "R", atom_ "S"⟩]
 
 
 /--
-  `is_unifier σ L` := True if and only if the substitution `σ` is a unifier of the list of pairs of formulas `L`.
+  `is_equation_unifier σ E` := True if and only if the substitution `σ` is a unifier of the equation `E`.
 -/
-def is_unifier
+def is_equation_unifier
   (σ : Substitution)
-  (L : List (Formula_ × Formula_)) :
+  (E : Equation) :
   Prop :=
-  ∀ (p : (Formula_ × Formula_)), p ∈ L →
-    replace_atom_all_rec σ p.fst =
-      replace_atom_all_rec σ p.snd
+  replace_atom_all_rec σ E.lhs = replace_atom_all_rec σ E.rhs
+
+
+/--
+  `is_equation_list_unifier σ L` := True if and only if the substitution `σ` is a unifier of the list of equations `L`.
+-/
+def is_equation_list_unifier
+  (σ : Substitution)
+  (L : List Equation) :
+  Prop :=
+  ∀ (E : Equation), E ∈ L → is_equation_unifier σ E
 
 
 lemma replace_atom_all_rec_compose
@@ -57,18 +76,30 @@ lemma replace_atom_all_rec_compose
     rfl
 
 
+lemma is_equation_unifier_replace_atom_all_rec_compose
+  (σ τ : Substitution)
+  (E : Equation)
+  (h1 : is_equation_unifier σ E) :
+  is_equation_unifier ((replace_atom_all_rec τ) ∘ σ) E :=
+  by
+  unfold is_equation_unifier at h1
+
+  unfold is_equation_unifier
+  simp only [replace_atom_all_rec_compose]
+  congr
+
+
 example
   (σ τ : Substitution)
-  (L : List (Formula_ × Formula_))
-  (h1 : is_unifier σ L) :
-  is_unifier ((replace_atom_all_rec τ) ∘ σ) L :=
+  (L : List Equation)
+  (h1 : is_equation_list_unifier σ L) :
+  is_equation_list_unifier ((replace_atom_all_rec τ) ∘ σ) L :=
   by
-  unfold is_unifier at h1
+  unfold is_equation_list_unifier at h1
 
-  unfold is_unifier
-  intro p a1
-  simp only [replace_atom_all_rec_compose]
-  congr 1
+  unfold is_equation_list_unifier
+  intro E a1
+  apply is_equation_unifier_replace_atom_all_rec_compose
   apply h1
   exact a1
 
@@ -88,70 +119,71 @@ example
   is_more_general_substitution σ σ :=
   by
   unfold is_more_general_substitution
-  apply Exists.intro (fun (X : String) => (atom_ X))
+  apply Exists.intro atom_
   funext F
   simp only [Function.comp_apply]
   simp only [replace_atom_all_rec_id]
 
 
 /--
-  `is_most_general_unifier σ L` := True if and only if the substitution `σ` is a most general unifier (MGU) of the list of pairs of formulas `L`.
+  `is_most_general_equation_list_unifier σ L` := True if and only if the substitution `σ` is a most general unifier (MGU) of the list of equations `L`.
 -/
-def is_most_general_unifier
+def is_most_general_equation_list_unifier
   (σ : Substitution)
-  (L : List (Formula_ × Formula_)) :
+  (L : List Equation) :
   Prop :=
-  is_unifier σ L ∧ ∀ (τ : Substitution), is_unifier τ L → is_more_general_substitution σ τ
+  is_equation_list_unifier σ L ∧ ∀ (τ : Substitution), is_equation_list_unifier τ L → is_more_general_substitution σ τ
 
 
 def are_equivalent_equation_lists
-  (L L' : List (Formula_ × Formula_)) :
+  (L L' : List Equation) :
   Prop :=
-  ∀ (σ : Substitution), (is_unifier σ L ↔ is_unifier σ L')
+  ∀ (σ : Substitution), (is_equation_list_unifier σ L ↔ is_equation_list_unifier σ L')
 
 
 def reduce :
-  (Formula_ × Formula_) → Option (List (Formula_ × Formula_))
-  | (not_ phi, not_ phi') => Option.some [(phi, phi')]
-  | (and_ phi psi, and_ phi' psi')
-  | (or_ phi psi, or_ phi' psi')
-  | (imp_ phi psi, imp_ phi' psi')
-  | (iff_ phi psi, iff_ phi' psi') => Option.some ([(phi, phi')] ∪ [(psi, psi')])
+  Equation → Option (List (Equation))
+  | ⟨not_ phi, not_ phi'⟩ => Option.some [⟨phi, phi'⟩]
+  | ⟨and_ phi psi, and_ phi' psi'⟩
+  | ⟨or_ phi psi, or_ phi' psi'⟩
+  | ⟨imp_ phi psi, imp_ phi' psi'⟩
+  | ⟨iff_ phi psi, iff_ phi' psi'⟩ => Option.some ([⟨phi, phi'⟩] ∪ [⟨psi, psi'⟩])
   | _ => Option.none
 
 
-def are_reducible :
-  (Formula_ × Formula_) → Prop
-  | (not_ _, not_ _)
-  | (and_ _ _, and_ _ _)
-  | (or_ _ _, or_ _ _)
-  | (imp_ _ _, imp_ _ _)
-  | (iff_ _ _, iff_ _ _) => True
+def is_reducible :
+  Equation → Prop
+  | ⟨not_ _, not_ _⟩
+  | ⟨and_ _ _, and_ _ _⟩
+  | ⟨or_ _ _, or_ _ _⟩
+  | ⟨imp_ _ _, imp_ _ _⟩
+  | ⟨iff_ _ _, iff_ _ _⟩ => True
   | _ => False
 
 
 example
-  (F F' : Formula_)
-  (h1 : (reduce (F, F')).isSome) :
-  are_equivalent_equation_lists [(F, F')] ((reduce (F, F')).get h1) :=
+  (lhs rhs : Formula_)
+  (h1 : (reduce ⟨lhs, rhs⟩).isSome) :
+  are_equivalent_equation_lists [⟨lhs, rhs⟩] ((reduce ⟨lhs, rhs⟩).get h1) :=
   by
-  cases F
+  cases lhs
   case false_ | true_ | atom_ X =>
     simp only [reduce] at h1
     simp only [Option.isSome_none] at h1
     contradiction
   case not_ phi =>
-    cases F'
+    cases rhs
     case not_ phi' =>
       simp only [reduce]
       unfold are_equivalent_equation_lists
       intro σ
-      unfold is_unifier
+      unfold is_equation_list_unifier
+      unfold is_equation_unifier
       simp only [Option.get_some]
       simp only [List.mem_singleton]
       constructor
-      · intro a1 p a2
-        specialize a1 (not_ phi, not_ phi')
+      · intro a1 E a2
+        specialize a1 ⟨not_ phi, not_ phi'⟩
         simp only at a1
         unfold replace_atom_all_rec at a1
         specialize a1 trivial
@@ -160,12 +192,12 @@ example
         rewrite [a2]
         simp only
         exact a1
-      · intro a1 p a2
+      · intro a1 E a2
         rewrite [a2]
         simp only
         unfold replace_atom_all_rec
         simp only [not_.injEq]
-        specialize a1 (phi, phi')
+        specialize a1 ⟨phi, phi'⟩
         simp only at a1
         apply a1
         exact trivial
@@ -174,20 +206,21 @@ example
       simp only [Option.isSome_none] at h1
       contradiction
   case and_ phi psi =>
-    cases F'
+    cases rhs
     case and_ phi' psi' =>
       simp only [reduce]
       unfold are_equivalent_equation_lists
       intro σ
-      unfold is_unifier
+      unfold is_equation_list_unifier
+      unfold is_equation_unifier
       simp only [Option.get_some]
       simp only [List.cons_union]
       simp only [List.nil_union]
       simp only [List.mem_insert_iff]
       simp only [List.mem_singleton]
       constructor
-      · intro a1 p a2
-        specialize a1 (and_ phi psi, and_ phi' psi')
+      · intro a1 E a2
+        specialize a1 ⟨and_ phi psi, and_ phi' psi'⟩
         simp only at a1
         unfold replace_atom_all_rec at a1
         specialize a1 trivial
@@ -203,18 +236,18 @@ example
           rewrite [a2]
           simp only
           exact a1_right
-      · intro a1 p a2
+      · intro a1 E a2
         rewrite [a2]
         simp only
         unfold replace_atom_all_rec
         simp only [and_.injEq]
         constructor
-        · specialize a1 (phi, phi')
+        · specialize a1 ⟨phi, phi'⟩
           simp only at a1
           apply a1
           left
           exact trivial
-        · specialize a1 (psi, psi')
+        · specialize a1 ⟨psi, psi'⟩
           simp only at a1
           apply a1
           right
@@ -230,44 +263,42 @@ example
 -------------------------------------------------------------------------------
 
 
-lemma is_unifier_singleton
+lemma is_equation_list_unifier_singleton
   (σ : Substitution)
-  (F F' : Formula_) :
-  is_unifier σ [(F, F')] ↔ (replace_atom_all_rec σ F = replace_atom_all_rec σ F') :=
+  (E : Equation) :
+  is_equation_list_unifier σ [E] ↔ is_equation_unifier σ E :=
   by
-  unfold is_unifier
+  unfold is_equation_list_unifier
   simp only [List.mem_singleton]
   constructor
   · intro a1
-    specialize a1 (F, F')
-    simp only at a1
-    specialize a1 trivial
-    exact a1
-  · intro a1 p a2
+    apply a1
+    rfl
+  · intro a1 E' a2
     rewrite [a2]
-    simp only
     exact a1
 
 
-lemma is_unifier_append
+lemma is_equation_list_unifier_append
   (σ : Substitution)
-  (L L' : List (Formula_ × Formula_)) :
-  is_unifier σ (L ++ L') ↔ (is_unifier σ L ∧ is_unifier σ L') :=
+  (L L' : List Equation) :
+  is_equation_list_unifier σ (L ++ L') ↔ (is_equation_list_unifier σ L ∧ is_equation_list_unifier σ L') :=
   by
-  unfold is_unifier
+  unfold is_equation_list_unifier
+  unfold is_equation_unifier
   simp only [List.mem_append]
   constructor
   · intro a1
     constructor
-    · intro p a2
+    · intro E a2
       apply a1
       left
       exact a2
-    · intro p a2
+    · intro E a2
       apply a1
       right
       exact a2
-  · intro a1 p a2
+  · intro a1 E a2
     obtain ⟨a1_left, a1_right⟩ := a1
 
     cases a2
@@ -416,19 +447,15 @@ lemma is_proper_subformula_v2_imp_is_proper_subformula_v2_replace_atom_all_rec
 
 example
   (σ : Substitution)
-  (F F' : Formula_)
-  (h1 : is_proper_subformula_v2 F F') :
-  ¬ is_unifier σ [(F, F')] :=
+  (E : Equation)
+  (h1 : is_proper_subformula_v2 E.lhs E.rhs) :
+  ¬ is_equation_unifier σ E :=
   by
-  unfold is_unifier
-  simp only [List.mem_singleton]
   intro contra
-  apply is_proper_subformula_v2_imp_replace_atom_all_rec_not_eq σ F F'
+  apply is_proper_subformula_v2_imp_replace_atom_all_rec_not_eq σ E.lhs E.rhs
   · exact h1
-  · specialize contra (F, F')
-    simp only at contra
-    apply contra
-    exact trivial
+  · unfold is_equation_unifier at contra
+    exact contra
 
 
 -------------------------------------------------------------------------------
@@ -442,22 +469,23 @@ example
 def var_elim
   (X : String)
   (F : Formula_)
-  (L : List (Formula_ × Formula_)) :
-  List (Formula_ × Formula_) :=
-  L.map (fun (eq : Formula_ × Formula_) => (replace_atom_one_rec X F eq.fst, replace_atom_one_rec X F eq.snd))
+  (L : List Equation) :
+  List Equation :=
+  L.map (fun (E : Equation) => ⟨replace_atom_one_rec X F E.lhs, replace_atom_one_rec X F E.rhs⟩)
 
 
 example
   (σ : Substitution)
   (X : String)
   (F : Formula_)
-  (L : List (Formula_ × Formula_))
-  (h1 : is_unifier σ ((atom_ X, F) :: L)) :
+  (L : List Equation)
+  (h1 : is_equation_list_unifier σ (⟨atom_ X, F⟩ :: L)) :
   σ X = replace_atom_all_rec σ F :=
   by
-  unfold is_unifier at h1
+  unfold is_equation_list_unifier at h1
+  unfold is_equation_unifier at h1
   simp only [List.mem_cons] at h1
-  specialize h1 (atom_ X, F)
+  specialize h1 ⟨atom_ X, F⟩
   simp only at h1
   simp only [replace_atom_all_rec] at h1
   apply h1
@@ -502,35 +530,35 @@ lemma replace_atom_all_rec_eq_replace_atom_all_rec_of_replace_atom_one_rec
     rfl
 
 
-lemma is_unifier_iff_is_unifier_replace_atom_one_rec_singleton
+lemma is_equation_unifier_iff_is_equation_unifier_replace_atom_one_rec_singleton
   (σ : Substitution)
   (X : String)
   (F : Formula_)
-  (F_1 F_2 : Formula_)
-  (h1 : is_unifier σ [(atom_ X, F)]) :
-  is_unifier σ [(F_1, F_2)] ↔ is_unifier σ ([(replace_atom_one_rec X F F_1, replace_atom_one_rec X F F_2)]) :=
+  (lhs rhs : Formula_)
+  (h1 : is_equation_unifier σ ⟨atom_ X, F⟩) :
+  is_equation_unifier σ ⟨lhs, rhs⟩ ↔ is_equation_unifier σ ⟨replace_atom_one_rec X F lhs, replace_atom_one_rec X F rhs⟩ :=
   by
-  simp only [is_unifier_singleton] at h1
+  unfold is_equation_unifier at h1
   simp only [replace_atom_all_rec] at h1
 
-  simp only [is_unifier_singleton]
+  unfold is_equation_unifier
 
-  obtain s1 := replace_atom_all_rec_eq_replace_atom_all_rec_of_replace_atom_one_rec σ X F F_1 h1
+  obtain s1 := replace_atom_all_rec_eq_replace_atom_all_rec_of_replace_atom_one_rec σ X F lhs h1
   rewrite [← s1]
 
-  obtain s2 := replace_atom_all_rec_eq_replace_atom_all_rec_of_replace_atom_one_rec σ X F F_2 h1
+  obtain s2 := replace_atom_all_rec_eq_replace_atom_all_rec_of_replace_atom_one_rec σ X F rhs h1
   rewrite [← s2]
 
   rfl
 
 
-lemma is_unifier_iff_is_unifier_var_elim
+lemma is_equation_list_unifier_iff_is_equation_list_unifier_var_elim
   (σ : Substitution)
   (X : String)
   (F : Formula_)
-  (L : List (Formula_ × Formula_))
-  (h1 : is_unifier σ [(atom_ X, F)]) :
-  is_unifier σ L ↔ is_unifier σ (var_elim X F L) :=
+  (L : List Equation)
+  (h1 : is_equation_unifier σ ⟨atom_ X, F⟩) :
+  is_equation_list_unifier σ L ↔ is_equation_list_unifier σ (var_elim X F L) :=
   by
   induction L
   case nil =>
@@ -540,11 +568,11 @@ lemma is_unifier_iff_is_unifier_var_elim
     unfold var_elim
     simp only [List.map_cons]
     rewrite [← List.singleton_append]
-    rewrite [is_unifier_append]
-    conv => right; rewrite [← List.singleton_append]; rewrite [is_unifier_append]
+    rewrite [is_equation_list_unifier_append]
+    conv => right; rewrite [← List.singleton_append]; rewrite [is_equation_list_unifier_append]
 
-    obtain s1 := is_unifier_iff_is_unifier_replace_atom_one_rec_singleton σ X F hd.fst hd.snd h1
-    simp only [Prod.mk.eta] at s1
+    obtain s1 := is_equation_unifier_iff_is_equation_unifier_replace_atom_one_rec_singleton σ X F hd.lhs hd.rhs h1
+    simp only [is_equation_list_unifier_singleton]
     rewrite [← s1]
 
     rewrite [ih]
@@ -555,26 +583,27 @@ lemma is_unifier_iff_is_unifier_var_elim
 example
   (X : String)
   (F : Formula_)
-  (L : List (Formula_ × Formula_)) :
-  are_equivalent_equation_lists ((atom_ X, F) :: L) ((atom_ X, F) :: var_elim X F L) :=
+  (L : List Equation) :
+  are_equivalent_equation_lists (⟨atom_ X, F⟩ :: L) (⟨atom_ X, F⟩ :: var_elim X F L) :=
   by
   unfold are_equivalent_equation_lists
   intro σ
   rewrite [← List.singleton_append]
-  rewrite [is_unifier_append]
-  conv => right; rewrite [← List.singleton_append]; rewrite [is_unifier_append]
+  rewrite [is_equation_list_unifier_append]
+  conv => right; rewrite [← List.singleton_append]; rewrite [is_equation_list_unifier_append]
+  simp only [is_equation_list_unifier_singleton]
   constructor
   · intro a1
     obtain ⟨a1_left, a1_right⟩ := a1
     constructor
     · exact a1_left
-    · simp only [← is_unifier_iff_is_unifier_var_elim σ X F L a1_left]
+    · simp only [← is_equation_list_unifier_iff_is_equation_list_unifier_var_elim σ X F L a1_left]
       exact a1_right
   · intro a1
     obtain ⟨a1_left, a1_right⟩ := a1
     constructor
     · exact a1_left
-    · simp only [is_unifier_iff_is_unifier_var_elim σ X F L a1_left]
+    · simp only [is_equation_list_unifier_iff_is_equation_list_unifier_var_elim σ X F L a1_left]
       exact a1_right
 
 
@@ -582,22 +611,178 @@ example
 
 
 structure Multiequation : Type where
-  (S : List Formula_)
-  (M : List Formula_)
-  (rule_1 : ¬ S = [])
-  (rule_2 : ∀ (F : Formula_), F ∈ S → F.is_atom)
-  (rule_3 : ∀ (F : Formula_), F ∈ M → (¬ F = false_ ∧ ¬ F = true_ ∧ ¬ F.is_atom))
+  (lhs : List Formula_)
+  (rhs : List Formula_)
+  (lhs_not_empty : ¬ lhs = [])
+  (lhs_atom : ∀ (F : Formula_), F ∈ lhs → F.is_atom)
+  (rhs_not_atom : ∀ (F : Formula_), F ∈ rhs → (¬ F = false_ ∧ ¬ F = true_ ∧ ¬ F.is_atom))
+
+
+def multiequation_formula_list
+  (M : Multiequation) :
+  List Formula_ :=
+  M.lhs ++ M.rhs
 
 
 def is_multiequation_unifier
   (σ : Substitution)
-  (S_M : Multiequation) :
+  (M : Multiequation) :
   Prop :=
-  ∃ (F : Formula_),
-    (∀ (F' : Formula_), F' ∈ S_M.S ∪ S_M.M → replace_atom_all_rec σ F' = F)
+  ∀ (F_1 F_2 : Formula_),
+    (F_1 ∈ multiequation_formula_list M ∧ F_2 ∈ multiequation_formula_list M) →
+      is_equation_unifier σ ⟨F_1, F_2⟩
 
 
 def multiequation_relation
-  (L : List (Formula_ × Formula_)) :
+  (L : List Equation) :
   Formula_ → Formula_ → Prop :=
-  Relation.EqvGen (fun (F_1 F_2 : Formula_) => (F_1, F_2) ∈ L)
+  Relation.EqvGen (fun (lhs rhs : Formula_) => ⟨lhs, rhs⟩ ∈ L)
+
+
+def corresponds
+  (L : List Equation)
+  (M : Multiequation) :
+  Prop :=
+  (∀ (F : Formula_), F ∈ (equation_list_formula_list L) → F ∈ multiequation_formula_list M) ∧
+  (∀ (F_1 F_2 : Formula_), (F_1 ∈ multiequation_formula_list M ∧ F_2 ∈ multiequation_formula_list M) → multiequation_relation L F_1 F_2)
+
+
+lemma multiequation_relation_is_unifier
+  (σ : Substitution)
+  (L : List Equation)
+  (F_1 F_2 : Formula_)
+  (h1 : is_equation_list_unifier σ L)
+  (h2 : multiequation_relation L F_1 F_2) :
+  is_equation_list_unifier σ [⟨F_1, F_2⟩] :=
+  by
+  unfold is_equation_list_unifier at h1
+
+  unfold multiequation_relation at h2
+
+  unfold is_equation_list_unifier
+  intro E a1
+  simp only [List.mem_singleton] at a1
+  rewrite [a1]
+
+  induction h2 generalizing E
+  case rel P Q ih_1 =>
+    apply h1
+    exact ih_1
+  case refl F =>
+    unfold is_equation_unifier
+    simp only
+  case symm P Q ih_1 ih_2 =>
+    unfold is_equation_unifier
+    symm
+    apply ih_2 ⟨P, Q⟩
+    rfl
+  case trans P Q R ih_1 ih_2 ih_3 ih_4 =>
+    unfold is_equation_unifier
+    simp only
+    trans (replace_atom_all_rec σ Q)
+    · apply ih_3 ⟨P, Q⟩
+      rfl
+    · apply ih_4 ⟨Q, R⟩
+      rfl
+
+
+example
+  (σ : Substitution)
+  (L : List Equation)
+  (M : Multiequation)
+  (h1 : corresponds L M)
+  (h2 : is_equation_list_unifier σ L) :
+  is_multiequation_unifier σ M :=
+  by
+  unfold corresponds at h1
+  obtain ⟨h1_left, h1_right⟩ := h1
+
+  unfold is_multiequation_unifier
+  intro F_1 F_2 a1
+  apply multiequation_relation_is_unifier σ L F_1 F_2
+  · exact h2
+  · apply h1_right
+    exact a1
+  · simp only [List.mem_singleton]
+
+
+lemma mem_equation_list_imp_mem_equation_list_formula_list_left
+  (E : Equation)
+  (L : List Equation)
+  (h1 : E ∈ L) :
+  E.lhs ∈ equation_list_formula_list L :=
+  by
+  induction L
+  case nil =>
+    simp only [List.not_mem_nil] at h1
+  case cons hd tl ih =>
+    unfold equation_list_formula_list at ih
+    simp only [List.mem_cons] at h1
+
+    unfold equation_list_formula_list
+    simp only [List.foldr_cons, List.mem_cons]
+    cases h1
+    case inl h1 =>
+      left
+      rewrite [h1]
+      rfl
+    case inr h1 =>
+      right
+      right
+      apply ih
+      exact h1
+
+
+lemma mem_equation_list_imp_mem_equation_list_formula_list_right
+  (E : Equation)
+  (L : List Equation)
+  (h1 : E ∈ L) :
+  E.rhs ∈ equation_list_formula_list L :=
+  by
+  induction L
+  case nil =>
+    simp only [List.not_mem_nil] at h1
+  case cons hd tl ih =>
+    unfold equation_list_formula_list at ih
+    simp only [List.mem_cons] at h1
+
+    unfold equation_list_formula_list
+    simp only [List.foldr_cons, List.mem_cons]
+    cases h1
+    case inl h1 =>
+      right
+      left
+      rewrite [h1]
+      rfl
+    case inr h1 =>
+      right
+      right
+      apply ih
+      exact h1
+
+
+example
+  (σ : Substitution)
+  (L : List Equation)
+  (M : Multiequation)
+  (h1 : corresponds L M)
+  (h2 : is_multiequation_unifier σ M) :
+  is_equation_list_unifier σ L :=
+  by
+  unfold corresponds at h1
+  obtain ⟨h1_left, h1_right⟩ := h1
+
+  unfold is_multiequation_unifier at h2
+
+  unfold is_equation_list_unifier
+  intro E a1
+  unfold is_equation_unifier at h2
+  apply h2 E.lhs E.rhs
+  · specialize h1_right E.lhs E.rhs
+    constructor
+    · apply h1_left
+      apply mem_equation_list_imp_mem_equation_list_formula_list_left
+      exact a1
+    · apply h1_left
+      apply mem_equation_list_imp_mem_equation_list_formula_list_right
+      exact a1
