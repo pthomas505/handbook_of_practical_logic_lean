@@ -393,7 +393,7 @@ def is_multiequation_unifier
       is_equation_unifier σ ⟨F_1, F_2⟩
 
 
-def multiequation_relation
+def equation_list_mem_eqv_relation
   (L : List Equation) :
   Formula_ → Formula_ → Prop :=
   Relation.EqvGen (fun (lhs rhs : Formula_) => ⟨lhs, rhs⟩ ∈ L)
@@ -404,46 +404,45 @@ def corresponds
   (M : Multiequation) :
   Prop :=
   (∀ (F : Formula_), F ∈ (equation_list_formula_list L) → F ∈ multiequation_formula_list M) ∧
-  (∀ (F_1 F_2 : Formula_), (F_1 ∈ multiequation_formula_list M ∧ F_2 ∈ multiequation_formula_list M) → multiequation_relation L F_1 F_2)
+  (∀ (F_1 F_2 : Formula_), (F_1 ∈ multiequation_formula_list M ∧ F_2 ∈ multiequation_formula_list M) → equation_list_mem_eqv_relation L F_1 F_2)
 
 
-lemma multiequation_relation_is_unifier
+lemma equation_list_mem_eqv_relation_is_equation_unifier
   (σ : Substitution)
   (L : List Equation)
   (F_1 F_2 : Formula_)
   (h1 : is_equation_list_unifier σ L)
-  (h2 : multiequation_relation L F_1 F_2) :
-  is_equation_list_unifier σ [⟨F_1, F_2⟩] :=
+  (h2 : equation_list_mem_eqv_relation L F_1 F_2) :
+  is_equation_unifier σ ⟨F_1, F_2⟩ :=
   by
   unfold is_equation_list_unifier at h1
+  unfold is_equation_unifier at h1
 
-  unfold multiequation_relation at h2
+  unfold equation_list_mem_eqv_relation at h2
 
-  unfold is_equation_list_unifier
-  intro E a1
-  simp only [List.mem_singleton] at a1
-  rewrite [a1]
+  unfold is_equation_unifier
 
-  induction h2 generalizing E
+  induction h2
   case rel P Q ih_1 =>
     apply h1
     exact ih_1
   case refl F =>
-    unfold is_equation_unifier
     simp only
   case symm P Q ih_1 ih_2 =>
-    unfold is_equation_unifier
+    simp only at ih_2
+
+    simp only
     symm
-    apply ih_2 ⟨P, Q⟩
-    rfl
+    exact ih_2
   case trans P Q R ih_1 ih_2 ih_3 ih_4 =>
-    unfold is_equation_unifier
+    simp only at ih_3
+
+    simp only at ih_4
+
     simp only
     trans (replace_atom_all_rec σ Q)
-    · apply ih_3 ⟨P, Q⟩
-      rfl
-    · apply ih_4 ⟨Q, R⟩
-      rfl
+    · exact ih_3
+    · exact ih_4
 
 
 example
@@ -459,11 +458,10 @@ example
 
   unfold is_multiequation_unifier
   intro F_1 F_2 a1
-  apply multiequation_relation_is_unifier σ L F_1 F_2
+  apply equation_list_mem_eqv_relation_is_equation_unifier σ L F_1 F_2
   · exact h2
   · apply h1_right
     exact a1
-  · simp only [List.mem_singleton]
 
 
 lemma mem_equation_list_imp_mem_equation_list_formula_list_left
