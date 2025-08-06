@@ -257,7 +257,7 @@ example
 
 
 /-
-  Let `X` be a variable, `F` be a formula, and `L : List (Formula_ × Formula_)` be a list of equations. If `(X, F) ∈ L` then every substitution that is a unifier of `L` is also a unifier of `(X, F)`. Hence every substitution that is a unifier of `L` maps `X` and `F` to the same formula. Let `L'` be the replacement of every occurrence of `X` in `L` by `F`. Then every substitution that is a unifier of `L` maps `X` and `F` in `L` to the same formula that it maps `F` in `L'` to. Therefore `L` and `L'` are equivalent equation lists.
+  Let `X` be a string, let `F` be a formula, and let `L` be a list of equations. If `⟨atom_ X, F⟩ ∈ L` then every substitution that is a unifier of `L` is also a unifier of `⟨atom_ X, F⟩`. Hence every substitution that is a unifier of `L` maps `X` and `F` to the same formula. Let `L'` be the replacement of every occurrence of `X` in `L` by `F`. Then every substitution that is a unifier of `L` maps `X` and `F` in `L` to the same formula that it maps `F` in `L'` to. Therefore `L` and `L'` are equivalent equation lists.
 -/
 
 
@@ -275,14 +275,16 @@ example
   (F : Formula_)
   (L : List Equation)
   (h1 : is_equation_list_unifier σ (⟨atom_ X, F⟩ :: L)) :
-  σ X = replace_atom_all_rec σ F :=
+  is_equation_unifier σ ⟨atom_ X, F⟩ :=
   by
   unfold is_equation_list_unifier at h1
   unfold is_equation_unifier at h1
   simp only [List.mem_cons] at h1
   specialize h1 ⟨atom_ X, F⟩
   simp only at h1
-  simp only [replace_atom_all_rec] at h1
+
+  unfold is_equation_unifier
+  simp only
   apply h1
   left
   exact trivial
