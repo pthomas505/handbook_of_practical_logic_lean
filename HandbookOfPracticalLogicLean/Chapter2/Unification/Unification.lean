@@ -399,7 +399,7 @@ def mem_equation_list_eqv_relation
   Relation.EqvGen (fun (lhs rhs : Formula_) => ⟨lhs, rhs⟩ ∈ L)
 
 
-def corresponds
+def equation_list_corresponds_to_multiequation
   (L : List Equation)
   (M : Multiequation) :
   Prop :=
@@ -449,11 +449,11 @@ example
   (σ : Substitution)
   (L : List Equation)
   (M : Multiequation)
-  (h1 : corresponds L M)
+  (h1 : equation_list_corresponds_to_multiequation L M)
   (h2 : is_equation_list_unifier σ L) :
   is_multiequation_unifier σ M :=
   by
-  unfold corresponds at h1
+  unfold equation_list_corresponds_to_multiequation at h1
   obtain ⟨h1_left, h1_right⟩ := h1
 
   unfold is_multiequation_unifier
@@ -523,11 +523,11 @@ example
   (σ : Substitution)
   (L : List Equation)
   (M : Multiequation)
-  (h1 : corresponds L M)
+  (h1 : equation_list_corresponds_to_multiequation L M)
   (h2 : is_multiequation_unifier σ M) :
   is_equation_list_unifier σ L :=
   by
-  unfold corresponds at h1
+  unfold equation_list_corresponds_to_multiequation at h1
   obtain ⟨h1_left, h1_right⟩ := h1
 
   unfold is_multiequation_unifier at h2
