@@ -112,7 +112,7 @@ def is_most_general_equation_list_unifier
 def are_equivalent_equation_lists
   (L L' : List Equation) :
   Prop :=
-  ∀ (σ : Substitution), (is_equation_list_unifier σ L ↔ is_equation_list_unifier σ L')
+  ∀ (σ : Substitution), is_equation_list_unifier σ L ↔ is_equation_list_unifier σ L'
 
 
 def reduce :
