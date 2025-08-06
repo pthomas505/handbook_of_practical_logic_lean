@@ -290,43 +290,6 @@ example
   exact trivial
 
 
-lemma replace_atom_all_rec_eq_replace_atom_all_rec_of_replace_atom_one_rec
-  (σ : Substitution)
-  (X' : String)
-  (F' : Formula_)
-  (F : Formula_)
-  (h1 : σ X' = replace_atom_all_rec σ F') :
-  replace_atom_all_rec σ F =
-    replace_atom_all_rec σ (replace_atom_one_rec X' F' F) :=
-  by
-  induction F
-  case false_ | true_ =>
-    simp only [replace_atom_all_rec]
-  case atom_ X =>
-    simp only [replace_atom_all_rec]
-    unfold replace_atom_one_rec
-    split_ifs
-    case pos c1 =>
-      rewrite [← c1]
-      exact h1
-    case neg c1 =>
-      unfold replace_atom_all_rec
-      rfl
-  case not_ phi ih =>
-    simp only [replace_atom_all_rec]
-    rewrite [ih]
-    rfl
-  case
-      and_ phi psi phi_ih psi_ih
-    | or_ phi psi phi_ih psi_ih
-    | imp_ phi psi phi_ih psi_ih
-    | iff_ phi psi phi_ih psi_ih =>
-    simp only [replace_atom_all_rec]
-    rewrite [phi_ih]
-    rewrite [psi_ih]
-    rfl
-
-
 lemma is_equation_unifier_iff_is_equation_unifier_replace_atom_one_rec_singleton
   (σ : Substitution)
   (X : String)
