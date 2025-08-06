@@ -393,7 +393,7 @@ def is_multiequation_unifier
       is_equation_unifier σ ⟨F_1, F_2⟩
 
 
-def equation_list_mem_eqv_relation
+def mem_equation_list_eqv_relation
   (L : List Equation) :
   Formula_ → Formula_ → Prop :=
   Relation.EqvGen (fun (lhs rhs : Formula_) => ⟨lhs, rhs⟩ ∈ L)
@@ -404,21 +404,21 @@ def corresponds
   (M : Multiequation) :
   Prop :=
   (∀ (F : Formula_), F ∈ (equation_list_formula_list L) → F ∈ multiequation_formula_list M) ∧
-  (∀ (F_1 F_2 : Formula_), (F_1 ∈ multiequation_formula_list M ∧ F_2 ∈ multiequation_formula_list M) → equation_list_mem_eqv_relation L F_1 F_2)
+  (∀ (F_1 F_2 : Formula_), (F_1 ∈ multiequation_formula_list M ∧ F_2 ∈ multiequation_formula_list M) → mem_equation_list_eqv_relation L F_1 F_2)
 
 
-lemma equation_list_mem_eqv_relation_is_equation_unifier
+lemma mem_equation_list_eqv_relation_is_equation_unifier
   (σ : Substitution)
   (L : List Equation)
   (F_1 F_2 : Formula_)
   (h1 : is_equation_list_unifier σ L)
-  (h2 : equation_list_mem_eqv_relation L F_1 F_2) :
+  (h2 : mem_equation_list_eqv_relation L F_1 F_2) :
   is_equation_unifier σ ⟨F_1, F_2⟩ :=
   by
   unfold is_equation_list_unifier at h1
   unfold is_equation_unifier at h1
 
-  unfold equation_list_mem_eqv_relation at h2
+  unfold mem_equation_list_eqv_relation at h2
 
   unfold is_equation_unifier
 
@@ -458,7 +458,7 @@ example
 
   unfold is_multiequation_unifier
   intro F_1 F_2 a1
-  apply equation_list_mem_eqv_relation_is_equation_unifier σ L F_1 F_2
+  apply mem_equation_list_eqv_relation_is_equation_unifier σ L F_1 F_2
   · exact h2
   · apply h1_right
     exact a1
