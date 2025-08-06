@@ -290,7 +290,7 @@ example
   exact trivial
 
 
-lemma is_equation_unifier_iff_is_equation_unifier_replace_atom_one_rec_singleton
+lemma is_equation_unifier_iff_is_equation_unifier_replace_atom_one_rec
   (σ : Substitution)
   (X : String)
   (F : Formula_)
@@ -331,7 +331,7 @@ lemma is_equation_list_unifier_iff_is_equation_list_unifier_var_elim
     rewrite [is_equation_list_unifier_append]
     conv => right; rewrite [← List.singleton_append]; rewrite [is_equation_list_unifier_append]
 
-    obtain s1 := is_equation_unifier_iff_is_equation_unifier_replace_atom_one_rec_singleton σ X F hd.lhs hd.rhs h1
+    obtain s1 := is_equation_unifier_iff_is_equation_unifier_replace_atom_one_rec σ X F hd.lhs hd.rhs h1
     simp only [is_equation_list_unifier_singleton]
     rewrite [← s1]
 
