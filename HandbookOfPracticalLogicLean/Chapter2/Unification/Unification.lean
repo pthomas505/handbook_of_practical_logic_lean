@@ -544,3 +544,9 @@ example
     · apply h1_left
       apply mem_equation_list_imp_mem_equation_list_formula_list_right
       exact a1
+
+
+def mem_multiequation_list_eqv_relation
+  (L : List Multiequation) :
+  Formula_ → Formula_ → Prop :=
+  Relation.EqvGen (fun (lhs rhs : Formula_) => ∃ (M : Multiequation), M ∈ L ∧ lhs ∈ M.lhs ∧ rhs ∈ M.rhs)
