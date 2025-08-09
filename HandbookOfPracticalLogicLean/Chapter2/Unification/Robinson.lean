@@ -9,12 +9,16 @@ set_option autoImplicit false
 open Formula_
 
 
+def Substitution : Type := List (String × Formula_)
+
+
+
 structure Equation : Type where
   (lhs : Formula_)
   (rhs : Formula_)
   deriving Inhabited, DecidableEq, Repr
 
-
+/-
 def unify
   (E : Equation) :
   Option (String → Formula_) :=
@@ -47,3 +51,4 @@ def unify
       | Option.none => Option.none
     | Option.none => Option.none
   | _ => Option.none
+-/

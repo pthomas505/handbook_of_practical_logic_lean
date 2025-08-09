@@ -3,8 +3,6 @@ import MathlibExtraLean.FunctionUpdateITE
 import HandbookOfPracticalLogicLean.Chapter2.Semantics
 import HandbookOfPracticalLogicLean.Chapter2.SubFormula
 
-import Batteries.Data.HashMap
-
 import Mathlib.Tactic
 
 
@@ -456,12 +454,12 @@ lemma is_proper_subformula_v2_imp_is_proper_subformula_v2_replace_atom_all_rec
   `replace_atom_all_rec_opt τ F` := The simultaneous replacement of each atom in the formula `F` using the hashmap from strings to formulas `τ`.
 -/
 def replace_atom_all_rec_opt
-  (τ : Batteries.HashMap String Formula_) :
+  (τ : Std.HashMap String Formula_) :
   Formula_ → Formula_
   | false_ => false_
   | true_ => true_
   | atom_ X =>
-    match Batteries.HashMap.find? τ X with
+    match Std.HashMap.get? τ X with
     | none => atom_ X
     | some F => F
   | not_ phi => not_ (replace_atom_all_rec_opt τ phi)
