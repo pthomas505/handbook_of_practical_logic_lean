@@ -115,16 +115,6 @@ def are_equivalent_equation_lists
   ∀ (σ : Substitution), is_equation_list_unifier σ L ↔ is_equation_list_unifier σ L'
 
 
-def reduce :
-  Equation → Option (List (Equation))
-  | ⟨not_ phi, not_ phi'⟩ => Option.some [⟨phi, phi'⟩]
-  | ⟨and_ phi psi, and_ phi' psi'⟩
-  | ⟨or_ phi psi, or_ phi' psi'⟩
-  | ⟨imp_ phi psi, imp_ phi' psi'⟩
-  | ⟨iff_ phi psi, iff_ phi' psi'⟩ => Option.some ([⟨phi, phi'⟩] ∪ [⟨psi, psi'⟩])
-  | _ => Option.none
-
-
 def is_reducible :
   Equation → Prop
   | ⟨not_ _, not_ _⟩
@@ -133,6 +123,30 @@ def is_reducible :
   | ⟨imp_ _ _, imp_ _ _⟩
   | ⟨iff_ _ _, iff_ _ _⟩ => True
   | _ => False
+
+instance :
+  DecidablePred is_reducible :=
+  by
+  unfold DecidablePred
+  intro E
+  cases E
+  case mk lhs rhs =>
+    cases lhs
+    all_goals
+      cases rhs
+      all_goals
+        simp only [is_reducible]
+        infer_instance
+
+
+def reduce :
+  Equation → Option (List Equation)
+  | ⟨not_ phi, not_ phi'⟩ => Option.some [⟨phi, phi'⟩]
+  | ⟨and_ phi psi, and_ phi' psi'⟩
+  | ⟨or_ phi psi, or_ phi' psi'⟩
+  | ⟨imp_ phi psi, imp_ phi' psi'⟩
+  | ⟨iff_ phi psi, iff_ phi' psi'⟩ => Option.some ([⟨phi, phi'⟩] ∪ [⟨psi, psi'⟩])
+  | _ => Option.none
 
 
 example
@@ -550,3 +564,57 @@ def mem_multiequation_list_eqv_relation
   (L : List Multiequation) :
   Formula_ → Formula_ → Prop :=
   Relation.EqvGen (fun (lhs rhs : Formula_) => ∃ (M : Multiequation), M ∈ L ∧ lhs ∈ M.lhs ∧ rhs ∈ M.rhs)
+
+
+-------------------------------------------------------------------------------
+
+
+def List.find_erase
+  {α : Type}
+  (p : α → Prop)
+  [DecidablePred p]
+  (L : List α) :
+  Option (α × List α) :=
+  match List.find? p L with
+  | Option.some x => Option.some (x, List.eraseP p L)
+  | Option.none => Option.none
+
+
+def delete_step
+  (L : List Equation) :
+  Option (List Equation) :=
+  let p : Equation → Prop := fun (E : Equation) => E.lhs = E.rhs
+  if ∃ (E : Equation), E ∈ L ∧ p E
+  then Option.some (List.eraseP p L)
+  else Option.none
+
+
+def decompose_step
+  (L : List Equation) :
+  Option (List Equation) :=
+  match List.find? is_reducible L with
+  | Option.some E =>
+    match reduce E with
+    | Option.some L' => L' ++ List.eraseP is_reducible L
+    | Option.none => Option.none
+  | Option.none => Option.none
+
+
+def is_conflict :
+  Equation → Prop
+  | ⟨false_, false_⟩
+  | ⟨true_, true_⟩
+  | ⟨atom_ _, _⟩
+  | ⟨_, atom_ _⟩
+  | ⟨not_ _, not_ _⟩
+  | ⟨and_ _ _, and_ _ _⟩
+  | ⟨or_ _ _, or_ _ _⟩
+  | ⟨imp_ _ _, imp_ _ _⟩
+  | ⟨iff_ _ _, iff_ _ _⟩ => False
+  | _ => True
+
+
+def conflict_step
+  (L : List Equation) :
+  Prop :=
+  ∃ (E : Equation), E ∈ L ∧ is_conflict E
