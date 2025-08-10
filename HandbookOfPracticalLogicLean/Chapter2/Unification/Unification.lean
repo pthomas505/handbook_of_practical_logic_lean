@@ -606,19 +606,66 @@ def is_in_solved_form :
         ((¬ X = pair.fst) ∧ (¬ atom_occurs_in X pair.snd))
 
 
-def System : Type := Sum Unit (List Equation × List (String × Formula_))
-
-
-inductive is_unification_step : System → System → Prop
-| trivial
-  (F F' : Formula_)
-  (P : List Equation)
-  (S : List (String × Formula_)) :
-  F = F' →
-  is_unification_step (Sum.inr (⟨F, F'⟩ :: P, S) : System) (Sum.inr (P, S) : System)
-
-| decompose_not
+inductive is_unification_step : List Equation → List Equation → Prop
+| dec_not
   (phi phi' : Formula_)
-  (P : List Equation)
-  (S : List (String × Formula_)) :
-  is_unification_step (Sum.inr (⟨not_ phi, not_ phi'⟩ :: P, S) : System) (Sum.inr (⟨phi, phi'⟩ :: P, S) : System)
+  (Γ : List Equation) :
+  is_unification_step (⟨not_ phi, not_ phi'⟩ :: Γ) (⟨phi, phi'⟩ :: Γ)
+
+| triv
+  (X X' : String)
+  (Γ : List Equation) :
+  X = X' →
+  is_unification_step (⟨atom_ X, atom_ X'⟩ :: Γ) Γ
+
+| var_lhs
+  (X : String)
+  (F : Formula_)
+  (Γ : List Equation) :
+  (∃ (E : Equation), E ∈ Γ ∧ (atom_occurs_in X E.lhs ∨ atom_occurs_in X E.rhs)) →
+  (¬ atom_occurs_in X F) →
+  is_unification_step (⟨atom_ X, F⟩ :: Γ) (⟨atom_ X, F⟩ :: var_elim X F Γ)
+
+| var_rhs
+  (X : String)
+  (F : Formula_)
+  (Γ : List Equation) :
+  (∃ (E : Equation), E ∈ Γ ∧ (atom_occurs_in X E.lhs ∨ atom_occurs_in X E.rhs)) →
+  (¬ atom_occurs_in X F) →
+  is_unification_step (⟨F, atom_ X⟩ :: Γ) (⟨F, atom_ X⟩ :: var_elim X F Γ)
+
+
+partial
+def unify :
+  List Equation → Option (List Equation)
+  | [] => Option.some []
+  | ⟨false_, false_⟩ :: Γ => unify Γ
+  | ⟨true_, true_⟩ :: Γ => unify Γ
+  | ⟨atom_ X, F⟩ :: Γ =>
+    if atom_ X = F
+    then unify Γ
+    else
+      if
+        (∃ (E : Equation), E ∈ Γ ∧ (atom_occurs_in X E.lhs ∨ atom_occurs_in X E.rhs)) ∧
+        (¬ atom_occurs_in X F)
+      then unify ((⟨atom_ X, F⟩ :: var_elim X F Γ))
+      else Option.none
+  | ⟨F, atom_ X⟩ :: Γ =>
+    if F = atom_ X
+    then unify Γ
+    else
+      if
+        (∃ (E : Equation), E ∈ Γ ∧ (atom_occurs_in X E.lhs ∨ atom_occurs_in X E.rhs)) ∧
+        (¬ atom_occurs_in X F)
+      then unify ((⟨atom_ X, F⟩ :: var_elim X F Γ))
+      else Option.none
+  | ⟨not_ phi, not_ phi'⟩ :: Γ => unify (⟨phi, phi'⟩ :: Γ)
+  | ⟨and_ phi psi, and_ phi' psi'⟩ :: Γ =>
+      unify (⟨phi, phi'⟩ :: ⟨psi, psi'⟩ :: Γ)
+  | ⟨or_ phi psi, or_ phi' psi'⟩ :: Γ =>
+      unify (⟨phi, phi'⟩ :: ⟨psi, psi'⟩ :: Γ)
+  | ⟨imp_ phi psi, imp_ phi' psi'⟩ :: Γ =>
+      unify (⟨phi, phi'⟩ :: ⟨psi, psi'⟩ :: Γ)
+  | ⟨iff_ phi psi, iff_ phi' psi'⟩ :: Γ =>
+      unify (⟨phi, phi'⟩ :: ⟨psi, psi'⟩ :: Γ)
+  | _ => Option.none

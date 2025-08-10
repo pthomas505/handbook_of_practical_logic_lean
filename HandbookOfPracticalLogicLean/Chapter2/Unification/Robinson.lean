@@ -58,9 +58,13 @@ def unify
 
 def print_unify
   (E : Equation) :
-  Option (String → Formula_) → Option (List (String × Formula_))
+  Option (String → Formula_) → Option (List (Formula_ × Formula_))
   | Option.none => Option.none
-  | Option.some σ => Option.some (List.map (fun (X : String) => (X, σ X)) E.atom_list)
+  | Option.some σ => Option.some (List.map (fun (X : String) => (atom_ X, σ X)) E.atom_list)
 
 
 #eval! let E : Equation := ⟨atom_ "P", atom_ "Q"⟩; print_unify E (unify E)
+
+#eval! let E : Equation := ⟨atom_ "X", not_ (atom_ "X")⟩; print_unify E (unify E)
+
+#eval! let E : Equation := ⟨and_ (atom_ "X") (atom_ "Y"), and_ (atom_ "Y") (atom_ "Z")⟩; print_unify E (unify E)
