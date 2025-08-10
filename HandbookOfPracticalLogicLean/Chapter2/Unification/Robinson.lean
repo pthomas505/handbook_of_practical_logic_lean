@@ -9,16 +9,19 @@ set_option autoImplicit false
 open Formula_
 
 
-def Substitution : Type := List (String × Formula_)
-
-
-
 structure Equation : Type where
   (lhs : Formula_)
   (rhs : Formula_)
   deriving Inhabited, DecidableEq, Repr
 
-/-
+
+def Equation.atom_list
+  (E : Equation) :
+  List String :=
+  E.lhs.atom_list ∪ E.rhs.atom_list
+
+
+partial
 def unify
   (E : Equation) :
   Option (String → Formula_) :=
@@ -43,7 +46,7 @@ def unify
   | ⟨and_ phi psi, and_ phi' psi'⟩
   | ⟨or_ phi psi, or_ phi' psi'⟩
   | ⟨imp_ phi psi, imp_ phi' psi'⟩
-  | ⟨iff_ phi psi, iff_ phi' psi'⟩ => do
+  | ⟨iff_ phi psi, iff_ phi' psi'⟩ =>
     match unify ⟨phi, phi'⟩ with
     | Option.some σ_1 =>
       match unify ⟨replace_atom_all_rec σ_1 psi, replace_atom_all_rec σ_1 psi'⟩ with
@@ -51,4 +54,13 @@ def unify
       | Option.none => Option.none
     | Option.none => Option.none
   | _ => Option.none
--/
+
+
+def print_unify
+  (E : Equation) :
+  Option (String → Formula_) → Option (List (String × Formula_))
+  | Option.none => Option.none
+  | Option.some σ => Option.some (List.map (fun (X : String) => (X, σ X)) E.atom_list)
+
+
+#eval! let E : Equation := ⟨atom_ "P", atom_ "Q"⟩; print_unify E (unify E)

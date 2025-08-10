@@ -149,6 +149,34 @@ def reduce :
   | _ => Option.none
 
 
+def conflict :
+  Equation → Prop
+  | ⟨false_, false_⟩
+  | ⟨true_, true_⟩
+  | ⟨atom_ _, _⟩
+  | ⟨_, atom_ _⟩
+  | ⟨not_ _, not_ _⟩
+  | ⟨and_ _ _, and_ _ _⟩
+  | ⟨or_ _ _, or_ _ _⟩
+  | ⟨imp_ _ _, imp_ _ _⟩
+  | ⟨iff_ _ _, iff_ _ _⟩ => False
+  | _ => True
+
+instance :
+  DecidablePred conflict :=
+  by
+  unfold DecidablePred
+  intro E
+  cases E
+  case mk lhs rhs =>
+    cases lhs
+    all_goals
+      cases rhs
+      all_goals
+        simp only [conflict]
+        infer_instance
+
+
 example
   (lhs rhs : Formula_)
   (h1 : (reduce ⟨lhs, rhs⟩).isSome) :
@@ -569,52 +597,28 @@ def mem_multiequation_list_eqv_relation
 -------------------------------------------------------------------------------
 
 
-def List.find_erase
-  {α : Type}
-  (p : α → Prop)
-  [DecidablePred p]
-  (L : List α) :
-  Option (α × List α) :=
-  match List.find? p L with
-  | Option.some x => Option.some (x, List.eraseP p L)
-  | Option.none => Option.none
+def is_in_solved_form :
+  List (String × Formula_) → Prop
+  | [] => True
+  | (X, F) :: tl =>
+    (¬ atom_occurs_in X F) ∧
+      ∀ (pair : String × Formula_), pair ∈ tl →
+        ((¬ X = pair.fst) ∧ (¬ atom_occurs_in X pair.snd))
 
 
-def delete_step
-  (L : List Equation) :
-  Option (List Equation) :=
-  let p : Equation → Prop := fun (E : Equation) => E.lhs = E.rhs
-  if ∃ (E : Equation), E ∈ L ∧ p E
-  then Option.some (List.eraseP p L)
-  else Option.none
+def System : Type := Sum Unit (List Equation × List (String × Formula_))
 
 
-def decompose_step
-  (L : List Equation) :
-  Option (List Equation) :=
-  match List.find? is_reducible L with
-  | Option.some E =>
-    match reduce E with
-    | Option.some L' => L' ++ List.eraseP is_reducible L
-    | Option.none => Option.none
-  | Option.none => Option.none
+inductive is_unification_step : System → System → Prop
+| trivial
+  (F F' : Formula_)
+  (P : List Equation)
+  (S : List (String × Formula_)) :
+  F = F' →
+  is_unification_step (Sum.inr (⟨F, F'⟩ :: P, S) : System) (Sum.inr (P, S) : System)
 
-
-def is_conflict :
-  Equation → Prop
-  | ⟨false_, false_⟩
-  | ⟨true_, true_⟩
-  | ⟨atom_ _, _⟩
-  | ⟨_, atom_ _⟩
-  | ⟨not_ _, not_ _⟩
-  | ⟨and_ _ _, and_ _ _⟩
-  | ⟨or_ _ _, or_ _ _⟩
-  | ⟨imp_ _ _, imp_ _ _⟩
-  | ⟨iff_ _ _, iff_ _ _⟩ => False
-  | _ => True
-
-
-def conflict_step
-  (L : List Equation) :
-  Prop :=
-  ∃ (E : Equation), E ∈ L ∧ is_conflict E
+| decompose_not
+  (phi phi' : Formula_)
+  (P : List Equation)
+  (S : List (String × Formula_)) :
+  is_unification_step (Sum.inr (⟨not_ phi, not_ phi'⟩ :: P, S) : System) (Sum.inr (⟨phi, phi'⟩ :: P, S) : System)
