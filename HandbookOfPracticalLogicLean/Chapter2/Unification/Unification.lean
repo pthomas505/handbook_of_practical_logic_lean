@@ -645,27 +645,28 @@ def unify :
     if atom_ X = F
     then unify Γ
     else
-      if
-        (∃ (E : Equation), E ∈ Γ ∧ (atom_occurs_in X E.lhs ∨ atom_occurs_in X E.rhs)) ∧
-        (¬ atom_occurs_in X F)
-      then unify ((⟨atom_ X, F⟩ :: var_elim X F Γ))
-      else Option.none
-  | ⟨F, atom_ X⟩ :: Γ =>
-    if F = atom_ X
-    then unify Γ
-    else
-      if
-        (∃ (E : Equation), E ∈ Γ ∧ (atom_occurs_in X E.lhs ∨ atom_occurs_in X E.rhs)) ∧
-        (¬ atom_occurs_in X F)
-      then unify ((⟨atom_ X, F⟩ :: var_elim X F Γ))
-      else Option.none
-  | ⟨not_ phi, not_ phi'⟩ :: Γ => unify (⟨phi, phi'⟩ :: Γ)
-  | ⟨and_ phi psi, and_ phi' psi'⟩ :: Γ =>
-      unify (⟨phi, phi'⟩ :: ⟨psi, psi'⟩ :: Γ)
-  | ⟨or_ phi psi, or_ phi' psi'⟩ :: Γ =>
-      unify (⟨phi, phi'⟩ :: ⟨psi, psi'⟩ :: Γ)
-  | ⟨imp_ phi psi, imp_ phi' psi'⟩ :: Γ =>
-      unify (⟨phi, phi'⟩ :: ⟨psi, psi'⟩ :: Γ)
+      if atom_occurs_in X F
+      then Option.none
+      else
+        if ∃ (E : Equation), E ∈ Γ ∧ (atom_occurs_in X E.lhs ∨ atom_occurs_in X E.rhs)
+        then unify (⟨atom_ X, F⟩ :: var_elim X F Γ)
+        else
+          match unify Γ with
+          | Option.none => Option.none
+          | Option.some Γ' => Option.some (⟨atom_ X, F⟩ :: Γ')
+  | ⟨F, atom_ X⟩ :: Γ => unify (⟨atom_ X, F⟩ :: Γ)
+  | ⟨not_ phi, not_ phi'⟩ :: Γ =>
+      unify (⟨phi, phi'⟩ :: Γ)
+  | ⟨and_ phi psi, and_ phi' psi'⟩ :: Γ
+  | ⟨or_ phi psi, or_ phi' psi'⟩ :: Γ
+  | ⟨imp_ phi psi, imp_ phi' psi'⟩ :: Γ
   | ⟨iff_ phi psi, iff_ phi' psi'⟩ :: Γ =>
       unify (⟨phi, phi'⟩ :: ⟨psi, psi'⟩ :: Γ)
   | _ => Option.none
+
+
+#eval! unify [⟨atom_ "P", atom_ "Q"⟩]
+
+#eval! unify [⟨atom_ "X", not_ (atom_ "X")⟩]
+
+#eval! unify [⟨and_ (atom_ "X") (atom_ "Y"), and_ (atom_ "Y") (atom_ "Z")⟩]

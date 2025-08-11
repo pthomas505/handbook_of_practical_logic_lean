@@ -21,7 +21,40 @@ def Equation.atom_list
   E.lhs.atom_list ∪ E.rhs.atom_list
 
 
-partial
+/--
+  `List.dup_count_aux acc L` := Helper function for `List.dup_count`.
+-/
+def List.dup_count_aux
+  {α : Type}
+  [DecidableEq α]
+  (acc : Finset α) :
+  List α → Nat
+  | [] => 0
+  | hd :: tl =>
+    if hd ∈ tl ∧ hd ∉ acc
+    then 1 + List.dup_count_aux (acc ∪ {hd}) tl
+    else List.dup_count_aux acc tl
+
+/--
+  `List.dup_count L` := The number of elements that occur more than once in the list `L`.
+-/
+def List.dup_count
+  {α : Type}
+  [DecidableEq α]
+  (L : List α) :
+  Nat :=
+  List.dup_count_aux {} L
+
+#eval [0].dup_count
+#eval [0, 0].dup_count
+#eval [0, 0, 0].dup_count
+#eval [0, 0, 1].dup_count
+#eval [0, 0, 1, 1].dup_count
+#eval [1, 0, 0, 1].dup_count
+#eval [0, 1, 0, 1].dup_count
+
+
+--partial
 def unify
   (E : Equation) :
   Option (String → Formula_) :=
@@ -54,6 +87,10 @@ def unify
       | Option.none => Option.none
     | Option.none => Option.none
   | _ => Option.none
+  termination_by (E.atom_list.dup_count, E.lhs.size + E.rhs.size)
+  decreasing_by
+  all_goals
+    sorry
 
 
 def print_unify
