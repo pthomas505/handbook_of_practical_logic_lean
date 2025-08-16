@@ -83,6 +83,9 @@ instance
     infer_instance
 
 
+-------------------------------------------------------------------------------
+
+
 lemma atom_occurs_in_iff_mem_atom_set
   (A : String)
   (F : Formula_) :
