@@ -1,4 +1,5 @@
 import MathlibExtraLean.FunctionUpdateITE
+import MathlibExtraLean.FunctionUpdateFromListOfPairsITE
 
 import HandbookOfPracticalLogicLean.Chapter2.Replace
 
@@ -54,22 +55,16 @@ def List.dup_count
 #eval [0, 1, 0, 1].dup_count
 
 
---partial
+partial
 def unify
   (E : Equation) :
   Option (String → Formula_) :=
   match E with
   | ⟨false_, false_⟩
   | ⟨true_, true_⟩ => Option.some atom_
-  | ⟨atom_ X, F⟩ =>
-    if atom_ X = F
-    then Option.some atom_
-    else
-      if atom_occurs_in X F
-      then Option.none
-      else Option.some (Function.updateITE atom_ X F)
+  | ⟨atom_ X, F⟩
   | ⟨F, atom_ X⟩ =>
-    if F = atom_ X
+    if atom_ X = F
     then Option.some atom_
     else
       if atom_occurs_in X F
@@ -79,18 +74,11 @@ def unify
   | ⟨and_ phi psi, and_ phi' psi'⟩
   | ⟨or_ phi psi, or_ phi' psi'⟩
   | ⟨imp_ phi psi, imp_ phi' psi'⟩
-  | ⟨iff_ phi psi, iff_ phi' psi'⟩ =>
-    match unify ⟨phi, phi'⟩ with
-    | Option.some σ_1 =>
-      match unify ⟨replace_atom_all_rec σ_1 psi, replace_atom_all_rec σ_1 psi'⟩ with
-      | Option.some σ_2 => Option.some ((replace_atom_all_rec σ_2) ∘ σ_1)
-      | Option.none => Option.none
-    | Option.none => Option.none
+  | ⟨iff_ phi psi, iff_ phi' psi'⟩ => do
+    let σ_1 ← unify ⟨phi, phi'⟩
+    let σ_2 ← unify ⟨replace_atom_all_rec σ_1 psi, replace_atom_all_rec σ_1 psi'⟩
+    (replace_atom_all_rec σ_2) ∘ σ_1
   | _ => Option.none
-  termination_by (E.atom_list.dup_count, E.lhs.size + E.rhs.size)
-  decreasing_by
-  all_goals
-    sorry
 
 
 def print_unify
@@ -105,3 +93,40 @@ def print_unify
 #eval! let E : Equation := ⟨atom_ "X", not_ (atom_ "X")⟩; print_unify E (unify E)
 
 #eval! let E : Equation := ⟨and_ (atom_ "X") (atom_ "Y"), and_ (atom_ "Y") (atom_ "Z")⟩; print_unify E (unify E)
+
+#eval! let E : Equation := ⟨or_ (and_ (atom_ "X") (atom_ "Y")) (atom_ "Z"), or_ (and_ (atom_ "Y") (atom_ "Z")) (atom_ "X")⟩; print_unify E (unify E)
+
+
+partial
+def unify_list
+  (E : Equation) :
+  Option (List (String × Formula_)) :=
+  match E with
+  | ⟨false_, false_⟩
+  | ⟨true_, true_⟩ => Option.some []
+  | ⟨atom_ X, F⟩
+  | ⟨F, atom_ X⟩ =>
+    if atom_ X = F
+    then Option.some []
+    else
+      if atom_occurs_in X F
+      then Option.none
+      else Option.some [(X, F)]
+  | ⟨not_ phi, not_ phi'⟩ =>
+      unify_list ⟨phi, phi'⟩
+  | ⟨and_ phi psi, and_ phi' psi'⟩
+  | ⟨or_ phi psi, or_ phi' psi'⟩
+  | ⟨imp_ phi psi, imp_ phi' psi'⟩
+  | ⟨iff_ phi psi, iff_ phi' psi'⟩ => do
+      let σ_1 ← unify_list ⟨phi, phi'⟩
+      let σ_1' : String → Formula_ := Function.updateFromListOfPairsITE atom_ σ_1
+      let σ_2 ← unify_list ⟨replace_atom_all_rec σ_1' psi, replace_atom_all_rec σ_1' psi'⟩
+      σ_1 ++ σ_2
+  | _ => Option.none
+
+
+#eval! unify_list ⟨atom_ "P", atom_ "Q"⟩
+
+#eval! unify_list ⟨atom_ "X", not_ (atom_ "X")⟩
+
+#eval! unify_list ⟨and_ (atom_ "X") (atom_ "Y"), and_ (atom_ "Y") (atom_ "Z")⟩

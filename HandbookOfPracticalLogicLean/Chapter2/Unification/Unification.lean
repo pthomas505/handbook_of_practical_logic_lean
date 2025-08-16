@@ -30,6 +30,39 @@ def equation_list_formula_list
 #eval equation_list_formula_list [⟨atom_ "P", atom_ "Q"⟩, ⟨atom_ "R", atom_ "S"⟩]
 
 
+def equation_list_atom_set
+  (L : List Equation) :
+  Finset String :=
+    List.foldr (fun (next : Equation) (prev : Finset String) => next.lhs.atom_set ∪ next.rhs.atom_set ∪ prev) {} L
+
+#eval equation_list_atom_set {}
+#eval equation_list_atom_set [⟨atom_ "P", atom_ "Q"⟩]
+#eval equation_list_atom_set [⟨atom_ "P", atom_ "Q"⟩, ⟨atom_ "Q", atom_ "R"⟩]
+#eval equation_list_atom_set [⟨atom_ "P", atom_ "Q"⟩, ⟨atom_ "R", atom_ "S"⟩]
+
+
+lemma equation_list_atom_set_append
+  (L1 L2 : List Equation) :
+  equation_list_atom_set (L1 ++ L2) =
+    equation_list_atom_set L1 ∪ equation_list_atom_set L2 :=
+  by
+    unfold equation_list_atom_set
+    simp only [Finset.union_assoc, List.foldr_append]
+    induction L1
+    case nil =>
+      simp only [List.foldr_nil, Finset.empty_union]
+    case cons hd tl ih =>
+      simp only [List.foldr_cons, Finset.union_assoc]
+      rewrite [ih]
+      rfl
+
+
+def equation_list_size
+  (L : List Equation) :
+  Nat :=
+  List.foldr (fun (next : Equation) (prev : Nat) => next.lhs.size + next.rhs.size + prev) 0 L
+
+
 /--
   `is_equation_unifier σ E` := True if and only if the substitution `σ` is a unifier of the equation `E`.
 -/
@@ -635,26 +668,142 @@ inductive is_unification_step : List Equation → List Equation → Prop
   is_unification_step (⟨F, atom_ X⟩ :: Γ) (⟨F, atom_ X⟩ :: var_elim X F Γ)
 
 
-partial
+theorem extracted_1
+  (X : String)
+  (Γ : List Equation)
+  (E : Equation)
+  (h1 : E ∈ Γ)
+  (h2 : X ∈ E.lhs.atom_set ∨ X ∈ E.rhs.atom_set) :
+  X ∈ List.foldr (fun (next : Equation) (prev : Finset String) => next.lhs.atom_set ∪ (next.rhs.atom_set ∪ prev)) ∅ Γ :=
+  by
+  induction Γ
+  case nil =>
+    simp only [List.not_mem_nil] at h1
+  case cons hd tl ih =>
+    simp only [List.mem_cons] at h1
+    simp only [List.foldr_cons, Finset.mem_union]
+    cases h1
+    case inl h1 =>
+      rewrite [h1] at h2
+      cases h2
+      case inl h2 =>
+        left
+        exact h2
+      case inr h2 =>
+        right
+        left
+        exact h2
+    case inr h1 =>
+      right
+      right
+      apply ih
+      exact h1
+
+
+theorem extracted_2
+  (X : String)
+  (Γ : List Equation)
+  (h1 : ∀ (E : Equation), ¬ (E ∈ Γ ∧ (X ∈ E.lhs.atom_set ∨ X ∈ E.rhs.atom_set))) :
+  X ∉ List.foldr (fun (next : Equation) (prev : Finset String) => next.lhs.atom_set ∪ (next.rhs.atom_set ∪ prev)) ∅ Γ :=
+  by
+  induction Γ
+  case nil =>
+    simp only [List.foldr_nil, Finset.not_mem_empty]
+    intro contra
+    exact contra
+  case cons hd tl ih =>
+    simp only [List.mem_cons] at h1
+    simp only [List.foldr_cons, Finset.mem_union]
+    intro contra
+    cases contra
+    case inl contra =>
+      apply h1 hd
+      constructor
+      · left
+        rfl
+      · left
+        exact contra
+    case inr contra =>
+      cases contra
+      case inl contra =>
+        apply h1 hd
+        constructor
+        · left
+          rfl
+        · right
+          exact contra
+      case inr contra =>
+        apply ih
+        · intro E a1
+          obtain ⟨a1_left, a1_right⟩ := a1
+          apply h1 E
+          constructor
+          · right
+            exact a1_left
+          · exact a1_right
+        · exact contra
+
+
+lemma not_atom_occurs_in_imp_not_mem_var_elim_equation_list_atom_set
+  (X : String)
+  (F : Formula_)
+  (L : List Equation)
+  (h1 : ¬ atom_occurs_in X F) :
+  X ∉ equation_list_atom_set (var_elim X F L) :=
+  by
+  unfold var_elim
+  unfold equation_list_atom_set
+  simp only [Finset.union_assoc]
+  induction L
+  case nil =>
+    simp only [List.map_nil, List.foldr_nil, Finset.not_mem_empty]
+    intro contra
+    exact contra
+  case cons hd tl ih =>
+    simp only [List.map_cons, List.foldr_cons, Finset.mem_union]
+    intro contra
+    cases contra
+    case inl contra =>
+      apply not_atom_occurs_in_imp_not_atom_occurs_in_replace_atom_one_rec X F hd.lhs
+      · exact h1
+      · simp only [atom_occurs_in_iff_mem_atom_set]
+        exact contra
+    case inr contra =>
+      cases contra
+      case inl contra =>
+        apply not_atom_occurs_in_imp_not_atom_occurs_in_replace_atom_one_rec X F hd.rhs
+        · exact h1
+        · simp only [atom_occurs_in_iff_mem_atom_set]
+          exact contra
+      case inr contra =>
+        contradiction
+
+
+example
+  (X : String)
+  (F : Formula_)
+  (Γ : List Equation) :
+  (equation_list_atom_set (var_elim X F Γ)) =  ((equation_list_atom_set Γ) \ {X}) ∪ F.atom_set :=
+  by
+  sorry
+
+
 def unify :
-  List Equation → Option (List Equation)
-  | [] => Option.some []
-  | ⟨false_, false_⟩ :: Γ => unify Γ
+  List Equation → Option (String → Formula_)
+  | [] => Option.some atom_
+  | ⟨false_, false_⟩ :: Γ
   | ⟨true_, true_⟩ :: Γ => unify Γ
-  | ⟨atom_ X, F⟩ :: Γ =>
+  | ⟨atom_ X, F⟩ :: Γ
+  | ⟨F, atom_ X⟩ :: Γ =>
     if atom_ X = F
     then unify Γ
     else
       if atom_occurs_in X F
       then Option.none
       else
-        if ∃ (E : Equation), E ∈ Γ ∧ (atom_occurs_in X E.lhs ∨ atom_occurs_in X E.rhs)
-        then unify (⟨atom_ X, F⟩ :: var_elim X F Γ)
-        else
-          match unify Γ with
-          | Option.none => Option.none
-          | Option.some Γ' => Option.some (⟨atom_ X, F⟩ :: Γ')
-  | ⟨F, atom_ X⟩ :: Γ => unify (⟨atom_ X, F⟩ :: Γ)
+        match unify (var_elim X F Γ) with
+        | Option.none => Option.none
+        | Option.some τ => Option.some (Function.updateITE τ X (replace_atom_all_rec τ F))
   | ⟨not_ phi, not_ phi'⟩ :: Γ =>
       unify (⟨phi, phi'⟩ :: Γ)
   | ⟨and_ phi psi, and_ phi' psi'⟩ :: Γ
@@ -663,10 +812,79 @@ def unify :
   | ⟨iff_ phi psi, iff_ phi' psi'⟩ :: Γ =>
       unify (⟨phi, phi'⟩ :: ⟨psi, psi'⟩ :: Γ)
   | _ => Option.none
+  termination_by L => ((equation_list_atom_set L).card, equation_list_size L)
+  decreasing_by
+  case _ | _ =>
+    all_goals
+    simp only [Prod.lex_def]
+    right
+    constructor
+    · unfold equation_list_atom_set
+      simp only [Finset.union_assoc, List.foldr_cons, Finset.union_left_idem]
+      simp only [atom_set]
+      simp only [Finset.empty_union]
+    · unfold equation_list_size
+      simp only [List.foldr_cons]
+      simp only [Formula_.size]
+      linarith
+  case _ h1 =>
+    rewrite [← h1]
+    unfold equation_list_atom_set
+    simp only [Finset.union_assoc, List.foldr_cons, Finset.union_left_idem]
+    simp only [atom_set]
+
+    simp only [Prod.lex_def]
+
+    by_cases c1 : ∃ (E : Equation), E ∈ Γ ∧ (X ∈ E.lhs.atom_set ∨ X ∈ E.rhs.atom_set)
+    case pos =>
+      right
+      constructor
+      · obtain ⟨E, c1_left, c1_right⟩ := c1
+
+        have s1 : {X} ∪ List.foldr (fun (next : Equation) (prev : Finset String) => next.lhs.atom_set ∪ (next.rhs.atom_set ∪ prev)) ∅ Γ =
+          List.foldr (fun (next : Equation) (prev : Finset String) => next.lhs.atom_set ∪ (next.rhs.atom_set ∪ prev)) ∅ Γ :=
+        by
+          simp only [Finset.union_eq_right, Finset.singleton_subset_iff]
+          apply extracted_1 X Γ E
+          · exact c1_left
+          · exact c1_right
+
+        rewrite [s1]
+        rfl
+      · unfold equation_list_size
+        simp only [List.foldr_cons]
+        simp only [Formula_.size]
+        linarith
+    case neg =>
+      simp only [not_exists] at c1
+
+      have s1 : Disjoint {X} (List.foldr (fun next prev => next.lhs.atom_set ∪ (next.rhs.atom_set ∪ prev)) ∅ Γ) :=
+      by
+        simp only [Finset.disjoint_singleton_left]
+        apply extracted_2
+        intro E
+        apply c1
+      left
+      simp only [Finset.card_union_of_disjoint s1]
+      simp only [Finset.card_singleton]
+      apply lt_one_add
+  case _ h1 h2 =>
+    apply Prod.Lex.left
+    sorry
+  all_goals
+    sorry
 
 
-#eval! unify [⟨atom_ "P", atom_ "Q"⟩]
+def print_unify_list
+  (L : List Equation) :
+  Option (String → Formula_) → Option (Finset (Formula_ × Formula_))
+  | Option.none => Option.none
+  | Option.some σ => Option.some (Finset.image (fun (X : String) => (atom_ X, σ X)) (equation_list_atom_set L))
 
-#eval! unify [⟨atom_ "X", not_ (atom_ "X")⟩]
+#eval! let L := [⟨atom_ "P", atom_ "Q"⟩]; print_unify_list L (unify L)
 
-#eval! unify [⟨and_ (atom_ "X") (atom_ "Y"), and_ (atom_ "Y") (atom_ "Z")⟩]
+#eval! let L := [⟨atom_ "X", not_ (atom_ "X")⟩]; print_unify_list L (unify L)
+
+#eval! let L := [⟨and_ (atom_ "X") (atom_ "Y"), and_ (atom_ "Y") (atom_ "Z")⟩]; print_unify_list L (unify L)
+
+#eval! let L := [⟨or_ (and_ (atom_ "X") (atom_ "Y")) (atom_ "Z"), or_ (and_ (atom_ "Y") (atom_ "Z")) (atom_ "X")⟩]; print_unify_list L (unify L)

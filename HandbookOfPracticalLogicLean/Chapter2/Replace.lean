@@ -113,6 +113,49 @@ theorem corollary_2_6_one
 -------------------------------------------------------------------------------
 
 
+lemma not_atom_occurs_in_imp_not_atom_occurs_in_replace_atom_one_rec
+  (A : String)
+  (P : Formula_)
+  (F : Formula_)
+  (h1 : ¬ atom_occurs_in A P) :
+  ¬ atom_occurs_in A (replace_atom_one_rec A P F) :=
+  by
+  induction F
+  case false_ | true_ =>
+    unfold replace_atom_one_rec
+    unfold atom_occurs_in
+    intro contra
+    exact contra
+  case atom_ X =>
+    unfold replace_atom_one_rec
+    split_ifs
+    case pos c1 =>
+      exact h1
+    case neg c1 =>
+      unfold atom_occurs_in
+      exact c1
+  case not_ phi ih =>
+    unfold replace_atom_one_rec
+    unfold atom_occurs_in
+    exact ih
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    unfold replace_atom_one_rec
+    unfold atom_occurs_in
+    intro contra
+    cases contra
+    case inl contra =>
+      contradiction
+    case inr contra =>
+      contradiction
+
+
+-------------------------------------------------------------------------------
+
+
 /--
   `replace_atom_all_rec τ F` := The simultaneous replacement of each occurrence of any atom `A` in the formula `F` by `τ A`.
 -/
