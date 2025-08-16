@@ -153,7 +153,7 @@ def formula_list_atom_set
 def formula_list_atom_list
   (FS : List Formula_) :
   List String :=
-  List.foldr (fun (next : Formula_) (prev : List String) => next.atom_list ++ prev) {} FS
+  List.foldr (fun (next : Formula_) (prev : List String) => next.atom_list ++ prev) [] FS
 
 
 /--
@@ -172,6 +172,9 @@ instance
   by
   unfold atom_occurs_in_formula_list
   infer_instance
+
+
+-------------------------------------------------------------------------------
 
 
 lemma atom_occurs_in_formula_list_imp_mem_formula_list_atom_set
@@ -252,6 +255,89 @@ lemma atom_occurs_in_formula_list_iff_mem_formula_list_atom_set
       · exact a1_left
       · exact a1_right
     · apply mem_formula_list_atom_set_imp_atom_occurs_in_formula_list
+
+
+-------------------------------------------------------------------------------
+
+
+lemma atom_occurs_in_formula_list_imp_mem_formula_list_atom_list
+  (A : String)
+  (FS : List Formula_)
+  (F : Formula_)
+  (h1 : F ∈ FS)
+  (h2 : atom_occurs_in A F) :
+  A ∈ formula_list_atom_list FS :=
+  by
+  unfold formula_list_atom_list
+
+  induction FS
+  case nil =>
+    simp only [List.not_mem_nil] at h1
+  case cons hd tl ih =>
+    simp only [List.mem_cons] at h1
+
+    simp only [List.foldr_cons, List.mem_append]
+
+    cases h1
+    case inl h1 =>
+      rewrite [← h1]
+      left
+      simp only [← atom_occurs_in_iff_mem_atom_list]
+      exact h2
+    case inr h1 =>
+      right
+      apply ih
+      exact h1
+
+
+lemma mem_formula_list_atom_list_imp_atom_occurs_in_formula_list
+  (A : String)
+  (FS : List Formula_)
+  (h1 : A ∈ formula_list_atom_list FS) :
+  atom_occurs_in_formula_list A FS :=
+  by
+  unfold formula_list_atom_list at h1
+
+  unfold atom_occurs_in_formula_list
+  induction FS
+  case nil =>
+    simp only [List.foldr_nil, List.not_mem_nil] at h1
+  case cons hd tl ih =>
+    simp only [List.foldr_cons, List.mem_append] at h1
+
+    simp only [List.mem_cons]
+    cases h1
+    case inl h1 =>
+      apply Exists.intro hd
+      constructor
+      · left
+        rfl
+      · simp only [atom_occurs_in_iff_mem_atom_list]
+        exact h1
+    case inr h1 =>
+      specialize ih h1
+      obtain ⟨F, ih_left, ih_right⟩ := ih
+
+      apply Exists.intro F
+      constructor
+      · right
+        exact ih_left
+      · exact ih_right
+
+
+lemma atom_occurs_in_formula_list_iff_mem_formula_list_atom_list
+  (A : String)
+  (FS : List Formula_) :
+  atom_occurs_in_formula_list A FS ↔ A ∈ formula_list_atom_list FS :=
+  by
+    unfold atom_occurs_in_formula_list
+    constructor
+    · intro a1
+      obtain ⟨F, a1_left, a1_right⟩ := a1
+      apply atom_occurs_in_formula_list_imp_mem_formula_list_atom_list A FS F
+      · exact a1_left
+      · exact a1_right
+    · apply mem_formula_list_atom_list_imp_atom_occurs_in_formula_list
 
 
 #lint
