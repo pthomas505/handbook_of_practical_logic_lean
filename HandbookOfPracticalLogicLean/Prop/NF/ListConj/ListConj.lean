@@ -1,4 +1,4 @@
-import HandbookOfPracticalLogicLean.Chapter2.Formula
+import HandbookOfPracticalLogicLean.Prop.Formula
 
 
 set_option autoImplicit false

@@ -1,5 +1,5 @@
-import HandbookOfPracticalLogicLean.Chapter2.NF.DNF.ToDNF_3_Simp_1
-import HandbookOfPracticalLogicLean.Chapter2.NF.NNF.NNF_1
+import HandbookOfPracticalLogicLean.Prop.NF.DNF.ToDNF_3_Simp_1
+import HandbookOfPracticalLogicLean.Prop.NF.NNF.NNF_1
 
 
 set_option autoImplicit false

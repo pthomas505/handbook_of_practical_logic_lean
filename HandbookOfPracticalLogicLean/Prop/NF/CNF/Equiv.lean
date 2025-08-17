@@ -1,4 +1,4 @@
-import HandbookOfPracticalLogicLean.Chapter2.NF.ListConj.Semantics
+import HandbookOfPracticalLogicLean.Prop.NF.ListConj.Semantics
 
 
 import Mathlib.Tactic

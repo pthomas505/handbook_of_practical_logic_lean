@@ -1,5 +1,5 @@
-import HandbookOfPracticalLogicLean.Chapter2.Semantics
-import HandbookOfPracticalLogicLean.Chapter2.Size
+import HandbookOfPracticalLogicLean.Prop.Semantics
+import HandbookOfPracticalLogicLean.Prop.Size
 
 import Mathlib.Tactic
 

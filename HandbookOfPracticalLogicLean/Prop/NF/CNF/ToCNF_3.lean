@@ -1,7 +1,7 @@
-import HandbookOfPracticalLogicLean.Chapter2.NF.DeMorgan
-import HandbookOfPracticalLogicLean.Chapter2.NF.NF
-import HandbookOfPracticalLogicLean.Chapter2.NF.NNF.NNF_1
-import HandbookOfPracticalLogicLean.Chapter2.NF.DNF.ToDNF_3
+import HandbookOfPracticalLogicLean.Prop.NF.DeMorgan
+import HandbookOfPracticalLogicLean.Prop.NF.NF
+import HandbookOfPracticalLogicLean.Prop.NF.NNF.NNF_1
+import HandbookOfPracticalLogicLean.Prop.NF.DNF.ToDNF_3
 
 
 set_option autoImplicit false

@@ -1,7 +1,7 @@
-import HandbookOfPracticalLogicLean.Chapter2.NF.ListOfListsTo
+import HandbookOfPracticalLogicLean.Prop.NF.ListOfListsTo
 
-import HandbookOfPracticalLogicLean.Chapter2.NF.ListConj.Semantics
-import HandbookOfPracticalLogicLean.Chapter2.NF.ListDisj.Semantics
+import HandbookOfPracticalLogicLean.Prop.NF.ListConj.Semantics
+import HandbookOfPracticalLogicLean.Prop.NF.ListDisj.Semantics
 
 
 set_option autoImplicit false

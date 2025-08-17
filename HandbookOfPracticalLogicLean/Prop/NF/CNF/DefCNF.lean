@@ -1,8 +1,8 @@
-import HandbookOfPracticalLogicLean.Chapter2.Replace.Var.One.Rec.Replace
-import HandbookOfPracticalLogicLean.Chapter2.Semantics
-import HandbookOfPracticalLogicLean.Chapter2.SubFormula
-import HandbookOfPracticalLogicLean.Chapter2.TruthTable
-import HandbookOfPracticalLogicLean.Chapter2.NF.ListConj.ListConj
+import HandbookOfPracticalLogicLean.Prop.Replace.Var.One.Rec.Replace
+import HandbookOfPracticalLogicLean.Prop.Semantics
+import HandbookOfPracticalLogicLean.Prop.SubFormula
+import HandbookOfPracticalLogicLean.Prop.TruthTable
+import HandbookOfPracticalLogicLean.Prop.NF.ListConj.ListConj
 
 import Mathlib.Tactic
 

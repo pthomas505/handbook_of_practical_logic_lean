@@ -1,7 +1,7 @@
-import HandbookOfPracticalLogicLean.Chapter2.Replace.Var.One.Rec.Replace
-import HandbookOfPracticalLogicLean.Chapter2.Semantics
+import HandbookOfPracticalLogicLean.Prop.Replace.Var.One.Rec.Replace
+import HandbookOfPracticalLogicLean.Prop.Semantics
 
-import HandbookOfPracticalLogicLean.Chapter2.NF.NF
+import HandbookOfPracticalLogicLean.Prop.NF.NF
 
 
 import Mathlib.Tactic

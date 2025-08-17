@@ -1,5 +1,5 @@
-import HandbookOfPracticalLogicLean.Chapter2.NF.ListDisj.ListDisj
-import HandbookOfPracticalLogicLean.Chapter2.NF.NF
+import HandbookOfPracticalLogicLean.Prop.NF.ListDisj.ListDisj
+import HandbookOfPracticalLogicLean.Prop.NF.NF
 
 
 set_option autoImplicit false

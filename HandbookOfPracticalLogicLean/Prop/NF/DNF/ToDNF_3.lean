@@ -1,10 +1,10 @@
 import MathlibExtraLean.AllPairs
 
-import HandbookOfPracticalLogicLean.Chapter2.NF.NF
-import HandbookOfPracticalLogicLean.Chapter2.NF.ListOfListsTo
-import HandbookOfPracticalLogicLean.Chapter2.NF.DNF.ToDNF_1
-import HandbookOfPracticalLogicLean.Chapter2.NF.ListConj.Semantics
-import HandbookOfPracticalLogicLean.Chapter2.NF.ListDisj.Semantics
+import HandbookOfPracticalLogicLean.Prop.NF.NF
+import HandbookOfPracticalLogicLean.Prop.NF.ListOfListsTo
+import HandbookOfPracticalLogicLean.Prop.NF.DNF.ToDNF_1
+import HandbookOfPracticalLogicLean.Prop.NF.ListConj.Semantics
+import HandbookOfPracticalLogicLean.Prop.NF.ListDisj.Semantics
 
 
 set_option autoImplicit false

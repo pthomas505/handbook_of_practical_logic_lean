@@ -1,4 +1,4 @@
-import HandbookOfPracticalLogicLean.Chapter2.Atom
+import HandbookOfPracticalLogicLean.Prop.Atom
 
 
 set_option autoImplicit false

@@ -1,9 +1,9 @@
 import MathlibExtraLean.List
 
-import HandbookOfPracticalLogicLean.Chapter2.TruthTable
-import HandbookOfPracticalLogicLean.Chapter2.NF.MkLits
-import HandbookOfPracticalLogicLean.Chapter2.NF.ListDisj.IsDNF
-import HandbookOfPracticalLogicLean.Chapter2.NF.ListDisj.Semantics
+import HandbookOfPracticalLogicLean.Prop.TruthTable
+import HandbookOfPracticalLogicLean.Prop.NF.MkLits
+import HandbookOfPracticalLogicLean.Prop.NF.ListDisj.IsDNF
+import HandbookOfPracticalLogicLean.Prop.NF.ListDisj.Semantics
 
 
 set_option autoImplicit false

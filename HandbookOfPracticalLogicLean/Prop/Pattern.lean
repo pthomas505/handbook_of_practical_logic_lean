@@ -1,4 +1,4 @@
-import HandbookOfPracticalLogicLean.Chapter2.Formula
+import HandbookOfPracticalLogicLean.Prop.Formula
 
 import Batteries.Data.HashMap
 

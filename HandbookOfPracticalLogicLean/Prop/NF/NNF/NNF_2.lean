@@ -1,7 +1,7 @@
-import HandbookOfPracticalLogicLean.Chapter2.Semantics
-import HandbookOfPracticalLogicLean.Chapter2.SubFormula
+import HandbookOfPracticalLogicLean.Prop.Semantics
+import HandbookOfPracticalLogicLean.Prop.SubFormula
 
-import HandbookOfPracticalLogicLean.Chapter2.NF.NF
+import HandbookOfPracticalLogicLean.Prop.NF.NF
 
 
 import Mathlib.Tactic

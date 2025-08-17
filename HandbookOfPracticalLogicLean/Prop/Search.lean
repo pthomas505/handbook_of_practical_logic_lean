@@ -1,4 +1,4 @@
-import HandbookOfPracticalLogicLean.Chapter2.Rename
+import HandbookOfPracticalLogicLean.Prop.Rename
 
 import Batteries.Data.HashMap
 

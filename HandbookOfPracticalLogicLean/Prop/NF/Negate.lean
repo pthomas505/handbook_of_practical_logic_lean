@@ -1,6 +1,6 @@
-import HandbookOfPracticalLogicLean.Chapter2.Semantics
+import HandbookOfPracticalLogicLean.Prop.Semantics
 
-import HandbookOfPracticalLogicLean.Chapter2.NF.NF
+import HandbookOfPracticalLogicLean.Prop.NF.NF
 
 
 import Mathlib.Tactic

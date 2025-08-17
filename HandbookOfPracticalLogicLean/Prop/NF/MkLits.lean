@@ -1,6 +1,6 @@
-import HandbookOfPracticalLogicLean.Chapter2.NF.NF
-import HandbookOfPracticalLogicLean.Chapter2.NF.ListConj.IsConj
-import HandbookOfPracticalLogicLean.Chapter2.NF.ListConj.Semantics
+import HandbookOfPracticalLogicLean.Prop.NF.NF
+import HandbookOfPracticalLogicLean.Prop.NF.ListConj.IsConj
+import HandbookOfPracticalLogicLean.Prop.NF.ListConj.Semantics
 
 
 set_option autoImplicit false

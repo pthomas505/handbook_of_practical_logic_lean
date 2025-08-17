@@ -1,5 +1,5 @@
-import HandbookOfPracticalLogicLean.Chapter2.Semantics
-import HandbookOfPracticalLogicLean.Chapter2.NF.NF
+import HandbookOfPracticalLogicLean.Prop.Semantics
+import HandbookOfPracticalLogicLean.Prop.NF.NF
 
 
 set_option autoImplicit false

@@ -1,6 +1,6 @@
 -- https://dl.acm.org/doi/10.1145/357162.357169
 
-import HandbookOfPracticalLogicLean.Chapter2.Replace.Var.All.Rec.Replace
+import HandbookOfPracticalLogicLean.Prop.Replace.Var.All.Rec.Replace
 
 
 set_option autoImplicit false
