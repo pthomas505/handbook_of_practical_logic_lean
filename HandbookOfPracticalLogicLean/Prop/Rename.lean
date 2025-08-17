@@ -1,4 +1,4 @@
-import HandbookOfPracticalLogicLean.Prop.Atom
+import HandbookOfPracticalLogicLean.Prop.Var
 
 import Batteries.Data.HashMap
 
