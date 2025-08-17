@@ -16,7 +16,7 @@ def Formula_.subformula_list :
   Formula_ → List Formula_
   | false_ => [false_]
   | true_ => [true_]
-  | atom_ X => [atom_ X]
+  | var_ X => [var_ X]
   | not_ phi => [not_ phi] ++ phi.subformula_list
   | and_ phi psi => [and_ phi psi] ++ (phi.subformula_list ++ psi.subformula_list)
   | or_ phi psi => [or_ phi psi] ++ (phi.subformula_list ++ psi.subformula_list)
@@ -32,7 +32,7 @@ def is_subformula
   Formula_ → Prop
   | false_ => F = false_
   | true_ => F = true_
-  | atom_ X => F = atom_ X
+  | var_ X => F = var_ X
   | not_ phi =>
     F = not_ phi ∨
     is_subformula F phi
@@ -71,7 +71,7 @@ lemma is_subformula_iff_mem_subformula_list
   all_goals
     unfold is_subformula
     unfold subformula_list
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     simp only [List.mem_singleton]
   case not_ phi ih =>
     simp only [List.singleton_append, List.mem_cons]
@@ -96,7 +96,7 @@ example
   all_goals
     unfold size
     unfold subformula_list
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     simp only [List.length_singleton]
   case not_ phi ih =>
     simp only [List.singleton_append, List.length_cons]
@@ -118,7 +118,7 @@ lemma is_subformula_refl
   is_subformula F F :=
   by
   cases F
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     unfold is_subformula
     rfl
   all_goals
@@ -134,7 +134,7 @@ lemma is_subformula_trans
   is_subformula F F'' :=
   by
   induction F''
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     unfold is_subformula at h2
     rewrite [← h2]
     exact h1
@@ -181,7 +181,7 @@ lemma is_subformula_imp_le_size
   F.size ≤ F'.size :=
   by
   induction F'
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     unfold is_subformula at h1
     rewrite [h1]
     apply le_refl
@@ -245,7 +245,7 @@ lemma is_subformula_and_eq_size_imp_eq
   F = F' :=
   by
   cases F'
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     unfold is_subformula at h1
     exact h1
   case not_ phi =>
@@ -412,7 +412,7 @@ def is_proper_subformula_v1
   Formula_ → Prop
   | false_ => False
   | true_ => False
-  | atom_ _ => False
+  | var_ _ => False
   | not_ phi =>
     is_subformula F phi
   | and_ phi psi =>
@@ -472,7 +472,7 @@ lemma is_proper_subformula_v1_imp_is_subformula
   is_subformula F F' :=
   by
   cases F'
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     simp only [is_proper_subformula_v1] at h1
   case not_ phi =>
     simp only [is_proper_subformula_v1] at h1
@@ -505,7 +505,7 @@ lemma is_proper_subformula_v1_imp_lt_size
   F.size < F'.size :=
   by
   cases F'
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     simp only [is_proper_subformula_v1] at h1
   case not_ phi =>
     simp only [is_proper_subformula_v1] at h1
@@ -573,7 +573,7 @@ lemma is_proper_subformula_v2_imp_is_proper_subformula_v1
   is_proper_subformula_v1 F F' :=
   by
   cases F'
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     unfold is_proper_subformula_v2 at h1
     unfold is_subformula at h1
     obtain ⟨h1_left, h1_right⟩ := h1

@@ -11,7 +11,7 @@ def is_small_step_v1
   (E : List (String × Formula_))
   (X Y : String) :
   Prop :=
-  ∃ (F : Formula_), (X, F) ∈ E ∧ atom_occurs_in Y F
+  ∃ (F : Formula_), (X, F) ∈ E ∧ var_occurs_in Y F
 
 
 def is_small_step_v2
@@ -20,7 +20,7 @@ def is_small_step_v2
   Prop :=
   match E with
   | [] => False
-  | hd :: tl => (hd.fst = X ∧ atom_occurs_in Y hd.snd) ∨
+  | hd :: tl => (hd.fst = X ∧ var_occurs_in Y hd.snd) ∨
     is_small_step_v2 tl X Y
 
 instance
@@ -158,7 +158,7 @@ def env_to_step_list_aux
   (X : String)
   (F : Formula_) :
   List (String × String) :=
-  List.map (fun (Y : String) => (X, Y)) (atom_list F)
+  List.map (fun (Y : String) => (X, Y)) (var_list F)
 
 
 def env_to_step_list :
@@ -192,7 +192,7 @@ lemma is_small_step_v1_imp_mem_env_to_step_list
       apply Exists.intro Y
       rewrite [← h1_left]
       simp only
-      simp only [← atom_occurs_in_iff_mem_atom_list]
+      simp only [← var_occurs_in_iff_mem_var_list]
       exact ⟨h1_right, ⟨trivial, trivial⟩⟩
     case inr h1_left =>
       right
@@ -229,7 +229,7 @@ lemma mem_env_to_step_list_imp_is_small_step_v1
       constructor
       · left
         simp only [Prod.mk.eta]
-      · simp only [atom_occurs_in_iff_mem_atom_list]
+      · simp only [var_occurs_in_iff_mem_var_list]
         exact h1_left
     case inr h1 =>
       specialize ih h1
@@ -367,7 +367,7 @@ lemma is_small_step_v1_singleton_left
   (F : Formula_)
   (Z : String)
   (h1 : is_small_step_v1 [(X, F)] Y Z) :
-  Y = X ∧ atom_occurs_in Z F :=
+  Y = X ∧ var_occurs_in Z F :=
   by
   unfold is_small_step_v1 at h1
   obtain ⟨F', h1_left, h1_right⟩ := h1
@@ -385,7 +385,7 @@ lemma is_small_step_v1_singleton_right
   (F : Formula_)
   (Z : String)
   (h1 : Y = X)
-  (h2 : atom_occurs_in Z F) :
+  (h2 : var_occurs_in Z F) :
   is_small_step_v1 [(X, F)] Y Z :=
   by
   unfold is_small_step_v1
@@ -402,7 +402,7 @@ lemma is_small_step_v1_singleton
   (X Y : String)
   (F : Formula_)
   (Z : String) :
-  (is_small_step_v1 [(X, F)] Y Z) ↔ (Y = X ∧ atom_occurs_in Z F) :=
+  (is_small_step_v1 [(X, F)] Y Z) ↔ (Y = X ∧ var_occurs_in Z F) :=
   by
   constructor
   · apply is_small_step_v1_singleton_left
@@ -420,7 +420,7 @@ lemma is_small_step_v1_singleton_refl
   (X Y : String)
   (F : Formula_)
   (h1 : is_small_step_v1 [(X, F)] Y Y) :
-  atom_occurs_in X F :=
+  var_occurs_in X F :=
   by
   simp only [is_small_step_v1_singleton] at h1
   obtain ⟨h1_left, h1_right⟩ := h1
@@ -635,7 +635,7 @@ lemma has_cycle_singleton_left
   (X : String)
   (F : Formula_)
   (h1 : has_cycle_v1 [(X, F)]) :
-  atom_occurs_in X F :=
+  var_occurs_in X F :=
   by
   unfold has_cycle_v1 at h1
   unfold is_big_step_v1 at h1
@@ -659,7 +659,7 @@ lemma has_cycle_singleton_left
 lemma has_cycle_singleton_right
   (X : String)
   (F : Formula_)
-  (h1 : atom_occurs_in X F) :
+  (h1 : var_occurs_in X F) :
   has_cycle_v1 [(X, F)] :=
   by
   unfold has_cycle_v1
@@ -674,7 +674,7 @@ lemma has_cycle_singleton_right
 lemma has_cycle_singleton
   (X : String)
   (F : Formula_) :
-  has_cycle_v1 [(X, F)] ↔ atom_occurs_in X F :=
+  has_cycle_v1 [(X, F)] ↔ var_occurs_in X F :=
   by
   constructor
   · apply has_cycle_singleton_left
@@ -704,7 +704,7 @@ example
   (F : Formula_)
   (l : List String)
   (h1 : is_big_step_v1 ((X, F) :: E) Y Y l)
-  (h2 : ¬ atom_occurs_in X F)
+  (h2 : ¬ var_occurs_in X F)
   (h3 : ¬ has_cycle_v1 E) :
   sorry :=
   by
@@ -756,9 +756,9 @@ example
   (X : String)
   (F : Formula_)
   (h1 : has_cycle_v1 ((X, F) :: E))
-  (h2 : ¬ atom_occurs_in X F)
+  (h2 : ¬ var_occurs_in X F)
   (h3 : ¬ has_cycle_v1 E) :
-  ∃ (Y : String), ∃ (l : List String), atom_occurs_in Y F ∧ is_big_step_v1 E Y X l :=
+  ∃ (Y : String), ∃ (l : List String), var_occurs_in Y F ∧ is_big_step_v1 E Y X l :=
   by
   unfold has_cycle_v1 at h1
   obtain ⟨Y, l, h1⟩ := h1
@@ -810,8 +810,8 @@ example
   (X : String)
   (F : Formula_)
   (h1 : ¬ has_cycle_v1 E)
-  (h2 : ¬ atom_occurs_in X F)
-  (h3 : ∀ (Y : String), ∀ (l : List String), atom_occurs_in Y F → ¬ is_big_step_v1 E Y X l) :
+  (h2 : ¬ var_occurs_in X F)
+  (h3 : ∀ (Y : String), ∀ (l : List String), var_occurs_in Y F → ¬ is_big_step_v1 E Y X l) :
   ¬ has_cycle_v1 ((X, F) :: E) :=
   by
   unfold has_cycle_v1 at h1

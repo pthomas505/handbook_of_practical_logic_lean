@@ -34,7 +34,7 @@ def to_dnf_v3
   list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_aux F)
 
 
-#eval (list_of_lists_to_disjunction_of_conjunctions [[atom_ "P", atom_ "Q"], [not_ (atom_ "P"), atom_ "R"]]).toString
+#eval (list_of_lists_to_disjunction_of_conjunctions [[var_ "P", var_ "Q"], [not_ (var_ "P"), var_ "R"]]).toString
 
 
 lemma eval_eq_eval_to_dnf_v3_aux
@@ -199,7 +199,7 @@ lemma mem_list_mem_to_dnf_v3_aux_of_nnf_rec_v1_imp_is_constant_or_literal
 
     left
     apply is_constant_ind.rule_2
-  case atom_ X =>
+  case var_ X =>
     unfold to_dnf_v3_aux at h2
     simp only [List.mem_singleton] at h2
     rewrite [h2] at h3
@@ -218,7 +218,7 @@ lemma mem_list_mem_to_dnf_v3_aux_of_nnf_rec_v1_imp_is_constant_or_literal
     rewrite [h3]
 
     cases phi
-    case atom_ X =>
+    case var_ X =>
       right
       apply is_literal_ind.rule_2
     all_goals
@@ -290,7 +290,7 @@ lemma is_nnf_rec_v1_imp_to_dnf_v3_is_dnf_ind_v1
     apply is_dnf_ind_v1.rule_1
     apply is_conj_ind_v1.rule_1
     apply is_constant_ind.rule_2
-  case atom_ X =>
+  case var_ X =>
     unfold to_dnf_v3
     unfold to_dnf_v3_aux
     simp only [list_of_lists_to_disjunction_of_conjunctions_singleton]
@@ -302,7 +302,7 @@ lemma is_nnf_rec_v1_imp_to_dnf_v3_is_dnf_ind_v1
     unfold to_dnf_v3_aux
     simp only [list_of_lists_to_disjunction_of_conjunctions_singleton]
     cases phi
-    case atom_ X =>
+    case var_ X =>
       apply is_dnf_ind_v1.rule_1
       apply is_conj_ind_v1.rule_2
       apply is_literal_ind.rule_2

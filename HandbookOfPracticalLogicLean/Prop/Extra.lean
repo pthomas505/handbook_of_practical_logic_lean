@@ -13,7 +13,7 @@ set_option autoImplicit false
 inductive Formula_ : Type
   | false_ : Formula_
   | true_ : Formula_
-  | atom_ : String → Formula_
+  | var_ : String → Formula_
   | not_ : Formula_ → Formula_
   | and_ : Formula_ → Formula_ → Formula_
   | or_ : Formula_ → Formula_ → Formula_
@@ -33,7 +33,7 @@ def Formula_.toString :
   Formula_ → String
   | false_ => "F."
   | true_ => "T."
-  | atom_ X => s! "{X}"
+  | var_ X => s! "{X}"
   | not_ phi => s! "¬ {phi.toString}"
   | and_ phi psi => s! "({phi.toString} ∧ {psi.toString})"
   | or_ phi psi => s! "({phi.toString} ∨ {psi.toString})"
@@ -45,7 +45,7 @@ def Formula_.toString :
 instance : ToString Formula_ :=
   { toString := Formula_.toString }
 
-#eval (Formula_.atom_ "P").toString
+#eval (Formula_.var_ "P").toString
 
 
 open Lean Elab Meta
@@ -72,7 +72,7 @@ partial def elabFormula : Syntax → MetaM Expr
 
   | `(formula| $X:ident) => do
     let X' : Expr := Lean.mkStrLit X.getId.toString
-    mkAppM ``Formula_.atom_ #[X']
+    mkAppM ``Formula_.var_ #[X']
 
   | `(formula| ~ $phi) => do
     let phi' : Expr ← elabFormula phi
@@ -129,52 +129,52 @@ elab "(Formula_|" p:formula ")" : term => elabFormula p
 
 open Formula_
 
-def Formula_.map_atoms
+def Formula_.map_vars
   (f : String → Formula_) :
   Formula_ → Formula_
   | false_ => false_
   | true_ => true_
-  | atom_ X => f X
-  | not_ phi => not_ (phi.map_atoms f)
-  | and_ phi psi => and_ (phi.map_atoms f) (psi.map_atoms f)
-  | or_ phi psi => or_ (phi.map_atoms f) (psi.map_atoms f)
-  | imp_ phi psi => imp_ (phi.map_atoms f) (psi.map_atoms f)
-  | iff_ phi psi => iff_ (phi.map_atoms f) (psi.map_atoms f)
-  | forall_ x phi => forall_ x (phi.map_atoms f)
-  | exists_ x phi => forall_ x (phi.map_atoms f)
+  | var_ X => f X
+  | not_ phi => not_ (phi.map_vars f)
+  | and_ phi psi => and_ (phi.map_vars f) (psi.map_vars f)
+  | or_ phi psi => or_ (phi.map_vars f) (psi.map_vars f)
+  | imp_ phi psi => imp_ (phi.map_vars f) (psi.map_vars f)
+  | iff_ phi psi => iff_ (phi.map_vars f) (psi.map_vars f)
+  | forall_ x phi => forall_ x (phi.map_vars f)
+  | exists_ x phi => forall_ x (phi.map_vars f)
 
 
--- Applies function f to all of the atoms of the formula, from right to left.
-def Formula_.foldr_atoms
+-- Applies function f to all of the vars of the formula, from right to left.
+def Formula_.foldr_vars
   {α : Type}
   (f : String → α → α)
   (init : α) :
   Formula_ → α
   | false_
   | true_ => init
-  | atom_ X => f X init
-  | not_ phi => phi.foldr_atoms f init
+  | var_ X => f X init
+  | not_ phi => phi.foldr_vars f init
   | and_ phi psi
   | or_ phi psi
   | imp_ phi psi
-  | iff_ phi psi => phi.foldr_atoms f (psi.foldr_atoms f init)
+  | iff_ phi psi => phi.foldr_vars f (psi.foldr_vars f init)
   | forall_ _ phi
-  | exists_ _ phi => phi.foldr_atoms f init
+  | exists_ _ phi => phi.foldr_vars f init
 
 
-def atom_occurs_in
+def var_occurs_in
   (A : String) :
   Formula_ → Prop
   | false_
   | true_ => False
-  | atom_ X => A = X
-  | not_ phi => atom_occurs_in A phi
+  | var_ X => A = X
+  | not_ phi => var_occurs_in A phi
   | and_ phi psi
   | or_ phi psi
   | imp_ phi psi
-  | iff_ phi psi => atom_occurs_in A phi ∨ atom_occurs_in A psi
+  | iff_ phi psi => var_occurs_in A phi ∨ var_occurs_in A psi
   | forall_ _ phi
-  | exists_ _ phi => atom_occurs_in A phi
+  | exists_ _ phi => var_occurs_in A phi
 
 
 def PropValuation : Type := String → Prop
@@ -186,7 +186,7 @@ def eval
   Formula_ → Prop
   | false_ => False
   | true_ => True
-  | atom_ X => V X
+  | var_ X => V X
   | not_ phi => ¬ eval V phi
   | and_ phi psi => eval V phi ∧ eval V psi
   | or_ phi psi => eval V phi ∨ eval V psi
@@ -212,7 +212,7 @@ def eval_opt
   Formula_ → Option Prop
   | false_ => some False
   | true_ => some True
-  | atom_ X => some (V X)
+  | var_ X => some (V X)
   | not_ phi => do
     let val_phi ← eval_opt V phi
     ¬ val_phi
@@ -240,7 +240,7 @@ def Formula_.is_prop :
   Formula_ → Prop
   | false_
   | true_
-  | atom_ _ => True
+  | var_ _ => True
   | not_ phi => phi.is_prop
   | and_ phi psi
   | or_ phi psi
@@ -257,7 +257,7 @@ lemma is_prop_imp_eval_opt_eq_some_eval
   eval_opt V F = some (eval V F) :=
   by
   induction F
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     unfold eval_opt
     unfold eval
     rfl

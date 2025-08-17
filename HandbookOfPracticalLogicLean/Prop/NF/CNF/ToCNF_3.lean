@@ -30,7 +30,7 @@ def to_cnf_v3
   list_of_lists_to_conjunction_of_disjunctions (to_cnf_v3_aux F)
 
 
-#eval (list_of_lists_to_conjunction_of_disjunctions [[atom_ "P", atom_ "Q"], [not_ (atom_ "P"), atom_ "R"]]).toString
+#eval (list_of_lists_to_conjunction_of_disjunctions [[var_ "P", var_ "Q"], [not_ (var_ "P"), var_ "R"]]).toString
 
 
 lemma eval_eq_eval_to_cnf_v3

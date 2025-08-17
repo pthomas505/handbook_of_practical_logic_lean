@@ -14,7 +14,7 @@ def pattern_match_aux
   Formula_ → Formula_ → Option (Batteries.HashMap String Formula_)
   | false_, false_ => some σ
   | true_, true_ => some σ
-  | atom_ X, F =>
+  | var_ X, F =>
     match Batteries.HashMap.find? σ X with
     | none => Batteries.HashMap.insert σ X F
     | some F' => if F' = F then some σ else none
@@ -48,6 +48,6 @@ instance : ToString (Batteries.HashMap String Formula_) :=
   { toString := fun (M : Batteries.HashMap String Formula_) => M.toList.toString }
 
 
-#eval pattern_match (and_ (atom_ "P") (atom_ "Q")) (atom_ "R")
-#eval pattern_match (atom_ "R") (and_ (atom_ "P") (atom_ "Q"))
-#eval pattern_match (and_ (atom_ "R") (atom_ "S")) (and_ (atom_ "P") (or_ (atom_ "Q") (atom_ "R")))
+#eval pattern_match (and_ (var_ "P") (var_ "Q")) (var_ "R")
+#eval pattern_match (var_ "R") (and_ (var_ "P") (var_ "Q"))
+#eval pattern_match (and_ (var_ "R") (var_ "S")) (and_ (var_ "P") (or_ (var_ "Q") (var_ "R")))

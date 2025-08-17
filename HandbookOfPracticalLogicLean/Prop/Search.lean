@@ -44,13 +44,13 @@ def unify_formulas_mp
     simp only [zero_add, Nat.reduceAdd, Nat.one_lt_ofNat]
   let minor_disjoint : Formula_ := major_minor_disjoint[1]
 
-  let consequent : Formula_ := atom_ Nat.zero.repr
+  let consequent : Formula_ := var_ Nat.zero.repr
 
   match unify_formulas major_disjoint (imp_ minor_disjoint consequent) with
   | some σ =>
-      let major_instantiated := major_disjoint.rename_atom_all_rec σ
-      let minor_instantiated := minor_disjoint.rename_atom_all_rec σ
-      let consequent_instantiated := consequent.rename_atom_all_rec σ
+      let major_instantiated := major_disjoint.rename_var_all_rec σ
+      let minor_instantiated := minor_disjoint.rename_var_all_rec σ
+      let consequent_instantiated := consequent.rename_var_all_rec σ
       some ⟨major_instantiated, minor_instantiated, consequent_instantiated⟩
   | none => none
 

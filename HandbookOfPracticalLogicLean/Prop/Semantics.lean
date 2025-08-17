@@ -14,7 +14,7 @@ open Formula_
 
 /--
   The valuation of a formula as a function from strings to booleans.
-  A function from the set of atoms to the set of truth values `{false, true}`.
+  A function from the set of vars to the set of truth values `{false, true}`.
 -/
 def ValuationAsTotalFunction : Type := String → Bool
   deriving Inhabited
@@ -28,7 +28,7 @@ def eval
   Formula_ → Bool
   | false_ => false
   | true_ => true
-  | atom_ X => V X
+  | var_ X => V X
   | not_ phi => b_not (eval V phi)
   | and_ phi psi => b_and (eval V phi) (eval V psi)
   | or_ phi psi => b_or (eval V phi) (eval V psi)
@@ -339,7 +339,7 @@ example
 theorem theorem_2_2
   (V V' : ValuationAsTotalFunction)
   (F : Formula_)
-  (h1 : ∀ (A : String), atom_occurs_in A F → (V A = V' A)) :
+  (h1 : ∀ (A : String), var_occurs_in A F → (V A = V' A)) :
   eval V F = eval V' F :=
   by
   induction F
@@ -347,12 +347,12 @@ theorem theorem_2_2
     unfold eval
   case false_ | true_ =>
     rfl
-  case atom_ X =>
+  case var_ X =>
     apply h1
-    unfold atom_occurs_in
+    unfold var_occurs_in
     rfl
   case not_ phi ih =>
-    unfold atom_occurs_in at h1
+    unfold var_occurs_in at h1
 
     congr 1
     apply ih
@@ -364,7 +364,7 @@ theorem theorem_2_2
     | or_ phi psi phi_ih psi_ih
     | imp_ phi psi phi_ih psi_ih
     | iff_ phi psi phi_ih psi_ih =>
-    unfold atom_occurs_in at h1
+    unfold var_occurs_in at h1
 
     congr 1
     · apply phi_ih
@@ -387,7 +387,7 @@ namespace Option_
 
 /--
   The valuation of a formula as a function from strings to optional booleans.
-  A function from the set of atoms to the set of optional truth values `{false, true}`.
+  A function from the set of vars to the set of optional truth values `{false, true}`.
 -/
 def ValuationAsPartialFunction : Type := String → Option Bool
   deriving Inhabited
@@ -401,7 +401,7 @@ def eval
   Formula_ → Option Bool
   | false_ => some false
   | true_ => some true
-  | atom_ X => V X
+  | var_ X => V X
   | not_ phi => do
     let val_phi ← eval V phi
     b_not val_phi
@@ -447,7 +447,7 @@ instance
 def Formula_.is_tautology
   (F : Formula_) :
   Prop :=
-  ∀ (V : ValuationAsPartialFunction), ((∀ (A : String), atom_occurs_in A F → ¬ V A = none) → satisfies V F)
+  ∀ (V : ValuationAsPartialFunction), ((∀ (A : String), var_occurs_in A F → ¬ V A = none) → satisfies V F)
 
 
 /--
@@ -459,15 +459,15 @@ def valuation_as_list_of_pairs_to_valuation_as_partial_function :
   | hd :: tl => Function.updateITE (valuation_as_list_of_pairs_to_valuation_as_partial_function tl) hd.fst (some hd.snd)
 
 
-#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", true)]) (atom_ "P"))
-#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", false)]) (atom_ "P"))
-#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", true)]) (not_ (atom_ "P")))
-#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", false)]) (not_ (atom_ "P")))
-#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", false), ("Q", false)]) (and_ (atom_ "P") (atom_ "Q")))
-#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", false), ("Q", true)]) (and_ (atom_ "P") (atom_ "Q")))
-#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", true), ("Q", false)]) (and_ (atom_ "P") (atom_ "Q")))
-#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", true), ("Q", true)]) (and_ (atom_ "P") (atom_ "Q")))
-#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", true)]) (atom_ "Q"))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", true)]) (var_ "P"))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", false)]) (var_ "P"))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", true)]) (not_ (var_ "P")))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", false)]) (not_ (var_ "P")))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", false), ("Q", false)]) (and_ (var_ "P") (var_ "Q")))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", false), ("Q", true)]) (and_ (var_ "P") (var_ "Q")))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", true), ("Q", false)]) (and_ (var_ "P") (var_ "Q")))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", true), ("Q", true)]) (and_ (var_ "P") (var_ "Q")))
+#eval (eval (valuation_as_list_of_pairs_to_valuation_as_partial_function [("P", true)]) (var_ "Q"))
 
 
 end Option_
@@ -477,7 +477,7 @@ example
   (V_opt : Option_.ValuationAsPartialFunction)
   (V : ValuationAsTotalFunction)
   (F : Formula_)
-  (h1 : ∀ (A : String), atom_occurs_in A F → V_opt A = some (V A)) :
+  (h1 : ∀ (A : String), var_occurs_in A F → V_opt A = some (V A)) :
   Option_.eval V_opt F = some (eval V F) :=
   by
   induction F
@@ -485,15 +485,15 @@ example
     unfold Option_.eval
     unfold eval
     rfl
-  case atom_ X =>
-    unfold atom_occurs_in at h1
+  case var_ X =>
+    unfold var_occurs_in at h1
 
     unfold Option_.eval
     unfold eval
     apply h1
     rfl
   case not_ phi ih =>
-    unfold atom_occurs_in at h1
+    unfold var_occurs_in at h1
 
     unfold Option_.eval
     unfold eval
@@ -504,16 +504,16 @@ example
     | or_ phi psi phi_ih psi_ih
     | imp_ phi psi phi_ih psi_ih
     | iff_ phi psi phi_ih psi_ih =>
-    unfold atom_occurs_in at h1
+    unfold var_occurs_in at h1
 
-    have s1 : ∀ (A : String), atom_occurs_in A phi → V_opt A = some (V A) :=
+    have s1 : ∀ (A : String), var_occurs_in A phi → V_opt A = some (V A) :=
     by
       intro A a1
       apply h1
       left
       exact a1
 
-    have s2 : ∀ (A : String), atom_occurs_in A psi → V_opt A = some (V A) :=
+    have s2 : ∀ (A : String), var_occurs_in A psi → V_opt A = some (V A) :=
     by
       intro A a1
       apply h1
@@ -575,7 +575,7 @@ lemma opt_val_eq_some_opt_val_to_val
 lemma eval_opt_val_to_val
   (V_opt : Option_.ValuationAsPartialFunction)
   (F : Formula_)
-  (h1 : ∀ (A : String), atom_occurs_in A F → ¬ V_opt A = none) :
+  (h1 : ∀ (A : String), var_occurs_in A F → ¬ V_opt A = none) :
   Option_.eval V_opt F = some (eval (opt_val_to_val V_opt) F) :=
   by
   induction F
@@ -583,8 +583,8 @@ lemma eval_opt_val_to_val
     unfold Option_.eval
     unfold eval
     rfl
-  case atom_ X =>
-    unfold atom_occurs_in at h1
+  case var_ X =>
+    unfold var_occurs_in at h1
 
     unfold Option_.eval
     unfold eval
@@ -592,7 +592,7 @@ lemma eval_opt_val_to_val
     apply h1
     rfl
   case not_ phi ih =>
-    unfold atom_occurs_in at h1
+    unfold var_occurs_in at h1
 
     unfold Option_.eval
     unfold eval
@@ -603,16 +603,16 @@ lemma eval_opt_val_to_val
     | or_ phi psi phi_ih psi_ih
     | imp_ phi psi phi_ih psi_ih
     | iff_ phi psi phi_ih psi_ih =>
-    unfold atom_occurs_in at h1
+    unfold var_occurs_in at h1
 
-    have s1 : ∀ (A : String), atom_occurs_in A phi → ¬ V_opt A = none :=
+    have s1 : ∀ (A : String), var_occurs_in A phi → ¬ V_opt A = none :=
     by
       intro A a1
       apply h1
       left
       exact a1
 
-    have s2 : ∀ (A : String), atom_occurs_in A psi → ¬ V_opt A = none :=
+    have s2 : ∀ (A : String), var_occurs_in A psi → ¬ V_opt A = none :=
     by
       intro A a1
       apply h1
@@ -636,7 +636,7 @@ lemma eval_val_to_opt_val
     unfold Option_.eval
     unfold eval
     rfl
-  case atom_ X =>
+  case var_ X =>
     unfold Option_.eval
     unfold eval
     unfold val_to_opt_val

@@ -16,7 +16,7 @@ def Formula_.size :
   Formula_ → Nat
   | false_ => 1
   | true_ => 1
-  | atom_ _ => 1
+  | var_ _ => 1
   | not_ phi => phi.size + 1
   | and_ phi psi => phi.size + psi.size + 1
   | or_ phi psi => phi.size + psi.size + 1

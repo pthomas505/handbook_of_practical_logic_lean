@@ -59,7 +59,7 @@ lemma eval_to_nnf_neg_v1_eq_not_eval_to_nnf_v1
     unfold to_nnf_neg_v1
     unfold eval
     simp only [b_not]
-  case atom_ X =>
+  case var_ X =>
     unfold to_nnf_v1
     unfold to_nnf_neg_v1
     simp only [eval]
@@ -91,7 +91,7 @@ lemma eval_eq_eval_to_nnf_v1
   eval V F = eval V (to_nnf_v1 F) :=
   by
   induction F
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     unfold to_nnf_v1
     rfl
   case not_ phi ih =>
@@ -141,7 +141,7 @@ lemma to_nnf_neg_v1_is_nnf_rec_v1_iff_to_nnf_v1_is_nnf_rec_v1
   (to_nnf_neg_v1 F).is_nnf_rec_v1 ↔ (to_nnf_v1 F).is_nnf_rec_v1 :=
   by
   induction F
-  case true_ | false_ | atom_ X =>
+  case true_ | false_ | var_ X =>
     unfold to_nnf_v1
     unfold to_nnf_neg_v1
     unfold is_nnf_rec_v1
@@ -169,7 +169,7 @@ lemma to_nnf_v1_is_nnf_rec_v1
   (to_nnf_v1 F).is_nnf_rec_v1 :=
   by
   induction F
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     unfold to_nnf_v1
     unfold is_nnf_rec_v1
     exact trivial
@@ -203,18 +203,18 @@ example
   (F : Formula_)
   (h1 : is_nnf_rec_v1 F)
   (h2 : ¬ is_neg_literal_in_rec A F) :
-  ∀ (V : ValuationAsTotalFunction), eval V (((atom_ A).imp_ (atom_ A')).imp_ (F.imp_ (replace_atom_one_rec A (atom_ A') F))) :=
+  ∀ (V : ValuationAsTotalFunction), eval V (((var_ A).imp_ (var_ A')).imp_ (F.imp_ (replace_var_one_rec A (var_ A') F))) :=
   by
   intro V
   induction F
   case false_ | true_ =>
-    unfold replace_atom_one_rec
+    unfold replace_var_one_rec
     simp only [eval]
     rewrite [Bool.eq_iff_iff]
     simp only [bool_iff_prop_imp]
     tauto
-  case atom_ X =>
-    unfold replace_atom_one_rec
+  case var_ X =>
+    unfold replace_var_one_rec
     simp only [eval]
     split_ifs
     case pos c1 =>
@@ -230,10 +230,10 @@ example
       tauto
   case not_ phi ih =>
     cases phi
-    case atom_ X =>
+    case var_ X =>
       unfold is_neg_literal_in_rec at h2
 
-      simp only [replace_atom_one_rec]
+      simp only [replace_var_one_rec]
       split_ifs
       simp only [eval]
       rewrite [Bool.eq_iff_iff]
@@ -258,7 +258,7 @@ example
     simp only [eval] at psi_ih
     simp only [bool_iff_prop_imp] at psi_ih
 
-    simp only [replace_atom_one_rec]
+    simp only [replace_var_one_rec]
     simp only [eval]
     rewrite [Bool.eq_iff_iff]
     simp only [bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp]
@@ -273,20 +273,20 @@ example
   (F : Formula_)
   (h1 : is_nnf_rec_v1 F)
   (h2 : ¬ is_pos_literal_in_rec A F) :
-  ∀ (V : ValuationAsTotalFunction), eval V (((atom_ A).imp_ (atom_ A')).imp_ ((replace_atom_one_rec A (atom_ A') F).imp_ F)) = true :=
+  ∀ (V : ValuationAsTotalFunction), eval V (((var_ A).imp_ (var_ A')).imp_ ((replace_var_one_rec A (var_ A') F).imp_ F)) = true :=
   by
   intro V
   induction F
   case false_ | true_ =>
-    unfold replace_atom_one_rec
+    unfold replace_var_one_rec
     simp only [eval]
     rewrite [Bool.eq_iff_iff]
     simp only [bool_iff_prop_imp]
     tauto
-  case atom_ X =>
+  case var_ X =>
     unfold is_pos_literal_in_rec at h2
 
-    unfold replace_atom_one_rec
+    unfold replace_var_one_rec
     split_ifs
     simp only [eval]
     rewrite [Bool.eq_iff_iff]
@@ -294,8 +294,8 @@ example
     tauto
   case not_ phi ih =>
     cases phi
-    case atom_ X =>
-      simp only [replace_atom_one_rec]
+    case var_ X =>
+      simp only [replace_var_one_rec]
       split_ifs
       case pos c1 =>
         simp only [eval]
@@ -327,7 +327,7 @@ example
     simp only [eval] at psi_ih
     simp only [bool_iff_prop_imp] at psi_ih
 
-    simp only [replace_atom_one_rec]
+    simp only [replace_var_one_rec]
     simp only [eval]
     rewrite [Bool.eq_iff_iff]
     simp only [bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp]

@@ -16,7 +16,7 @@ def Formula_.has_dual :
   Formula_ → Prop
   | false_ => True
   | true_ => True
-  | atom_ _ => True
+  | var_ _ => True
   | not_ phi => phi.has_dual
   | and_ phi psi => phi.has_dual ∧ psi.has_dual
   | or_ phi psi => phi.has_dual ∧ psi.has_dual
@@ -39,7 +39,7 @@ def Formula_.dual :
   Formula_ → Formula_
   | false_ => true_
   | true_ => false_
-  | atom_ X => atom_ X
+  | var_ X => var_ X
   | not_ phi => not_ phi.dual
   | and_ phi psi => or_ phi.dual psi.dual
   | or_ phi psi => and_ phi.dual psi.dual
@@ -79,7 +79,7 @@ theorem theorem_2_7
     unfold eval
   case false_ | true_ =>
     simp only [b_not]
-  case atom_ X =>
+  case var_ X =>
     simp only [Function.comp_apply]
     cases V X
     all_goals

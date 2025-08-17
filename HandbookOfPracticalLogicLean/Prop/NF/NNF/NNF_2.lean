@@ -56,7 +56,7 @@ lemma eval_to_nnf_neg_v2_eq_not_eval_to_nnf_v2
     unfold to_nnf_v2
     unfold to_nnf_neg_v2
     simp only [eval]
-  case atom_ X =>
+  case var_ X =>
     unfold to_nnf_v2
     unfold to_nnf_neg_v2
     simp only [eval]
@@ -88,7 +88,7 @@ lemma eval_eq_eval_to_nnf_v2
   eval V F = eval V (to_nnf_v2 F) :=
   by
   induction F
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     unfold to_nnf_v2
     rfl
   case not_ phi ih =>
@@ -138,7 +138,7 @@ lemma to_nnf_neg_v2_is_nnf_rec_v2_iff_to_nnf_v2_is_nnf_rec_v2
   (to_nnf_neg_v2 F).is_nnf_rec_v2 ↔ (to_nnf_v2 F).is_nnf_rec_v2 :=
   by
   induction F
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     unfold to_nnf_v2
     unfold to_nnf_neg_v2
     unfold is_nnf_rec_v2
@@ -166,7 +166,7 @@ lemma to_nnf_v2_is_nnf_rec_v2
   is_nnf_rec_v2 (to_nnf_v2 F) :=
   by
   induction F
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     unfold to_nnf_v2
     unfold is_nnf_rec_v2
     exact trivial
@@ -208,7 +208,7 @@ lemma to_nnf_neg_v2_is_nnf_rec_v1_iff_to_nnf_v2_is_nnf_rec_v1
   case true_ =>
     unfold is_subformula at h2
     contradiction
-  case atom_ X =>
+  case var_ X =>
     unfold to_nnf_v2
     simp only [to_nnf_neg_v2]
     simp only [is_nnf_rec_v1]
@@ -253,7 +253,7 @@ lemma to_nnf_v2_is_nnf_rec_v1
   (to_nnf_v2 F).is_nnf_rec_v1 :=
   by
   induction F
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     unfold to_nnf_v2
     unfold is_nnf_rec_v1
     exact trivial

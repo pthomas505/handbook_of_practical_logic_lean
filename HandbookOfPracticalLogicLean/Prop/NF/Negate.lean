@@ -17,8 +17,8 @@ open Formula_
 -/
 def negate_literal :
   Formula_ → Formula_
-  | atom_ X => not_ (atom_ X)
-  | not_ (atom_ X) => atom_ X
+  | var_ X => not_ (var_ X)
+  | not_ (var_ X) => var_ X
   | phi => phi
 
 
@@ -28,13 +28,13 @@ lemma negate_literal_not_eq_self
   ¬ negate_literal F = F :=
   by
   cases F
-  case atom_ X =>
+  case var_ X =>
     simp only [negate_literal]
     intro contra
     contradiction
   case not_ phi =>
     cases phi
-    case atom_ X =>
+    case var_ X =>
       simp only [negate_literal]
       intro contra
       contradiction
@@ -51,12 +51,12 @@ lemma eval_negate_literal_eq_not_eval_literal
   eval V (negate_literal F) = b_not (eval V F) :=
   by
   cases F
-  case atom_ X =>
+  case var_ X =>
     simp only [negate_literal]
     simp only [eval]
   case not_ phi =>
     cases phi
-    case atom_ X =>
+    case var_ X =>
       simp only [negate_literal]
       simp only [eval]
 

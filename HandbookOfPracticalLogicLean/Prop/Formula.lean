@@ -11,7 +11,7 @@ set_option autoImplicit false
 inductive Formula_ : Type
   | false_ : Formula_
   | true_ : Formula_
-  | atom_ : String → Formula_
+  | var_ : String → Formula_
   | not_ : Formula_ → Formula_
   | and_ : Formula_ → Formula_ → Formula_
   | or_ : Formula_ → Formula_ → Formula_
@@ -29,7 +29,7 @@ def Formula_.toString :
   Formula_ → String
   | false_ => "F."
   | true_ => "T."
-  | atom_ X => s! "{X}"
+  | var_ X => s! "{X}"
   | not_ phi => s! "¬ {phi.toString}"
   | and_ phi psi => s! "({phi.toString} ∧ {psi.toString})"
   | or_ phi psi => s! "({phi.toString} ∨ {psi.toString})"
@@ -54,7 +54,7 @@ syntax "F." : formula
 /-- true -/
 syntax "T." : formula
 
-/-- atom -/
+/-- var -/
 syntax ident : formula
 
 /-- not -/
@@ -83,7 +83,7 @@ partial def elabFormula : Syntax → MetaM Expr
 
   | `(formula| $X:ident) => do
     let X' : Expr := Lean.mkStrLit X.getId.toString
-    mkAppM ``Formula_.atom_ #[X']
+    mkAppM ``Formula_.var_ #[X']
 
   | `(formula| ~ $phi) => do
     let phi' : Expr ← elabFormula phi

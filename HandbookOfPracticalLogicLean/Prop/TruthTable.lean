@@ -20,8 +20,8 @@ def ValuationAsListOfPairs : Type := List (String × Bool)
 
 
 /--
-  `gen_all_valuations_as_list_of_list_of_pairs atom_list` := Returns a list of all of the lists of pairs of strings and booleans that can be constructed by pairing each string in `atom_list` with a boolean.
-  [ l : List (String × Bool) | (l.map Prod.fst) = atom_list ]
+  `gen_all_valuations_as_list_of_list_of_pairs var_list` := Returns a list of all of the lists of pairs of strings and booleans that can be constructed by pairing each string in `var_list` with a boolean.
+  [ l : List (String × Bool) | (l.map Prod.fst) = var_list ]
 -/
 def gen_all_valuations_as_list_of_list_of_pairs :
   List String → List (ValuationAsListOfPairs)
@@ -36,21 +36,21 @@ def gen_all_valuations_as_list_of_list_of_pairs :
 
 
 /--
-  `all_valuations_as_set_of_list_of_pairs atom_list` := The set of all of the lists of pairs of strings and booleans that can be constructed by pairing each string in `atom_list` with a boolean.
+  `all_valuations_as_set_of_list_of_pairs var_list` := The set of all of the lists of pairs of strings and booleans that can be constructed by pairing each string in `var_list` with a boolean.
 -/
 def all_valuations_as_set_of_list_of_pairs
-  (atom_list : List String) :
+  (var_list : List String) :
   Set (ValuationAsListOfPairs) :=
-  { l : ValuationAsListOfPairs | (l.map Prod.fst) = atom_list }
+  { l : ValuationAsListOfPairs | (l.map Prod.fst) = var_list }
 
 
 lemma mem_gen_all_valuations_as_list_of_list_of_pairs_imp_mem_all_valuations_as_set_of_list_of_pairs
-  (atom_list : List String)
+  (var_list : List String)
   (l : ValuationAsListOfPairs)
-  (h1 : l ∈ gen_all_valuations_as_list_of_list_of_pairs atom_list) :
-  (l.map Prod.fst) = atom_list :=
+  (h1 : l ∈ gen_all_valuations_as_list_of_list_of_pairs var_list) :
+  (l.map Prod.fst) = var_list :=
   by
-  induction atom_list generalizing l
+  induction var_list generalizing l
   case nil =>
     unfold gen_all_valuations_as_list_of_list_of_pairs at h1
     simp only [List.mem_singleton] at h1
@@ -72,12 +72,12 @@ lemma mem_gen_all_valuations_as_list_of_list_of_pairs_imp_mem_all_valuations_as_
 
 
 lemma mem_all_valuations_as_set_of_list_of_pairs_imp_mem_gen_all_valuations_as_list_of_list_of_pairs
-  (atom_list : List String)
+  (var_list : List String)
   (l : ValuationAsListOfPairs)
-  (h1 : (l.map Prod.fst) = atom_list) :
-  l ∈ gen_all_valuations_as_list_of_list_of_pairs atom_list :=
+  (h1 : (l.map Prod.fst) = var_list) :
+  l ∈ gen_all_valuations_as_list_of_list_of_pairs var_list :=
   by
-  induction atom_list generalizing l
+  induction var_list generalizing l
   case nil =>
     cases l
     case nil =>
@@ -111,9 +111,9 @@ lemma mem_all_valuations_as_set_of_list_of_pairs_imp_mem_gen_all_valuations_as_l
 
 
 lemma mem_gen_all_valuations_as_list_of_list_of_pairs_iff_mem_all_valuations_as_set_of_list_of_pairs
-  (atom_list : List String)
+  (var_list : List String)
   (l : ValuationAsListOfPairs) :
-  l ∈ gen_all_valuations_as_list_of_list_of_pairs atom_list ↔ l ∈ all_valuations_as_set_of_list_of_pairs atom_list :=
+  l ∈ gen_all_valuations_as_list_of_list_of_pairs var_list ↔ l ∈ all_valuations_as_set_of_list_of_pairs var_list :=
   by
   unfold all_valuations_as_set_of_list_of_pairs
   simp only [Set.mem_setOf_eq]
@@ -126,11 +126,11 @@ lemma mem_gen_all_valuations_as_list_of_list_of_pairs_iff_mem_all_valuations_as_
 
 
 example
-  (atom_list : List String)
+  (var_list : List String)
   (f : String → Bool) :
-  Function.toListOfPairs atom_list f ∈ gen_all_valuations_as_list_of_list_of_pairs atom_list :=
+  Function.toListOfPairs var_list f ∈ gen_all_valuations_as_list_of_list_of_pairs var_list :=
   by
-  induction atom_list
+  induction var_list
   case nil =>
     unfold Function.toListOfPairs
     unfold gen_all_valuations_as_list_of_list_of_pairs
@@ -158,8 +158,8 @@ example
 
 
 /--
-  `gen_all_valuations_as_list_of_total_functions init atom_list` := Returns a list of all of the functions from strings to booleans that map every string not in `atom_list` to the same value as the function `init`.
-  [ V : String → Bool | ∀ (X : String), X ∉ atom_list → V X = init X ]
+  `gen_all_valuations_as_list_of_total_functions init var_list` := Returns a list of all of the functions from strings to booleans that map every string not in `var_list` to the same value as the function `init`.
+  [ V : String → Bool | ∀ (X : String), X ∉ var_list → V X = init X ]
 -/
 def gen_all_valuations_as_list_of_total_functions
   (init : ValuationAsTotalFunction) :
@@ -175,25 +175,25 @@ def gen_all_valuations_as_list_of_total_functions
 
 
 /--
-  `all_valuations_as_set_of_total_functions init atom_list` := The set of all of the functions from strings to booleans that map every string not in `atom_list` to the same value as the function `init`.
+  `all_valuations_as_set_of_total_functions init var_list` := The set of all of the functions from strings to booleans that map every string not in `var_list` to the same value as the function `init`.
 -/
 def all_valuations_as_set_of_total_functions
   (init : ValuationAsTotalFunction)
-  (atom_list : List String) :
+  (var_list : List String) :
   Set ValuationAsTotalFunction :=
-  { V : ValuationAsTotalFunction | ∀ (X : String), X ∉ atom_list → V X = init X }
+  { V : ValuationAsTotalFunction | ∀ (X : String), X ∉ var_list → V X = init X }
 
 
 lemma mem_gen_all_valuations_as_list_of_total_functions_imp_mem_all_valuations_as_set_of_total_functions
   (init : String → Bool)
-  (atom_list : List String)
+  (var_list : List String)
   (V : ValuationAsTotalFunction)
   (X : String)
-  (h1 : V ∈ gen_all_valuations_as_list_of_total_functions init atom_list)
-  (h2 : X ∉ atom_list) :
+  (h1 : V ∈ gen_all_valuations_as_list_of_total_functions init var_list)
+  (h2 : X ∉ var_list) :
   V X = init X :=
   by
-  induction atom_list generalizing V
+  induction var_list generalizing V
   case nil =>
     unfold gen_all_valuations_as_list_of_total_functions at h1
     simp only [List.mem_singleton] at h1
@@ -226,12 +226,12 @@ lemma mem_gen_all_valuations_as_list_of_total_functions_imp_mem_all_valuations_a
 
 lemma mem_all_valuations_as_set_of_total_functions_imp_mem_gen_all_valuations_as_list_of_total_functions
   (init : String → Bool)
-  (atom_list : List String)
+  (var_list : List String)
   (V : ValuationAsTotalFunction)
-  (h1 : ∀ (X : String), X ∉ atom_list → V X = init X) :
-  V ∈ gen_all_valuations_as_list_of_total_functions init atom_list :=
+  (h1 : ∀ (X : String), X ∉ var_list → V X = init X) :
+  V ∈ gen_all_valuations_as_list_of_total_functions init var_list :=
   by
-  induction atom_list generalizing V
+  induction var_list generalizing V
   case nil =>
     unfold gen_all_valuations_as_list_of_total_functions
     simp only [List.mem_singleton]
@@ -274,15 +274,15 @@ lemma mem_all_valuations_as_set_of_total_functions_imp_mem_gen_all_valuations_as
 
 lemma mem_gen_all_valuations_as_list_of_total_functions_iff_mem_all_valuations_as_set_of_total_functions
   (init : String → Bool)
-  (atom_list : List String)
+  (var_list : List String)
   (V : ValuationAsTotalFunction) :
-  V ∈ gen_all_valuations_as_list_of_total_functions init atom_list ↔ V ∈ all_valuations_as_set_of_total_functions init atom_list :=
+  V ∈ gen_all_valuations_as_list_of_total_functions init var_list ↔ V ∈ all_valuations_as_set_of_total_functions init var_list :=
   by
   unfold all_valuations_as_set_of_total_functions
   simp only [Set.mem_setOf_eq]
   constructor
   · intro a1 X a2
-    apply mem_gen_all_valuations_as_list_of_total_functions_imp_mem_all_valuations_as_set_of_total_functions init atom_list
+    apply mem_gen_all_valuations_as_list_of_total_functions_imp_mem_all_valuations_as_set_of_total_functions init var_list
     · exact a1
     · exact a2
   · apply mem_all_valuations_as_set_of_total_functions_imp_mem_gen_all_valuations_as_list_of_total_functions
@@ -305,10 +305,10 @@ def valuation_as_list_of_pairs_to_valuation_as_total_function
 
 example
   (init : ValuationAsTotalFunction)
-  (atom_list : List String) :
-  (gen_all_valuations_as_list_of_list_of_pairs atom_list).map (valuation_as_list_of_pairs_to_valuation_as_total_function init) = gen_all_valuations_as_list_of_total_functions init atom_list :=
+  (var_list : List String) :
+  (gen_all_valuations_as_list_of_list_of_pairs var_list).map (valuation_as_list_of_pairs_to_valuation_as_total_function init) = gen_all_valuations_as_list_of_total_functions init var_list :=
   by
-  induction atom_list
+  induction var_list
   case nil =>
     unfold gen_all_valuations_as_list_of_list_of_pairs
     simp only [List.map_cons, List.map_nil]
@@ -347,22 +347,22 @@ example
 
 
 /--
-  `valuation_as_total_function_to_valuation_as_list_of_pairs atom_list V` := Translates the function from strings to booleans `V` to a list of pairs of strings and booleans by pairing each string in `atom_list` with the boolean value mapped to by `V`.
+  `valuation_as_total_function_to_valuation_as_list_of_pairs var_list V` := Translates the function from strings to booleans `V` to a list of pairs of strings and booleans by pairing each string in `var_list` with the boolean value mapped to by `V`.
 -/
 def valuation_as_total_function_to_valuation_as_list_of_pairs
-  (atom_list : List String)
+  (var_list : List String)
   (V : ValuationAsTotalFunction) :
   ValuationAsListOfPairs :=
-  Function.toListOfPairs atom_list V
+  Function.toListOfPairs var_list V
 
 
 example
   (init : ValuationAsTotalFunction)
-  (atom_list : List String)
-  (h1 : atom_list.Nodup) :
-  (gen_all_valuations_as_list_of_total_functions init atom_list).map (valuation_as_total_function_to_valuation_as_list_of_pairs atom_list) = gen_all_valuations_as_list_of_list_of_pairs atom_list :=
+  (var_list : List String)
+  (h1 : var_list.Nodup) :
+  (gen_all_valuations_as_list_of_total_functions init var_list).map (valuation_as_total_function_to_valuation_as_list_of_pairs var_list) = gen_all_valuations_as_list_of_list_of_pairs var_list :=
   by
-  induction atom_list
+  induction var_list
   case nil =>
     unfold gen_all_valuations_as_list_of_total_functions
     simp only [List.map_cons, List.map_nil]
@@ -410,10 +410,10 @@ example
 
 
 lemma gen_all_valuations_as_list_of_list_of_pairs_length
-  (atom_list : List String) :
-  (gen_all_valuations_as_list_of_list_of_pairs atom_list).length = 2 ^ atom_list.length :=
+  (var_list : List String) :
+  (gen_all_valuations_as_list_of_list_of_pairs var_list).length = 2 ^ var_list.length :=
   by
-  induction atom_list
+  induction var_list
   case nil =>
     unfold gen_all_valuations_as_list_of_list_of_pairs
     simp only [List.length_singleton, List.length_nil, pow_zero]
@@ -427,10 +427,10 @@ lemma gen_all_valuations_as_list_of_list_of_pairs_length
 
 lemma gen_all_valuations_as_list_of_total_functions_length
   (init : String → Bool)
-  (atom_list : List String) :
-  (gen_all_valuations_as_list_of_total_functions init atom_list).length = 2 ^ atom_list.length :=
+  (var_list : List String) :
+  (gen_all_valuations_as_list_of_total_functions init var_list).length = 2 ^ var_list.length :=
   by
-  induction atom_list
+  induction var_list
   case nil =>
     unfold gen_all_valuations_as_list_of_total_functions
     simp only [List.length_singleton, List.length_nil, pow_zero]
@@ -445,18 +445,18 @@ lemma gen_all_valuations_as_list_of_total_functions_length
 -------------------------------------------------------------------------------
 
 
-lemma gen_all_valuations_as_list_of_total_functions_eq_on_atom_list
+lemma gen_all_valuations_as_list_of_total_functions_eq_on_var_list
   (init_1 init_2 : ValuationAsTotalFunction)
-  (atom_list : List String)
+  (var_list : List String)
   (p : ValuationAsTotalFunction × ValuationAsTotalFunction)
   (X : String)
   (h1 : p ∈ List.zip
-    (gen_all_valuations_as_list_of_total_functions init_1 atom_list)
-    (gen_all_valuations_as_list_of_total_functions init_2 atom_list))
-  (h2 : X ∈ atom_list) :
+    (gen_all_valuations_as_list_of_total_functions init_1 var_list)
+    (gen_all_valuations_as_list_of_total_functions init_2 var_list))
+  (h2 : X ∈ var_list) :
   p.fst X = p.snd X :=
   by
-  induction atom_list generalizing p
+  induction var_list generalizing p
   case nil =>
     simp only [List.not_mem_nil] at h2
   case cons hd tl ih =>
@@ -514,16 +514,16 @@ lemma mem_zip_gen_all_valuations_as_list_of_total_functions_imp_eval_eq
   (F : Formula_)
   (p : ValuationAsTotalFunction × ValuationAsTotalFunction)
   (h1 : p ∈ List.zip
-    (gen_all_valuations_as_list_of_total_functions init_1 F.atom_list.dedup)
-    (gen_all_valuations_as_list_of_total_functions init_2 F.atom_list.dedup)) :
+    (gen_all_valuations_as_list_of_total_functions init_1 F.var_list.dedup)
+    (gen_all_valuations_as_list_of_total_functions init_2 F.var_list.dedup)) :
   eval p.fst F = eval p.snd F :=
   by
   apply theorem_2_2
   intro X a1
-  apply gen_all_valuations_as_list_of_total_functions_eq_on_atom_list init_1 init_2 F.atom_list.dedup
+  apply gen_all_valuations_as_list_of_total_functions_eq_on_var_list init_1 init_2 F.var_list.dedup
   · exact h1
   · simp only [List.mem_dedup]
-    rewrite [← atom_occurs_in_iff_mem_atom_list]
+    rewrite [← var_occurs_in_iff_mem_var_list]
     exact a1
 
 
@@ -542,26 +542,26 @@ def find_valuation_aux
   find_valuation_aux pred tl ((hd, true) :: l)
 
 /--
-  `find_valuation pred atom_list` := Searches for the first valuation in `{ l : List (String × Bool) | (l.map Prod.fst) = atom_list }` that satisfies the predicate `pred`.
+  `find_valuation pred var_list` := Searches for the first valuation in `{ l : List (String × Bool) | (l.map Prod.fst) = var_list }` that satisfies the predicate `pred`.
 -/
 def find_valuation
   (pred : ValuationAsListOfPairs → Bool)
-  (atom_list : List String) :
+  (var_list : List String) :
   Option ValuationAsListOfPairs :=
-  find_valuation_aux pred atom_list []
+  find_valuation_aux pred var_list []
 
 
 #eval find_valuation (fun (l : List (String × Bool)) => ("P", true) ∈ l ∧ ("Q", false) ∈ l) ["P", "Q"]
 
 
 /--
-  `find_satisfying_valuation F` := Searches for the first valuation in `{ l : List (String × Bool) | (l.map Prod.fst) = F.atom_list }` that satisfies the formula `F`.
+  `find_satisfying_valuation F` := Searches for the first valuation in `{ l : List (String × Bool) | (l.map Prod.fst) = F.var_list }` that satisfies the formula `F`.
 -/
 def find_satisfying_valuation
   (F : Formula_) :
   Option ValuationAsListOfPairs :=
   let pred := fun (V : List (String × Bool)) => eval (valuation_as_list_of_pairs_to_valuation_as_total_function (fun _ => false) V) F
-  find_valuation pred F.atom_list.dedup
+  find_valuation pred F.var_list.dedup
 
 
 /--
@@ -580,14 +580,14 @@ instance
   infer_instance
 
 
-#eval find_satisfying_valuation (atom_ "P")
-#eval find_satisfying_valuation (not_ (atom_ "P"))
-#eval find_satisfying_valuation (and_ (atom_ "P") (not_ (atom_ "P")))
-#eval find_satisfying_valuation (or_ (atom_ "P") (not_ (atom_ "P")))
-#eval find_satisfying_valuation (imp_ (atom_ "P") (atom_ "Q"))
+#eval find_satisfying_valuation (var_ "P")
+#eval find_satisfying_valuation (not_ (var_ "P"))
+#eval find_satisfying_valuation (and_ (var_ "P") (not_ (var_ "P")))
+#eval find_satisfying_valuation (or_ (var_ "P") (not_ (var_ "P")))
+#eval find_satisfying_valuation (imp_ (var_ "P") (var_ "Q"))
 
-#eval check_tautology (or_ (atom_ "P") (not_ (atom_ "P")))
-#eval check_tautology (imp_ (atom_ "P") (atom_ "Q"))
+#eval check_tautology (or_ (var_ "P") (not_ (var_ "P")))
+#eval check_tautology (imp_ (var_ "P") (var_ "Q"))
 
 
 -------------------------------------------------------------------------------

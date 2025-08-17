@@ -398,13 +398,13 @@ example
 
 #eval let FSS : List (List Formula_):= [[]]; (filter_not_has_proper_subset_in_v2 FSS).toString
 
-#eval let FSS := [[atom_ "P"]]; (filter_not_has_proper_subset_in_v2 FSS).toString
+#eval let FSS := [[var_ "P"]]; (filter_not_has_proper_subset_in_v2 FSS).toString
 
-#eval let FSS := [[atom_ "P"], []]; (filter_not_has_proper_subset_in_v2 FSS).toString
+#eval let FSS := [[var_ "P"], []]; (filter_not_has_proper_subset_in_v2 FSS).toString
 
-#eval let FSS := [[atom_ "P"], [atom_ "P"]]; (filter_not_has_proper_subset_in_v2 FSS).toString
+#eval let FSS := [[var_ "P"], [var_ "P"]]; (filter_not_has_proper_subset_in_v2 FSS).toString
 
-#eval let FSS := [[atom_ "P"], [atom_ "P", atom_ "Q"]]; (filter_not_has_proper_subset_in_v2 FSS).toString
+#eval let FSS := [[var_ "P"], [var_ "P", var_ "Q"]]; (filter_not_has_proper_subset_in_v2 FSS).toString
 
 
 -------------------------------------------------------------------------------

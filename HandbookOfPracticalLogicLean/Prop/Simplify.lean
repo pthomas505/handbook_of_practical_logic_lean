@@ -622,7 +622,7 @@ lemma simplify_aux_is_logically_equivalent
   eval V (simplify_aux F) = eval V F :=
   by
   cases F
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     simp only [simplify_aux]
   case not_ phi =>
     cases phi
@@ -658,7 +658,7 @@ lemma simplify_is_logically_equivalent
   eval V (simplify F) = eval V F :=
   by
   induction F
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     rfl
   case not_ phi ih =>
     unfold simplify
@@ -696,7 +696,7 @@ lemma simplify_aux_size_le_size
   size (simplify_aux F) <= size F :=
   by
   cases F
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     simp only [simplify_aux]
     apply Nat.le_of_eq
     rfl
@@ -814,7 +814,7 @@ example
   size (simplify F) <= size F :=
   by
   induction F
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     simp only [simplify]
     apply Nat.le_refl
   case not_ phi ih =>

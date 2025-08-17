@@ -16,10 +16,10 @@ structure Equation : Type where
   deriving Inhabited, DecidableEq, Repr
 
 
-def Equation.atom_list
+def Equation.var_list
   (E : Equation) :
   List String :=
-  E.lhs.atom_list ∪ E.rhs.atom_list
+  E.lhs.var_list ∪ E.rhs.var_list
 
 
 /--
@@ -61,23 +61,23 @@ def unify
   Option (String → Formula_) :=
   match E with
   | ⟨false_, false_⟩
-  | ⟨true_, true_⟩ => Option.some atom_
-  | ⟨atom_ X, F⟩
-  | ⟨F, atom_ X⟩ =>
-    if atom_ X = F
-    then Option.some atom_
+  | ⟨true_, true_⟩ => Option.some var_
+  | ⟨var_ X, F⟩
+  | ⟨F, var_ X⟩ =>
+    if var_ X = F
+    then Option.some var_
     else
-      if atom_occurs_in X F
+      if var_occurs_in X F
       then Option.none
-      else Option.some (Function.updateITE atom_ X F)
+      else Option.some (Function.updateITE var_ X F)
   | ⟨not_ phi, not_ phi'⟩ => unify ⟨phi, phi'⟩
   | ⟨and_ phi psi, and_ phi' psi'⟩
   | ⟨or_ phi psi, or_ phi' psi'⟩
   | ⟨imp_ phi psi, imp_ phi' psi'⟩
   | ⟨iff_ phi psi, iff_ phi' psi'⟩ => do
     let σ_1 ← unify ⟨phi, phi'⟩
-    let σ_2 ← unify ⟨replace_atom_all_rec σ_1 psi, replace_atom_all_rec σ_1 psi'⟩
-    (replace_atom_all_rec σ_2) ∘ σ_1
+    let σ_2 ← unify ⟨replace_var_all_rec σ_1 psi, replace_var_all_rec σ_1 psi'⟩
+    (replace_var_all_rec σ_2) ∘ σ_1
   | _ => Option.none
 
 
@@ -85,16 +85,16 @@ def print_unify
   (E : Equation) :
   Option (String → Formula_) → Option (List (Formula_ × Formula_))
   | Option.none => Option.none
-  | Option.some σ => Option.some (List.map (fun (X : String) => (atom_ X, σ X)) E.atom_list)
+  | Option.some σ => Option.some (List.map (fun (X : String) => (var_ X, σ X)) E.var_list)
 
 
-#eval! let E : Equation := ⟨atom_ "P", atom_ "Q"⟩; print_unify E (unify E)
+#eval! let E : Equation := ⟨var_ "P", var_ "Q"⟩; print_unify E (unify E)
 
-#eval! let E : Equation := ⟨atom_ "X", not_ (atom_ "X")⟩; print_unify E (unify E)
+#eval! let E : Equation := ⟨var_ "X", not_ (var_ "X")⟩; print_unify E (unify E)
 
-#eval! let E : Equation := ⟨and_ (atom_ "X") (atom_ "Y"), and_ (atom_ "Y") (atom_ "Z")⟩; print_unify E (unify E)
+#eval! let E : Equation := ⟨and_ (var_ "X") (var_ "Y"), and_ (var_ "Y") (var_ "Z")⟩; print_unify E (unify E)
 
-#eval! let E : Equation := ⟨or_ (and_ (atom_ "X") (atom_ "Y")) (atom_ "Z"), or_ (and_ (atom_ "Y") (atom_ "Z")) (atom_ "X")⟩; print_unify E (unify E)
+#eval! let E : Equation := ⟨or_ (and_ (var_ "X") (var_ "Y")) (var_ "Z"), or_ (and_ (var_ "Y") (var_ "Z")) (var_ "X")⟩; print_unify E (unify E)
 
 
 partial
@@ -104,12 +104,12 @@ def unify_list
   match E with
   | ⟨false_, false_⟩
   | ⟨true_, true_⟩ => Option.some []
-  | ⟨atom_ X, F⟩
-  | ⟨F, atom_ X⟩ =>
-    if atom_ X = F
+  | ⟨var_ X, F⟩
+  | ⟨F, var_ X⟩ =>
+    if var_ X = F
     then Option.some []
     else
-      if atom_occurs_in X F
+      if var_occurs_in X F
       then Option.none
       else Option.some [(X, F)]
   | ⟨not_ phi, not_ phi'⟩ =>
@@ -119,14 +119,14 @@ def unify_list
   | ⟨imp_ phi psi, imp_ phi' psi'⟩
   | ⟨iff_ phi psi, iff_ phi' psi'⟩ => do
       let σ_1 ← unify_list ⟨phi, phi'⟩
-      let σ_1' : String → Formula_ := Function.updateFromListOfPairsITE atom_ σ_1
-      let σ_2 ← unify_list ⟨replace_atom_all_rec σ_1' psi, replace_atom_all_rec σ_1' psi'⟩
+      let σ_1' : String → Formula_ := Function.updateFromListOfPairsITE var_ σ_1
+      let σ_2 ← unify_list ⟨replace_var_all_rec σ_1' psi, replace_var_all_rec σ_1' psi'⟩
       σ_1 ++ σ_2
   | _ => Option.none
 
 
-#eval! unify_list ⟨atom_ "P", atom_ "Q"⟩
+#eval! unify_list ⟨var_ "P", var_ "Q"⟩
 
-#eval! unify_list ⟨atom_ "X", not_ (atom_ "X")⟩
+#eval! unify_list ⟨var_ "X", not_ (var_ "X")⟩
 
-#eval! unify_list ⟨and_ (atom_ "X") (atom_ "Y"), and_ (atom_ "Y") (atom_ "Z")⟩
+#eval! unify_list ⟨and_ (var_ "X") (var_ "Y"), and_ (var_ "Y") (var_ "Z")⟩

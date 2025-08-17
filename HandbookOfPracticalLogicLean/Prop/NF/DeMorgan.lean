@@ -18,7 +18,7 @@ def map_map_not
   List (List Formula_) :=
   List.map (List.map not_) FSS
 
-#eval map_map_not ([[atom_ "P", atom_ "Q"], [atom_ "R", atom_ "S"]])
+#eval map_map_not ([[var_ "P", var_ "Q"], [var_ "R", var_ "S"]])
 
 
 lemma de_morgan_1

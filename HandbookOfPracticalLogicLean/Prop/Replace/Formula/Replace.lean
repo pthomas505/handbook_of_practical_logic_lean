@@ -115,7 +115,7 @@ lemma is_repl_of_formula_in_formula_rec_imp_is_repl_of_formula_in_formula_ind
     | false_.false_ =>
     apply is_repl_of_formula_in_formula_ind.same_
     rfl
-  case atom_.atom_ X X' =>
+  case var_.var_ X X' =>
     unfold is_repl_of_formula_in_formula_rec at h1
 
     cases h1

@@ -32,12 +32,12 @@ instance
 
 
 /--
-  `Formula_.is_literal_rec F` := True if and only if the formula `F` is an atom or the negation of an atom.
+  `Formula_.is_literal_rec F` := True if and only if the formula `F` is an var or the negation of an var.
 -/
 def Formula_.is_literal_rec :
   Formula_ → Prop
-  | atom_ _ => True
-  | not_ (atom_ _) => True
+  | var_ _ => True
+  | not_ (var_ _) => True
   | _ => False
 
 instance
@@ -60,7 +60,7 @@ instance
 -/
 def Formula_.is_pos_literal_rec :
   Formula_ → Prop
-  | atom_ _ => True
+  | var_ _ => True
   | _ => False
 
 instance
@@ -78,7 +78,7 @@ instance
 -/
 def Formula_.is_neg_literal_rec :
   Formula_ → Prop
-  | not_ (atom_ _) => True
+  | not_ (var_ _) => True
   | _ => False
 
 instance
@@ -100,15 +100,15 @@ instance
 
 
 /--
-  `is_pos_literal_in_rec A F` := True if and only if there is an occurrence of the atom `A` as a positive literal in the formula `F`.
+  `is_pos_literal_in_rec A F` := True if and only if there is an occurrence of the var `A` as a positive literal in the formula `F`.
 -/
 def is_pos_literal_in_rec
   (A : String) :
   Formula_ → Prop
   | false_ => False
   | true_ => False
-  | atom_ X => A = X
-  | not_ (atom_ _) => False
+  | var_ X => A = X
+  | not_ (var_ _) => False
   | not_ phi => is_pos_literal_in_rec A phi
   | and_ phi psi => is_pos_literal_in_rec A phi ∨ is_pos_literal_in_rec A psi
   | or_ phi psi => is_pos_literal_in_rec A phi ∨ is_pos_literal_in_rec A psi
@@ -123,7 +123,7 @@ instance
   induction F
   case not_ phi ih =>
     cases phi
-    case atom_ X =>
+    case var_ X =>
       simp only [is_pos_literal_in_rec]
       infer_instance
     case not_ phi =>
@@ -140,15 +140,15 @@ instance
 
 
 /--
-  `is_neg_literal_in_rec A F` := True if and only if there is an occurrence of the atom `A` as a negative literal in the formula `F`.
+  `is_neg_literal_in_rec A F` := True if and only if there is an occurrence of the var `A` as a negative literal in the formula `F`.
 -/
 def is_neg_literal_in_rec
   (A : String) :
   Formula_ → Prop
   | false_ => False
   | true_ => False
-  | atom_ _ => False
-  | not_ (atom_ X) => A = X
+  | var_ _ => False
+  | not_ (var_ X) => A = X
   | not_ phi => is_neg_literal_in_rec A phi
   | and_ phi psi => is_neg_literal_in_rec A phi ∨ is_neg_literal_in_rec A psi
   | or_ phi psi => is_neg_literal_in_rec A phi ∨ is_neg_literal_in_rec A psi
@@ -163,7 +163,7 @@ instance
   induction F
   case not_ phi ih =>
     cases phi
-    case atom_ X =>
+    case var_ X =>
       simp only [is_neg_literal_in_rec]
       infer_instance
     case not_ phi =>
@@ -189,8 +189,8 @@ def Formula_.is_nnf_rec_v1 :
   Formula_ → Prop
   | false_ => True
   | true_ => True
-  | atom_ _ => True
-  | not_ (atom_ _) => True
+  | var_ _ => True
+  | not_ (var_ _) => True
   | and_ phi psi => phi.is_nnf_rec_v1 ∧ psi.is_nnf_rec_v1
   | or_ phi psi => phi.is_nnf_rec_v1 ∧ psi.is_nnf_rec_v1
   | _ => False
@@ -219,8 +219,8 @@ def Formula_.is_nnf_rec_v2 :
   | not_ false_ => True
   | true_ => True
   | not_ true_ => True
-  | atom_ _ => True
-  | not_ (atom_ _) => True
+  | var_ _ => True
+  | not_ (var_ _) => True
   | and_ phi psi => phi.is_nnf_rec_v2 ∧ psi.is_nnf_rec_v2
   | or_ phi psi => phi.is_nnf_rec_v2 ∧ psi.is_nnf_rec_v2
   | _ => False
@@ -244,14 +244,14 @@ instance
 
 
 /--
-  `Formula_.is_pos_nnf_rec_v1 F` := True if and only if the formula `F` is in negation normal form and every atom in `F` is positive.
+  `Formula_.is_pos_nnf_rec_v1 F` := True if and only if the formula `F` is in negation normal form and every var in `F` is positive.
 -/
 def Formula_.is_pos_nnf_rec_v1 :
   Formula_ → Prop
   | false_ => True
   | true_ => True
-  | atom_ _ => True
-  | not_ (atom_ _) => False
+  | var_ _ => True
+  | not_ (var_ _) => False
   | and_ phi psi => phi.is_pos_nnf_rec_v1 ∧ psi.is_pos_nnf_rec_v1
   | or_ phi psi => phi.is_pos_nnf_rec_v1 ∧ psi.is_pos_nnf_rec_v1
   | _ => False
@@ -275,14 +275,14 @@ instance
 
 
 /--
-  `Formula_.is_neg_nnf_rec_v1 F` := True if and only if the formula `F` is in negation normal form and every atom in `F` is negative.
+  `Formula_.is_neg_nnf_rec_v1 F` := True if and only if the formula `F` is in negation normal form and every var in `F` is negative.
 -/
 def Formula_.is_neg_nnf_rec_v1 :
   Formula_ → Prop
   | false_ => True
   | true_ => True
-  | atom_ _ => False
-  | not_ (atom_ _) => True
+  | var_ _ => False
+  | not_ (var_ _) => True
   | and_ phi psi => phi.is_neg_nnf_rec_v1 ∧ psi.is_neg_nnf_rec_v1
   | or_ phi psi => phi.is_neg_nnf_rec_v1 ∧ psi.is_neg_nnf_rec_v1
   | _ => False
@@ -312,12 +312,12 @@ def Formula_.is_disj_rec_v1 :
   Formula_ → Prop
   | false_ => True
   | true_ => True
-  | atom_ _ => True
-  | not_ (atom_ _) => True
+  | var_ _ => True
+  | not_ (var_ _) => True
   | or_ false_ psi => psi.is_disj_rec_v1
   | or_ true_ psi => psi.is_disj_rec_v1
-  | or_ (atom_ _) psi => psi.is_disj_rec_v1
-  | or_ (not_ (atom_ _)) psi => psi.is_disj_rec_v1
+  | or_ (var_ _) psi => psi.is_disj_rec_v1
+  | or_ (not_ (var_ _)) psi => psi.is_disj_rec_v1
   | _ => False
 
 instance
@@ -352,8 +352,8 @@ def Formula_.is_disj_rec_v2 :
   Formula_ → Prop
   | false_ => True
   | true_ => True
-  | atom_ _ => True
-  | not_ (atom_ _) => True
+  | var_ _ => True
+  | not_ (var_ _) => True
   | or_ phi psi => phi.is_disj_rec_v2 ∧ psi.is_disj_rec_v2
   | _ => False
 
@@ -382,12 +382,12 @@ def Formula_.is_conj_rec_v1 :
   Formula_ → Prop
   | false_ => True
   | true_ => True
-  | atom_ _ => True
-  | not_ (atom_ _) => True
+  | var_ _ => True
+  | not_ (var_ _) => True
   | and_ false_ psi => psi.is_conj_rec_v1
   | and_ true_ psi => psi.is_conj_rec_v1
-  | and_ (atom_ _) psi => psi.is_conj_rec_v1
-  | and_ (not_ (atom_ _)) psi => psi.is_conj_rec_v1
+  | and_ (var_ _) psi => psi.is_conj_rec_v1
+  | and_ (not_ (var_ _)) psi => psi.is_conj_rec_v1
   | _ => False
 
 instance
@@ -422,8 +422,8 @@ def Formula_.is_conj_rec_v2 :
   Formula_ → Prop
   | false_ => True
   | true_ => True
-  | atom_ _ => True
-  | not_ (atom_ _) => True
+  | var_ _ => True
+  | not_ (var_ _) => True
   | and_ phi psi => phi.is_conj_rec_v2 ∧ psi.is_conj_rec_v2
   | _ => False
 
@@ -538,16 +538,16 @@ inductive is_constant_ind : Formula_ → Prop
 
 
 /--
-  `is_literal_ind F` := True if and only if the formula `F` is an atom or the negation of an atom.
+  `is_literal_ind F` := True if and only if the formula `F` is an var or the negation of an var.
 -/
 inductive is_literal_ind : Formula_ → Prop
 | rule_1
   (X : String) :
-  is_literal_ind (atom_ X)
+  is_literal_ind (var_ X)
 
 | rule_2
   (X : String) :
-  is_literal_ind (not_ (atom_ X))
+  is_literal_ind (not_ (var_ X))
 
 
 -------------------------------------------------------------------------------
@@ -797,11 +797,11 @@ lemma is_literal_rec_imp_is_literal_ind
   is_literal_ind F :=
   by
   cases F
-  case atom_ X =>
+  case var_ X =>
     apply is_literal_ind.rule_1
   case not_ phi =>
     cases phi
-    case atom_ X =>
+    case var_ X =>
       apply is_literal_ind.rule_2
     all_goals
       simp only [is_literal_rec] at h1
@@ -843,12 +843,12 @@ lemma is_nnf_rec_v1_imp_is_nnf_ind_v1
   case true_ =>
     apply is_nnf_ind_v1.rule_1
     apply is_constant_ind.rule_2
-  case atom_ X =>
+  case var_ X =>
     apply is_nnf_ind_v1.rule_2
     apply is_literal_ind.rule_1
   case not_ phi ih =>
     cases phi
-    case atom_ X =>
+    case var_ X =>
       apply is_nnf_ind_v1.rule_2
       apply is_literal_ind.rule_2
     all_goals
@@ -913,12 +913,12 @@ lemma is_nnf_rec_v1_imp_is_nnf_rec_v2
   is_nnf_rec_v2 F :=
   by
   induction F
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     unfold is_nnf_rec_v2
     exact trivial
   case not_ phi ih =>
     cases phi
-    case atom_ X =>
+    case var_ X =>
       unfold is_nnf_rec_v2
       exact trivial
     all_goals
@@ -950,7 +950,7 @@ lemma is_pos_nnf_rec_v1_imp_is_nnf_rec_v1
   is_nnf_rec_v1 F :=
   by
   induction F
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     unfold is_nnf_rec_v1
     exact trivial
   case not_ phi ih =>
@@ -981,12 +981,12 @@ lemma is_neg_nnf_rec_v1_imp_is_nnf_rec_v1
   is_nnf_rec_v1 F :=
   by
   induction F
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     unfold is_nnf_rec_v1
     exact trivial
   case not_ phi ih =>
     cases phi
-    case atom_ X =>
+    case var_ X =>
       unfold is_nnf_rec_v1
       exact trivial
     all_goals
@@ -1018,12 +1018,12 @@ lemma is_disj_rec_v1_imp_is_nnf_rec_v1
   is_nnf_rec_v1 F :=
   by
   induction F
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     unfold is_nnf_rec_v1
     exact trivial
   case not_ phi ih =>
     cases phi
-    case atom_ X =>
+    case var_ X =>
       unfold is_nnf_rec_v1
       exact trivial
     all_goals
@@ -1032,7 +1032,7 @@ lemma is_disj_rec_v1_imp_is_nnf_rec_v1
   case or_ phi psi phi_ih psi_ih =>
     unfold is_nnf_rec_v1
     cases phi
-    case false_ | true_ | atom_ X =>
+    case false_ | true_ | var_ X =>
       unfold is_disj_rec_v1 at h1
 
       constructor
@@ -1042,7 +1042,7 @@ lemma is_disj_rec_v1_imp_is_nnf_rec_v1
         exact h1
     case not_ phi =>
       cases phi
-      case atom_ X =>
+      case var_ X =>
         unfold is_disj_rec_v1 at h1
 
         constructor
@@ -1076,12 +1076,12 @@ lemma is_disj_rec_v1_imp_is_disj_ind_v1
   case true_ =>
     apply is_disj_ind_v1.rule_1
     apply is_constant_ind.rule_2
-  case atom_ X =>
+  case var_ X =>
     apply is_disj_ind_v1.rule_2
     apply is_literal_ind.rule_1
   case not_ phi ih =>
     cases phi
-    case atom_ X =>
+    case var_ X =>
       apply is_disj_ind_v1.rule_2
       apply is_literal_ind.rule_2
     all_goals
@@ -1102,7 +1102,7 @@ lemma is_disj_rec_v1_imp_is_disj_ind_v1
       · apply is_constant_ind.rule_2
       · apply psi_ih
         exact h1
-    case atom_ X =>
+    case var_ X =>
       simp only [is_disj_rec_v1] at h1
 
       apply is_disj_ind_v1.rule_4
@@ -1111,7 +1111,7 @@ lemma is_disj_rec_v1_imp_is_disj_ind_v1
         exact h1
     case not_ phi =>
       cases phi
-      case atom_ X =>
+      case var_ X =>
         simp only [is_disj_rec_v1] at h1
 
         simp only [is_disj_rec_v1] at phi_ih
@@ -1174,12 +1174,12 @@ lemma is_disj_rec_v2_imp_is_disj_ind_v2
   case true_ =>
     apply is_disj_ind_v2.rule_1
     apply is_constant_ind.rule_2
-  case atom_ X =>
+  case var_ X =>
     apply is_disj_ind_v2.rule_2
     apply is_literal_ind.rule_1
   case not_ phi ih =>
     cases phi
-    case atom_ X =>
+    case var_ X =>
       apply is_disj_ind_v2.rule_2
       apply is_literal_ind.rule_2
     all_goals
@@ -1280,12 +1280,12 @@ lemma is_conj_rec_v1_imp_is_nnf_rec_v1
   is_nnf_rec_v1 F :=
   by
   induction F
-  case false_ | true_ | atom_ X =>
+  case false_ | true_ | var_ X =>
     unfold is_nnf_rec_v1
     exact trivial
   case not_ phi ih =>
     cases phi
-    case atom_ X =>
+    case var_ X =>
       unfold is_nnf_rec_v1
       exact trivial
     all_goals
@@ -1294,7 +1294,7 @@ lemma is_conj_rec_v1_imp_is_nnf_rec_v1
   case and_ phi psi phi_ih psi_ih =>
     unfold is_nnf_rec_v1
     cases phi
-    case false_ | true_ | atom_ X =>
+    case false_ | true_ | var_ X =>
       unfold is_conj_rec_v1 at h1
 
       constructor
@@ -1304,7 +1304,7 @@ lemma is_conj_rec_v1_imp_is_nnf_rec_v1
         exact h1
     case not_ phi =>
       cases phi
-      case atom_ X =>
+      case var_ X =>
         unfold is_conj_rec_v1 at h1
 
         constructor
@@ -1338,12 +1338,12 @@ lemma is_conj_rec_v1_imp_is_conj_ind_v1
   case true_ =>
     apply is_conj_ind_v1.rule_1
     apply is_constant_ind.rule_2
-  case atom_ X =>
+  case var_ X =>
     apply is_conj_ind_v1.rule_2
     apply is_literal_ind.rule_1
   case not_ phi ih =>
     cases phi
-    case atom_ X =>
+    case var_ X =>
       apply is_conj_ind_v1.rule_2
       apply is_literal_ind.rule_2
     all_goals
@@ -1364,7 +1364,7 @@ lemma is_conj_rec_v1_imp_is_conj_ind_v1
       · apply is_constant_ind.rule_2
       · apply psi_ih
         exact h1
-    case atom_ X =>
+    case var_ X =>
       simp only [is_conj_rec_v1] at h1
 
       apply is_conj_ind_v1.rule_4
@@ -1373,7 +1373,7 @@ lemma is_conj_rec_v1_imp_is_conj_ind_v1
         exact h1
     case not_ phi =>
       cases phi
-      case atom_ X =>
+      case var_ X =>
         simp only [is_conj_rec_v1] at h1
 
         simp only [is_conj_rec_v1] at phi_ih
@@ -1436,12 +1436,12 @@ lemma is_conj_rec_v2_imp_is_conj_ind_v2
   case true_ =>
     apply is_conj_ind_v2.rule_1
     apply is_constant_ind.rule_2
-  case atom_ X =>
+  case var_ X =>
     apply is_conj_ind_v2.rule_2
     apply is_literal_ind.rule_1
   case not_ phi ih =>
     cases phi
-    case atom_ X =>
+    case var_ X =>
       apply is_conj_ind_v2.rule_2
       apply is_literal_ind.rule_2
     all_goals
@@ -1550,13 +1550,13 @@ lemma is_dnf_rec_v1_imp_is_dnf_ind_v1
     apply is_dnf_ind_v1.rule_1
     apply is_conj_ind_v1.rule_1
     apply is_constant_ind.rule_2
-  case atom_ X =>
+  case var_ X =>
     apply is_dnf_ind_v1.rule_1
     apply is_conj_ind_v1.rule_2
     apply is_literal_ind.rule_1
   case not_ phi ih =>
     cases phi
-    case atom_ X =>
+    case var_ X =>
       apply is_dnf_ind_v1.rule_1
       apply is_conj_ind_v1.rule_2
       apply is_literal_ind.rule_2
@@ -1643,13 +1643,13 @@ lemma is_dnf_rec_v2_imp_is_dnf_ind_v2
     apply is_dnf_ind_v2.rule_1
     apply is_conj_ind_v2.rule_1
     apply is_constant_ind.rule_2
-  case atom_ X =>
+  case var_ X =>
     apply is_dnf_ind_v2.rule_1
     apply is_conj_ind_v2.rule_2
     apply is_literal_ind.rule_1
   case not_ phi ih =>
     cases phi
-    case atom_ X =>
+    case var_ X =>
       apply is_dnf_ind_v2.rule_1
       apply is_conj_ind_v2.rule_2
       apply is_literal_ind.rule_2
@@ -1766,13 +1766,13 @@ lemma is_cnf_rec_v1_imp_is_cnf_ind_v1
     apply is_cnf_ind_v1.rule_1
     apply is_disj_ind_v1.rule_1
     apply is_constant_ind.rule_2
-  case atom_ X =>
+  case var_ X =>
     apply is_cnf_ind_v1.rule_1
     apply is_disj_ind_v1.rule_2
     apply is_literal_ind.rule_1
   case not_ phi ih =>
     cases phi
-    case atom_ X =>
+    case var_ X =>
       apply is_cnf_ind_v1.rule_1
       apply is_disj_ind_v1.rule_2
       apply is_literal_ind.rule_2
@@ -1859,13 +1859,13 @@ lemma is_cnf_rec_v2_imp_is_cnf_ind_v2
     apply is_cnf_ind_v2.rule_1
     apply is_disj_ind_v2.rule_1
     apply is_constant_ind.rule_2
-  case atom_ X =>
+  case var_ X =>
     apply is_cnf_ind_v2.rule_1
     apply is_disj_ind_v2.rule_2
     apply is_literal_ind.rule_1
   case not_ phi ih =>
     cases phi
-    case atom_ X =>
+    case var_ X =>
       apply is_cnf_ind_v2.rule_1
       apply is_disj_ind_v2.rule_2
       apply is_literal_ind.rule_2

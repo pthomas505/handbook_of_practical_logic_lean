@@ -18,8 +18,8 @@ open Formula_
 theorem theorem_2_10
   (X : String)
   (P Q : Formula_)
-  (h1 : ¬ atom_occurs_in X Q) :
-  are_equisatisfiable (replace_atom_one_rec X Q P) (and_ (iff_ (atom_ X) Q) P) :=
+  (h1 : ¬ var_occurs_in X Q) :
+  are_equisatisfiable (replace_var_one_rec X Q P) (and_ (iff_ (var_ X) Q) P) :=
   by
   unfold are_equisatisfiable
   unfold is_satisfiable
@@ -60,32 +60,32 @@ def mk_defs_aux
   Formula_ → (Formula_ × Array Formula_)
   | false_ => (false_, acc)
   | true_ => (true_, acc)
-  | atom_ X =>
-      (atom_ X, acc)
+  | var_ X =>
+      (var_ X, acc)
 /-
-      match acc.findIdx? (· = (atom_ X)) with
-      | some n => (atom_ s!"def_{n}", acc)
-      | none => (atom_ s!"def_{acc.size}", acc.push (atom_ X))
+      match acc.findIdx? (· = (var_ X)) with
+      | some n => (var_ s!"def_{n}", acc)
+      | none => (var_ s!"def_{acc.size}", acc.push (var_ X))
 -/
-  | not_ (atom_ X) =>
-      (not_ (atom_ X), acc)
+  | not_ (var_ X) =>
+      (not_ (var_ X), acc)
 /-
-      match acc.findIdx? (· = (atom_ X)) with
-      | some n => (not_ (atom_ s!"def_{n}"), acc)
-      | none => (not_ (atom_ s!"def_{acc.size}"), acc.push (atom_ X))
+      match acc.findIdx? (· = (var_ X)) with
+      | some n => (not_ (var_ s!"def_{n}"), acc)
+      | none => (not_ (var_ s!"def_{acc.size}"), acc.push (var_ X))
 -/
   | and_ phi psi =>
       let (phi_def, phi_acc) := mk_defs_aux acc phi
       let (psi_def, psi_acc) := mk_defs_aux phi_acc psi
       match psi_acc.findIdx? (· = and_ phi_def psi_def) with
-      | some n => (atom_ s!"def_{n}", psi_acc)
-      | none => (atom_ s!"def_{psi_acc.size.repr}", psi_acc.push (and_ phi_def psi_def))
+      | some n => (var_ s!"def_{n}", psi_acc)
+      | none => (var_ s!"def_{psi_acc.size.repr}", psi_acc.push (and_ phi_def psi_def))
   | or_ phi psi =>
       let (phi_def, phi_acc) := mk_defs_aux acc phi
       let (psi_def, psi_acc) := mk_defs_aux phi_acc psi
       match psi_acc.findIdx? (· = or_ phi_def psi_def) with
-      | some n => (atom_ s!"def_{n}", psi_acc)
-      | none => (atom_ s!"def_{psi_acc.size.repr}", psi_acc.push (or_ phi_def psi_def))
+      | some n => (var_ s!"def_{n}", psi_acc)
+      | none => (var_ s!"def_{psi_acc.size.repr}", psi_acc.push (or_ phi_def psi_def))
   | F => (F, acc)
 
 
@@ -110,7 +110,7 @@ def print_defs
 def defs_to_cnf_aux :
   List Formula_ → Nat → List Formula_
   | [], _ => []
-  | hd :: tl, n => (or_ hd (not_ (atom_ s!"def_{n}"))) :: defs_to_cnf_aux tl (n + 1)
+  | hd :: tl, n => (or_ hd (not_ (var_ s!"def_{n}"))) :: defs_to_cnf_aux tl (n + 1)
 
 
 def to_cnf

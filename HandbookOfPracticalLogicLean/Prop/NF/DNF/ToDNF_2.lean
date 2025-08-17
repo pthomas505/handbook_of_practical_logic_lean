@@ -270,7 +270,7 @@ example
     apply is_dnf_ind_v2.rule_1
     apply is_conj_ind_v2.rule_1
     exact is_constant_ind.rule_2
-  case atom_ X =>
+  case var_ X =>
     unfold raw_dnf
     apply is_dnf_ind_v2.rule_1
     apply is_conj_ind_v2.rule_2
@@ -278,7 +278,7 @@ example
   case not_ phi ih =>
     unfold raw_dnf
     cases phi
-    case atom_ X =>
+    case var_ X =>
       apply is_dnf_ind_v2.rule_1
       apply is_conj_ind_v2.rule_2
       apply is_literal_ind.rule_2

@@ -43,20 +43,20 @@ instance
 
 #eval has_complementary []
 
-#eval has_complementary [atom_ "P"]
-#eval has_complementary [not_ (atom_ "P")]
+#eval has_complementary [var_ "P"]
+#eval has_complementary [not_ (var_ "P")]
 
-#eval has_complementary [atom_ "P", not_ (atom_ "P")]
-#eval has_complementary [not_ (atom_ "P"), atom_ "P"]
+#eval has_complementary [var_ "P", not_ (var_ "P")]
+#eval has_complementary [not_ (var_ "P"), var_ "P"]
 
-#eval has_complementary [atom_ "P", atom_ "Q", not_ (atom_ "P")]
-#eval has_complementary [not_ (atom_ "P"), atom_ "Q", atom_ "P"]
+#eval has_complementary [var_ "P", var_ "Q", not_ (var_ "P")]
+#eval has_complementary [not_ (var_ "P"), var_ "Q", var_ "P"]
 
-#eval has_complementary [atom_ "P", atom_ "Q", not_ (atom_ "Q")]
-#eval has_complementary [atom_ "P", not_ (atom_ "Q"), atom_ "Q"]
+#eval has_complementary [var_ "P", var_ "Q", not_ (var_ "Q")]
+#eval has_complementary [var_ "P", not_ (var_ "Q"), var_ "Q"]
 
-#eval has_complementary [atom_ "P", not_ (atom_ "P"), atom_ "Q"]
-#eval has_complementary [not_ (atom_ "P"), atom_ "P", atom_ "Q"]
+#eval has_complementary [var_ "P", not_ (var_ "P"), var_ "Q"]
+#eval has_complementary [not_ (var_ "P"), var_ "P", var_ "Q"]
 
 
 /--
