@@ -1,4 +1,4 @@
-import HandbookOfPracticalLogicLean.Chapter2.Replace
+import HandbookOfPracticalLogicLean.Chapter2.Replace.Var.One.Rec.Replace
 import HandbookOfPracticalLogicLean.Chapter2.Semantics
 import HandbookOfPracticalLogicLean.Chapter2.SubFormula
 import HandbookOfPracticalLogicLean.Chapter2.TruthTable

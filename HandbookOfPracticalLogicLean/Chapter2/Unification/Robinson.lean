@@ -1,7 +1,7 @@
 import MathlibExtraLean.FunctionUpdateITE
 import MathlibExtraLean.FunctionUpdateFromListOfPairsITE
 
-import HandbookOfPracticalLogicLean.Chapter2.Replace
+import HandbookOfPracticalLogicLean.Chapter2.Replace.Var.All.Rec.Replace
 
 
 set_option autoImplicit false
