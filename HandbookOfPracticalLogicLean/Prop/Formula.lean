@@ -115,7 +115,7 @@ partial def elabFormula : Syntax → MetaM Expr
 /--
   The elaboration of formulas.
 -/
-elab "(Formula_|" p:formula ")" : term => elabFormula p
+elab "(Formula_|" F:formula ")" : term => elabFormula F
 
 
 #check (Formula_| F. )
