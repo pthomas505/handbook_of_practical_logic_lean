@@ -67,7 +67,7 @@ def unify
     if var_ X = F
     then Option.some var_
     else
-      if var_occurs_in X F
+      if var_occurs_in_formula X F
       then Option.none
       else Option.some (Function.updateITE var_ X F)
   | ⟨not_ phi, not_ phi'⟩ => unify ⟨phi, phi'⟩
@@ -109,7 +109,7 @@ def unify_list
     if var_ X = F
     then Option.some []
     else
-      if var_occurs_in X F
+      if var_occurs_in_formula X F
       then Option.none
       else Option.some [(X, F)]
   | ⟨not_ phi, not_ phi'⟩ =>

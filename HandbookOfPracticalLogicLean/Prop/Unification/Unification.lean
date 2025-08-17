@@ -633,9 +633,9 @@ def is_in_solved_form :
   List (String × Formula_) → Prop
   | [] => True
   | (X, F) :: tl =>
-    (¬ var_occurs_in X F) ∧
+    (¬ var_occurs_in_formula X F) ∧
       ∀ (pair : String × Formula_), pair ∈ tl →
-        ((¬ X = pair.fst) ∧ (¬ var_occurs_in X pair.snd))
+        ((¬ X = pair.fst) ∧ (¬ var_occurs_in_formula X pair.snd))
 
 
 inductive is_unification_step : List Equation → List Equation → Prop
@@ -654,16 +654,16 @@ inductive is_unification_step : List Equation → List Equation → Prop
   (X : String)
   (F : Formula_)
   (Γ : List Equation) :
-  (∃ (E : Equation), E ∈ Γ ∧ (var_occurs_in X E.lhs ∨ var_occurs_in X E.rhs)) →
-  (¬ var_occurs_in X F) →
+  (∃ (E : Equation), E ∈ Γ ∧ (var_occurs_in_formula X E.lhs ∨ var_occurs_in_formula X E.rhs)) →
+  (¬ var_occurs_in_formula X F) →
   is_unification_step (⟨var_ X, F⟩ :: Γ) (⟨var_ X, F⟩ :: var_elim X F Γ)
 
 | var_rhs
   (X : String)
   (F : Formula_)
   (Γ : List Equation) :
-  (∃ (E : Equation), E ∈ Γ ∧ (var_occurs_in X E.lhs ∨ var_occurs_in X E.rhs)) →
-  (¬ var_occurs_in X F) →
+  (∃ (E : Equation), E ∈ Γ ∧ (var_occurs_in_formula X E.lhs ∨ var_occurs_in_formula X E.rhs)) →
+  (¬ var_occurs_in_formula X F) →
   is_unification_step (⟨F, var_ X⟩ :: Γ) (⟨F, var_ X⟩ :: var_elim X F Γ)
 
 
@@ -743,11 +743,11 @@ theorem extracted_2
         · exact contra
 
 
-lemma not_var_occurs_in_imp_not_mem_var_elim_equation_list_var_set
+lemma not_var_occurs_in_formula_imp_not_mem_var_elim_equation_list_var_set
   (X : String)
   (F : Formula_)
   (L : List Equation)
-  (h1 : ¬ var_occurs_in X F) :
+  (h1 : ¬ var_occurs_in_formula X F) :
   X ∉ equation_list_var_set (var_elim X F L) :=
   by
   unfold var_elim
@@ -763,16 +763,16 @@ lemma not_var_occurs_in_imp_not_mem_var_elim_equation_list_var_set
     intro contra
     cases contra
     case inl contra =>
-      apply not_var_occurs_in_imp_not_var_occurs_in_replace_var_one_rec X F hd.lhs
+      apply not_var_occurs_in_formula_imp_not_var_occurs_in_formula_replace_var_one_rec X F hd.lhs
       · exact h1
-      · simp only [var_occurs_in_iff_mem_var_set]
+      · simp only [var_occurs_in_formula_iff_mem_var_set]
         exact contra
     case inr contra =>
       cases contra
       case inl contra =>
-        apply not_var_occurs_in_imp_not_var_occurs_in_replace_var_one_rec X F hd.rhs
+        apply not_var_occurs_in_formula_imp_not_var_occurs_in_formula_replace_var_one_rec X F hd.rhs
         · exact h1
-        · simp only [var_occurs_in_iff_mem_var_set]
+        · simp only [var_occurs_in_formula_iff_mem_var_set]
           exact contra
       case inr contra =>
         contradiction
@@ -797,7 +797,7 @@ def unify :
     if var_ X = F
     then unify Γ
     else
-      if var_occurs_in X F
+      if var_occurs_in_formula X F
       then Option.none
       else
         match unify (var_elim X F Γ) with

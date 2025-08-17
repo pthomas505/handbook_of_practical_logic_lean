@@ -339,7 +339,7 @@ example
 theorem theorem_2_2
   (V V' : ValuationAsTotalFunction)
   (F : Formula_)
-  (h1 : ∀ (A : String), var_occurs_in A F → (V A = V' A)) :
+  (h1 : ∀ (A : String), var_occurs_in_formula A F → (V A = V' A)) :
   eval V F = eval V' F :=
   by
   induction F
@@ -349,10 +349,10 @@ theorem theorem_2_2
     rfl
   case var_ X =>
     apply h1
-    unfold var_occurs_in
+    unfold var_occurs_in_formula
     rfl
   case not_ phi ih =>
-    unfold var_occurs_in at h1
+    unfold var_occurs_in_formula at h1
 
     congr 1
     apply ih
@@ -364,7 +364,7 @@ theorem theorem_2_2
     | or_ phi psi phi_ih psi_ih
     | imp_ phi psi phi_ih psi_ih
     | iff_ phi psi phi_ih psi_ih =>
-    unfold var_occurs_in at h1
+    unfold var_occurs_in_formula at h1
 
     congr 1
     · apply phi_ih
@@ -447,7 +447,7 @@ instance
 def Formula_.is_tautology
   (F : Formula_) :
   Prop :=
-  ∀ (V : ValuationAsPartialFunction), ((∀ (A : String), var_occurs_in A F → ¬ V A = none) → satisfies V F)
+  ∀ (V : ValuationAsPartialFunction), ((∀ (A : String), var_occurs_in_formula A F → ¬ V A = none) → satisfies V F)
 
 
 /--
@@ -477,7 +477,7 @@ example
   (V_opt : Option_.ValuationAsPartialFunction)
   (V : ValuationAsTotalFunction)
   (F : Formula_)
-  (h1 : ∀ (A : String), var_occurs_in A F → V_opt A = some (V A)) :
+  (h1 : ∀ (A : String), var_occurs_in_formula A F → V_opt A = some (V A)) :
   Option_.eval V_opt F = some (eval V F) :=
   by
   induction F
@@ -486,14 +486,14 @@ example
     unfold eval
     rfl
   case var_ X =>
-    unfold var_occurs_in at h1
+    unfold var_occurs_in_formula at h1
 
     unfold Option_.eval
     unfold eval
     apply h1
     rfl
   case not_ phi ih =>
-    unfold var_occurs_in at h1
+    unfold var_occurs_in_formula at h1
 
     unfold Option_.eval
     unfold eval
@@ -504,16 +504,16 @@ example
     | or_ phi psi phi_ih psi_ih
     | imp_ phi psi phi_ih psi_ih
     | iff_ phi psi phi_ih psi_ih =>
-    unfold var_occurs_in at h1
+    unfold var_occurs_in_formula at h1
 
-    have s1 : ∀ (A : String), var_occurs_in A phi → V_opt A = some (V A) :=
+    have s1 : ∀ (A : String), var_occurs_in_formula A phi → V_opt A = some (V A) :=
     by
       intro A a1
       apply h1
       left
       exact a1
 
-    have s2 : ∀ (A : String), var_occurs_in A psi → V_opt A = some (V A) :=
+    have s2 : ∀ (A : String), var_occurs_in_formula A psi → V_opt A = some (V A) :=
     by
       intro A a1
       apply h1
@@ -575,7 +575,7 @@ lemma opt_val_eq_some_opt_val_to_val
 lemma eval_opt_val_to_val
   (V_opt : Option_.ValuationAsPartialFunction)
   (F : Formula_)
-  (h1 : ∀ (A : String), var_occurs_in A F → ¬ V_opt A = none) :
+  (h1 : ∀ (A : String), var_occurs_in_formula A F → ¬ V_opt A = none) :
   Option_.eval V_opt F = some (eval (opt_val_to_val V_opt) F) :=
   by
   induction F
@@ -584,7 +584,7 @@ lemma eval_opt_val_to_val
     unfold eval
     rfl
   case var_ X =>
-    unfold var_occurs_in at h1
+    unfold var_occurs_in_formula at h1
 
     unfold Option_.eval
     unfold eval
@@ -592,7 +592,7 @@ lemma eval_opt_val_to_val
     apply h1
     rfl
   case not_ phi ih =>
-    unfold var_occurs_in at h1
+    unfold var_occurs_in_formula at h1
 
     unfold Option_.eval
     unfold eval
@@ -603,16 +603,16 @@ lemma eval_opt_val_to_val
     | or_ phi psi phi_ih psi_ih
     | imp_ phi psi phi_ih psi_ih
     | iff_ phi psi phi_ih psi_ih =>
-    unfold var_occurs_in at h1
+    unfold var_occurs_in_formula at h1
 
-    have s1 : ∀ (A : String), var_occurs_in A phi → ¬ V_opt A = none :=
+    have s1 : ∀ (A : String), var_occurs_in_formula A phi → ¬ V_opt A = none :=
     by
       intro A a1
       apply h1
       left
       exact a1
 
-    have s2 : ∀ (A : String), var_occurs_in A psi → ¬ V_opt A = none :=
+    have s2 : ∀ (A : String), var_occurs_in_formula A psi → ¬ V_opt A = none :=
     by
       intro A a1
       apply h1

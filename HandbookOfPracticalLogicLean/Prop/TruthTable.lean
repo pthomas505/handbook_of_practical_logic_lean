@@ -523,7 +523,7 @@ lemma mem_zip_gen_all_valuations_as_list_of_total_functions_imp_eval_eq
   apply gen_all_valuations_as_list_of_total_functions_eq_on_var_list init_1 init_2 F.var_list.dedup
   · exact h1
   · simp only [List.mem_dedup]
-    rewrite [← var_occurs_in_iff_mem_var_list]
+    rewrite [← var_occurs_in_formula_iff_mem_var_list]
     exact a1
 
 

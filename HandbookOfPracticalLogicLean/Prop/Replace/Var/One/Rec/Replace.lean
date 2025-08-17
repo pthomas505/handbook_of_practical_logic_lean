@@ -112,17 +112,17 @@ theorem corollary_2_6_one
 -------------------------------------------------------------------------------
 
 
-lemma not_var_occurs_in_imp_not_var_occurs_in_replace_var_one_rec
+lemma not_var_occurs_in_formula_imp_not_var_occurs_in_formula_replace_var_one_rec
   (A : String)
   (P : Formula_)
   (F : Formula_)
-  (h1 : ¬ var_occurs_in A P) :
-  ¬ var_occurs_in A (replace_var_one_rec A P F) :=
+  (h1 : ¬ var_occurs_in_formula A P) :
+  ¬ var_occurs_in_formula A (replace_var_one_rec A P F) :=
   by
   induction F
   case false_ | true_ =>
     unfold replace_var_one_rec
-    unfold var_occurs_in
+    unfold var_occurs_in_formula
     intro contra
     exact contra
   case var_ X =>
@@ -131,11 +131,11 @@ lemma not_var_occurs_in_imp_not_var_occurs_in_replace_var_one_rec
     case pos c1 =>
       exact h1
     case neg c1 =>
-      unfold var_occurs_in
+      unfold var_occurs_in_formula
       exact c1
   case not_ phi ih =>
     unfold replace_var_one_rec
-    unfold var_occurs_in
+    unfold var_occurs_in_formula
     exact ih
   case
       and_ phi psi phi_ih psi_ih
@@ -143,7 +143,7 @@ lemma not_var_occurs_in_imp_not_var_occurs_in_replace_var_one_rec
     | imp_ phi psi phi_ih psi_ih
     | iff_ phi psi phi_ih psi_ih =>
     unfold replace_var_one_rec
-    unfold var_occurs_in
+    unfold var_occurs_in_formula
     intro contra
     cases contra
     case inl contra =>

@@ -162,19 +162,19 @@ def Formula_.foldr_vars
   | exists_ _ phi => phi.foldr_vars f init
 
 
-def var_occurs_in
+def var_occurs_in_formula
   (A : String) :
   Formula_ → Prop
   | false_
   | true_ => False
   | var_ X => A = X
-  | not_ phi => var_occurs_in A phi
+  | not_ phi => var_occurs_in_formula A phi
   | and_ phi psi
   | or_ phi psi
   | imp_ phi psi
-  | iff_ phi psi => var_occurs_in A phi ∨ var_occurs_in A psi
+  | iff_ phi psi => var_occurs_in_formula A phi ∨ var_occurs_in_formula A psi
   | forall_ _ phi
-  | exists_ _ phi => var_occurs_in A phi
+  | exists_ _ phi => var_occurs_in_formula A phi
 
 
 def PropValuation : Type := String → Prop

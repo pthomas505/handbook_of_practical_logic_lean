@@ -18,7 +18,7 @@ open Formula_
 theorem theorem_2_10
   (X : String)
   (P Q : Formula_)
-  (h1 : ¬ var_occurs_in X Q) :
+  (h1 : ¬ var_occurs_in_formula X Q) :
   are_equisatisfiable (replace_var_one_rec X Q P) (and_ (iff_ (var_ X) Q) P) :=
   by
   unfold are_equisatisfiable

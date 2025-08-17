@@ -161,7 +161,7 @@ theorem theorem_2_5_all
   (V : ValuationAsTotalFunction)
   (τ1 τ2 : String → Formula_)
   (F : Formula_)
-  (h1 : ∀ (A : String), var_occurs_in A F → eval V (τ1 A) = eval V (τ2 A)) :
+  (h1 : ∀ (A : String), var_occurs_in_formula A F → eval V (τ1 A) = eval V (τ2 A)) :
   eval V (replace_var_all_rec τ1 F) = eval V (replace_var_all_rec τ2 F) :=
   by
   simp only [theorem_2_3_all]
@@ -186,7 +186,7 @@ theorem corollary_2_6_all
   (V : ValuationAsTotalFunction)
   (τ1 τ2 : String → Formula_)
   (F : Formula_)
-  (h1 : ∀ (A : String), var_occurs_in A F → are_logically_equivalent (τ1 A) (τ2 A)) :
+  (h1 : ∀ (A : String), var_occurs_in_formula A F → are_logically_equivalent (τ1 A) (τ2 A)) :
   eval V (replace_var_all_rec τ1 F) = eval V (replace_var_all_rec τ2 F) :=
   by
   simp only [are_logically_equivalent_iff_eval_eq] at h1
