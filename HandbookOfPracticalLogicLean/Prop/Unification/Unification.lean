@@ -765,14 +765,14 @@ lemma not_var_occurs_in_formula_imp_not_mem_var_elim_equation_list_var_set
     case inl contra =>
       apply not_var_occurs_in_formula_imp_not_var_occurs_in_formula_replace_var_one_rec X F hd.lhs
       · exact h1
-      · simp only [var_occurs_in_formula_iff_mem_var_set]
+      · simp only [var_occurs_in_formula_iff_mem_formula_var_set]
         exact contra
     case inr contra =>
       cases contra
       case inl contra =>
         apply not_var_occurs_in_formula_imp_not_var_occurs_in_formula_replace_var_one_rec X F hd.rhs
         · exact h1
-        · simp only [var_occurs_in_formula_iff_mem_var_set]
+        · simp only [var_occurs_in_formula_iff_mem_formula_var_set]
           exact contra
       case inr contra =>
         contradiction

@@ -192,7 +192,7 @@ lemma is_small_step_v1_imp_mem_env_to_step_list
       apply Exists.intro Y
       rewrite [← h1_left]
       simp only
-      simp only [← var_occurs_in_formula_iff_mem_var_list]
+      simp only [← var_occurs_in_formula_iff_mem_formula_var_list]
       exact ⟨h1_right, ⟨trivial, trivial⟩⟩
     case inr h1_left =>
       right
@@ -229,7 +229,7 @@ lemma mem_env_to_step_list_imp_is_small_step_v1
       constructor
       · left
         simp only [Prod.mk.eta]
-      · simp only [var_occurs_in_formula_iff_mem_var_list]
+      · simp only [var_occurs_in_formula_iff_mem_formula_var_list]
         exact h1_left
     case inr h1 =>
       specialize ih h1

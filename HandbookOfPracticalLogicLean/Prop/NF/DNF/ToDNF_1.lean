@@ -160,7 +160,7 @@ lemma to_dnf_diff_init_eq_aux
       apply gen_all_valuations_as_list_of_total_functions_eq_on_var_list init_1 init_2 F.var_list.dedup
       · exact a1
       · simp only [List.mem_dedup]
-        simp only [← var_occurs_in_formula_iff_mem_var_list]
+        simp only [← var_occurs_in_formula_iff_mem_formula_var_list]
         exact a2
   · intro p a1
     apply eq_on_mem_imp_mk_lits_eq
@@ -251,7 +251,7 @@ lemma eval_to_dnf_eq_true_imp_eval_eq_true
   intro X a1
   apply eval_mk_lits_eq_true_imp_valuations_eq_on_var_list F.var_list.dedup V V' h1_right
   simp only [List.mem_dedup]
-  rewrite [← var_occurs_in_formula_iff_mem_var_list]
+  rewrite [← var_occurs_in_formula_iff_mem_formula_var_list]
   exact a1
 
 

@@ -10,7 +10,7 @@ open Formula_
 
 
 /--
-  `Formula_.is_var F` := True if and only if the formula `F` is an `var_`.
+  `Formula_.is_var F` := True if and only if the formula `F` is a variable.
 -/
 def Formula_.is_var :
   Formula_ → Prop
@@ -28,7 +28,7 @@ instance
 
 
 /--
-  `Formula_.var_set F` := The set of all of the vars that have an occurrence in the formula `F`.
+  `Formula_.var_set F` := The set of all of the variables that have an occurrence in the formula `F`.
 -/
 def Formula_.var_set :
   Formula_ → Finset String
@@ -43,7 +43,7 @@ def Formula_.var_set :
 
 
 /--
-  `Formula_.var_list F` := The list of all of the vars that have an occurrence in the formula `F`.
+  `Formula_.var_list F` := The list of all of the variables that have an occurrence in the formula `F`.
 -/
 def Formula_.var_list :
   Formula_ → List String
@@ -58,24 +58,24 @@ def Formula_.var_list :
 
 
 /--
-  `var_occurs_in_formula A F` := True if and only if there is an occurrence of the var `A` in the formula `F`.
+  `var_occurs_in_formula V F` := True if and only if there is an occurrence of the variable `V` in the formula `F`.
 -/
 def var_occurs_in_formula
-  (A : String) :
+  (V : String) :
   Formula_ → Prop
   | false_ => False
   | true_ => False
-  | var_ X => A = X
-  | not_ phi => var_occurs_in_formula A phi
-  | and_ phi psi => var_occurs_in_formula A phi ∨ var_occurs_in_formula A psi
-  | or_ phi psi => var_occurs_in_formula A phi ∨ var_occurs_in_formula A psi
-  | imp_ phi psi => var_occurs_in_formula A phi ∨ var_occurs_in_formula A psi
-  | iff_ phi psi => var_occurs_in_formula A phi ∨ var_occurs_in_formula A psi
+  | var_ X => V = X
+  | not_ phi => var_occurs_in_formula V phi
+  | and_ phi psi => var_occurs_in_formula V phi ∨ var_occurs_in_formula V psi
+  | or_ phi psi => var_occurs_in_formula V phi ∨ var_occurs_in_formula V psi
+  | imp_ phi psi => var_occurs_in_formula V phi ∨ var_occurs_in_formula V psi
+  | iff_ phi psi => var_occurs_in_formula V phi ∨ var_occurs_in_formula V psi
 
 instance
-  (A : String)
+  (V : String)
   (F : Formula_) :
-  Decidable (var_occurs_in_formula A F) :=
+  Decidable (var_occurs_in_formula V F) :=
   by
   induction F
   all_goals
@@ -86,10 +86,10 @@ instance
 -------------------------------------------------------------------------------
 
 
-lemma var_occurs_in_formula_iff_mem_var_set
-  (A : String)
+lemma var_occurs_in_formula_iff_mem_formula_var_set
+  (V : String)
   (F : Formula_) :
-  var_occurs_in_formula A F ↔ A ∈ F.var_set :=
+  var_occurs_in_formula V F ↔ V ∈ F.var_set :=
   by
   induction F
   all_goals
@@ -112,10 +112,10 @@ lemma var_occurs_in_formula_iff_mem_var_set
     rfl
 
 
-lemma var_occurs_in_formula_iff_mem_var_list
-  (A : String)
+lemma var_occurs_in_formula_iff_mem_formula_var_list
+  (V : String)
   (F : Formula_) :
-  var_occurs_in_formula A F ↔ A ∈ F.var_list :=
+  var_occurs_in_formula V F ↔ V ∈ F.var_list :=
   by
   induction F
   all_goals
@@ -142,7 +142,7 @@ lemma var_occurs_in_formula_iff_mem_var_list
 
 
 /--
-  `formula_list_var_set FS` := The set of all of the vars that have an occurrence in the list of formulas `FS`.
+  `formula_list_var_set FS` := The set of all of the variables that have an occurrence in the list of formulas `FS`.
 -/
 def formula_list_var_set
   (FS : List Formula_) :
@@ -151,7 +151,7 @@ def formula_list_var_set
 
 
 /--
-  `formula_list_var_list FS` := The list of all of the vars that have an occurrence in the list of formulas `FS`.
+  `formula_list_var_list FS` := The list of all of the variables that have an occurrence in the list of formulas `FS`.
 -/
 def formula_list_var_list
   (FS : List Formula_) :
@@ -160,33 +160,33 @@ def formula_list_var_list
 
 
 /--
-  `var_occurs_in_formula_formula_list A FS` := True if and only if there is an occurrence of the var `A` in the list of formulas `FS`.
+  `var_occurs_in_formula_list V FS` := True if and only if there is an occurrence of the variable `V` in the list of formulas `FS`.
 -/
-def var_occurs_in_formula_formula_list
-  (A : String)
+def var_occurs_in_formula_list
+  (V : String)
   (FS : List Formula_) :
   Prop :=
-  ∃ (F : Formula_), F ∈ FS ∧ var_occurs_in_formula A F
+  ∃ (F : Formula_), F ∈ FS ∧ var_occurs_in_formula V F
 
 instance
-  (A : String)
+  (V : String)
   (FS : List Formula_) :
-  Decidable (var_occurs_in_formula_formula_list A FS) :=
+  Decidable (var_occurs_in_formula_list V FS) :=
   by
-  unfold var_occurs_in_formula_formula_list
+  unfold var_occurs_in_formula_list
   infer_instance
 
 
 -------------------------------------------------------------------------------
 
 
-lemma var_occurs_in_formula_formula_list_imp_mem_formula_list_var_set
-  (A : String)
+lemma var_occurs_in_formula_list_imp_mem_formula_list_var_set
+  (V : String)
   (FS : List Formula_)
   (F : Formula_)
   (h1 : F ∈ FS)
-  (h2 : var_occurs_in_formula A F) :
-  A ∈ formula_list_var_set FS :=
+  (h2 : var_occurs_in_formula V F) :
+  V ∈ formula_list_var_set FS :=
   by
   unfold formula_list_var_set
 
@@ -202,7 +202,7 @@ lemma var_occurs_in_formula_formula_list_imp_mem_formula_list_var_set
     case inl h1 =>
       rewrite [← h1]
       left
-      simp only [← var_occurs_in_formula_iff_mem_var_set]
+      simp only [← var_occurs_in_formula_iff_mem_formula_var_set]
       exact h2
     case inr h1 =>
       right
@@ -210,15 +210,15 @@ lemma var_occurs_in_formula_formula_list_imp_mem_formula_list_var_set
       exact h1
 
 
-lemma mem_formula_list_var_set_imp_var_occurs_in_formula_formula_list
-  (A : String)
+lemma mem_formula_list_var_set_imp_var_occurs_in_formula_list
+  (V : String)
   (FS : List Formula_)
-  (h1 : A ∈ formula_list_var_set FS) :
-  var_occurs_in_formula_formula_list A FS :=
+  (h1 : V ∈ formula_list_var_set FS) :
+  var_occurs_in_formula_list V FS :=
   by
   unfold formula_list_var_set at h1
 
-  unfold var_occurs_in_formula_formula_list
+  unfold var_occurs_in_formula_list
   induction FS
   case nil =>
     simp only [List.foldr_nil, Finset.not_mem_empty] at h1
@@ -232,7 +232,7 @@ lemma mem_formula_list_var_set_imp_var_occurs_in_formula_formula_list
       constructor
       · left
         rfl
-      · simp only [var_occurs_in_formula_iff_mem_var_set]
+      · simp only [var_occurs_in_formula_iff_mem_formula_var_set]
         exact h1
     case inr h1 =>
       specialize ih h1
@@ -245,31 +245,31 @@ lemma mem_formula_list_var_set_imp_var_occurs_in_formula_formula_list
       · exact ih_right
 
 
-lemma var_occurs_in_formula_formula_list_iff_mem_formula_list_var_set
-  (A : String)
+lemma var_occurs_in_formula_list_iff_mem_formula_list_var_set
+  (V : String)
   (FS : List Formula_) :
-  var_occurs_in_formula_formula_list A FS ↔ A ∈ formula_list_var_set FS :=
+  var_occurs_in_formula_list V FS ↔ V ∈ formula_list_var_set FS :=
   by
-    unfold var_occurs_in_formula_formula_list
+    unfold var_occurs_in_formula_list
     constructor
     · intro a1
       obtain ⟨F, a1_left, a1_right⟩ := a1
-      apply var_occurs_in_formula_formula_list_imp_mem_formula_list_var_set A FS F
+      apply var_occurs_in_formula_list_imp_mem_formula_list_var_set V FS F
       · exact a1_left
       · exact a1_right
-    · apply mem_formula_list_var_set_imp_var_occurs_in_formula_formula_list
+    · apply mem_formula_list_var_set_imp_var_occurs_in_formula_list
 
 
 -------------------------------------------------------------------------------
 
 
-lemma var_occurs_in_formula_formula_list_imp_mem_formula_list_var_list
-  (A : String)
+lemma var_occurs_in_formula_list_imp_mem_formula_list_var_list
+  (V : String)
   (FS : List Formula_)
   (F : Formula_)
   (h1 : F ∈ FS)
-  (h2 : var_occurs_in_formula A F) :
-  A ∈ formula_list_var_list FS :=
+  (h2 : var_occurs_in_formula V F) :
+  V ∈ formula_list_var_list FS :=
   by
   unfold formula_list_var_list
 
@@ -285,7 +285,7 @@ lemma var_occurs_in_formula_formula_list_imp_mem_formula_list_var_list
     case inl h1 =>
       rewrite [← h1]
       left
-      simp only [← var_occurs_in_formula_iff_mem_var_list]
+      simp only [← var_occurs_in_formula_iff_mem_formula_var_list]
       exact h2
     case inr h1 =>
       right
@@ -293,15 +293,15 @@ lemma var_occurs_in_formula_formula_list_imp_mem_formula_list_var_list
       exact h1
 
 
-lemma mem_formula_list_var_list_imp_var_occurs_in_formula_formula_list
-  (A : String)
+lemma mem_formula_list_var_list_imp_var_occurs_in_formula_list
+  (V : String)
   (FS : List Formula_)
-  (h1 : A ∈ formula_list_var_list FS) :
-  var_occurs_in_formula_formula_list A FS :=
+  (h1 : V ∈ formula_list_var_list FS) :
+  var_occurs_in_formula_list V FS :=
   by
   unfold formula_list_var_list at h1
 
-  unfold var_occurs_in_formula_formula_list
+  unfold var_occurs_in_formula_list
   induction FS
   case nil =>
     simp only [List.foldr_nil, List.not_mem_nil] at h1
@@ -315,7 +315,7 @@ lemma mem_formula_list_var_list_imp_var_occurs_in_formula_formula_list
       constructor
       · left
         rfl
-      · simp only [var_occurs_in_formula_iff_mem_var_list]
+      · simp only [var_occurs_in_formula_iff_mem_formula_var_list]
         exact h1
     case inr h1 =>
       specialize ih h1
@@ -328,19 +328,19 @@ lemma mem_formula_list_var_list_imp_var_occurs_in_formula_formula_list
       · exact ih_right
 
 
-lemma var_occurs_in_formula_formula_list_iff_mem_formula_list_var_list
-  (A : String)
+lemma var_occurs_in_formula_list_iff_mem_formula_list_var_list
+  (V : String)
   (FS : List Formula_) :
-  var_occurs_in_formula_formula_list A FS ↔ A ∈ formula_list_var_list FS :=
+  var_occurs_in_formula_list V FS ↔ V ∈ formula_list_var_list FS :=
   by
-    unfold var_occurs_in_formula_formula_list
+    unfold var_occurs_in_formula_list
     constructor
     · intro a1
       obtain ⟨F, a1_left, a1_right⟩ := a1
-      apply var_occurs_in_formula_formula_list_imp_mem_formula_list_var_list A FS F
+      apply var_occurs_in_formula_list_imp_mem_formula_list_var_list V FS F
       · exact a1_left
       · exact a1_right
-    · apply mem_formula_list_var_list_imp_var_occurs_in_formula_formula_list
+    · apply mem_formula_list_var_list_imp_var_occurs_in_formula_list
 
 
 #lint
