@@ -282,7 +282,7 @@ example
 
 
 /-
-  Let `X` be a string, let `F` be a formula, and let `L` be a list of equations. If `⟨var_ X, F⟩ ∈ L` then every substitution that is a unifier of `L` is also a unifier of `⟨var_ X, F⟩`. Hence every substitution that is a unifier of `L` maps `X` and `F` to the same formula. Let `L'` be the replacement of every occurrence of `X` in `L` by `F`. Then every substitution that is a unifier of `L` maps `X` and `F` in `L` to the same formula that it maps `F` in `L'` to. Therefore `L` and `L'` are equivalent equation lists.
+  Let `X` be a string, let `F` be a formula, and let `ES` be a list of equations. If `⟨var_ X, F⟩ ∈ ES` then every substitution that is a unifier of `ES` is also a unifier of `⟨var_ X, F⟩`. Hence every substitution that is a unifier of `ES` maps `X` and `F` to the same formula. Let `ES'` be the replacement of every occurrence of `X` in `ES` by `F`. Then every substitution that is a unifier of `ES` maps `X` and `F` in `ES` to the same formula that it maps `F` in `ES'` to. Therefore `ES` and `ES'` are equivalent equation lists.
 -/
 
 
