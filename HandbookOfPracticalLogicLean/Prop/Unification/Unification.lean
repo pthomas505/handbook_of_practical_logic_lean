@@ -1,5 +1,6 @@
 -- https://dl.acm.org/doi/10.1145/357162.357169
 
+import HandbookOfPracticalLogicLean.Prop.Unification.Equation
 import HandbookOfPracticalLogicLean.Prop.Replace.Var.All.Rec.Replace
 
 
@@ -10,56 +11,6 @@ open Formula_
 
 
 def Substitution : Type := String → Formula_
-
-
-structure Equation : Type where
-  (lhs : Formula_)
-  (rhs : Formula_)
-  deriving Inhabited, DecidableEq, Repr
-
-
-def equation_list_formula_list
-  (L : List Equation) :
-  List Formula_ :=
-  List.foldr (fun (next : Equation) (prev : List Formula_) => next.lhs :: next.rhs :: prev) [] L
-
-#eval equation_list_formula_list []
-#eval equation_list_formula_list [⟨var_ "P", var_ "Q"⟩]
-#eval equation_list_formula_list [⟨var_ "P", var_ "Q"⟩, ⟨var_ "Q", var_ "R"⟩]
-#eval equation_list_formula_list [⟨var_ "P", var_ "Q"⟩, ⟨var_ "R", var_ "S"⟩]
-
-
-def equation_list_var_set
-  (L : List Equation) :
-  Finset String :=
-    List.foldr (fun (next : Equation) (prev : Finset String) => next.lhs.var_set ∪ next.rhs.var_set ∪ prev) {} L
-
-#eval equation_list_var_set {}
-#eval equation_list_var_set [⟨var_ "P", var_ "Q"⟩]
-#eval equation_list_var_set [⟨var_ "P", var_ "Q"⟩, ⟨var_ "Q", var_ "R"⟩]
-#eval equation_list_var_set [⟨var_ "P", var_ "Q"⟩, ⟨var_ "R", var_ "S"⟩]
-
-
-lemma equation_list_var_set_append
-  (L1 L2 : List Equation) :
-  equation_list_var_set (L1 ++ L2) =
-    equation_list_var_set L1 ∪ equation_list_var_set L2 :=
-  by
-    unfold equation_list_var_set
-    simp only [Finset.union_assoc, List.foldr_append]
-    induction L1
-    case nil =>
-      simp only [List.foldr_nil, Finset.empty_union]
-    case cons hd tl ih =>
-      simp only [List.foldr_cons, Finset.union_assoc]
-      rewrite [ih]
-      rfl
-
-
-def equation_list_size
-  (L : List Equation) :
-  Nat :=
-  List.foldr (fun (next : Equation) (prev : Nat) => next.lhs.size + next.rhs.size + prev) 0 L
 
 
 /--

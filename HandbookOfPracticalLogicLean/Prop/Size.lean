@@ -24,4 +24,13 @@ def Formula_.size :
   | iff_ phi psi => phi.size + psi.size + 1
 
 
+/--
+  `formula_list_size FS` := The number of subformulas in the list of formulas `FS`.
+-/
+def formula_list_size
+  (FS : List Formula_) :
+  Nat :=
+  List.foldr (fun (next : Formula_) (prev : Nat) => next.size + prev) 0 FS
+
+
 #lint
