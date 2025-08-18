@@ -113,6 +113,9 @@ lemma replace_var_all_rec_eq_replace_var_all_rec_of_replace_var_one_rec
     rfl
 
 
+-------------------------------------------------------------------------------
+
+
 theorem theorem_2_3_all
   (V : ValuationAsTotalFunction)
   (τ : String → Formula_)
