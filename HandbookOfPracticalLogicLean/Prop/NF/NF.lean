@@ -32,7 +32,7 @@ instance
 
 
 /--
-  `Formula_.is_literal_rec F` := True if and only if the formula `F` is an var or the negation of an var.
+  `Formula_.is_literal_rec F` := True if and only if the formula `F` is a variable or the negation of a variable.
 -/
 def Formula_.is_literal_rec :
   Formula_ → Prop
@@ -100,7 +100,7 @@ instance
 
 
 /--
-  `is_pos_literal_in_rec A F` := True if and only if there is an occurrence of the var `A` as a positive literal in the formula `F`.
+  `is_pos_literal_in_rec A F` := True if and only if there is an occurrence of the variable `A` as a positive literal in the formula `F`.
 -/
 def is_pos_literal_in_rec
   (A : String) :
@@ -140,7 +140,7 @@ instance
 
 
 /--
-  `is_neg_literal_in_rec A F` := True if and only if there is an occurrence of the var `A` as a negative literal in the formula `F`.
+  `is_neg_literal_in_rec A F` := True if and only if there is an occurrence of the variable `A` as a negative literal in the formula `F`.
 -/
 def is_neg_literal_in_rec
   (A : String) :
@@ -244,7 +244,7 @@ instance
 
 
 /--
-  `Formula_.is_pos_nnf_rec_v1 F` := True if and only if the formula `F` is in negation normal form and every var in `F` is positive.
+  `Formula_.is_pos_nnf_rec_v1 F` := True if and only if the formula `F` is in negation normal form and every variable in `F` is positive.
 -/
 def Formula_.is_pos_nnf_rec_v1 :
   Formula_ → Prop
@@ -275,7 +275,7 @@ instance
 
 
 /--
-  `Formula_.is_neg_nnf_rec_v1 F` := True if and only if the formula `F` is in negation normal form and every var in `F` is negative.
+  `Formula_.is_neg_nnf_rec_v1 F` := True if and only if the formula `F` is in negation normal form and every variable in `F` is negative.
 -/
 def Formula_.is_neg_nnf_rec_v1 :
   Formula_ → Prop
@@ -538,7 +538,7 @@ inductive is_constant_ind : Formula_ → Prop
 
 
 /--
-  `is_literal_ind F` := True if and only if the formula `F` is an var or the negation of an var.
+  `is_literal_ind F` := True if and only if the formula `F` is a variable or the negation of a variable.
 -/
 inductive is_literal_ind : Formula_ → Prop
 | rule_1

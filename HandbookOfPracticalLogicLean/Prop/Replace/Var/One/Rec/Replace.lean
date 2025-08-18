@@ -14,9 +14,9 @@ open Formula_
 /--
   `replace_var_one_rec A F P` :=
 
-  `A → F` in `P` for each occurrence of the var `A` in the formula `P`
+  `A → F` in `P` for each occurrence of the variable `A` in the formula `P`
 
-  The result of simultaneously replacing each occurrence of the var `A` in the formula `P` by an occurrence of the formula `F`.
+  The result of simultaneously replacing each occurrence of the variable `A` in the formula `P` by an occurrence of the formula `F`.
 -/
 def replace_var_one_rec
   (A : String)

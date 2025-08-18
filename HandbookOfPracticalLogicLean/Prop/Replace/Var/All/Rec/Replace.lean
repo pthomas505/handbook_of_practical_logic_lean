@@ -11,7 +11,7 @@ open Formula_
 
 
 /--
-  `replace_var_all_rec τ F` := The simultaneous replacement of each occurrence of any var `A` in the formula `F` by `τ A`.
+  `replace_var_all_rec τ F` := The simultaneous replacement of each occurrence of any variable `A` in the formula `F` by `τ A`.
 -/
 def replace_var_all_rec
   (τ : String → Formula_) :

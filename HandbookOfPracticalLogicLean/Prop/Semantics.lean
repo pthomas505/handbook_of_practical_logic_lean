@@ -14,7 +14,7 @@ open Formula_
 
 /--
   The valuation of a formula as a function from strings to booleans.
-  A function from the set of vars to the set of truth values `{false, true}`.
+  A function from the set of variables to the set of truth values `{false, true}`.
 -/
 def ValuationAsTotalFunction : Type := String → Bool
   deriving Inhabited
@@ -387,7 +387,7 @@ namespace Option_
 
 /--
   The valuation of a formula as a function from strings to optional booleans.
-  A function from the set of vars to the set of optional truth values `{false, true}`.
+  A function from the set of variables to the set of optional truth values `{false, true}`.
 -/
 def ValuationAsPartialFunction : Type := String → Option Bool
   deriving Inhabited

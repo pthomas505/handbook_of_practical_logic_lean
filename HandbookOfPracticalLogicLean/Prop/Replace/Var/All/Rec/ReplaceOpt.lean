@@ -10,7 +10,7 @@ open Formula_
 
 
 /--
-  `replace_var_all_rec_opt τ F` := The simultaneous replacement of each var in the formula `F` using the hashmap from strings to formulas `τ`.
+  `replace_var_all_rec_opt τ F` := The simultaneous replacement of each variable in the formula `F` using the hashmap from strings to formulas `τ`.
 -/
 def replace_var_all_rec_opt
   (τ : Std.HashMap String Formula_) :

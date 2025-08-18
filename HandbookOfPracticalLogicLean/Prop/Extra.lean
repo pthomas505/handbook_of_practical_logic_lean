@@ -111,7 +111,7 @@ partial def elabFormula : Syntax → MetaM Expr
   | _ => throwUnsupportedSyntax
 
 
-elab "(Formula_|" p:formula ")" : term => elabFormula p
+elab "(Formula_|" F:formula ")" : term => elabFormula F
 
 
 #check (Formula_| F. )
@@ -144,7 +144,7 @@ def Formula_.map_vars
   | exists_ x phi => forall_ x (phi.map_vars f)
 
 
--- Applies function f to all of the vars of the formula, from right to left.
+-- Applies the function f to all of the variables of the formula, from right to left.
 def Formula_.foldr_vars
   {α : Type}
   (f : String → α → α)

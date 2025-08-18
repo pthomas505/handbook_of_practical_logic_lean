@@ -1,7 +1,5 @@
 import HandbookOfPracticalLogicLean.Prop.Formula
 
-import Batteries.Data.HashMap
-
 
 set_option autoImplicit false
 
@@ -10,13 +8,13 @@ open Formula_
 
 
 def pattern_match_aux
-  (σ : Batteries.HashMap String Formula_) :
-  Formula_ → Formula_ → Option (Batteries.HashMap String Formula_)
+  (σ : Std.HashMap String Formula_) :
+  Formula_ → Formula_ → Option (Std.HashMap String Formula_)
   | false_, false_ => some σ
   | true_, true_ => some σ
   | var_ X, F =>
-    match Batteries.HashMap.find? σ X with
-    | none => Batteries.HashMap.insert σ X F
+    match Std.HashMap.get? σ X with
+    | none => Std.HashMap.insert σ X F
     | some F' => if F' = F then some σ else none
   | not_ phi, not_ phi' => pattern_match_aux σ phi phi'
   | and_ phi psi, and_ phi' psi' =>
@@ -40,12 +38,12 @@ def pattern_match_aux
 
 def pattern_match
   (P Q : Formula_) :
-  Option (Batteries.HashMap String Formula_) :=
+  Option (Std.HashMap String Formula_) :=
   pattern_match_aux {} P Q
 
 
-instance : ToString (Batteries.HashMap String Formula_) :=
-  { toString := fun (M : Batteries.HashMap String Formula_) => M.toList.toString }
+instance : ToString (Std.HashMap String Formula_) :=
+  { toString := fun (M : Std.HashMap String Formula_) => M.toList.toString }
 
 
 #eval pattern_match (and_ (var_ "P") (var_ "Q")) (var_ "R")

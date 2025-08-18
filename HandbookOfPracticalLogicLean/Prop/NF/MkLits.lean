@@ -10,7 +10,7 @@ open Formula_
 
 
 /--
-  `mk_lits var_list V` := Returns a formula in conjunctive normal form that is only satisfied by valuations that map each var in `var_list` to the same boolean value as the valuation `V`.
+  `mk_lits var_list V` := Returns a formula in conjunctive normal form that is only satisfied by valuations that map each variable in `var_list` to the same boolean value as the valuation `V`.
 -/
 def mk_lits
   (var_list : List String)
