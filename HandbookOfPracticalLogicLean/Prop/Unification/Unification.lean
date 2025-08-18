@@ -24,13 +24,13 @@ def is_equation_unifier
 
 
 /--
-  `is_equation_list_unifier σ L` := True if and only if the substitution `σ` is a unifier of the list of equations `L`.
+  `is_equation_list_unifier σ ES` := True if and only if the substitution `σ` is a unifier of the list of equations `ES`.
 -/
 def is_equation_list_unifier
   (σ : Substitution)
-  (L : List Equation) :
+  (ES : List Equation) :
   Prop :=
-  ∀ (E : Equation), E ∈ L → is_equation_unifier σ E
+  ∀ (E : Equation), E ∈ ES → is_equation_unifier σ E
 
 
 lemma is_equation_unifier_replace_var_all_rec_compose
@@ -48,9 +48,9 @@ lemma is_equation_unifier_replace_var_all_rec_compose
 
 example
   (σ τ : Substitution)
-  (L : List Equation)
-  (h1 : is_equation_list_unifier σ L) :
-  is_equation_list_unifier ((replace_var_all_rec τ) ∘ σ) L :=
+  (ES : List Equation)
+  (h1 : is_equation_list_unifier σ ES) :
+  is_equation_list_unifier ((replace_var_all_rec τ) ∘ σ) ES :=
   by
   unfold is_equation_list_unifier at h1
 
@@ -83,19 +83,20 @@ example
 
 
 /--
-  `is_most_general_equation_list_unifier σ L` := True if and only if the substitution `σ` is a most general unifier (MGU) of the list of equations `L`.
+  `is_most_general_equation_list_unifier σ ES` := True if and only if the substitution `σ` is a most general unifier (MGU) of the list of equations `ES`.
 -/
 def is_most_general_equation_list_unifier
   (σ : Substitution)
-  (L : List Equation) :
+  (ES : List Equation) :
   Prop :=
-  is_equation_list_unifier σ L ∧ ∀ (τ : Substitution), is_equation_list_unifier τ L → is_more_general_substitution σ τ
+  is_equation_list_unifier σ ES ∧
+    ∀ (τ : Substitution), is_equation_list_unifier τ ES → is_more_general_substitution σ τ
 
 
 def are_equivalent_equation_lists
-  (L L' : List Equation) :
+  (ES ES' : List Equation) :
   Prop :=
-  ∀ (σ : Substitution), is_equation_list_unifier σ L ↔ is_equation_list_unifier σ L'
+  ∀ (σ : Substitution), is_equation_list_unifier σ ES ↔ is_equation_list_unifier σ ES'
 
 
 def is_reducible :
@@ -233,8 +234,8 @@ lemma is_equation_list_unifier_singleton
 
 lemma is_equation_list_unifier_append
   (σ : Substitution)
-  (L L' : List Equation) :
-  is_equation_list_unifier σ (L ++ L') ↔ (is_equation_list_unifier σ L ∧ is_equation_list_unifier σ L') :=
+  (ES ES' : List Equation) :
+  is_equation_list_unifier σ (ES ++ ES') ↔ (is_equation_list_unifier σ ES ∧ is_equation_list_unifier σ ES') :=
   by
   unfold is_equation_list_unifier
   unfold is_equation_unifier
