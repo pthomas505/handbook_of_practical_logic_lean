@@ -317,13 +317,8 @@ lemma is_equation_unifier_iff_is_equation_unifier_equation_replace_var_one_rec
 
   unfold equation_replace_var_one_rec
   unfold is_equation_unifier
-
-  obtain s1 := replace_var_all_rec_eq_replace_var_all_rec_of_replace_var_one_rec σ X F E.lhs h1
-  rewrite [← s1]
-
-  obtain s2 := replace_var_all_rec_eq_replace_var_all_rec_of_replace_var_one_rec σ X F E.rhs h1
-  rewrite [← s2]
-
+  rewrite [← replace_var_all_rec_eq_replace_var_all_rec_of_replace_var_one_rec σ X F E.lhs h1]
+  rewrite [← replace_var_all_rec_eq_replace_var_all_rec_of_replace_var_one_rec σ X F E.rhs h1]
   rfl
 
 
