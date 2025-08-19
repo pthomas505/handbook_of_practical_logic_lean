@@ -573,13 +573,13 @@ def is_in_solved_form :
 
 theorem extracted_1
   (X : String)
-  (Γ : List Equation)
+  (ES : List Equation)
   (E : Equation)
-  (h1 : E ∈ Γ)
+  (h1 : E ∈ ES)
   (h2 : X ∈ E.lhs.var_set ∨ X ∈ E.rhs.var_set) :
-  X ∈ List.foldr (fun (next : Equation) (prev : Finset String) => next.lhs.var_set ∪ (next.rhs.var_set ∪ prev)) ∅ Γ :=
+  X ∈ List.foldr (fun (next : Equation) (prev : Finset String) => next.lhs.var_set ∪ (next.rhs.var_set ∪ prev)) ∅ ES :=
   by
-  induction Γ
+  induction ES
   case nil =>
     simp only [List.not_mem_nil] at h1
   case cons hd tl ih =>
