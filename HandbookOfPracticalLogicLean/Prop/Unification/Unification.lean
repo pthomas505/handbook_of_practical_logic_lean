@@ -68,7 +68,7 @@ example
 def is_more_general_substitution
   (σ τ : Substitution) :
   Prop :=
-  ∃ (δ : Substitution), replace_var_all_rec τ = (replace_var_all_rec δ) ∘ (replace_var_all_rec σ)
+  ∃ (μ : Substitution), replace_var_all_rec τ = (replace_var_all_rec μ) ∘ (replace_var_all_rec σ)
 
 
 example
