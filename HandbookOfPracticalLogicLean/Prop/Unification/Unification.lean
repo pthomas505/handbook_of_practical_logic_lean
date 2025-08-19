@@ -309,7 +309,8 @@ lemma is_equation_unifier_iff_is_equation_unifier_equation_replace_var_one_rec
   (F : Formula_)
   (E : Equation)
   (h1 : is_equation_unifier σ ⟨var_ X, F⟩) :
-  is_equation_unifier σ E ↔ is_equation_unifier σ (equation_replace_var_one_rec X F E) :=
+  is_equation_unifier σ E ↔
+    is_equation_unifier σ (equation_replace_var_one_rec X F E) :=
   by
   unfold is_equation_unifier at h1
   simp only [replace_var_all_rec] at h1
