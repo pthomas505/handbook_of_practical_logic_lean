@@ -287,20 +287,12 @@ example
 -/
 
 
-def var_elim
-  (X : String)
-  (F : Formula_)
-  (L : List Equation) :
-  List Equation :=
-  L.map (fun (E : Equation) => ⟨replace_var_one_rec X F E.lhs, replace_var_one_rec X F E.rhs⟩)
-
-
 example
   (σ : Substitution)
   (X : String)
   (F : Formula_)
-  (L : List Equation)
-  (h1 : is_equation_list_unifier σ (⟨var_ X, F⟩ :: L)) :
+  (ES : List Equation)
+  (h1 : is_equation_list_unifier σ (⟨var_ X, F⟩ :: ES)) :
   is_equation_unifier σ ⟨var_ X, F⟩ :=
   by
   unfold is_equation_list_unifier at h1
@@ -316,53 +308,49 @@ example
   exact trivial
 
 
-lemma is_equation_unifier_iff_is_equation_unifier_replace_var_one_rec
+lemma is_equation_unifier_iff_is_equation_unifier_equation_replace_var_one_rec
   (σ : Substitution)
   (X : String)
   (F : Formula_)
-  (lhs rhs : Formula_)
+  (E : Equation)
   (h1 : is_equation_unifier σ ⟨var_ X, F⟩) :
-  is_equation_unifier σ ⟨lhs, rhs⟩ ↔ is_equation_unifier σ ⟨replace_var_one_rec X F lhs, replace_var_one_rec X F rhs⟩ :=
+  is_equation_unifier σ E ↔ is_equation_unifier σ (equation_replace_var_one_rec X F E) :=
   by
   unfold is_equation_unifier at h1
   simp only [replace_var_all_rec] at h1
 
+  unfold equation_replace_var_one_rec
   unfold is_equation_unifier
 
-  obtain s1 := replace_var_all_rec_eq_replace_var_all_rec_of_replace_var_one_rec σ X F lhs h1
+  obtain s1 := replace_var_all_rec_eq_replace_var_all_rec_of_replace_var_one_rec σ X F E.lhs h1
   rewrite [← s1]
 
-  obtain s2 := replace_var_all_rec_eq_replace_var_all_rec_of_replace_var_one_rec σ X F rhs h1
+  obtain s2 := replace_var_all_rec_eq_replace_var_all_rec_of_replace_var_one_rec σ X F E.rhs h1
   rewrite [← s2]
 
   rfl
 
 
-lemma is_equation_list_unifier_iff_is_equation_list_unifier_var_elim
+lemma is_equation_list_unifier_iff_is_equation_list_unifier_equation_list_replace_var_one_rec
   (σ : Substitution)
   (X : String)
   (F : Formula_)
-  (L : List Equation)
+  (ES : List Equation)
   (h1 : is_equation_unifier σ ⟨var_ X, F⟩) :
-  is_equation_list_unifier σ L ↔ is_equation_list_unifier σ (var_elim X F L) :=
+  is_equation_list_unifier σ ES ↔ is_equation_list_unifier σ (equation_list_replace_var_one_rec X F ES) :=
   by
-  induction L
+  unfold equation_list_replace_var_one_rec
+  induction ES
   case nil =>
-    unfold var_elim
     simp only [List.map_nil]
   case cons hd tl ih =>
-    unfold var_elim
     simp only [List.map_cons]
     rewrite [← List.singleton_append]
     rewrite [is_equation_list_unifier_append]
     conv => right; rewrite [← List.singleton_append]; rewrite [is_equation_list_unifier_append]
-
-    obtain s1 := is_equation_unifier_iff_is_equation_unifier_replace_var_one_rec σ X F hd.lhs hd.rhs h1
     simp only [is_equation_list_unifier_singleton]
-    rewrite [← s1]
-
+    simp only [← is_equation_unifier_iff_is_equation_unifier_equation_replace_var_one_rec σ X F hd h1]
     rewrite [ih]
-    unfold var_elim
     rfl
 
 
