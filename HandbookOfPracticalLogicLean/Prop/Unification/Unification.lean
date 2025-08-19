@@ -162,9 +162,9 @@ instance :
 
 
 example
-  (lhs rhs : Formula_)
-  (h1 : (reduce ⟨lhs, rhs⟩).isSome) :
-  are_equivalent_equation_lists [⟨lhs, rhs⟩] ((reduce ⟨lhs, rhs⟩).get h1) :=
+  (E : Equation)
+  (h1 : (reduce E).isSome) :
+  are_equivalent_equation_lists [E] ((reduce E).get h1) :=
   by
   unfold are_equivalent_equation_lists
   intro σ
@@ -172,45 +172,47 @@ example
   simp only [List.mem_singleton]
   unfold is_equation_unifier
 
-  cases lhs
-  all_goals
-    cases rhs
-    any_goals
-      simp only [reduce] at h1
-      simp only [Option.isSome_none] at h1
-      contradiction
-  case not_ phi psi =>
-    simp only [reduce]
-    simp only [Option.get_some]
-    simp only [List.mem_singleton]
-    simp only [forall_eq]
-    simp only [replace_var_all_rec]
-    constructor
-    · intro a1
-      injection a1
-    · intro a1
-      congr
-  case
-      and_ phi psi phi' psi'
-    | or_ phi psi phi' psi'
-    | imp_ phi psi phi' psi'
-    | iff_ phi psi phi' psi' =>
-    simp only [reduce]
-    simp only [Option.get_some]
-    simp only [List.cons_union]
-    simp only [List.nil_union]
-    simp only [List.mem_insert_iff]
-    simp only [List.mem_singleton]
-    simp only [forall_eq_or_imp]
-    simp only [forall_eq]
-    simp only [replace_var_all_rec]
-    constructor
-    · intro a1
-      injection a1 with a1_left a1_right
-      exact ⟨a1_left, a1_right⟩
-    · intro a1
-      obtain ⟨a1_left, a1_right⟩ := a1
-      congr
+  cases E
+  case mk lhs rhs =>
+    cases lhs
+    all_goals
+      cases rhs
+      any_goals
+        simp only [reduce] at h1
+        simp only [Option.isSome_none] at h1
+        contradiction
+    case not_ phi psi =>
+      simp only [reduce]
+      simp only [Option.get_some]
+      simp only [List.mem_singleton]
+      simp only [forall_eq]
+      simp only [replace_var_all_rec]
+      constructor
+      · intro a1
+        injection a1
+      · intro a1
+        congr
+    case
+        and_ phi psi phi' psi'
+      | or_ phi psi phi' psi'
+      | imp_ phi psi phi' psi'
+      | iff_ phi psi phi' psi' =>
+      simp only [reduce]
+      simp only [Option.get_some]
+      simp only [List.cons_union]
+      simp only [List.nil_union]
+      simp only [List.mem_insert_iff]
+      simp only [List.mem_singleton]
+      simp only [forall_eq_or_imp]
+      simp only [forall_eq]
+      simp only [replace_var_all_rec]
+      constructor
+      · intro a1
+        injection a1 with a1_left a1_right
+        exact ⟨a1_left, a1_right⟩
+      · intro a1
+        obtain ⟨a1_left, a1_right⟩ := a1
+        congr
 
 
 -------------------------------------------------------------------------------
