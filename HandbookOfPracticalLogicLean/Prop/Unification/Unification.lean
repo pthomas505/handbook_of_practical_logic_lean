@@ -348,8 +348,8 @@ lemma is_equation_list_unifier_iff_is_equation_list_unifier_equation_list_replac
 example
   (X : String)
   (F : Formula_)
-  (L : List Equation) :
-  are_equivalent_equation_lists (⟨var_ X, F⟩ :: L) (⟨var_ X, F⟩ :: var_elim X F L) :=
+  (ES : List Equation) :
+  are_equivalent_equation_lists (⟨var_ X, F⟩ :: ES) (⟨var_ X, F⟩ :: equation_list_replace_var_one_rec X F ES) :=
   by
   unfold are_equivalent_equation_lists
   intro σ
@@ -362,13 +362,13 @@ example
     obtain ⟨a1_left, a1_right⟩ := a1
     constructor
     · exact a1_left
-    · simp only [← is_equation_list_unifier_iff_is_equation_list_unifier_var_elim σ X F L a1_left]
+    · simp only [← is_equation_list_unifier_iff_is_equation_list_unifier_equation_list_replace_var_one_rec σ X F ES a1_left]
       exact a1_right
   · intro a1
     obtain ⟨a1_left, a1_right⟩ := a1
     constructor
     · exact a1_left
-    · simp only [is_equation_list_unifier_iff_is_equation_list_unifier_var_elim σ X F L a1_left]
+    · simp only [is_equation_list_unifier_iff_is_equation_list_unifier_equation_list_replace_var_one_rec σ X F ES a1_left]
       exact a1_right
 
 
