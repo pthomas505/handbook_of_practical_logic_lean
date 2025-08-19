@@ -296,16 +296,11 @@ example
   is_equation_unifier σ ⟨var_ X, F⟩ :=
   by
   unfold is_equation_list_unifier at h1
-  unfold is_equation_unifier at h1
   simp only [List.mem_cons] at h1
-  specialize h1 ⟨var_ X, F⟩
-  simp only at h1
 
-  unfold is_equation_unifier
-  simp only
   apply h1
   left
-  exact trivial
+  rfl
 
 
 lemma is_equation_unifier_iff_is_equation_unifier_equation_replace_var_one_rec
