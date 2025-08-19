@@ -571,35 +571,6 @@ def is_in_solved_form :
         ((¬ X = pair.fst) ∧ (¬ var_occurs_in_formula X pair.snd))
 
 
-inductive is_unification_step : List Equation → List Equation → Prop
-| dec_not
-  (phi phi' : Formula_)
-  (Γ : List Equation) :
-  is_unification_step (⟨not_ phi, not_ phi'⟩ :: Γ) (⟨phi, phi'⟩ :: Γ)
-
-| triv
-  (X X' : String)
-  (Γ : List Equation) :
-  X = X' →
-  is_unification_step (⟨var_ X, var_ X'⟩ :: Γ) Γ
-
-| var_lhs
-  (X : String)
-  (F : Formula_)
-  (Γ : List Equation) :
-  (∃ (E : Equation), E ∈ Γ ∧ (var_occurs_in_formula X E.lhs ∨ var_occurs_in_formula X E.rhs)) →
-  (¬ var_occurs_in_formula X F) →
-  is_unification_step (⟨var_ X, F⟩ :: Γ) (⟨var_ X, F⟩ :: var_elim X F Γ)
-
-| var_rhs
-  (X : String)
-  (F : Formula_)
-  (Γ : List Equation) :
-  (∃ (E : Equation), E ∈ Γ ∧ (var_occurs_in_formula X E.lhs ∨ var_occurs_in_formula X E.rhs)) →
-  (¬ var_occurs_in_formula X F) →
-  is_unification_step (⟨F, var_ X⟩ :: Γ) (⟨F, var_ X⟩ :: var_elim X F Γ)
-
-
 theorem extracted_1
   (X : String)
   (Γ : List Equation)
