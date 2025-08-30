@@ -279,6 +279,14 @@ def var_occurs_in_equation_list
 -------------------------------------------------------------------------------
 
 
+example
+  (X : String)
+  (ES : List Equation)
+  (h1 : var_occurs_in_equation_list X ES) :
+  X ∈ equation_list_var_set ES :=
+  by
+  sorry
+
 -- lemma var_occurs_in_equation_list_iff_mem_equation_list_var_set
 
 -- lemma var_occurs_in_equation_list_iff_mem_equation_list_var_list
@@ -348,7 +356,16 @@ example
   unfold equation_list_replace_var_one_rec
   apply List.fun_is_id_on_mem_imp_map_eq_self
   intro E a1
-  sorry
+  unfold equation_replace_var_one_rec
+  congr
+  · apply not_var_occurs_in_replace_var_one_rec_self
+    intro contra
+    apply h1
+    sorry
+  · apply not_var_occurs_in_replace_var_one_rec_self
+    intro contra
+    apply h1
+    sorry
 
 
 --#lint
