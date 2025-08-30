@@ -238,9 +238,27 @@ instance
   infer_instance
 
 
--- lemma var_occurs_in_equation_iff_mem_equation_var_set
+lemma var_occurs_in_equation_iff_mem_equation_var_set
+  (V : String)
+  (E : Equation) :
+  var_occurs_in_equation V E ↔ V ∈ E.var_set :=
+  by
+  unfold var_occurs_in_equation
+  unfold Equation.var_set
+  simp only [Finset.mem_union]
+  simp only [var_occurs_in_formula_iff_mem_formula_var_set]
 
--- lemma var_occurs_in_equation_iff_mem_equation_var_list
+
+lemma var_occurs_in_equation_iff_mem_equation_var_list
+  (V : String)
+  (E : Equation) :
+  var_occurs_in_equation V E ↔ V ∈ E.var_list :=
+  by
+  unfold var_occurs_in_equation
+  unfold Equation.var_list
+  simp only [List.mem_append]
+  simp only [var_occurs_in_formula_iff_mem_formula_var_list]
+
 
 -------------------------------------------------------------------------------
 
@@ -279,17 +297,88 @@ def var_occurs_in_equation_list
 -------------------------------------------------------------------------------
 
 
-example
+lemma var_occurs_in_equation_list_imp_mem_equation_list_var_set
   (X : String)
   (ES : List Equation)
-  (h1 : var_occurs_in_equation_list X ES) :
+  (E : Equation)
+  (h1 : E ∈ ES)
+  (h2 : var_occurs_in_equation X E) :
   X ∈ equation_list_var_set ES :=
   by
-  sorry
+  induction ES
+  case nil =>
+    simp only [List.not_mem_nil] at h1
+  case cons hd tl ih =>
+    simp only [List.mem_cons] at h1
 
--- lemma var_occurs_in_equation_list_iff_mem_equation_list_var_set
+    simp only [var_occurs_in_equation_iff_mem_equation_var_set] at h2
 
--- lemma var_occurs_in_equation_list_iff_mem_equation_list_var_list
+    unfold equation_list_var_set
+    simp only [List.foldr_cons, Finset.mem_union]
+    cases h1
+    case inl h1 =>
+      left
+      rewrite [← h1]
+      exact h2
+    case inr h1 =>
+      right
+      unfold equation_list_var_set at ih
+      apply ih
+      exact h1
+
+
+lemma mem_equation_list_var_set_imp_var_occurs_in_equation_list
+  (X : String)
+  (ES : List Equation)
+  (h1 : X ∈ equation_list_var_set ES) :
+  var_occurs_in_equation_list X ES :=
+  by
+  induction ES
+  case nil =>
+    unfold equation_list_var_set at h1
+    simp only [List.foldr_nil, Finset.not_mem_empty] at h1
+  case cons hd tl ih =>
+    unfold equation_list_var_set at h1
+    simp only [List.foldr_cons, Finset.mem_union] at h1
+
+    unfold var_occurs_in_equation_list
+    cases h1
+    case inl h1 =>
+      apply Exists.intro hd
+      constructor
+      · simp only [List.mem_cons]
+        left
+        exact trivial
+      · simp only [var_occurs_in_equation_iff_mem_equation_var_set]
+        exact h1
+    case inr h1 =>
+      unfold var_occurs_in_equation_list at ih
+      unfold equation_list_var_set at ih
+      specialize ih h1
+      obtain ⟨E, ih_left, ih_right⟩ := ih
+
+      apply Exists.intro E
+      constructor
+      · simp only [List.mem_cons]
+        right
+        exact ih_left
+      · exact ih_right
+
+
+lemma var_occurs_in_equation_list_iff_mem_equation_list_var_set
+  (X : String)
+  (ES : List Equation) :
+  var_occurs_in_equation_list X ES ↔
+  X ∈ equation_list_var_set ES :=
+  by
+  constructor
+  · intro a1
+    unfold var_occurs_in_equation_list at a1
+    obtain ⟨E, a1_left, a1_right⟩ := a1
+    apply var_occurs_in_equation_list_imp_mem_equation_list_var_set X ES E
+    · exact a1_left
+    · exact a1_right
+  · apply mem_equation_list_var_set_imp_var_occurs_in_equation_list
 
 
 -------------------------------------------------------------------------------
@@ -361,11 +450,24 @@ example
   · apply not_var_occurs_in_replace_var_one_rec_self
     intro contra
     apply h1
-    sorry
+    simp only [← var_occurs_in_equation_list_iff_mem_equation_list_var_set]
+    unfold var_occurs_in_equation_list
+    apply Exists.intro E
+    constructor
+    · exact a1
+    · unfold var_occurs_in_equation
+      left
+      exact contra
   · apply not_var_occurs_in_replace_var_one_rec_self
     intro contra
     apply h1
-    sorry
-
+    simp only [← var_occurs_in_equation_list_iff_mem_equation_list_var_set]
+    unfold var_occurs_in_equation_list
+    apply Exists.intro E
+    constructor
+    · exact a1
+    · unfold var_occurs_in_equation
+      right
+      exact contra
 
 --#lint
