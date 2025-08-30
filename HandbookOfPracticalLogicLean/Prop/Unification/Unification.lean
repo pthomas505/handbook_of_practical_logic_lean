@@ -548,9 +548,9 @@ def unify :
     right
     constructor
     · unfold equation_list_var_set
-      unfold equation_list_formula_list
-      unfold formula_list_var_set
-      simp only [List.foldr_cons, Finset.union_left_idem]
+      simp only [List.foldr_cons]
+      unfold Equation.var_set
+      simp only [ Finset.union_idempotent]
       simp only [Formula_.var_set]
       simp only [Finset.empty_union]
     · unfold equation_list_size
@@ -567,10 +567,15 @@ def unify :
       right
       constructor
       · congr 1
-        simp only [equation_list_var_set_cons]
+        unfold equation_list_var_set
+        simp only [List.foldr_cons, Finset.right_eq_union]
         unfold Equation.var_set
-        unfold Formula_.var_set
-        simp only [Finset.union_idempotent, Finset.right_eq_union, Finset.singleton_subset_iff]
+        simp only [Finset.union_idempotent]
+        simp only [Formula_.var_set]
+        simp only [Finset.singleton_subset_iff]
+
+        unfold equation_list_var_set at c1
+        unfold Equation.var_set at c1
         exact c1
       · unfold equation_list_size
         unfold equation_list_formula_list
@@ -581,15 +586,18 @@ def unify :
     case neg =>
       simp only [Prod.lex_def]
       left
-      simp only [equation_list_var_set_cons]
-      simp only [Equation.var_set]
-      simp only [Formula_.var_set]
+      unfold equation_list_var_set
+      simp only [List.foldr_cons]
+      unfold Equation.var_set
       simp only [Finset.union_idempotent]
+      simp only [Formula_.var_set]
       apply Finset.card_lt_card
       simp only [Finset.ssubset_iff]
       apply Exists.intro X
       constructor
-      · exact c1
+      · unfold equation_list_var_set at c1
+        unfold Equation.var_set at c1
+        exact c1
       · simp only [Finset.insert_eq]
         apply subset_refl
   case _ h1 h2 =>
