@@ -471,61 +471,6 @@ example
     exact a1
 
 
-lemma mem_equation_list_imp_mem_equation_list_formula_list_left
-  (E : Equation)
-  (ES : List Equation)
-  (h1 : E ∈ ES) :
-  E.lhs ∈ equation_list_formula_list ES :=
-  by
-  induction ES
-  case nil =>
-    simp only [List.not_mem_nil] at h1
-  case cons hd tl ih =>
-    unfold equation_list_formula_list at ih
-    simp only [List.mem_cons] at h1
-
-    unfold equation_list_formula_list
-    simp only [List.foldr_cons, List.mem_cons]
-    cases h1
-    case inl h1 =>
-      left
-      rewrite [h1]
-      rfl
-    case inr h1 =>
-      right
-      right
-      apply ih
-      exact h1
-
-
-lemma mem_equation_list_imp_mem_equation_list_formula_list_right
-  (E : Equation)
-  (ES : List Equation)
-  (h1 : E ∈ ES) :
-  E.rhs ∈ equation_list_formula_list ES :=
-  by
-  induction ES
-  case nil =>
-    simp only [List.not_mem_nil] at h1
-  case cons hd tl ih =>
-    unfold equation_list_formula_list at ih
-    simp only [List.mem_cons] at h1
-
-    unfold equation_list_formula_list
-    simp only [List.foldr_cons, List.mem_cons]
-    cases h1
-    case inl h1 =>
-      right
-      left
-      rewrite [h1]
-      rfl
-    case inr h1 =>
-      right
-      right
-      apply ih
-      exact h1
-
-
 example
   (σ : Substitution)
   (ES : List Equation)
@@ -571,126 +516,6 @@ def is_in_solved_form :
         ((¬ X = pair.fst) ∧ (¬ var_occurs_in_formula X pair.snd))
 
 
-theorem extracted_1
-  (X : String)
-  (ES : List Equation)
-  (E : Equation)
-  (h1 : E ∈ ES)
-  (h2 : X ∈ E.lhs.var_set ∨ X ∈ E.rhs.var_set) :
-  X ∈ List.foldr (fun (next : Equation) (prev : Finset String) => next.lhs.var_set ∪ (next.rhs.var_set ∪ prev)) ∅ ES :=
-  by
-  induction ES
-  case nil =>
-    simp only [List.not_mem_nil] at h1
-  case cons hd tl ih =>
-    simp only [List.mem_cons] at h1
-    simp only [List.foldr_cons, Finset.mem_union]
-    cases h1
-    case inl h1 =>
-      rewrite [h1] at h2
-      cases h2
-      case inl h2 =>
-        left
-        exact h2
-      case inr h2 =>
-        right
-        left
-        exact h2
-    case inr h1 =>
-      right
-      right
-      apply ih
-      exact h1
-
-
-theorem extracted_2
-  (X : String)
-  (Γ : List Equation)
-  (h1 : ∀ (E : Equation), ¬ (E ∈ Γ ∧ (X ∈ E.lhs.var_set ∨ X ∈ E.rhs.var_set))) :
-  X ∉ List.foldr (fun (next : Equation) (prev : Finset String) => next.lhs.var_set ∪ (next.rhs.var_set ∪ prev)) ∅ Γ :=
-  by
-  induction Γ
-  case nil =>
-    simp only [List.foldr_nil, Finset.not_mem_empty]
-    intro contra
-    exact contra
-  case cons hd tl ih =>
-    simp only [List.mem_cons] at h1
-    simp only [List.foldr_cons, Finset.mem_union]
-    intro contra
-    cases contra
-    case inl contra =>
-      apply h1 hd
-      constructor
-      · left
-        rfl
-      · left
-        exact contra
-    case inr contra =>
-      cases contra
-      case inl contra =>
-        apply h1 hd
-        constructor
-        · left
-          rfl
-        · right
-          exact contra
-      case inr contra =>
-        apply ih
-        · intro E a1
-          obtain ⟨a1_left, a1_right⟩ := a1
-          apply h1 E
-          constructor
-          · right
-            exact a1_left
-          · exact a1_right
-        · exact contra
-
-
-lemma not_var_occurs_in_formula_imp_not_mem_var_elim_equation_list_var_set
-  (X : String)
-  (F : Formula_)
-  (L : List Equation)
-  (h1 : ¬ var_occurs_in_formula X F) :
-  X ∉ equation_list_var_set (var_elim X F L) :=
-  by
-  unfold var_elim
-  unfold equation_list_var_set
-  simp only [Finset.union_assoc]
-  induction L
-  case nil =>
-    simp only [List.map_nil, List.foldr_nil, Finset.not_mem_empty]
-    intro contra
-    exact contra
-  case cons hd tl ih =>
-    simp only [List.map_cons, List.foldr_cons, Finset.mem_union]
-    intro contra
-    cases contra
-    case inl contra =>
-      apply not_var_occurs_in_formula_imp_not_var_occurs_in_formula_replace_var_one_rec X F hd.lhs
-      · exact h1
-      · simp only [var_occurs_in_formula_iff_mem_formula_var_set]
-        exact contra
-    case inr contra =>
-      cases contra
-      case inl contra =>
-        apply not_var_occurs_in_formula_imp_not_var_occurs_in_formula_replace_var_one_rec X F hd.rhs
-        · exact h1
-        · simp only [var_occurs_in_formula_iff_mem_formula_var_set]
-          exact contra
-      case inr contra =>
-        contradiction
-
-
-example
-  (X : String)
-  (F : Formula_)
-  (Γ : List Equation) :
-  (equation_list_var_set (var_elim X F Γ)) =  ((equation_list_var_set Γ) \ {X}) ∪ F.var_set :=
-  by
-  sorry
-
-
 def unify :
   List Equation → Option (String → Formula_)
   | [] => Option.some var_
@@ -704,7 +529,7 @@ def unify :
       if var_occurs_in_formula X F
       then Option.none
       else
-        match unify (var_elim X F Γ) with
+        match unify (equation_list_replace_var_one_rec X F Γ) with
         | Option.none => Option.none
         | Option.some τ => Option.some (Function.updateITE τ X (replace_var_all_rec τ F))
   | ⟨not_ phi, not_ phi'⟩ :: Γ =>
@@ -715,7 +540,7 @@ def unify :
   | ⟨iff_ phi psi, iff_ phi' psi'⟩ :: Γ =>
       unify (⟨phi, phi'⟩ :: ⟨psi, psi'⟩ :: Γ)
   | _ => Option.none
-  termination_by L => ((equation_list_var_set L).card, equation_list_size L)
+  termination_by Γ => ((equation_list_var_set Γ).card, equation_list_size Γ)
   decreasing_by
   case _ | _ =>
     all_goals
@@ -723,54 +548,50 @@ def unify :
     right
     constructor
     · unfold equation_list_var_set
-      simp only [Finset.union_assoc, List.foldr_cons, Finset.union_left_idem]
-      simp only [var_set]
+      unfold equation_list_formula_list
+      unfold formula_list_var_set
+      simp only [List.foldr_cons, Finset.union_left_idem]
+      simp only [Formula_.var_set]
       simp only [Finset.empty_union]
     · unfold equation_list_size
+      unfold equation_list_formula_list
+      unfold formula_list_size
       simp only [List.foldr_cons]
       simp only [Formula_.size]
       linarith
   case _ h1 =>
     rewrite [← h1]
-    unfold equation_list_var_set
-    simp only [Finset.union_assoc, List.foldr_cons, Finset.union_left_idem]
-    simp only [var_set]
-
-    simp only [Prod.lex_def]
-
-    by_cases c1 : ∃ (E : Equation), E ∈ Γ ∧ (X ∈ E.lhs.var_set ∨ X ∈ E.rhs.var_set)
+    by_cases c1 : X ∈ equation_list_var_set Γ
     case pos =>
+      simp only [Prod.lex_def]
       right
       constructor
-      · obtain ⟨E, c1_left, c1_right⟩ := c1
-
-        have s1 : {X} ∪ List.foldr (fun (next : Equation) (prev : Finset String) => next.lhs.var_set ∪ (next.rhs.var_set ∪ prev)) ∅ Γ =
-          List.foldr (fun (next : Equation) (prev : Finset String) => next.lhs.var_set ∪ (next.rhs.var_set ∪ prev)) ∅ Γ :=
-        by
-          simp only [Finset.union_eq_right, Finset.singleton_subset_iff]
-          apply extracted_1 X Γ E
-          · exact c1_left
-          · exact c1_right
-
-        rewrite [s1]
-        rfl
+      · congr 1
+        simp only [equation_list_var_set_cons]
+        unfold Equation.var_set
+        unfold Formula_.var_set
+        simp only [Finset.union_idempotent, Finset.right_eq_union, Finset.singleton_subset_iff]
+        exact c1
       · unfold equation_list_size
+        unfold equation_list_formula_list
+        unfold formula_list_size
         simp only [List.foldr_cons]
         simp only [Formula_.size]
         linarith
     case neg =>
-      simp only [not_exists] at c1
-
-      have s1 : Disjoint {X} (List.foldr (fun next prev => next.lhs.var_set ∪ (next.rhs.var_set ∪ prev)) ∅ Γ) :=
-      by
-        simp only [Finset.disjoint_singleton_left]
-        apply extracted_2
-        intro E
-        apply c1
+      simp only [Prod.lex_def]
       left
-      simp only [Finset.card_union_of_disjoint s1]
-      simp only [Finset.card_singleton]
-      apply lt_one_add
+      simp only [equation_list_var_set_cons]
+      simp only [Equation.var_set]
+      simp only [Formula_.var_set]
+      simp only [Finset.union_idempotent]
+      apply Finset.card_lt_card
+      simp only [Finset.ssubset_iff]
+      apply Exists.intro X
+      constructor
+      · exact c1
+      · simp only [Finset.insert_eq]
+        apply subset_refl
   case _ h1 h2 =>
     apply Prod.Lex.left
     sorry

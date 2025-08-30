@@ -143,6 +143,27 @@ lemma mem_equation_list_imp_mem_equation_list_formula_list_right
       exact h1
 
 
+lemma mem_equation_list_formula_list_iff_exists_mem_equation_list
+  (F : Formula_)
+  (ES : List Equation) :
+  F ∈ equation_list_formula_list ES ↔
+    ∃ (E : Equation), E ∈ ES ∧ (F = E.lhs ∨ F = E.rhs) :=
+  by
+  constructor
+  · apply mem_equation_list_formula_list_imp_exists_mem_equation_list
+  · intro a1
+    obtain ⟨E, a1_left, a1_right⟩ := a1
+    cases a1_right
+    case inl a1_right =>
+      rewrite [a1_right]
+      apply mem_equation_list_imp_mem_equation_list_formula_list_left
+      exact a1_left
+    case inr a1_right =>
+      rewrite [a1_right]
+      apply mem_equation_list_imp_mem_equation_list_formula_list_right
+      exact a1_left
+
+
 -------------------------------------------------------------------------------
 
 
@@ -196,6 +217,19 @@ example
   simp only [← var_occurs_in_formula_list_iff_mem_formula_list_var_set]
   unfold var_occurs_in_formula_list
   simp only [var_occurs_in_formula_iff_mem_formula_var_set]
+
+
+lemma equation_list_var_set_cons
+  (E : Equation)
+  (ES : List Equation) :
+  equation_list_var_set (E :: ES) =
+    E.var_set ∪ equation_list_var_set ES :=
+  by
+  unfold equation_list_var_set
+  unfold equation_list_formula_list
+  simp only [formula_list_var_set]
+  simp only [Equation.var_set]
+  simp only [List.foldr_cons, Finset.union_assoc]
 
 
 -------------------------------------------------------------------------------
