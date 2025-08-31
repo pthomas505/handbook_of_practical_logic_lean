@@ -287,6 +287,9 @@ def equation_list_var_list
   -- formula_list_var_list (equation_list_formula_list ES)
 
 
+/--
+  `var_occurs_in_equation_list X ES` := True if and only if there is an occurrence of the variable `X` in the list of equations `ES`.
+-/
 def var_occurs_in_equation_list
   (X : String)
   (ES : List Equation) :
