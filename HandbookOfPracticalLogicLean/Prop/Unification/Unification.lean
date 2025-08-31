@@ -507,15 +507,6 @@ def mem_multiequation_list_eqv_relation
 -------------------------------------------------------------------------------
 
 
-def is_in_solved_form :
-  List (String × Formula_) → Prop
-  | [] => True
-  | (X, F) :: tl =>
-    (¬ var_occurs_in_formula X F) ∧
-      ∀ (pair : String × Formula_), pair ∈ tl →
-        ((¬ X = pair.fst) ∧ (¬ var_occurs_in_formula X pair.snd))
-
-
 def unify :
   List Equation → Option (String → Formula_)
   | [] => Option.some var_
@@ -555,7 +546,7 @@ def unify :
       simp only [Formula_.size]
       linarith
 
-  case _ h1 =>
+  case _ _ =>
     apply Prod.Lex.right'
     · apply Finset.card_le_card
       unfold equation_list_var_set
@@ -566,7 +557,7 @@ def unify :
       simp only [List.foldr_cons]
       simp only [Formula_.size]
       linarith
-  case _ h1 h2 =>
+  case _ _ h2 =>
     apply Prod.Lex.left
     apply Finset.card_lt_card
     unfold equation_list_var_set
@@ -576,7 +567,7 @@ def unify :
     apply extracted_1
     exact h2
 
-  case _ h1 =>
+  case _ _ =>
     apply Prod.Lex.right'
     · apply Finset.card_le_card
       unfold equation_list_var_set
@@ -587,7 +578,7 @@ def unify :
       simp only [List.foldr_cons]
       simp only [Formula_.size]
       linarith
-  case _ h1 h2 =>
+  case _ _ h2 =>
     apply Prod.Lex.left
     apply Finset.card_lt_card
     unfold equation_list_var_set
@@ -620,7 +611,15 @@ def unify :
       simp only [List.foldr_cons]
       simp only [Equation.var_set]
       simp only [Formula_.var_set]
-      sorry
+      rewrite [← Finset.union_assoc]
+      have s1 : phi.var_set ∪ phi'.var_set ∪ (psi.var_set ∪ psi'.var_set) = phi.var_set ∪ psi.var_set ∪ (phi'.var_set ∪ psi'.var_set) :=
+      by
+        rewrite [← Finset.union_assoc]
+        conv => left; left; rewrite [Finset.union_assoc]; right; rewrite [Finset.union_comm]
+        simp only [Finset.union_assoc]
+
+      rewrite [s1]
+      rfl
     · unfold equation_list_size
       unfold equation_list_formula_list
       unfold formula_list_size
@@ -635,10 +634,10 @@ def print_unify_list
   | Option.none => Option.none
   | Option.some σ => Option.some (Finset.image (fun (X : String) => (var_ X, σ X)) (equation_list_var_set L))
 
-#eval! let L := [⟨var_ "P", var_ "Q"⟩]; print_unify_list L (unify L)
+#eval let L := [⟨var_ "P", var_ "Q"⟩]; print_unify_list L (unify L)
 
-#eval! let L := [⟨var_ "X", not_ (var_ "X")⟩]; print_unify_list L (unify L)
+#eval let L := [⟨var_ "X", not_ (var_ "X")⟩]; print_unify_list L (unify L)
 
-#eval! let L := [⟨and_ (var_ "X") (var_ "Y"), and_ (var_ "Y") (var_ "Z")⟩]; print_unify_list L (unify L)
+#eval let L := [⟨and_ (var_ "X") (var_ "Y"), and_ (var_ "Y") (var_ "Z")⟩]; print_unify_list L (unify L)
 
-#eval! let L := [⟨or_ (and_ (var_ "X") (var_ "Y")) (var_ "Z"), or_ (and_ (var_ "Y") (var_ "Z")) (var_ "X")⟩]; print_unify_list L (unify L)
+#eval let L := [⟨or_ (and_ (var_ "X") (var_ "Y")) (var_ "Z"), or_ (and_ (var_ "Y") (var_ "Z")) (var_ "X")⟩]; print_unify_list L (unify L)
