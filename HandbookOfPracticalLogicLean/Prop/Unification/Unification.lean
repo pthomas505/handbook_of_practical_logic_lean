@@ -628,6 +628,18 @@ def unify :
       linarith
 
 
+example
+  (E : Equation)
+  (h1 : (unify [E]).isSome) :
+  is_equation_list_unifier ((unify [E]).get h1) [E] :=
+  by
+  cases E
+  case mk lhs rhs =>
+    induction lhs generalizing rhs
+    all_goals
+    sorry
+
+
 def print_unify_list
   (L : List Equation) :
   Option (String → Formula_) → Option (Finset (Formula_ × Formula_))
