@@ -470,4 +470,100 @@ example
       right
       exact contra
 
+
+lemma var_occurs_in_equation_equation_replace_var_one_rec
+  (X : String)
+  (F : Formula_)
+  (E : Equation)
+  (h1 : var_occurs_in_equation X (equation_replace_var_one_rec X F E)) :
+  var_occurs_in_formula X F :=
+  by
+  unfold equation_replace_var_one_rec at h1
+  unfold var_occurs_in_equation at h1
+  simp only at h1
+  cases h1
+  case inl h1 =>
+    apply var_occurs_in_formula_replace_var_one_rec X F E.lhs
+    exact h1
+  case inr h1 =>
+    apply var_occurs_in_formula_replace_var_one_rec X F E.rhs
+    exact h1
+
+
+lemma var_occurs_in_equation_list_equation_list_replace_var_one_rec
+  (X : String)
+  (F : Formula_)
+  (ES : List Equation)
+  (h1 : var_occurs_in_equation_list X (equation_list_replace_var_one_rec X F ES)) :
+  var_occurs_in_formula X F :=
+  by
+  unfold var_occurs_in_equation_list at h1
+  obtain ⟨E, h1_left, h1_right⟩ := h1
+  unfold equation_list_replace_var_one_rec at h1_left
+  simp only [List.mem_map] at h1_left
+  obtain ⟨E', h1_left_left, h1_left_right⟩ := h1_left
+  rewrite [← h1_left_right] at h1_right
+  apply var_occurs_in_equation_equation_replace_var_one_rec X F E'
+  exact h1_right
+
+
+lemma equation_replace_var_one_rec_var_set_subset
+  (X : String)
+  (F : Formula_)
+  (E : Equation) :
+  (equation_replace_var_one_rec X F E).var_set ⊆
+    F.var_set ∪ E.var_set :=
+  by
+  unfold equation_replace_var_one_rec
+  unfold Equation.var_set
+  simp only
+  rewrite [Finset.union_union_distrib_left]
+  apply Finset.union_subset_union
+  · apply replace_var_one_rec_var_set_subset
+  · apply replace_var_one_rec_var_set_subset
+
+
+lemma equation_list_replace_var_one_rec_equation_list_var_set_subset
+  (X : String)
+  (F : Formula_)
+  (ES : List Equation) :
+  equation_list_var_set (equation_list_replace_var_one_rec X F ES) ⊆
+    F.var_set ∪ equation_list_var_set ES :=
+  by
+  unfold equation_list_replace_var_one_rec
+  unfold equation_list_var_set
+
+  induction ES
+  case nil =>
+    simp only [List.map_nil, List.foldr_nil, Finset.union_empty, Finset.empty_subset]
+  case cons hd tl ih =>
+    simp only [List.map_cons, List.foldr_cons]
+    rewrite [Finset.union_union_distrib_left]
+    apply Finset.union_subset_union
+    · apply equation_replace_var_one_rec_var_set_subset
+    · exact ih
+
+
+theorem extracted_1
+  (X : String)
+  (F : Formula_)
+  (ES : List Equation)
+  (h1 : ¬ var_occurs_in_formula X F) :
+  equation_list_var_set (equation_list_replace_var_one_rec X F ES) ⊂ {X} ∪ F.var_set ∪ equation_list_var_set ES :=
+  by
+  simp only [Finset.ssubset_iff]
+  apply Exists.intro X
+  constructor
+  · intro contra
+    apply h1
+    simp only [← var_occurs_in_equation_list_iff_mem_equation_list_var_set] at contra
+    apply var_occurs_in_equation_list_equation_list_replace_var_one_rec X F ES
+    exact contra
+  · simp only [Finset.insert_eq]
+    simp only [Finset.union_assoc]
+    apply Finset.union_subset_union
+    · rfl
+    · apply equation_list_replace_var_one_rec_equation_list_var_set_subset
+
+
 --#lint
