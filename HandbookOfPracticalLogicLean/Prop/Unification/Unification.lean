@@ -520,9 +520,9 @@ def unify :
       if var_occurs_in_formula X F
       then Option.none
       else
-        match unify (equation_list_replace_var_one_rec X F Γ) with
-        | Option.none => Option.none
-        | Option.some τ => Option.some (Function.updateITE τ X (replace_var_all_rec τ F))
+        Option.map
+          (fun (τ : String → Formula_) => Function.updateITE' τ X (replace_var_all_rec τ F))
+          (unify (equation_list_replace_var_one_rec X F Γ))
   | ⟨not_ phi, not_ phi'⟩ :: Γ =>
       unify (⟨phi, phi'⟩ :: Γ)
   | ⟨and_ phi psi, and_ phi' psi'⟩ :: Γ
@@ -631,13 +631,39 @@ def unify :
 example
   (E : Equation)
   (h1 : (unify [E]).isSome) :
-  is_equation_list_unifier ((unify [E]).get h1) [E] :=
+  replace_var_all_rec ((unify [E]).get h1) E.lhs =
+    replace_var_all_rec ((unify [E]).get h1) E.rhs :=
   by
   cases E
   case mk lhs rhs =>
-    induction lhs generalizing rhs
+    simp only
+    induction lhs
+    case var_ X =>
+      simp only [unify]
+      split_ifs
+      case pos c1 =>
+        simp only [Option.get_some]
+        rewrite [c1]
+        rfl
+      case pos c1 c2 =>
+        simp only [unify] at h1
+        split_ifs at h1
+        simp only [Option.isSome_none] at h1
+        contradiction
+      case neg c1 c2 =>
+        simp only [Option.get_map]
+        unfold equation_list_replace_var_one_rec
+        simp only [List.map_nil]
+        simp only [unify]
+        simp only [Option.get_some]
+        simp only [replace_var_all_rec_id]
+        simp only [replace_var_all_rec]
+        simp only [Function.updateITE']
+        simp only [if_pos]
+        simp only [replace_var_all_rec_function_update_ite_not_occurs_in var_ X rhs rhs c2]
+        simp only [replace_var_all_rec_id]
     all_goals
-    sorry
+      sorry
 
 
 def print_unify_list

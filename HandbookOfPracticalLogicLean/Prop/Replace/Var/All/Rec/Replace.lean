@@ -28,7 +28,7 @@ def replace_var_all_rec
 
 lemma replace_var_all_rec_id
   (F : Formula_) :
-  replace_var_all_rec (fun (X : String) => var_ X) F = F :=
+  replace_var_all_rec var_ F = F :=
   by
   induction F
   case false_ | true_ | var_ X =>
@@ -74,6 +74,52 @@ lemma replace_var_all_rec_compose
     rewrite [phi_ih]
     rewrite [psi_ih]
     rfl
+
+
+lemma replace_var_all_rec_function_update_ite_not_occurs_in
+  (σ : String → Formula_)
+  (V : String)
+  (F : Formula_)
+  (H : Formula_)
+  (h1 : ¬ var_occurs_in_formula V F) :
+  replace_var_all_rec (Function.updateITE' σ V H) F =
+    replace_var_all_rec σ F :=
+  by
+  induction F
+  case false_ | true_ =>
+    simp only [replace_var_all_rec]
+  case var_ X =>
+    simp only [var_occurs_in_formula] at h1
+    simp only [replace_var_all_rec]
+    unfold Function.updateITE'
+    split_ifs
+    rfl
+  case not_ phi ih =>
+    unfold var_occurs_in_formula at h1
+
+    unfold replace_var_all_rec
+    congr 1
+    apply ih
+    exact h1
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    unfold var_occurs_in_formula at h1
+
+    unfold replace_var_all_rec
+    congr 1
+    · apply phi_ih
+      intro contra
+      apply h1
+      left
+      exact contra
+    · apply psi_ih
+      intro contra
+      apply h1
+      right
+      exact contra
 
 
 lemma replace_var_all_rec_eq_replace_var_all_rec_of_replace_var_one_rec
