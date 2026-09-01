@@ -39,11 +39,11 @@ def simplify : Expression → Expression
 #eval simplify (add (mul (add (mul (const 0) (var "x")) (const 1)) (const 3)) (const 12))
 
 
-def space := String.contains " \t\n\r"
-def punctuation := String.contains "()[]{},"
-def symbolic := String.contains "~`!@#$%^&*-+=|\\:;<>.?/"
-def numeric := String.contains "0123456789"
-def alphanumeric := String.contains "abcdefghijklmnopqrstuvwxyz_'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+def space := fun (c : Char) => " \t\n\r".contains c
+def punctuation := fun (c : Char) => "()[]{},".contains c
+def symbolic := fun (c : Char) => "~`!@#$%^&*-+=|\\:;<>.?/".contains c
+def numeric := fun (c : Char) => "0123456789".contains c
+def alphanumeric := fun (c : Char) => "abcdefghijklmnopqrstuvwxyz_'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".contains c
 
 def lexWhileAux
   (prop : Char → Bool)
@@ -61,7 +61,7 @@ def lexWhile
   (inp : String) :
   String × String :=
   let (left, right) := lexWhileAux prop [] inp.toList
-  (left.asString, right.asString)
+  (String.ofList left, String.ofList right)
 
 
 #eval lexWhile alphanumeric "abc"
