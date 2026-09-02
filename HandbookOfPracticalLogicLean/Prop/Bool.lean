@@ -1,12 +1,15 @@
 import Mathlib.Tactic
 
 
-set_option autoImplicit false
+set_option linter.style.docString false
+set_option linter.style.emptyLine false
+set_option linter.style.longLine false
 
 
 /--
   The truth table definition of boolean `not`.
 -/
+@[nolint defsWithUnderscore]
 def b_not : Bool → Bool
 | false => true
 | true => false
@@ -14,6 +17,7 @@ def b_not : Bool → Bool
 /--
   The truth table definition of boolean `and`.
 -/
+@[nolint defsWithUnderscore]
 def b_and : Bool → Bool → Bool
 | false, false => false
 | false, true => false
@@ -23,6 +27,7 @@ def b_and : Bool → Bool → Bool
 /--
   The truth table definition of boolean `or`.
 -/
+@[nolint defsWithUnderscore]
 def b_or : Bool → Bool → Bool
 | false, false => false
 | false, true => true
@@ -32,6 +37,7 @@ def b_or : Bool → Bool → Bool
 /--
   The truth table definition of boolean `imp`.
 -/
+@[nolint defsWithUnderscore]
 def b_imp : Bool → Bool → Bool
 | false, false => true
 | false, true => true
@@ -41,6 +47,7 @@ def b_imp : Bool → Bool → Bool
 /--
   The truth table definition of boolean `iff`.
 -/
+@[nolint defsWithUnderscore]
 def b_iff : Bool → Bool → Bool
 | false, false => true
 | false, true => false
@@ -51,7 +58,7 @@ def b_iff : Bool → Bool → Bool
 -------------------------------------------------------------------------------
 
 
-lemma bool_iff_prop_not
+theorem bool_iff_prop_not
   (b : Bool) :
   (b_not b = true) ↔ ¬ (b = true) :=
   by
@@ -62,7 +69,7 @@ lemma bool_iff_prop_not
     decide
 
 
-lemma bool_iff_prop_and
+theorem bool_iff_prop_and
   (b1 b2 : Bool) :
   (b_and b1 b2 = true) ↔ ((b1 = true) ∧ (b2 = true)) :=
   by
@@ -75,7 +82,7 @@ lemma bool_iff_prop_and
       decide
 
 
-lemma bool_iff_prop_or
+theorem bool_iff_prop_or
   (b1 b2 : Bool) :
   (b_or b1 b2 = true) ↔ ((b1 = true) ∨ (b2 = true)) :=
   by
@@ -88,7 +95,7 @@ lemma bool_iff_prop_or
       decide
 
 
-lemma bool_iff_prop_imp
+theorem bool_iff_prop_imp
   (b1 b2 : Bool) :
   (b_imp b1 b2 = true) ↔ ((b1 = true) → (b2 = true)) :=
   by
@@ -101,7 +108,7 @@ lemma bool_iff_prop_imp
       decide
 
 
-lemma bool_iff_prop_iff
+theorem bool_iff_prop_iff
   (b1 b2 : Bool) :
   (b_iff b1 b2 = true) ↔ ((b1 = true) ↔ (b2 = true)) :=
   by
@@ -117,7 +124,7 @@ lemma bool_iff_prop_iff
 -------------------------------------------------------------------------------
 
 
-lemma b_iff_rfl
+theorem b_iff_rfl
   (b : Bool) :
   b_iff b b = true :=
   by
@@ -128,7 +135,7 @@ lemma b_iff_rfl
     dsimp only
 
 
-lemma b_not_eq_false
+theorem b_not_eq_false
   (b : Bool) :
   (b_not b = false ↔ b = true) :=
   by
@@ -138,7 +145,7 @@ lemma b_not_eq_false
     · unfold b_not at a1
       dsimp at a1
       contradiction
-    · rfl
+    · apply Eq.refl
   · intro a1
     cases b
     · contradiction
@@ -146,14 +153,14 @@ lemma b_not_eq_false
       dsimp only
 
 
-lemma b_not_eq_true
+theorem b_not_eq_true
   (b : Bool) :
   (b_not b = true ↔ b = false) :=
   by
   constructor
   · intro a1
     cases b
-    · rfl
+    · apply Eq.refl
     · unfold b_not at a1
       dsimp only at a1
       contradiction
@@ -164,7 +171,7 @@ lemma b_not_eq_true
     · contradiction
 
 
-lemma b_iff_eq_false
+theorem b_iff_eq_false
   (b1 b2 : Bool) :
   (b_iff b1 b2 = false) ↔ ¬ (b1 = b2) :=
   by
@@ -195,7 +202,7 @@ lemma b_iff_eq_false
       · contradiction
 
 
-lemma b_iff_eq_true
+theorem b_iff_eq_true
   (b1 b2 : Bool) :
   (b_iff b1 b2 = true) ↔ (b1 = b2) :=
   by
@@ -203,7 +210,7 @@ lemma b_iff_eq_true
   · intro a1
     cases b1
     · cases b2
-      · rfl
+      · apply Eq.refl
       · unfold b_iff at a1
         dsimp only at a1
         contradiction
@@ -211,7 +218,7 @@ lemma b_iff_eq_true
       · unfold b_iff at a1
         dsimp only at a1
         contradiction
-      · rfl
+      · apply Eq.refl
   · intro a1
     rewrite [a1]
     apply b_iff_rfl
@@ -226,7 +233,7 @@ example
   b = false :=
   by
   cases b
-  · rfl
+  · apply Eq.refl
   · contradiction
 
 
@@ -237,7 +244,7 @@ example
   by
   cases b
   · contradiction
-  · rfl
+  · apply Eq.refl
 
 
 #lint
