@@ -39,11 +39,11 @@ def simplify : Expression → Expression
 #eval simplify (add (mul (add (mul (const 0) (var "x")) (const 1)) (const 3)) (const 12))
 
 
-def space := fun (c : Char) => " \t\n\r".contains c
-def punctuation := fun (c : Char) => "()[]{},".contains c
-def symbolic := fun (c : Char) => "~`!@#$%^&*-+=|\\:;<>.?/".contains c
-def numeric := fun (c : Char) => "0123456789".contains c
-def alphanumeric := fun (c : Char) => "abcdefghijklmnopqrstuvwxyz_'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".contains c
+def space : Char → Bool := fun (c : Char) => " \t\n\r".contains c
+def punctuation : Char → Bool := fun (c : Char) => "()[]{},".contains c
+def symbolic : Char → Bool := fun (c : Char) => "~`!@#$%^&*-+=|\\:;<>.?/".contains c
+def numeric : Char → Bool := fun (c : Char) => "0123456789".contains c
+def alphanumeric : Char → Bool := fun (c : Char) => "abcdefghijklmnopqrstuvwxyz_'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".contains c
 
 def lexWhileAux
   (prop : Char → Bool)
