@@ -23,7 +23,7 @@ inductive Formula_ : Type
   | iff_ : Formula_ → Formula_ → Formula_
   | forall_ : String → Formula_ → Formula_
   | exists_ : String → Formula_ → Formula_
-  deriving Inhabited, DecidableEq, Repr
+  deriving Inhabited, DecidableEq, Hashable, Repr
 
 compile_inductive% Formula_
 
