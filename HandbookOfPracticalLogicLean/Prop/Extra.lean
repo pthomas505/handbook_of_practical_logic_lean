@@ -4,7 +4,9 @@ import Mathlib.Util.CompileInductive
 import Mathlib.Tactic
 
 
-set_option autoImplicit false
+set_option linter.style.docString false
+set_option linter.style.emptyLine false
+set_option linter.style.longLine false
 
 
 /--
@@ -50,21 +52,46 @@ instance : ToString Formula_ :=
 
 open Lean Elab Meta
 
+/--
+  The syntax category of formulas.
+-/
 declare_syntax_cat formula
 
 
+/-- false -/
 syntax "F." : formula
+
+/-- true -/
 syntax "T." : formula
+
+/-- var -/
 syntax ident : formula
+
+/-- not -/
 syntax "~" formula : formula
+
+/-- and -/
 syntax "(" formula "/\\" formula ")" : formula
+
+/-- or -/
 syntax "(" formula "\\/" formula ")" : formula
+
+/-- imp -/
 syntax "(" formula "->" formula ")" : formula
+
+/-- iff -/
 syntax "(" formula "<->" formula ")" : formula
+
+/-- forall -/
 syntax "(" "A." ident formula ")" : formula
+
+/-- exists -/
 syntax "(" "E." ident formula ")" : formula
 
 
+/--
+  The elaboration of formulas.
+-/
 partial def elabFormula : Syntax → MetaM Expr
   | `(formula| F.) => mkAppM ``Formula_.false_ #[]
 
@@ -111,6 +138,9 @@ partial def elabFormula : Syntax → MetaM Expr
   | _ => throwUnsupportedSyntax
 
 
+/--
+  The elaboration of formulas.
+-/
 elab "(Formula_|" F:formula ")" : term => elabFormula F
 
 
@@ -125,10 +155,25 @@ elab "(Formula_|" F:formula ")" : term => elabFormula F
 #check (Formula_| ( A. x P ) )
 #check (Formula_| ( E. x P ) )
 
+#eval (Formula_| F. ).toString
+#eval (Formula_| T. ).toString
+#eval (Formula_| P ).toString
+#eval (Formula_| ~ P ).toString
+#eval (Formula_| (P /\ Q) ).toString
+#eval (Formula_| (P \/ Q) ).toString
+#eval (Formula_| (P -> Q) ).toString
+#eval (Formula_| (P <-> Q) ).toString
+#eval (Formula_| ( A. x P ) ).toString
+#eval (Formula_| ( E. x P ) ).toString
 
 
 open Formula_
 
+
+/--
+  `Formula_.map_vars f F` := Applies the function `f` to each of the propositional variables in the formula `F`.
+-/
+@[nolint defsWithUnderscore]
 def Formula_.map_vars
   (f : String → Formula_) :
   Formula_ → Formula_
@@ -144,7 +189,10 @@ def Formula_.map_vars
   | exists_ x phi => forall_ x (phi.map_vars f)
 
 
--- Applies the function f to all of the variables of the formula, from right to left.
+/--
+  `Formula_.foldr_vars f init F` := Folds the function `f` over each of the propositional variables in the formula `F`, from right to left.
+-/
+@[nolint defsWithUnderscore]
 def Formula_.foldr_vars
   {α : Type}
   (f : String → α → α)
@@ -162,25 +210,35 @@ def Formula_.foldr_vars
   | exists_ _ phi => phi.foldr_vars f init
 
 
+/--
+  `var_occurs_in_formula V F` := True if and only if there is an occurrence of the variable `V` in the formula `F`.
+-/
+@[nolint defsWithUnderscore]
 def var_occurs_in_formula
-  (A : String) :
+  (V : String) :
   Formula_ → Prop
   | false_
   | true_ => False
-  | var_ X => A = X
-  | not_ phi => var_occurs_in_formula A phi
+  | var_ X => V = X
+  | not_ phi => var_occurs_in_formula V phi
   | and_ phi psi
   | or_ phi psi
   | imp_ phi psi
-  | iff_ phi psi => var_occurs_in_formula A phi ∨ var_occurs_in_formula A psi
+  | iff_ phi psi => var_occurs_in_formula V phi ∨ var_occurs_in_formula V psi
   | forall_ _ phi
-  | exists_ _ phi => var_occurs_in_formula A phi
+  | exists_ _ phi => var_occurs_in_formula V phi
 
 
+/--
+  The valuation of a formula.
+-/
 def PropValuation : Type := String → Prop
   deriving Inhabited
 
 
+/--
+  `eval V F` := The evaluation of a formula `F` given the valuation `V`.
+-/
 def eval
   (V : PropValuation) :
   Formula_ → Prop
@@ -207,6 +265,10 @@ instance
     infer_instance
 
 
+/--
+  `eval_opt V F` := The evaluation of a formula `F` given the valuation `V`.
+-/
+@[nolint defsWithUnderscore]
 def eval_opt
   (V : PropValuation) :
   Formula_ → Option Prop
@@ -236,6 +298,10 @@ def eval_opt
   | exists_ _ _ => none
 
 
+/--
+  `Formula_.is_prop F` := True if and only if `F` is a formula in propositional logic.
+-/
+@[nolint defsWithUnderscore]
 def Formula_.is_prop :
   Formula_ → Prop
   | false_
@@ -250,7 +316,7 @@ def Formula_.is_prop :
   | exists_ _ _ => False
 
 
-lemma is_prop_imp_eval_opt_eq_some_eval
+theorem is_prop_imp_eval_opt_eq_some_eval
   (F : Formula_)
   (V : PropValuation)
   (h1 : F.is_prop) :
@@ -260,14 +326,14 @@ lemma is_prop_imp_eval_opt_eq_some_eval
   case false_ | true_ | var_ X =>
     unfold eval_opt
     unfold eval
-    rfl
+    apply Eq.refl
   case not_ phi ih =>
     unfold is_prop at h1
 
     simp only [eval_opt]
     rewrite [ih h1]
     simp only [eval]
-    simp
+    simp only [Option.bind_eq_bind, Option.bind_some]
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih
@@ -280,9 +346,12 @@ lemma is_prop_imp_eval_opt_eq_some_eval
     rewrite [phi_ih h1_left]
     rewrite [psi_ih h1_right]
     simp only [eval]
-    simp
+    simp only [Option.bind_eq_bind, Option.bind_some]
   case
       forall_ x phi ih
     | exists_ x phi ih =>
       unfold is_prop at h1
       contradiction
+
+
+#lint
