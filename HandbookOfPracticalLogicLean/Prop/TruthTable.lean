@@ -6,7 +6,9 @@ import HandbookOfPracticalLogicLean.Prop.Semantics
 import Mathlib.Tactic
 
 
-set_option autoImplicit false
+set_option linter.style.docString false
+set_option linter.style.emptyLine false
+set_option linter.style.longLine false
 
 
 open Formula_
@@ -23,6 +25,7 @@ def ValuationAsListOfPairs : Type := List (String × Bool)
   `gen_all_valuations_as_list_of_list_of_pairs var_list` := Returns a list of all of the lists of pairs of strings and booleans that can be constructed by pairing each string in `var_list` with a boolean.
   [ l : List (String × Bool) | (l.map Prod.fst) = var_list ]
 -/
+@[nolint defsWithUnderscore]
 def gen_all_valuations_as_list_of_list_of_pairs :
   List String → List (ValuationAsListOfPairs)
 | [] => [[]]
@@ -38,6 +41,7 @@ def gen_all_valuations_as_list_of_list_of_pairs :
 /--
   `all_valuations_as_set_of_list_of_pairs var_list` := The set of all of the lists of pairs of strings and booleans that can be constructed by pairing each string in `var_list` with a boolean.
 -/
+@[nolint defsWithUnderscore]
 def all_valuations_as_set_of_list_of_pairs
   (var_list : List String) :
   Set (ValuationAsListOfPairs) :=
@@ -57,9 +61,10 @@ lemma mem_gen_all_valuations_as_list_of_list_of_pairs_imp_mem_all_valuations_as_
 
     rewrite [h1]
     unfold List.map
-    rfl
+    apply Eq.refl
   case cons hd tl ih =>
     unfold gen_all_valuations_as_list_of_list_of_pairs at h1
+    unfold ValuationAsListOfPairs at h1
     simp only [List.mem_append, List.mem_map] at h1
 
     cases h1
@@ -68,7 +73,7 @@ lemma mem_gen_all_valuations_as_list_of_list_of_pairs_imp_mem_all_valuations_as_
       rewrite [← h1_right]
       simp only [List.map_cons]
       rewrite [ih V h1_left]
-      rfl
+      apply Eq.refl
 
 
 lemma mem_all_valuations_as_set_of_list_of_pairs_imp_mem_gen_all_valuations_as_list_of_list_of_pairs
@@ -96,6 +101,7 @@ lemma mem_all_valuations_as_set_of_list_of_pairs_imp_mem_gen_all_valuations_as_l
       obtain ⟨h1_left, h1_right⟩ := h1
 
       unfold gen_all_valuations_as_list_of_list_of_pairs
+      unfold ValuationAsListOfPairs
       simp only [List.mem_append, List.mem_map]
 
       cases c1 : l_hd.2
@@ -107,7 +113,7 @@ lemma mem_all_valuations_as_set_of_list_of_pairs_imp_mem_gen_all_valuations_as_l
           exact h1_right
         · rewrite [← h1_left]
           rewrite [← c1]
-          rfl
+          simp only [Prod.mk.eta]
 
 
 lemma mem_gen_all_valuations_as_list_of_list_of_pairs_iff_mem_all_valuations_as_set_of_list_of_pairs
@@ -134,12 +140,14 @@ example
   case nil =>
     unfold Function.toListOfPairs
     unfold gen_all_valuations_as_list_of_list_of_pairs
+    unfold ValuationAsListOfPairs
     simp only [List.map_nil, List.mem_singleton]
   case cons hd tl ih =>
     unfold Function.toListOfPairs at ih
 
     unfold Function.toListOfPairs
     unfold gen_all_valuations_as_list_of_list_of_pairs
+    unfold ValuationAsListOfPairs
     simp only [List.map_cons, List.mem_append, List.mem_map, List.cons.injEq, Prod.mk.injEq]
     cases f hd
     map_tacs [left; right]
@@ -149,9 +157,9 @@ example
       · exact ih
       · constructor
         · constructor
-          · exact trivial
-          · rfl
-        · rfl
+          · exact True.intro
+          · apply Eq.refl
+        · apply Eq.refl
 
 
 -------------------------------------------------------------------------------
@@ -161,6 +169,7 @@ example
   `gen_all_valuations_as_list_of_total_functions init var_list` := Returns a list of all of the functions from strings to booleans that map every string not in `var_list` to the same value as the function `init`.
   [ V : String → Bool | ∀ (X : String), X ∉ var_list → V X = init X ]
 -/
+@[nolint defsWithUnderscore]
 def gen_all_valuations_as_list_of_total_functions
   (init : ValuationAsTotalFunction) :
   List String → List (ValuationAsTotalFunction)
@@ -177,6 +186,7 @@ def gen_all_valuations_as_list_of_total_functions
 /--
   `all_valuations_as_set_of_total_functions init var_list` := The set of all of the functions from strings to booleans that map every string not in `var_list` to the same value as the function `init`.
 -/
+@[nolint defsWithUnderscore]
 def all_valuations_as_set_of_total_functions
   (init : ValuationAsTotalFunction)
   (var_list : List String) :
@@ -198,9 +208,10 @@ lemma mem_gen_all_valuations_as_list_of_total_functions_imp_mem_all_valuations_a
     unfold gen_all_valuations_as_list_of_total_functions at h1
     simp only [List.mem_singleton] at h1
     rewrite [h1]
-    rfl
+    apply Eq.refl
   case cons hd tl ih =>
     unfold gen_all_valuations_as_list_of_total_functions at h1
+    unfold ValuationAsTotalFunction at h1
     simp only [List.mem_append, List.mem_map] at h1
 
     simp only [List.mem_cons] at h2
@@ -210,13 +221,13 @@ lemma mem_gen_all_valuations_as_list_of_total_functions_imp_mem_all_valuations_a
       obtain ⟨l, h1_left, h1_right⟩ := h1
       rewrite [← h1_right]
       unfold Function.updateITE
-      split_ifs
-      case pos c1 =>
+      split
+      case isTrue c1 =>
         exfalso
         apply h2
         left
         exact c1
-      case neg c1 =>
+      case isFalse c1 =>
         apply ih l h1_left
         intro contra
         apply h2
@@ -244,6 +255,7 @@ lemma mem_all_valuations_as_set_of_total_functions_imp_mem_gen_all_valuations_as
     simp only [List.mem_cons, not_or] at h1
 
     unfold gen_all_valuations_as_list_of_total_functions
+    unfold ValuationAsTotalFunction
     simp only [List.mem_append, List.mem_map]
     cases c1 : V hd
     map_tacs [left; right]
@@ -252,23 +264,26 @@ lemma mem_all_valuations_as_set_of_total_functions_imp_mem_gen_all_valuations_as
       constructor
       · apply ih
         intro X a2
-        split_ifs
-        rfl
+        split
+        case isTrue c2 =>
+          contradiction
+        case isFalse c2 =>
+          apply Eq.refl
       · funext X
         unfold Function.updateITE
-        split_ifs
-        case pos c2 =>
+        split
+        case isTrue c2 =>
           rewrite [← c1]
           rewrite [c2]
-          rfl
-        case neg c2 =>
+          apply Eq.refl
+        case isFalse c2 =>
           simp only
-          split_ifs
-          case pos c3 =>
-            rfl
-          case neg c3 =>
+          split
+          case isTrue c3 =>
+            apply Eq.refl
+          case isFalse c3 =>
             rewrite [h1]
-            · rfl
+            · apply Eq.refl
             · exact ⟨c2, c3⟩
 
 
@@ -294,6 +309,7 @@ lemma mem_gen_all_valuations_as_list_of_total_functions_iff_mem_all_valuations_a
 /--
   `valuation_as_list_of_pairs_to_valuation_as_total_function init l` := Translates the list of string and boolean pairs `l` to a function that maps each string that occurs in a pair in `l` to the leftmost boolean value that it is paired with, and each string that does not occur in a pair in `l` to the boolean value mapped to by the function `init`.
 -/
+@[nolint defsWithUnderscore]
 def valuation_as_list_of_pairs_to_valuation_as_total_function
   (init : ValuationAsTotalFunction)
   (l : ValuationAsListOfPairs) :
@@ -315,11 +331,12 @@ example
     unfold valuation_as_list_of_pairs_to_valuation_as_total_function
     unfold Function.updateFromListOfPairsITE
     unfold gen_all_valuations_as_list_of_total_functions
-    rfl
+    apply Eq.refl
   case cons hd tl ih =>
     unfold valuation_as_list_of_pairs_to_valuation_as_total_function at ih
 
     unfold gen_all_valuations_as_list_of_list_of_pairs
+    unfold ValuationAsListOfPairs
     simp only [List.map_append, List.map_map]
     unfold valuation_as_list_of_pairs_to_valuation_as_total_function
     unfold gen_all_valuations_as_list_of_total_functions
@@ -327,28 +344,37 @@ example
     congr 1
     all_goals
       rewrite [← ih]
+      unfold ValuationAsTotalFunction
+      unfold ValuationAsListOfPairs
       simp only [List.map_map, List.map_inj_left, Function.comp_apply]
       intro l a1
       funext X
       unfold Function.updateITE
-      split_ifs
-      case pos c1 =>
+      split
+      case isTrue c1 =>
         unfold Function.updateFromListOfPairsITE
         simp only
         unfold Function.updateITE
-        split_ifs
-        rfl
-      case neg c1 =>
+        split
+        case isTrue c2 =>
+          apply Eq.refl
+        case isFalse c2 =>
+          contradiction
+      case isFalse c1 =>
         conv => left; unfold Function.updateFromListOfPairsITE
         simp only
         unfold Function.updateITE
-        split_ifs
-        rfl
+        split
+        case isTrue c2 =>
+          contradiction
+        case isFalse c2 =>
+          apply Eq.refl
 
 
 /--
   `valuation_as_total_function_to_valuation_as_list_of_pairs var_list V` := Translates the function from strings to booleans `V` to a list of pairs of strings and booleans by pairing each string in `var_list` with the boolean value mapped to by `V`.
 -/
+@[nolint defsWithUnderscore]
 def valuation_as_total_function_to_valuation_as_list_of_pairs
   (var_list : List String)
   (V : ValuationAsTotalFunction) :
@@ -370,7 +396,7 @@ example
     unfold Function.toListOfPairs
     simp only [List.map_nil]
     unfold gen_all_valuations_as_list_of_list_of_pairs
-    rfl
+    apply Eq.refl
   case cons hd tl ih =>
     unfold valuation_as_total_function_to_valuation_as_list_of_pairs at ih
 
@@ -378,6 +404,7 @@ example
     obtain ⟨h1_left, h1_right⟩ := h1
 
     unfold gen_all_valuations_as_list_of_total_functions
+    unfold ValuationAsTotalFunction
     simp only [List.map_append, List.map_map]
     unfold valuation_as_total_function_to_valuation_as_list_of_pairs
     unfold gen_all_valuations_as_list_of_list_of_pairs
@@ -385,25 +412,31 @@ example
     congr 1
     all_goals
       rewrite [← ih h1_right]
+      unfold ValuationAsTotalFunction
+      unfold ValuationAsListOfPairs
       simp only [List.map_map, List.map_inj_left, Function.comp_apply]
       intro V a1
       unfold Function.toListOfPairs
       simp only [List.map_cons]
       congr 1
       · unfold Function.updateITE
-        simp only [if_pos]
+        split
+        case isTrue c1 =>
+          apply Eq.refl
+        case isFalse c1 =>
+          contradiction
       · simp only [List.map_inj_left]
         intro X a2
         simp only [Prod.mk.injEq]
         constructor
-        · exact trivial
+        · exact True.intro
         · unfold Function.updateITE
-          split_ifs
-          case pos c1 =>
+          split
+          case isTrue c1 =>
             rewrite [c1] at a2
             contradiction
-          case neg c1 =>
-            rfl
+          case isFalse c1 =>
+            apply Eq.refl
 
 
 -------------------------------------------------------------------------------
@@ -419,10 +452,12 @@ lemma gen_all_valuations_as_list_of_list_of_pairs_length
     simp only [List.length_singleton, List.length_nil, pow_zero]
   case cons hd tl ih =>
     unfold gen_all_valuations_as_list_of_list_of_pairs
+    unfold ValuationAsListOfPairs
     simp only [List.length_append, List.length_map, List.length_cons]
     simp only [Nat.two_pow_succ]
+    unfold ValuationAsListOfPairs at ih
     rewrite [ih]
-    rfl
+    apply Eq.refl
 
 
 lemma gen_all_valuations_as_list_of_total_functions_length
@@ -436,10 +471,12 @@ lemma gen_all_valuations_as_list_of_total_functions_length
     simp only [List.length_singleton, List.length_nil, pow_zero]
   case cons hd tl ih =>
     unfold gen_all_valuations_as_list_of_total_functions
+    unfold ValuationAsTotalFunction
     simp only [List.length_append, List.length_map, List.length_cons]
     simp only [Nat.two_pow_succ]
+    unfold ValuationAsTotalFunction at ih
     rewrite [ih]
-    rfl
+    apply Eq.refl
 
 
 -------------------------------------------------------------------------------
@@ -464,6 +501,7 @@ lemma gen_all_valuations_as_list_of_total_functions_eq_on_var_list
 
     unfold gen_all_valuations_as_list_of_total_functions at h1
     simp only at h1
+    unfold ValuationAsTotalFunction at h1
 
     rewrite [List.zip_append] at h1
     · simp only [List.mem_append] at h1
@@ -484,8 +522,11 @@ lemma gen_all_valuations_as_list_of_total_functions_eq_on_var_list
           rewrite [← s1_left_right]
           rewrite [← s1_right_right]
           unfold Function.updateITE
-          split_ifs
-          rfl
+          split
+          case isTrue c1 =>
+            apply Eq.refl
+          case isFalse c2 =>
+            contradiction
       case inr h2 =>
         cases h1
         case inl h1 | inr h1 =>
@@ -496,17 +537,26 @@ lemma gen_all_valuations_as_list_of_total_functions_eq_on_var_list
           rewrite [← h1_right]
           simp only
           unfold Function.updateITE
-          split_ifs
-          case pos c1 =>
-            rfl
-          case neg c1 =>
+          split
+          case isTrue c1 =>
+            apply Eq.refl
+          case isFalse c1 =>
             specialize ih (a, b)
             simp only at ih
             apply ih
             · exact h1_left
             · exact h2
     · simp only [List.length_map]
-      simp only [gen_all_valuations_as_list_of_total_functions_length]
+
+      obtain s1 := gen_all_valuations_as_list_of_total_functions_length init_1 tl
+      unfold ValuationAsTotalFunction at s1
+      rewrite [s1]
+
+      obtain s2 := gen_all_valuations_as_list_of_total_functions_length init_2 tl
+      unfold ValuationAsTotalFunction at s2
+      rewrite [s2]
+
+      apply Eq.refl
 
 
 lemma mem_zip_gen_all_valuations_as_list_of_total_functions_imp_eval_eq
@@ -533,6 +583,7 @@ lemma mem_zip_gen_all_valuations_as_list_of_total_functions_imp_eval_eq
 /--
   Helper function for `find_valuation`.
 -/
+@[nolint defsWithUnderscore]
 def find_valuation_aux
   (pred : ValuationAsListOfPairs → Bool) :
   List String → ValuationAsListOfPairs → Option ValuationAsListOfPairs
@@ -544,6 +595,7 @@ def find_valuation_aux
 /--
   `find_valuation pred var_list` := Searches for the first valuation in `{ l : List (String × Bool) | (l.map Prod.fst) = var_list }` that satisfies the predicate `pred`.
 -/
+@[nolint defsWithUnderscore]
 def find_valuation
   (pred : ValuationAsListOfPairs → Bool)
   (var_list : List String) :
@@ -557,6 +609,7 @@ def find_valuation
 /--
   `find_satisfying_valuation F` := Searches for the first valuation in `{ l : List (String × Bool) | (l.map Prod.fst) = F.var_list }` that satisfies the formula `F`.
 -/
+@[nolint defsWithUnderscore]
 def find_satisfying_valuation
   (F : Formula_) :
   Option ValuationAsListOfPairs :=
@@ -567,11 +620,13 @@ def find_satisfying_valuation
 /--
   `check_tautology F` := True if and only if the formula `F` is a tautology.
 -/
+@[nolint defsWithUnderscore]
 def check_tautology
   (F : Formula_) :
   Prop :=
   (find_satisfying_valuation (not_ F)).isNone
 
+@[nolint defsWithUnderscore]
 instance
   (F : Formula_) :
   Decidable (check_tautology F) :=
@@ -596,6 +651,7 @@ instance
 /--
   `cartesian_product l` := The n-ary cartesian product of the lists in `l`.
 -/
+@[nolint defsWithUnderscore]
 def cartesian_product
   {α : Type} :
   List (List α) → List (List α)
