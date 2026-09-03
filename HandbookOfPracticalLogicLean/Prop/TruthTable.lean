@@ -48,7 +48,7 @@ def all_valuations_as_set_of_list_of_pairs
   { l : ValuationAsListOfPairs | (l.map Prod.fst) = var_list }
 
 
-lemma mem_gen_all_valuations_as_list_of_list_of_pairs_imp_mem_all_valuations_as_set_of_list_of_pairs
+theorem mem_gen_all_valuations_as_list_of_list_of_pairs_imp_mem_all_valuations_as_set_of_list_of_pairs
   (var_list : List String)
   (l : ValuationAsListOfPairs)
   (h1 : l ∈ gen_all_valuations_as_list_of_list_of_pairs var_list) :
@@ -76,7 +76,7 @@ lemma mem_gen_all_valuations_as_list_of_list_of_pairs_imp_mem_all_valuations_as_
       apply Eq.refl
 
 
-lemma mem_all_valuations_as_set_of_list_of_pairs_imp_mem_gen_all_valuations_as_list_of_list_of_pairs
+theorem mem_all_valuations_as_set_of_list_of_pairs_imp_mem_gen_all_valuations_as_list_of_list_of_pairs
   (var_list : List String)
   (l : ValuationAsListOfPairs)
   (h1 : (l.map Prod.fst) = var_list) :
@@ -116,7 +116,7 @@ lemma mem_all_valuations_as_set_of_list_of_pairs_imp_mem_gen_all_valuations_as_l
           simp only [Prod.mk.eta]
 
 
-lemma mem_gen_all_valuations_as_list_of_list_of_pairs_iff_mem_all_valuations_as_set_of_list_of_pairs
+theorem mem_gen_all_valuations_as_list_of_list_of_pairs_iff_mem_all_valuations_as_set_of_list_of_pairs
   (var_list : List String)
   (l : ValuationAsListOfPairs) :
   l ∈ gen_all_valuations_as_list_of_list_of_pairs var_list ↔ l ∈ all_valuations_as_set_of_list_of_pairs var_list :=
@@ -194,7 +194,7 @@ def all_valuations_as_set_of_total_functions
   { V : ValuationAsTotalFunction | ∀ (X : String), X ∉ var_list → V X = init X }
 
 
-lemma mem_gen_all_valuations_as_list_of_total_functions_imp_mem_all_valuations_as_set_of_total_functions
+theorem mem_gen_all_valuations_as_list_of_total_functions_imp_mem_all_valuations_as_set_of_total_functions
   (init : String → Bool)
   (var_list : List String)
   (V : ValuationAsTotalFunction)
@@ -235,7 +235,7 @@ lemma mem_gen_all_valuations_as_list_of_total_functions_imp_mem_all_valuations_a
         exact contra
 
 
-lemma mem_all_valuations_as_set_of_total_functions_imp_mem_gen_all_valuations_as_list_of_total_functions
+theorem mem_all_valuations_as_set_of_total_functions_imp_mem_gen_all_valuations_as_list_of_total_functions
   (init : String → Bool)
   (var_list : List String)
   (V : ValuationAsTotalFunction)
@@ -287,7 +287,7 @@ lemma mem_all_valuations_as_set_of_total_functions_imp_mem_gen_all_valuations_as
             · exact ⟨c2, c3⟩
 
 
-lemma mem_gen_all_valuations_as_list_of_total_functions_iff_mem_all_valuations_as_set_of_total_functions
+theorem mem_gen_all_valuations_as_list_of_total_functions_iff_mem_all_valuations_as_set_of_total_functions
   (init : String → Bool)
   (var_list : List String)
   (V : ValuationAsTotalFunction) :
@@ -442,7 +442,7 @@ example
 -------------------------------------------------------------------------------
 
 
-lemma gen_all_valuations_as_list_of_list_of_pairs_length
+theorem gen_all_valuations_as_list_of_list_of_pairs_length
   (var_list : List String) :
   (gen_all_valuations_as_list_of_list_of_pairs var_list).length = 2 ^ var_list.length :=
   by
@@ -460,7 +460,7 @@ lemma gen_all_valuations_as_list_of_list_of_pairs_length
     apply Eq.refl
 
 
-lemma gen_all_valuations_as_list_of_total_functions_length
+theorem gen_all_valuations_as_list_of_total_functions_length
   (init : String → Bool)
   (var_list : List String) :
   (gen_all_valuations_as_list_of_total_functions init var_list).length = 2 ^ var_list.length :=
@@ -482,7 +482,7 @@ lemma gen_all_valuations_as_list_of_total_functions_length
 -------------------------------------------------------------------------------
 
 
-lemma gen_all_valuations_as_list_of_total_functions_eq_on_var_list
+theorem gen_all_valuations_as_list_of_total_functions_eq_on_var_list
   (init_1 init_2 : ValuationAsTotalFunction)
   (var_list : List String)
   (p : ValuationAsTotalFunction × ValuationAsTotalFunction)
@@ -559,7 +559,7 @@ lemma gen_all_valuations_as_list_of_total_functions_eq_on_var_list
       apply Eq.refl
 
 
-lemma mem_zip_gen_all_valuations_as_list_of_total_functions_imp_eval_eq
+theorem mem_zip_gen_all_valuations_as_list_of_total_functions_imp_eval_eq
   (init_1 init_2 : ValuationAsTotalFunction)
   (F : Formula_)
   (p : ValuationAsTotalFunction × ValuationAsTotalFunction)
