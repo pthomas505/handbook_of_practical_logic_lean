@@ -6,7 +6,9 @@ import HandbookOfPracticalLogicLean.Prop.Bool
 import Mathlib.Tactic
 
 
-set_option autoImplicit false
+set_option linter.style.docString false
+set_option linter.style.emptyLine false
+set_option linter.style.longLine false
 
 
 open Formula_
@@ -57,6 +59,7 @@ instance
 /--
   `Formula_.is_tautology F` := True if and only if the formula `F` is a tautology.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.is_tautology
   (F : Formula_) :
   Prop :=
@@ -66,6 +69,7 @@ def Formula_.is_tautology
 /--
   `Formula_.is_satisfiable F` := True if and only if the formula `F` is satisfiable.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.is_satisfiable
   (F : Formula_) :
   Prop :=
@@ -75,6 +79,7 @@ def Formula_.is_satisfiable
 /--
   `Formula_.is_unsatisfiable F` := True if and only if the formula `F` is not satisfiable.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.is_unsatisfiable
   (F : Formula_) :
   Prop :=
@@ -84,6 +89,7 @@ def Formula_.is_unsatisfiable
 /--
   `satisfies_set V F` := True if and only if the valuation `V` satisfies every formula in the set of formulas `Γ`.
 -/
+@[nolint defsWithUnderscore]
 def satisfies_set
   (V : ValuationAsTotalFunction)
   (Γ : Set Formula_) :
@@ -94,6 +100,7 @@ def satisfies_set
 /--
   `set_is_satisfiable Γ` := True if and only if the set of formulas `Γ` is satisfiable.
 -/
+@[nolint defsWithUnderscore]
 def set_is_satisfiable
   (Γ : Set Formula_) :
   Prop :=
@@ -103,6 +110,7 @@ def set_is_satisfiable
 /--
   `set_is_unsatisfiable Γ` := True if and only if the set of formulas `Γ` is not satisfiable.
 -/
+@[nolint defsWithUnderscore]
 def set_is_unsatisfiable
   (Γ : Set Formula_) :
   Prop :=
@@ -122,6 +130,7 @@ def entails
 /--
   `is_logical_consequence P Q` := True if and only if the formula `Q` is a logical consequence of the formula `P`.
 -/
+@[nolint defsWithUnderscore]
 def is_logical_consequence
   (P Q : Formula_) :
   Prop :=
@@ -131,6 +140,7 @@ def is_logical_consequence
 /--
   `are_logically_equivalent P Q` := True if and only if the formulas `P` and `Q` are logically equivalent.
 -/
+@[nolint defsWithUnderscore]
 def are_logically_equivalent
   (P Q : Formula_) :
   Prop :=
@@ -140,6 +150,7 @@ def are_logically_equivalent
 /--
   `are_equisatisfiable P Q` := True if and only if the formulas `P` and `Q` are equisatisfiable.
 -/
+@[nolint defsWithUnderscore]
 def are_equisatisfiable
   (P Q : Formula_) :
   Prop :=
@@ -149,6 +160,7 @@ def are_equisatisfiable
 /--
   `are_equivalid P Q` := True if and only if the formulas `P` and `Q` are equivalid.
 -/
+@[nolint defsWithUnderscore]
 def are_equivalid
   (P Q : Formula_) :
   Prop :=
@@ -176,7 +188,7 @@ example
   by
   unfold is_unsatisfiable
   unfold is_satisfiable
-  rfl
+  apply Iff.refl
 
 
 example
@@ -215,7 +227,7 @@ example
 -------------------------------------------------------------------------------
 
 
-lemma are_logically_equivalent_iff_eval_eq
+theorem are_logically_equivalent_iff_eval_eq
   (P Q : Formula_) :
   are_logically_equivalent P Q ↔ ∀ (V : ValuationAsTotalFunction), eval V P = eval V Q :=
   by
@@ -226,7 +238,7 @@ lemma are_logically_equivalent_iff_eval_eq
   simp only [b_iff_eq_true]
 
 
-lemma are_logically_equivalent_false_iff
+theorem are_logically_equivalent_false_iff
   (F : Formula_) :
   are_logically_equivalent F false_ ↔
   are_logically_equivalent (not_ F) true_ :=
@@ -239,7 +251,7 @@ lemma are_logically_equivalent_false_iff
   simp only [b_not_eq_true]
 
 
-lemma are_logically_equivalent_true_iff
+theorem are_logically_equivalent_true_iff
   (F : Formula_) :
   are_logically_equivalent F true_ ↔
   are_logically_equivalent (not_ F) false_ :=
@@ -252,7 +264,7 @@ lemma are_logically_equivalent_true_iff
   simp only [b_not_eq_false]
 
 
-lemma are_logically_equivalent_to_false_iff_not_is_tautology
+theorem are_logically_equivalent_to_false_iff_not_is_tautology
   (F : Formula_) :
   are_logically_equivalent F false_ ↔ (not_ F).is_tautology :=
   by
@@ -264,7 +276,7 @@ lemma are_logically_equivalent_to_false_iff_not_is_tautology
   simp only [b_not_eq_true]
 
 
-lemma are_logically_equivalent_to_true_iff_is_tautology
+theorem are_logically_equivalent_to_true_iff_is_tautology
   (F : Formula_) :
   are_logically_equivalent F true_ ↔ F.is_tautology :=
   by
@@ -299,7 +311,7 @@ example
   · intro a1 V a2
     apply a1
     apply a2
-    rfl
+    apply Eq.refl
 
 
 example
@@ -346,11 +358,11 @@ theorem theorem_2_2
   all_goals
     unfold eval
   case false_ | true_ =>
-    rfl
+    apply Eq.refl
   case var_ X =>
     apply h1
     unfold var_occurs_in_formula
-    rfl
+    apply Eq.refl
   case not_ phi ih =>
     unfold var_occurs_in_formula at h1
 
@@ -444,6 +456,7 @@ instance
 /--
   `Formula_.is_tautology F` := True if and only if the formula `F` is a tautology.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.is_tautology
   (F : Formula_) :
   Prop :=
@@ -453,6 +466,7 @@ def Formula_.is_tautology
 /--
   `valuation_as_list_of_pairs_to_valuation_as_partial_function l` := Translates the list of string and boolean pairs `l` to a function that maps each string that occurs in a pair in `l` to `some` of the leftmost boolean value that it is paired with, and each string that does not occur in a pair in `l` to `none`.
 -/
+@[nolint defsWithUnderscore]
 def valuation_as_list_of_pairs_to_valuation_as_partial_function :
   List (String × Bool) → ValuationAsPartialFunction
   | [] => fun _ => none
@@ -484,21 +498,21 @@ example
   case false_ | true_ =>
     unfold Option_.eval
     unfold eval
-    rfl
+    apply Eq.refl
   case var_ X =>
     unfold var_occurs_in_formula at h1
 
     unfold Option_.eval
     unfold eval
     apply h1
-    rfl
+    apply Eq.refl
   case not_ phi ih =>
     unfold var_occurs_in_formula at h1
 
     unfold Option_.eval
     unfold eval
     rewrite [ih h1]
-    simp only [Option.bind_eq_bind, Option.some_bind]
+    simp only [Option.bind_eq_bind, Option.bind_some]
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih
@@ -524,12 +538,13 @@ example
     unfold eval
     rewrite [phi_ih s1]
     rewrite [psi_ih s2]
-    simp only [Option.bind_eq_bind, Option.some_bind]
+    simp only [Option.bind_eq_bind, Option.bind_some]
 
 
 /--
   `val_to_opt_val V` := The conversion of the valuation function `V` to an option valued valuation function.
 -/
+@[nolint defsWithUnderscore]
 def val_to_opt_val
   (V : ValuationAsTotalFunction) :
   Option_.ValuationAsPartialFunction :=
@@ -539,6 +554,7 @@ def val_to_opt_val
 /--
   `opt_val_to_val V_opt` := The conversion of the option valued valuation function `V_opt` to a valuation function.
 -/
+@[nolint defsWithUnderscore]
 def opt_val_to_val
   (V_opt : Option_.ValuationAsPartialFunction) :
   ValuationAsTotalFunction :=
@@ -548,16 +564,16 @@ def opt_val_to_val
     | none => default
 
 
-lemma val_to_opt_val_eq_some_val
+theorem val_to_opt_val_eq_some_val
   (V : ValuationAsTotalFunction)
   (A : String) :
   (val_to_opt_val V) A = some (V A) :=
   by
   unfold val_to_opt_val
-  rfl
+  apply Eq.refl
 
 
-lemma opt_val_eq_some_opt_val_to_val
+theorem opt_val_eq_some_opt_val_to_val
   (V_opt : Option_.ValuationAsPartialFunction)
   (A : String)
   (h1 : ¬ V_opt A = none) :
@@ -569,10 +585,10 @@ lemma opt_val_eq_some_opt_val_to_val
   case some b =>
     unfold opt_val_to_val
     rewrite [c1]
-    rfl
+    dsimp only
 
 
-lemma eval_opt_val_to_val
+theorem eval_opt_val_to_val
   (V_opt : Option_.ValuationAsPartialFunction)
   (F : Formula_)
   (h1 : ∀ (A : String), var_occurs_in_formula A F → ¬ V_opt A = none) :
@@ -582,7 +598,7 @@ lemma eval_opt_val_to_val
   case false_ | true_ =>
     unfold Option_.eval
     unfold eval
-    rfl
+    apply Eq.refl
   case var_ X =>
     unfold var_occurs_in_formula at h1
 
@@ -590,14 +606,14 @@ lemma eval_opt_val_to_val
     unfold eval
     apply opt_val_eq_some_opt_val_to_val
     apply h1
-    rfl
+    apply Eq.refl
   case not_ phi ih =>
     unfold var_occurs_in_formula at h1
 
     unfold Option_.eval
     unfold eval
     rewrite [ih h1]
-    simp only [Option.bind_eq_bind, Option.some_bind]
+    simp only [Option.bind_eq_bind, Option.bind_some]
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih
@@ -623,10 +639,10 @@ lemma eval_opt_val_to_val
     unfold eval
     rewrite [phi_ih s1]
     rewrite [psi_ih s2]
-    simp only [Option.bind_eq_bind, Option.some_bind]
+    simp only [Option.bind_eq_bind, Option.bind_some]
 
 
-lemma eval_val_to_opt_val
+theorem eval_val_to_opt_val
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
   Option_.eval (val_to_opt_val V) F = some (eval V F) :=
@@ -635,17 +651,17 @@ lemma eval_val_to_opt_val
   case false_ | true_ =>
     unfold Option_.eval
     unfold eval
-    rfl
+    apply Eq.refl
   case var_ X =>
     unfold Option_.eval
     unfold eval
     unfold val_to_opt_val
-    rfl
+    apply Eq.refl
   case not_ phi ih =>
     unfold Option_.eval
     unfold eval
     rewrite [ih]
-    simp only [Option.bind_eq_bind, Option.some_bind]
+    simp only [Option.bind_eq_bind, Option.bind_some]
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih
@@ -655,7 +671,7 @@ lemma eval_val_to_opt_val
     unfold eval
     rewrite [phi_ih]
     rewrite [psi_ih]
-    simp only [Option.bind_eq_bind, Option.some_bind]
+    simp only [Option.bind_eq_bind, Option.bind_some]
 
 
 example
