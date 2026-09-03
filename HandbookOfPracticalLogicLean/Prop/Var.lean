@@ -3,7 +3,9 @@ import HandbookOfPracticalLogicLean.Prop.Formula
 import Mathlib.Tactic
 
 
-set_option autoImplicit false
+set_option linter.style.docString false
+set_option linter.style.emptyLine false
+set_option linter.style.longLine false
 
 
 open Formula_
@@ -12,11 +14,13 @@ open Formula_
 /--
   `Formula_.is_var F` := True if and only if the formula `F` is a variable.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.is_var :
   Formula_ → Prop
 | var_ _ => True
 | _ => False
 
+@[nolint defsWithUnderscore]
 instance
   (F : Formula_) :
   Decidable (is_var F) :=
@@ -30,6 +34,7 @@ instance
 /--
   `Formula_.var_set F` := The set of all of the variables that have an occurrence in the formula `F`.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.var_set :
   Formula_ → Finset String
   | false_ => ∅
@@ -45,6 +50,7 @@ def Formula_.var_set :
 /--
   `Formula_.var_list F` := The list of all of the variables that have an occurrence in the formula `F`.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.var_list :
   Formula_ → List String
   | false_ => []
@@ -60,6 +66,7 @@ def Formula_.var_list :
 /--
   `var_occurs_in_formula V F` := True if and only if there is an occurrence of the variable `V` in the formula `F`.
 -/
+@[nolint defsWithUnderscore]
 def var_occurs_in_formula
   (V : String) :
   Formula_ → Prop
@@ -72,6 +79,7 @@ def var_occurs_in_formula
   | imp_ phi psi => var_occurs_in_formula V phi ∨ var_occurs_in_formula V psi
   | iff_ phi psi => var_occurs_in_formula V phi ∨ var_occurs_in_formula V psi
 
+@[nolint defsWithUnderscore]
 instance
   (V : String)
   (F : Formula_) :
@@ -96,7 +104,7 @@ lemma var_occurs_in_formula_iff_mem_formula_var_set
     unfold var_occurs_in_formula
     unfold var_set
   case true_ | false_ =>
-    simp only [Finset.not_mem_empty]
+    simp only [Finset.notMem_empty]
   case var_ X =>
     simp only [Finset.mem_singleton]
   case not_ phi ih =>
@@ -109,7 +117,7 @@ lemma var_occurs_in_formula_iff_mem_formula_var_set
     simp only [Finset.mem_union]
     rewrite [phi_ih]
     rewrite [psi_ih]
-    rfl
+    apply Iff.refl
 
 
 lemma var_occurs_in_formula_iff_mem_formula_var_list
@@ -135,7 +143,7 @@ lemma var_occurs_in_formula_iff_mem_formula_var_list
     simp only [List.mem_append]
     rewrite [phi_ih]
     rewrite [psi_ih]
-    rfl
+    apply Iff.refl
 
 
 -------------------------------------------------------------------------------
@@ -144,6 +152,7 @@ lemma var_occurs_in_formula_iff_mem_formula_var_list
 /--
   `formula_list_var_set FS` := The set of all of the variables that have an occurrence in the list of formulas `FS`.
 -/
+@[nolint defsWithUnderscore]
 def formula_list_var_set
   (FS : List Formula_) :
   Finset String :=
@@ -153,6 +162,7 @@ def formula_list_var_set
 /--
   `formula_list_var_list FS` := The list of all of the variables that have an occurrence in the list of formulas `FS`.
 -/
+@[nolint defsWithUnderscore]
 def formula_list_var_list
   (FS : List Formula_) :
   List String :=
@@ -162,12 +172,14 @@ def formula_list_var_list
 /--
   `var_occurs_in_formula_list V FS` := True if and only if there is an occurrence of the variable `V` in the list of formulas `FS`.
 -/
+@[nolint defsWithUnderscore]
 def var_occurs_in_formula_list
   (V : String)
   (FS : List Formula_) :
   Prop :=
   ∃ (F : Formula_), F ∈ FS ∧ var_occurs_in_formula V F
 
+@[nolint defsWithUnderscore]
 instance
   (V : String)
   (FS : List Formula_) :
@@ -221,7 +233,7 @@ lemma mem_formula_list_var_set_imp_var_occurs_in_formula_list
   unfold var_occurs_in_formula_list
   induction FS
   case nil =>
-    simp only [List.foldr_nil, Finset.not_mem_empty] at h1
+    simp only [List.foldr_nil, Finset.notMem_empty] at h1
   case cons hd tl ih =>
     simp only [List.foldr_cons, Finset.mem_union] at h1
 
@@ -231,7 +243,7 @@ lemma mem_formula_list_var_set_imp_var_occurs_in_formula_list
       apply Exists.intro hd
       constructor
       · left
-        rfl
+        apply Eq.refl
       · simp only [var_occurs_in_formula_iff_mem_formula_var_set]
         exact h1
     case inr h1 =>
@@ -314,7 +326,7 @@ lemma mem_formula_list_var_list_imp_var_occurs_in_formula_list
       apply Exists.intro hd
       constructor
       · left
-        rfl
+        apply Eq.refl
       · simp only [var_occurs_in_formula_iff_mem_formula_var_list]
         exact h1
     case inr h1 =>
