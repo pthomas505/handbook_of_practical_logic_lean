@@ -94,7 +94,7 @@ instance
 -------------------------------------------------------------------------------
 
 
-lemma var_occurs_in_formula_iff_mem_formula_var_set
+theorem var_occurs_in_formula_iff_mem_formula_var_set
   (V : String)
   (F : Formula_) :
   var_occurs_in_formula V F ↔ V ∈ F.var_set :=
@@ -120,7 +120,7 @@ lemma var_occurs_in_formula_iff_mem_formula_var_set
     apply Iff.refl
 
 
-lemma var_occurs_in_formula_iff_mem_formula_var_list
+theorem var_occurs_in_formula_iff_mem_formula_var_list
   (V : String)
   (F : Formula_) :
   var_occurs_in_formula V F ↔ V ∈ F.var_list :=
@@ -192,7 +192,7 @@ instance
 -------------------------------------------------------------------------------
 
 
-lemma var_occurs_in_formula_list_imp_mem_formula_list_var_set
+theorem var_occurs_in_formula_list_imp_mem_formula_list_var_set
   (V : String)
   (FS : List Formula_)
   (F : Formula_)
@@ -222,7 +222,7 @@ lemma var_occurs_in_formula_list_imp_mem_formula_list_var_set
       exact h1
 
 
-lemma mem_formula_list_var_set_imp_var_occurs_in_formula_list
+theorem mem_formula_list_var_set_imp_var_occurs_in_formula_list
   (V : String)
   (FS : List Formula_)
   (h1 : V ∈ formula_list_var_set FS) :
@@ -257,7 +257,7 @@ lemma mem_formula_list_var_set_imp_var_occurs_in_formula_list
       · exact ih_right
 
 
-lemma var_occurs_in_formula_list_iff_mem_formula_list_var_set
+theorem var_occurs_in_formula_list_iff_mem_formula_list_var_set
   (V : String)
   (FS : List Formula_) :
   var_occurs_in_formula_list V FS ↔ V ∈ formula_list_var_set FS :=
@@ -275,7 +275,7 @@ lemma var_occurs_in_formula_list_iff_mem_formula_list_var_set
 -------------------------------------------------------------------------------
 
 
-lemma var_occurs_in_formula_list_imp_mem_formula_list_var_list
+theorem var_occurs_in_formula_list_imp_mem_formula_list_var_list
   (V : String)
   (FS : List Formula_)
   (F : Formula_)
@@ -305,7 +305,7 @@ lemma var_occurs_in_formula_list_imp_mem_formula_list_var_list
       exact h1
 
 
-lemma mem_formula_list_var_list_imp_var_occurs_in_formula_list
+theorem mem_formula_list_var_list_imp_var_occurs_in_formula_list
   (V : String)
   (FS : List Formula_)
   (h1 : V ∈ formula_list_var_list FS) :
@@ -340,7 +340,7 @@ lemma mem_formula_list_var_list_imp_var_occurs_in_formula_list
       · exact ih_right
 
 
-lemma var_occurs_in_formula_list_iff_mem_formula_list_var_list
+theorem var_occurs_in_formula_list_iff_mem_formula_list_var_list
   (V : String)
   (FS : List Formula_) :
   var_occurs_in_formula_list V FS ↔ V ∈ formula_list_var_list FS :=
