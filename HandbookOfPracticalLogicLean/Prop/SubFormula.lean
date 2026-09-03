@@ -3,7 +3,9 @@ import HandbookOfPracticalLogicLean.Prop.Size
 import Mathlib.Tactic
 
 
-set_option autoImplicit false
+set_option linter.style.docString false
+set_option linter.style.emptyLine false
+set_option linter.style.longLine false
 
 
 open Formula_
@@ -12,6 +14,7 @@ open Formula_
 /--
   `Formula_.subformula_list F` := A list of all of the subformulas of the formula `F`.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.subformula_list :
   Formula_ → List Formula_
   | false_ => [false_]
@@ -27,6 +30,7 @@ def Formula_.subformula_list :
 /--
   `is_subformula F F'` := True if and only if `F` is a subformula of the formula `F'`.
 -/
+@[nolint defsWithUnderscore]
 def is_subformula
   (F : Formula_) :
   Formula_ → Prop
@@ -53,6 +57,7 @@ def is_subformula
     is_subformula F phi ∨
     is_subformula F psi
 
+@[nolint defsWithUnderscore]
 instance
   (F F' : Formula_) :
   Decidable (is_subformula F F') :=
@@ -63,7 +68,7 @@ instance
     infer_instance
 
 
-lemma is_subformula_iff_mem_subformula_list
+theorem is_subformula_iff_mem_subformula_list
   (F F' : Formula_) :
   is_subformula F F' ↔ F ∈ subformula_list F' :=
   by
@@ -76,7 +81,7 @@ lemma is_subformula_iff_mem_subformula_list
   case not_ phi ih =>
     simp only [List.singleton_append, List.mem_cons]
     rewrite [ih]
-    rfl
+    apply Iff.refl
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih
@@ -85,7 +90,7 @@ lemma is_subformula_iff_mem_subformula_list
     simp only [List.mem_append, List.mem_singleton]
     rewrite [phi_ih]
     rewrite [psi_ih]
-    rfl
+    apply Iff.refl
 
 
 example
@@ -101,7 +106,7 @@ example
   case not_ phi ih =>
     simp only [List.singleton_append, List.length_cons]
     rewrite [ih]
-    rfl
+    apply Eq.refl
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih
@@ -110,24 +115,24 @@ example
     simp only [List.singleton_append, List.length_cons, List.length_append]
     rewrite [phi_ih]
     rewrite [psi_ih]
-    rfl
+    apply Eq.refl
 
 
-lemma is_subformula_refl
+theorem is_subformula_refl
   (F : Formula_) :
   is_subformula F F :=
   by
   cases F
   case false_ | true_ | var_ X =>
     unfold is_subformula
-    rfl
+    apply Eq.refl
   all_goals
     unfold is_subformula
     left
-    rfl
+    apply Eq.refl
 
 
-lemma is_subformula_trans
+theorem is_subformula_trans
   (F F' F'' : Formula_)
   (h1 : is_subformula F F')
   (h2 : is_subformula F' F'') :
@@ -175,7 +180,7 @@ lemma is_subformula_trans
         exact h2
 
 
-lemma is_subformula_imp_le_size
+theorem is_subformula_imp_le_size
   (F F' : Formula_)
   (h1 : is_subformula F F') :
   F.size ≤ F'.size :=
@@ -194,8 +199,8 @@ lemma is_subformula_imp_le_size
       apply le_refl
     case inr h1 =>
       trans phi.size
-      apply ih
-      · exact h1
+      · apply ih
+        exact h1
       · simp only [size]
         apply Nat.le_add_right
   case
@@ -225,7 +230,7 @@ lemma is_subformula_imp_le_size
           linarith
 
 
-lemma is_subformula_size_antisymm
+theorem is_subformula_size_antisymm
   (F F' : Formula_)
   (h1 : is_subformula F F')
   (h2 : is_subformula F' F) :
@@ -238,7 +243,7 @@ lemma is_subformula_size_antisymm
     exact h2
 
 
-lemma is_subformula_and_eq_size_imp_eq
+theorem is_subformula_and_eq_size_imp_eq
   (F F' : Formula_)
   (h1 : is_subformula F F')
   (h2 : size F = size F') :
@@ -283,7 +288,7 @@ lemma is_subformula_and_eq_size_imp_eq
         linarith
 
 
-lemma is_subformula_antisymm
+theorem is_subformula_antisymm
   (F F' : Formula_)
   (h1 : is_subformula F F')
   (h2 : is_subformula F' F) :
@@ -299,7 +304,7 @@ lemma is_subformula_antisymm
 -------------------------------------------------------------------------------
 
 
-lemma not_is_subformula_not
+theorem not_is_subformula_not
   (F : Formula_) :
   ¬ is_subformula (not_ F) F :=
   by
@@ -312,7 +317,7 @@ lemma not_is_subformula_not
 -------------------------------------------------------------------------------
 
 
-lemma not_is_subformula_and_left
+theorem not_is_subformula_and_left
   (P Q : Formula_) :
   ¬ is_subformula (and_ P Q) P :=
   by
@@ -322,7 +327,7 @@ lemma not_is_subformula_and_left
   linarith
 
 
-lemma not_is_subformula_and_right
+theorem not_is_subformula_and_right
   (P Q : Formula_) :
   ¬ is_subformula (and_ P Q) Q :=
   by
@@ -335,7 +340,7 @@ lemma not_is_subformula_and_right
 -------------------------------------------------------------------------------
 
 
-lemma not_is_subformula_or_left
+theorem not_is_subformula_or_left
   (P Q : Formula_) :
   ¬ is_subformula (or_ P Q) P :=
   by
@@ -345,7 +350,7 @@ lemma not_is_subformula_or_left
   linarith
 
 
-lemma not_is_subformula_or_right
+theorem not_is_subformula_or_right
   (P Q : Formula_) :
   ¬ is_subformula (or_ P Q) Q :=
   by
@@ -358,7 +363,7 @@ lemma not_is_subformula_or_right
 -------------------------------------------------------------------------------
 
 
-lemma not_is_subformula_imp_left
+theorem not_is_subformula_imp_left
   (P Q : Formula_) :
   ¬ is_subformula (imp_ P Q) P :=
   by
@@ -368,7 +373,7 @@ lemma not_is_subformula_imp_left
   linarith
 
 
-lemma not_is_subformula_imp_right
+theorem not_is_subformula_imp_right
   (P Q : Formula_) :
   ¬ is_subformula (imp_ P Q) Q :=
   by
@@ -381,7 +386,7 @@ lemma not_is_subformula_imp_right
 -------------------------------------------------------------------------------
 
 
-lemma not_is_subformula_iff_left
+theorem not_is_subformula_iff_left
   (P Q : Formula_) :
   ¬ is_subformula (iff_ P Q) P :=
   by
@@ -391,7 +396,7 @@ lemma not_is_subformula_iff_left
   linarith
 
 
-lemma not_is_subformula_iff_right
+theorem not_is_subformula_iff_right
   (P Q : Formula_) :
   ¬ is_subformula (iff_ P Q) Q :=
   by
@@ -407,6 +412,7 @@ lemma not_is_subformula_iff_right
 /--
   `is_proper_subformula_v1 F F'` := True if and only if the formula `F` is a proper subformula of the formula `F'`.
 -/
+@[nolint defsWithUnderscore]
 def is_proper_subformula_v1
   (F : Formula_) :
   Formula_ → Prop
@@ -428,6 +434,7 @@ def is_proper_subformula_v1
     is_subformula F phi ∨
     is_subformula F psi
 
+@[nolint defsWithUnderscore]
 instance
   (F F' : Formula_) :
   Decidable (is_proper_subformula_v1 F F') :=
@@ -441,11 +448,13 @@ instance
 /--
   `is_proper_subformula_v2 F F'` := True if and only if the formula `F` is a proper subformula of the formula `F'`.
 -/
+@[nolint defsWithUnderscore]
 def is_proper_subformula_v2
   (F F' : Formula_) :
   Prop :=
   is_subformula F F' ∧ ¬ F = F'
 
+@[nolint defsWithUnderscore]
 instance
   (F F' : Formula_) :
   Decidable (is_proper_subformula_v2 F F') :=
@@ -466,7 +475,7 @@ example
   exact contra_left
 
 
-lemma is_proper_subformula_v1_imp_is_subformula
+theorem is_proper_subformula_v1_imp_is_subformula
   (F F' : Formula_)
   (h1 : is_proper_subformula_v1 F F') :
   is_subformula F F' :=
@@ -499,7 +508,7 @@ lemma is_proper_subformula_v1_imp_is_subformula
       exact h1
 
 
-lemma is_proper_subformula_v1_imp_lt_size
+theorem is_proper_subformula_v1_imp_lt_size
   (F F' : Formula_)
   (h1 : is_proper_subformula_v1 F F') :
   F.size < F'.size :=
@@ -534,7 +543,7 @@ lemma is_proper_subformula_v1_imp_lt_size
       linarith
 
 
-lemma not_is_proper_subformula_v1_self
+theorem not_is_proper_subformula_v1_self
   (F : Formula_) :
   ¬ is_proper_subformula_v1 F F :=
   by
@@ -543,7 +552,7 @@ lemma not_is_proper_subformula_v1_self
   simp only [lt_self_iff_false] at s1
 
 
-lemma is_proper_subformula_v1_imp_neq
+theorem is_proper_subformula_v1_imp_neq
   (F F' : Formula_)
   (h1 : is_proper_subformula_v1 F F') :
   ¬ F = F' :=
@@ -554,7 +563,7 @@ lemma is_proper_subformula_v1_imp_neq
   exact h1
 
 
-lemma is_proper_subformula_v1_imp_is_proper_subformula_v2
+theorem is_proper_subformula_v1_imp_is_proper_subformula_v2
   (F F' : Formula_)
   (h1 : is_proper_subformula_v1 F F') :
   is_proper_subformula_v2 F F' :=
@@ -567,7 +576,7 @@ lemma is_proper_subformula_v1_imp_is_proper_subformula_v2
     exact h1
 
 
-lemma is_proper_subformula_v2_imp_is_proper_subformula_v1
+theorem is_proper_subformula_v2_imp_is_proper_subformula_v1
   (F F' : Formula_)
   (h1 : is_proper_subformula_v2 F F') :
   is_proper_subformula_v1 F F' :=
@@ -591,7 +600,7 @@ lemma is_proper_subformula_v2_imp_is_proper_subformula_v1
       exact h1_left
 
 
-lemma is_proper_subformula_v1_iff_is_proper_subformula_v2
+theorem is_proper_subformula_v1_iff_is_proper_subformula_v2
   (F F' : Formula_) :
   is_proper_subformula_v1 F F' ↔ is_proper_subformula_v2 F F' :=
   by
@@ -603,13 +612,14 @@ lemma is_proper_subformula_v1_iff_is_proper_subformula_v2
 -------------------------------------------------------------------------------
 
 
-lemma is_proper_subformula_v2_left_right_imp_not_is_subformula_right_left
+theorem is_proper_subformula_v2_left_right_imp_not_is_subformula_right_left
   (F F' : Formula_)
   (h1 : is_proper_subformula_v2 F F') :
   ¬ is_subformula F' F :=
   by
   unfold is_proper_subformula_v2 at h1
   obtain ⟨h1_left, h1_right⟩ := h1
+
   intro contra
   apply h1_right
   apply is_subformula_antisymm

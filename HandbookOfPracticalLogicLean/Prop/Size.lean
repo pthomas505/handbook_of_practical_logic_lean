@@ -3,7 +3,9 @@ import HandbookOfPracticalLogicLean.Prop.Formula
 import Mathlib.Tactic
 
 
-set_option autoImplicit false
+set_option linter.style.docString false
+set_option linter.style.emptyLine false
+set_option linter.style.longLine false
 
 
 open Formula_
@@ -27,6 +29,7 @@ def Formula_.size :
 /--
   `formula_list_size FS` := The number of subformulas in the list of formulas `FS`.
 -/
+@[nolint defsWithUnderscore]
 def formula_list_size
   (FS : List Formula_) :
   Nat :=
