@@ -1,12 +1,15 @@
 import HandbookOfPracticalLogicLean.Prop.Formula
 
 
-set_option autoImplicit false
+set_option linter.style.docString false
+set_option linter.style.emptyLine false
+set_option linter.style.longLine false
 
 
 open Formula_
 
 
+@[nolint defsWithUnderscore]
 def pattern_match_aux
   (σ : Std.HashMap String Formula_) :
   Formula_ → Formula_ → Option (Std.HashMap String Formula_)
@@ -36,6 +39,7 @@ def pattern_match_aux
   | _, _ => none
 
 
+@[nolint defsWithUnderscore]
 def pattern_match
   (P Q : Formula_) :
   Option (Std.HashMap String Formula_) :=
@@ -49,3 +53,6 @@ instance : ToString (Std.HashMap String Formula_) :=
 #eval pattern_match (and_ (var_ "P") (var_ "Q")) (var_ "R")
 #eval pattern_match (var_ "R") (and_ (var_ "P") (var_ "Q"))
 #eval pattern_match (and_ (var_ "R") (var_ "S")) (and_ (var_ "P") (or_ (var_ "Q") (var_ "R")))
+
+
+--#lint
