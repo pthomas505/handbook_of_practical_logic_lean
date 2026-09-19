@@ -3,7 +3,9 @@ import HandbookOfPracticalLogicLean.Prop.Semantics
 import Mathlib.Tactic
 
 
-set_option autoImplicit false
+set_option linter.style.docString false
+set_option linter.style.emptyLine false
+set_option linter.style.longLine false
 
 
 open Formula_
@@ -12,6 +14,7 @@ open Formula_
 /--
   `Formula_.has_dual F` := True if and only if there exists a dual of the formula `F`.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.has_dual :
   Formula_ → Prop
   | false_ => True
@@ -22,6 +25,7 @@ def Formula_.has_dual :
   | or_ phi psi => phi.has_dual ∧ psi.has_dual
   | _ => False
 
+@[nolint defsWithUnderscore]
 instance
   (F : Formula_) :
   Decidable (has_dual F) :=
@@ -56,7 +60,7 @@ example
     simp only [dual]
   case not_ phi ih =>
     rewrite [ih]
-    rfl
+    apply Eq.refl
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih
@@ -64,7 +68,7 @@ example
     | iff_ phi psi phi_ih psi_ih =>
     rewrite [phi_ih]
     rewrite [psi_ih]
-    rfl
+    apply Eq.refl
 
 
 theorem theorem_2_7
@@ -88,7 +92,7 @@ theorem theorem_2_7
     unfold has_dual at h1
 
     rewrite [ih h1]
-    rfl
+    apply Eq.refl
   case and_ phi psi phi_ih psi_ih =>
     unfold has_dual at h1
     obtain ⟨h1_left, h1_right⟩ := h1
@@ -128,7 +132,7 @@ theorem corollary_2_8_a
   rewrite [theorem_2_7 V P h2]
   rewrite [theorem_2_7 V Q h3]
   rewrite [h1]
-  rfl
+  apply Eq.refl
 
 
 theorem corollary_2_8_b
@@ -139,13 +143,12 @@ theorem corollary_2_8_b
   by
   rewrite [← are_logically_equivalent_to_true_iff_is_tautology] at h1
 
-  obtain s1 := corollary_2_8_a F true_ h1 h2
-  unfold has_dual at s1
-  simp only [dual] at s1
-
   rewrite [← are_logically_equivalent_to_false_iff_not_is_tautology]
-  apply s1
-  exact trivial
+  apply corollary_2_8_a F true_
+  · exact h1
+  · exact h2
+  · unfold has_dual
+    exact True.intro
 
 
 #lint
