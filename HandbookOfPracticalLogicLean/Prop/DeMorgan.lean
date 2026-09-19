@@ -1,9 +1,6 @@
 import Mathlib.Tactic
 
 
-set_option autoImplicit false
-
-
 theorem de_morgan_prop_1
   (P Q : Prop) :
   (¬ (P ∧ Q)) ↔ ((¬ P) ∨ (¬ Q)) :=
@@ -18,9 +15,7 @@ theorem de_morgan_prop_1
       exact ⟨c1, contra⟩
     case neg =>
       left
-      intro contra
-      apply c1
-      exact contra
+      exact c1
   · intro a1 contra
     obtain ⟨contra_left, contra_right⟩ := contra
     cases a1
