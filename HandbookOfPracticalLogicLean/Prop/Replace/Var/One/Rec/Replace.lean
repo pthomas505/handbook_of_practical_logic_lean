@@ -14,24 +14,24 @@ open Formula_
 
 
 /--
-  `replace_var_one_rec A F P` :=
+  `replace_var_one_rec V F P` :=
 
-  `A → F` in `P` for each occurrence of the variable `A` in the formula `P`
+  `V → F` in `P` for each occurrence of the variable `V` in the formula `P`
 
-  The result of simultaneously replacing each occurrence of the variable `A` in the formula `P` by an occurrence of the formula `F`.
+  The result of simultaneously replacing each occurrence of the variable `V` in the formula `P` by an occurrence of the formula `F`.
 -/
 def replace_var_one_rec
-  (A : String)
+  (V : String)
   (F : Formula_) :
   Formula_ → Formula_
   | false_ => false_
   | true_ => true_
-  | var_ X => if A = X then F else var_ X
-  | not_ phi => not_ (replace_var_one_rec A F phi)
-  | and_ phi psi => and_ (replace_var_one_rec A F phi) (replace_var_one_rec A F psi)
-  | or_ phi psi => or_ (replace_var_one_rec A F phi) (replace_var_one_rec A F psi)
-  | imp_ phi psi => imp_ (replace_var_one_rec A F phi) (replace_var_one_rec A F psi)
-  | iff_ phi psi => iff_ (replace_var_one_rec A F phi) (replace_var_one_rec A F psi)
+  | var_ X => if V = X then F else var_ X
+  | not_ phi => not_ (replace_var_one_rec V F phi)
+  | and_ phi psi => and_ (replace_var_one_rec V F phi) (replace_var_one_rec V F psi)
+  | or_ phi psi => or_ (replace_var_one_rec V F phi) (replace_var_one_rec V F psi)
+  | imp_ phi psi => imp_ (replace_var_one_rec V F phi) (replace_var_one_rec V F psi)
+  | iff_ phi psi => iff_ (replace_var_one_rec V F phi) (replace_var_one_rec V F psi)
 
 
 theorem theorem_2_3_one
