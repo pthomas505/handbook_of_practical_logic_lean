@@ -15,6 +15,7 @@ open Formula_
 /--
   Helper function for `simplify`.
 -/
+@[nolint defsWithUnderscore]
 def simplify_aux :
   Formula_ → Formula_
   | not_ false_ => true_
@@ -61,6 +62,7 @@ def simplify :
 /--
   `simplify_aux_not F` := If the formula `F` is of the form `not_ _` then `simplify_aux F`. If the formula `F` is not of the form `not_ _` then `F`.
 -/
+@[nolint defsWithUnderscore]
 def simplify_aux_not :
   Formula_ → Formula_
   | not_ false_ => true_
@@ -139,6 +141,7 @@ example
 /--
   `simplify_aux_and F` := If the formula `F` is of the form `and_ _ _` then `simplify_aux F`. If the formula `F` is not of the form `and_ _ _` then `F`.
 -/
+@[nolint defsWithUnderscore]
 def simplify_aux_and :
   Formula_ → Formula_
   | and_ _ false_ => false_
@@ -256,6 +259,7 @@ lemma simplify_aux_and_cases
 /--
   `simplify_aux_or F` := If the formula `F` is of the form `or_ _ _` then `simplify_aux F`. If the formula `F` is not of the form `or_ _ _` then `F`.
 -/
+@[nolint defsWithUnderscore]
 def simplify_aux_or :
   Formula_ → Formula_
   | or_ phi false_ => phi
@@ -373,6 +377,7 @@ lemma simplify_aux_or_cases
 /--
   `simplify_aux_imp F` := If the formula `F` is of the form `imp_ _ _` then `simplify_aux F`. If the formula `F` is not of the form `imp_ _ _` then `F`.
 -/
+@[nolint defsWithUnderscore]
 def simplify_aux_imp :
   Formula_ → Formula_
   | imp_ false_ _ => true_
@@ -495,6 +500,7 @@ lemma simplify_aux_imp_cases
 /--
   `simplify_aux_iff F` := If the formula `F` is of the form `iff_ _ _` then `simplify_aux F`. If the formula `F` is not of the form `iff_ _ _` then `F`.
 -/
+@[nolint defsWithUnderscore]
 def simplify_aux_iff :
   Formula_ → Formula_
   | iff_ phi true_ => phi
