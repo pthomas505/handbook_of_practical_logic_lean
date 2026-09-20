@@ -225,18 +225,22 @@ example
   unfold simplify_aux_and
   split
   case _ phi psi ih_1 =>
-    cases ih_1
+    simp only [and_.injEq] at ih_1
+    obtain ⟨ih_1_left, ih_1_right⟩ := ih_1
     contradiction
   case _ phi psi ih_1 ih_2 =>
-    cases ih_2
+    simp only [and_.injEq] at ih_2
+    obtain ⟨ih_2_left, ih_2_right⟩ := ih_2
     contradiction
   case _ phi psi ih_1 ih_2 =>
-    cases ih_2
+    simp only [and_.injEq] at ih_2
+    obtain ⟨ih_2_left, ih_2_right⟩ := ih_2
     contradiction
   case _ phi psi ih_1 ih_2 ih_3 =>
-    cases ih_3
+    simp only [and_.injEq] at ih_3
+    obtain ⟨ih_3_left, ih_3_right⟩ := ih_3
     contradiction
-  · rfl
+  · apply Eq.refl
 
 
 theorem simplify_aux_and_cases
@@ -343,18 +347,22 @@ example
   unfold simplify_aux_or
   split
   case _ phi psi ih_1 =>
-    cases ih_1
+    simp only [or_.injEq] at ih_1
+    obtain ⟨ih_1_left, ih_1_right⟩ := ih_1
     contradiction
   case _ phi psi ih_1 ih_2 =>
-    cases ih_2
+    simp only [or_.injEq] at ih_2
+    obtain ⟨ih_2_left, ih_2_right⟩ := ih_2
     contradiction
   case _ phi psi ih_1 ih_2 =>
-    cases ih_2
+    simp only [or_.injEq] at ih_2
+    obtain ⟨ih_2_left, ih_2_right⟩ := ih_2
     contradiction
   case _ phi psi ih_1 ih_2 ih_3 =>
-    cases ih_3
+    simp only [or_.injEq] at ih_3
+    obtain ⟨ih_3_left, ih_3_right⟩ := ih_3
     contradiction
-  · rfl
+  · apply Eq.refl
 
 
 theorem simplify_aux_or_cases
@@ -465,18 +473,22 @@ example
   unfold simplify_aux_imp
   split
   case _ phi psi ih_1 =>
-    cases ih_1
+    simp only [imp_.injEq] at ih_1
+    obtain ⟨ih_1_left, ih_1_right⟩ := ih_1
     contradiction
   case _ phi psi ih_1 ih_2 =>
-    cases ih_2
+    simp only [imp_.injEq] at ih_2
+    obtain ⟨ih_2_left, ih_2_right⟩ := ih_2
     contradiction
   case _ phi psi ih_1 ih_2 =>
-    cases ih_2
+    simp only [imp_.injEq] at ih_2
+    obtain ⟨ih_2_left, ih_2_right⟩ := ih_2
     contradiction
   case _ phi psi ih_1 ih_2 ih_3 =>
-    cases ih_3
+    simp only [imp_.injEq] at ih_3
+    obtain ⟨ih_3_left, ih_3_right⟩ := ih_3
     contradiction
-  · rfl
+  · apply Eq.refl
 
 
 theorem simplify_aux_imp_cases
@@ -591,18 +603,22 @@ example
   unfold simplify_aux_iff
   split
   case _ phi psi ih_1 =>
-    cases ih_1
+    simp only [iff_.injEq] at ih_1
+    obtain ⟨ih_1_left, ih_1_right⟩ := ih_1
     contradiction
   case _ phi psi ih_1 ih_2 =>
-    cases ih_2
+    simp only [iff_.injEq] at ih_2
+    obtain ⟨ih_2_left, ih_2_right⟩ := ih_2
     contradiction
   case _ phi psi ih_1 ih_2 =>
-    cases ih_2
+    simp only [iff_.injEq] at ih_2
+    obtain ⟨ih_2_left, ih_2_right⟩ := ih_2
     contradiction
   case _ phi psi ih_1 ih_2 ih_3 =>
-    cases ih_3
+    simp only [iff_.injEq] at ih_3
+    obtain ⟨ih_3_left, ih_3_right⟩ := ih_3
     contradiction
-  · rfl
+  · apply Eq.refl
 
 
 theorem simplify_aux_iff_cases
@@ -667,13 +683,14 @@ theorem simplify_is_logically_equivalent
   by
   induction F
   case false_ | true_ | var_ X =>
-    rfl
+    unfold simplify
+    apply Eq.refl
   case not_ phi ih =>
     unfold simplify
     rewrite [simplify_aux_is_logically_equivalent]
     unfold eval
     rewrite [ih]
-    rfl
+    apply Eq.refl
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih
@@ -684,7 +701,7 @@ theorem simplify_is_logically_equivalent
     unfold eval
     rewrite [phi_ih]
     rewrite [psi_ih]
-    rfl
+    apply Eq.refl
 
 
 example
@@ -707,7 +724,7 @@ theorem simplify_aux_size_le_size
   case false_ | true_ | var_ X =>
     simp only [simplify_aux]
     apply Nat.le_of_eq
-    rfl
+    apply Eq.refl
   case not_ phi =>
     cases phi
     all_goals
