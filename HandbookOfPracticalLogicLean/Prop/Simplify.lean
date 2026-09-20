@@ -4,7 +4,9 @@ import HandbookOfPracticalLogicLean.Prop.Size
 import Mathlib.Tactic
 
 
-set_option autoImplicit false
+set_option linter.style.docString false
+set_option linter.style.emptyLine false
+set_option linter.style.longLine false
 
 
 open Formula_
