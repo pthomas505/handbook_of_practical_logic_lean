@@ -1,17 +1,18 @@
 import HandbookOfPracticalLogicLean.Prop.Rename
 
-import Batteries.Data.HashMap
 
-
-set_option autoImplicit false
+set_option linter.style.docString false
+set_option linter.style.emptyLine false
+set_option linter.style.longLine false
 
 
 open Formula_
 
 
-def Unifier : Type := Batteries.HashMap String String
+def Unifier : Type := Std.HashMap String String
 
 
+@[nolint defsWithUnderscore]
 def unify_formulas
   (P Q : Formula_) :
   Option Unifier :=
@@ -24,6 +25,7 @@ structure mp_formulas : Type where
   (consequent : Formula_)
 
 
+@[nolint defsWithUnderscore]
 def unify_formulas_mp
   (major minor : Formula_) :
   Option mp_formulas :=
@@ -32,7 +34,7 @@ def unify_formulas_mp
   by
     unfold major_minor_disjoint
     rewrite [formula_list_to_disjoint_formula_list_length]
-    simp only [List.length_cons, List.length_singleton, List.length_nil]
+    simp only [List.length_cons, List.length_nil]
     simp only [zero_add, Nat.reduceAdd, Nat.ofNat_pos]
   let major_disjoint : Formula_ := major_minor_disjoint[0]
 
@@ -40,7 +42,7 @@ def unify_formulas_mp
   by
     unfold major_minor_disjoint
     rewrite [formula_list_to_disjoint_formula_list_length]
-    simp only [List.length_cons, List.length_singleton, List.length_nil]
+    simp only [List.length_cons, List.length_nil]
     simp only [zero_add, Nat.reduceAdd, Nat.one_lt_ofNat]
   let minor_disjoint : Formula_ := major_minor_disjoint[1]
 
@@ -65,8 +67,13 @@ inductive Proof : Type
 open Proof
 
 
+@[nolint defsWithUnderscore]
 def schema_1 : Formula_ := (Formula_| (phi -> (psi -> phi)))
+
+@[nolint defsWithUnderscore]
 def schema_2 : Formula_ := (Formula_| ((phi -> (psi -> chi)) -> ((phi -> psi) -> (phi -> chi))))
+
+@[nolint defsWithUnderscore]
 def schema_3 : Formula_ := (Formula_| ((~ phi -> ~ psi) -> (psi -> phi)))
 
 def Proof.formula :
@@ -78,6 +85,7 @@ def Proof.formula :
   | sub _ F => F
 
 
+@[nolint defsWithUnderscore]
 def unify_proofs_mp
   (major_proof minor_proof : Proof) :
   Option Proof :=
@@ -105,3 +113,6 @@ all ways to choose a fixed number of elements from a list
 
 Is there a function available that takes a list of `l` and a natural number `n` and returns all unique lists of length `n` where every element of each these lists is taken from `l`? Selecting the same element from `l` more than once is allowed, and lists are the same if they have the same elements in same order. For example, for `l = [1, 2, 3]` and `n = 2` we would have `[1, 1], [2, 2], [3, 3], [1, 2], [2, 1], [1,3], [3,1], [2, 3], [3, 2]`.
 -/
+
+
+--#lint
