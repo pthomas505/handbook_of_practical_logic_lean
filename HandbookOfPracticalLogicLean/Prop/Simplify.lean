@@ -239,7 +239,7 @@ example
   · rfl
 
 
-lemma simplify_aux_and_cases
+theorem simplify_aux_and_cases
   (P Q : Formula_) :
   simplify_aux (and_ P Q) = P ∨
   simplify_aux (and_ P Q) = Q ∨
@@ -357,7 +357,7 @@ example
   · rfl
 
 
-lemma simplify_aux_or_cases
+theorem simplify_aux_or_cases
   (P Q : Formula_) :
   simplify_aux (or_ P Q) = P ∨
   simplify_aux (or_ P Q) = Q ∨
@@ -479,7 +479,7 @@ example
   · rfl
 
 
-lemma simplify_aux_imp_cases
+theorem simplify_aux_imp_cases
   (P Q : Formula_) :
   simplify_aux (imp_ P Q) = true_ ∨
   simplify_aux (imp_ P Q) = Q ∨
@@ -605,7 +605,7 @@ example
   · rfl
 
 
-lemma simplify_aux_iff_cases
+theorem simplify_aux_iff_cases
   (P Q : Formula_) :
   simplify_aux (iff_ P Q) = P ∨
   simplify_aux (iff_ P Q) = Q ∨
@@ -624,7 +624,7 @@ lemma simplify_aux_iff_cases
 -------------------------------------------------------------------------------
 
 
-lemma simplify_aux_is_logically_equivalent
+theorem simplify_aux_is_logically_equivalent
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V (simplify_aux F) = eval V F :=
@@ -660,7 +660,7 @@ lemma simplify_aux_is_logically_equivalent
         tauto
 
 
-lemma simplify_is_logically_equivalent
+theorem simplify_is_logically_equivalent
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V (simplify F) = eval V F :=
@@ -699,7 +699,7 @@ example
 -------------------------------------------------------------------------------
 
 
-lemma simplify_aux_size_le_size
+theorem simplify_aux_size_le_size
   (F : Formula_) :
   size (simplify_aux F) <= size F :=
   by
