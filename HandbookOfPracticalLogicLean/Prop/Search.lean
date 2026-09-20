@@ -25,6 +25,10 @@ structure mp_formulas : Type where
   (consequent : Formula_)
 
 
+/-
+  Let `major` and `minor` be previously proven tautologies. Rename the propositional variables in each to ensure that the set of propositional variables that occur in `major` is disjoint from the set of propositional variables that occur in `minor`. Let `consequent` be a propositional variable that does not occur in either of these resulting formulas. Check if `major` and `minor -> Formula_.var_ consequent` can be unified. If so then instantiate `Formula_.var_ consequent` with the unification mapping and add it to the list of previously proven formulas. It holds by modus ponens applied to `major` and `minor`.
+-/
+
 @[nolint defsWithUnderscore]
 def unify_formulas_mp
   (major minor : Formula_) :
