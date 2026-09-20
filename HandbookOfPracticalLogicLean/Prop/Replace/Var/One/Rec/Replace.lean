@@ -22,7 +22,7 @@ open Formula_
 -/
 def replace_var_one_rec
   (A : String)
-  (F : Formula_ ) :
+  (F : Formula_) :
   Formula_ → Formula_
   | false_ => false_
   | true_ => true_
@@ -43,28 +43,34 @@ theorem theorem_2_3_one
   by
   induction F
   case false_ | true_ =>
-    simp only [eval]
-  case var_ X =>
-    simp only [eval]
     unfold replace_var_one_rec
+    unfold eval
+    apply Eq.refl
+  case var_ X =>
+    unfold replace_var_one_rec
+    simp only [eval]
     unfold Function.updateITE'
-    split_ifs
-    · rfl
-    · unfold eval
-      rfl
+    split
+    case isTrue c1 =>
+      apply Eq.refl
+    case isFalse c1 =>
+      unfold eval
+      apply Eq.refl
   case not_ phi ih =>
+    unfold replace_var_one_rec
     simp only [eval]
     rewrite [ih]
-    rfl
+    apply Eq.refl
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih
     | imp_ phi psi phi_ih psi_ih
     | iff_ phi psi phi_ih psi_ih =>
+    unfold replace_var_one_rec
     simp only [eval]
     rewrite [phi_ih]
     rewrite [psi_ih]
-    rfl
+    apply Eq.refl
 
 
 theorem corollary_2_4_one
@@ -80,7 +86,7 @@ theorem corollary_2_4_one
   unfold is_tautology
   unfold satisfies
   intro V
-  rewrite [theorem_2_3_one]
+  simp only [theorem_2_3_one]
   apply h1
 
 
@@ -94,7 +100,7 @@ theorem theorem_2_5_one
   by
   simp only [theorem_2_3_one]
   rewrite [h1]
-  rfl
+  apply Eq.refl
 
 
 theorem corollary_2_6_one
@@ -124,13 +130,16 @@ theorem not_var_occurs_in_replace_var_one_rec_self
   induction F
   case false_ | true_ =>
     unfold replace_var_one_rec
-    rfl
+    apply Eq.refl
   case var_ X =>
     unfold var_occurs_in_formula at h1
 
     unfold replace_var_one_rec
-    split_ifs
-    rfl
+    split
+    case isTrue c1 =>
+      contradiction
+    case isFalse c1 =>
+      apply Eq.refl
   case not_ phi ih =>
     unfold var_occurs_in_formula at h1
 
