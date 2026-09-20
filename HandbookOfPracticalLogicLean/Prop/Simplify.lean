@@ -718,7 +718,7 @@ example
 
 theorem simplify_aux_size_le_size
   (F : Formula_) :
-  size (simplify_aux F) <= size F :=
+  size (simplify_aux F) ≤ size F :=
   by
   cases F
   case false_ | true_ | var_ X =>
