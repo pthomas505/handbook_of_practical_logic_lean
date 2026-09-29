@@ -237,27 +237,27 @@ def PropValuation : Type := String → Prop
 
 
 /--
-  `eval V F` := The evaluation of a formula `F` given the valuation `V`.
+  `eval σ F` := The evaluation of a formula `F` given the valuation `σ`.
 -/
 def eval
-  (V : PropValuation) :
+  (σ : PropValuation) :
   Formula_ → Prop
   | false_ => False
   | true_ => True
-  | var_ X => V X
-  | not_ phi => ¬ eval V phi
-  | and_ phi psi => eval V phi ∧ eval V psi
-  | or_ phi psi => eval V phi ∨ eval V psi
-  | imp_ phi psi => eval V phi → eval V psi
-  | iff_ phi psi => eval V phi ↔ eval V psi
+  | var_ X => σ X
+  | not_ phi => ¬ eval σ phi
+  | and_ phi psi => eval σ phi ∧ eval σ psi
+  | or_ phi psi => eval σ phi ∨ eval σ psi
+  | imp_ phi psi => eval σ phi → eval σ psi
+  | iff_ phi psi => eval σ phi ↔ eval σ psi
   | forall_ _ phi
-  | exists_ _ phi => eval V phi
+  | exists_ _ phi => eval σ phi
 
 instance
-  (V : PropValuation)
-  [DecidablePred V]
+  (σ : PropValuation)
+  [DecidablePred σ]
   (F : Formula_) :
-  Decidable (eval V F) :=
+  Decidable (eval σ F) :=
   by
   induction F
   all_goals
@@ -266,33 +266,33 @@ instance
 
 
 /--
-  `eval_opt V F` := The evaluation of a formula `F` given the valuation `V`.
+  `eval_opt σ F` := The evaluation of a formula `F` given the valuation `σ`.
 -/
 @[nolint defsWithUnderscore]
 def eval_opt
-  (V : PropValuation) :
+  (σ : PropValuation) :
   Formula_ → Option Prop
   | false_ => some False
   | true_ => some True
-  | var_ X => some (V X)
+  | var_ X => some (σ X)
   | not_ phi => do
-    let val_phi ← eval_opt V phi
+    let val_phi ← eval_opt σ phi
     ¬ val_phi
   | and_ phi psi => do
-    let val_phi ← eval_opt V phi
-    let val_psi ← eval_opt V psi
+    let val_phi ← eval_opt σ phi
+    let val_psi ← eval_opt σ psi
     val_phi ∧ val_psi
   | or_ phi psi => do
-    let val_phi ← eval_opt V phi
-    let val_psi ← eval_opt V psi
+    let val_phi ← eval_opt σ phi
+    let val_psi ← eval_opt σ psi
     val_phi ∨ val_psi
   | imp_ phi psi => do
-    let val_phi ← eval_opt V phi
-    let val_psi ← eval_opt V psi
+    let val_phi ← eval_opt σ phi
+    let val_psi ← eval_opt σ psi
     val_phi → val_psi
   | iff_ phi psi => do
-    let val_phi ← eval_opt V phi
-    let val_psi ← eval_opt V psi
+    let val_phi ← eval_opt σ phi
+    let val_psi ← eval_opt σ psi
     val_phi ↔ val_psi
   | forall_ _ _
   | exists_ _ _ => none
@@ -318,9 +318,9 @@ def Formula_.is_prop :
 
 theorem is_prop_imp_eval_opt_eq_some_eval
   (F : Formula_)
-  (V : PropValuation)
+  (σ : PropValuation)
   (h1 : F.is_prop) :
-  eval_opt V F = some (eval V F) :=
+  eval_opt σ F = some (eval σ F) :=
   by
   induction F
   case false_ | true_ | var_ X =>
