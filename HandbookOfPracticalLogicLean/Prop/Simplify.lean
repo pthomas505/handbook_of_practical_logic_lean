@@ -641,9 +641,9 @@ theorem simplify_aux_iff_cases
 
 
 theorem simplify_aux_is_logically_equivalent
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V (simplify_aux F) = eval V F :=
+  eval σ (simplify_aux F) = eval σ F :=
   by
   cases F
   case false_ | true_ | var_ X =>
@@ -677,9 +677,9 @@ theorem simplify_aux_is_logically_equivalent
 
 
 theorem simplify_is_logically_equivalent
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V (simplify F) = eval V F :=
+  eval σ (simplify F) = eval σ F :=
   by
   induction F
   case false_ | true_ | var_ X =>
@@ -709,7 +709,7 @@ example
   are_logically_equivalent (simplify F) F :=
   by
   simp only [are_logically_equivalent_iff_eval_eq]
-  intro V
+  intro σ
   apply simplify_is_logically_equivalent
 
 

@@ -69,10 +69,10 @@ theorem mem_gen_all_valuations_as_list_of_list_of_pairs_imp_mem_all_valuations_a
 
     cases h1
     case inl h1 | inr h1 =>
-      obtain ⟨V, h1_left, h1_right⟩ := h1
+      obtain ⟨σ, h1_left, h1_right⟩ := h1
       rewrite [← h1_right]
       simp only [List.map_cons]
-      rewrite [ih V h1_left]
+      rewrite [ih σ h1_left]
       apply Eq.refl
 
 
@@ -167,7 +167,7 @@ example
 
 /--
   `gen_all_valuations_as_list_of_total_functions init var_list` := Returns a list of all of the functions from strings to booleans that map every string not in `var_list` to the same value as the function `init`.
-  [ V : String → Bool | ∀ (X : String), X ∉ var_list → V X = init X ]
+  [ σ : String → Bool | ∀ (X : String), X ∉ var_list → σ X = init X ]
 -/
 @[nolint defsWithUnderscore]
 def gen_all_valuations_as_list_of_total_functions
@@ -177,8 +177,8 @@ def gen_all_valuations_as_list_of_total_functions
 | hd :: tl =>
   let prev := gen_all_valuations_as_list_of_total_functions init tl
 
-  let left := List.map (fun (V : ValuationAsTotalFunction) => Function.updateITE V hd false) prev
-  let right := List.map (fun (V : ValuationAsTotalFunction) => Function.updateITE V hd true) prev
+  let left := List.map (fun (σ : ValuationAsTotalFunction) => Function.updateITE σ hd false) prev
+  let right := List.map (fun (σ : ValuationAsTotalFunction) => Function.updateITE σ hd true) prev
 
   left ++ right
 
@@ -191,19 +191,19 @@ def all_valuations_as_set_of_total_functions
   (init : ValuationAsTotalFunction)
   (var_list : List String) :
   Set ValuationAsTotalFunction :=
-  { V : ValuationAsTotalFunction | ∀ (X : String), X ∉ var_list → V X = init X }
+  { σ : ValuationAsTotalFunction | ∀ (X : String), X ∉ var_list → σ X = init X }
 
 
 theorem mem_gen_all_valuations_as_list_of_total_functions_imp_mem_all_valuations_as_set_of_total_functions
   (init : String → Bool)
   (var_list : List String)
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (X : String)
-  (h1 : V ∈ gen_all_valuations_as_list_of_total_functions init var_list)
+  (h1 : σ ∈ gen_all_valuations_as_list_of_total_functions init var_list)
   (h2 : X ∉ var_list) :
-  V X = init X :=
+  σ X = init X :=
   by
-  induction var_list generalizing V
+  induction var_list generalizing σ
   case nil =>
     unfold gen_all_valuations_as_list_of_total_functions at h1
     simp only [List.mem_singleton] at h1
@@ -238,11 +238,11 @@ theorem mem_gen_all_valuations_as_list_of_total_functions_imp_mem_all_valuations
 theorem mem_all_valuations_as_set_of_total_functions_imp_mem_gen_all_valuations_as_list_of_total_functions
   (init : String → Bool)
   (var_list : List String)
-  (V : ValuationAsTotalFunction)
-  (h1 : ∀ (X : String), X ∉ var_list → V X = init X) :
-  V ∈ gen_all_valuations_as_list_of_total_functions init var_list :=
+  (σ : ValuationAsTotalFunction)
+  (h1 : ∀ (X : String), X ∉ var_list → σ X = init X) :
+  σ ∈ gen_all_valuations_as_list_of_total_functions init var_list :=
   by
-  induction var_list generalizing V
+  induction var_list generalizing σ
   case nil =>
     unfold gen_all_valuations_as_list_of_total_functions
     simp only [List.mem_singleton]
@@ -257,10 +257,10 @@ theorem mem_all_valuations_as_set_of_total_functions_imp_mem_gen_all_valuations_
     unfold gen_all_valuations_as_list_of_total_functions
     unfold ValuationAsTotalFunction
     simp only [List.mem_append, List.mem_map]
-    cases c1 : V hd
+    cases c1 : σ hd
     map_tacs [left; right]
     all_goals
-      apply Exists.intro (fun (X : String) => if X ∈ tl then V X else init X)
+      apply Exists.intro (fun (X : String) => if X ∈ tl then σ X else init X)
       constructor
       · apply ih
         intro X a2
@@ -290,8 +290,8 @@ theorem mem_all_valuations_as_set_of_total_functions_imp_mem_gen_all_valuations_
 theorem mem_gen_all_valuations_as_list_of_total_functions_iff_mem_all_valuations_as_set_of_total_functions
   (init : String → Bool)
   (var_list : List String)
-  (V : ValuationAsTotalFunction) :
-  V ∈ gen_all_valuations_as_list_of_total_functions init var_list ↔ V ∈ all_valuations_as_set_of_total_functions init var_list :=
+  (σ : ValuationAsTotalFunction) :
+  σ ∈ gen_all_valuations_as_list_of_total_functions init var_list ↔ σ ∈ all_valuations_as_set_of_total_functions init var_list :=
   by
   unfold all_valuations_as_set_of_total_functions
   simp only [Set.mem_setOf_eq]
@@ -372,14 +372,14 @@ example
 
 
 /--
-  `valuation_as_total_function_to_valuation_as_list_of_pairs var_list V` := Translates the function from strings to booleans `V` to a list of pairs of strings and booleans by pairing each string in `var_list` with the boolean value mapped to by `V`.
+  `valuation_as_total_function_to_valuation_as_list_of_pairs var_list σ` := Translates the function from strings to booleans `σ` to a list of pairs of strings and booleans by pairing each string in `var_list` with the boolean value mapped to by `σ`.
 -/
 @[nolint defsWithUnderscore]
 def valuation_as_total_function_to_valuation_as_list_of_pairs
   (var_list : List String)
-  (V : ValuationAsTotalFunction) :
+  (σ : ValuationAsTotalFunction) :
   ValuationAsListOfPairs :=
-  Function.toListOfPairs var_list V
+  Function.toListOfPairs var_list σ
 
 
 example
@@ -415,7 +415,7 @@ example
       unfold ValuationAsTotalFunction
       unfold ValuationAsListOfPairs
       simp only [List.map_map, List.map_inj_left, Function.comp_apply]
-      intro V a1
+      intro σ a1
       unfold Function.toListOfPairs
       simp only [List.map_cons]
       congr 1
@@ -613,7 +613,7 @@ def find_valuation
 def find_satisfying_valuation
   (F : Formula_) :
   Option ValuationAsListOfPairs :=
-  let pred := fun (V : List (String × Bool)) => eval (valuation_as_list_of_pairs_to_valuation_as_total_function (fun _ => false) V) F
+  let pred := fun (σ : List (String × Bool)) => eval (valuation_as_list_of_pairs_to_valuation_as_total_function (fun _ => false) σ) F
   find_valuation pred F.var_list.dedup
 
 

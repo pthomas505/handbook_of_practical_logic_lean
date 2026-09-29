@@ -72,10 +72,10 @@ example
 
 
 theorem theorem_2_7
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (F : Formula_)
   (h1 : has_dual F) :
-  eval V (dual F) = b_not (eval (b_not ∘ V) F) :=
+  eval σ (dual F) = b_not (eval (b_not ∘ σ) F) :=
   by
   induction F
   all_goals
@@ -85,7 +85,7 @@ theorem theorem_2_7
     simp only [b_not]
   case var_ X =>
     simp only [Function.comp_apply]
-    cases V X
+    cases σ X
     all_goals
       simp only [b_not]
   case not_ phi ih =>

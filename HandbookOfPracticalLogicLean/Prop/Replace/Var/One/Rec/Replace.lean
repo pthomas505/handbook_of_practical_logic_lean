@@ -14,32 +14,33 @@ open Formula_
 
 
 /--
-  `replace_var_one_rec V F P` :=
+  `replace_var_one_rec V P F` :=
 
-  `V → F` in `P` for each occurrence of the variable `V` in the formula `P`
+  `V → P` in `F` for each occurrence of the variable `V` in the formula `F`
 
-  The result of simultaneously replacing each occurrence of the variable `V` in the formula `P` by an occurrence of the formula `F`.
+  The result of simultaneously replacing each occurrence of the variable `V` in the formula `F` by an occurrence of the formula `P`.
 -/
+@[nolint defsWithUnderscore]
 def replace_var_one_rec
   (V : String)
-  (F : Formula_) :
+  (P : Formula_) :
   Formula_ → Formula_
   | false_ => false_
   | true_ => true_
-  | var_ X => if V = X then F else var_ X
-  | not_ phi => not_ (replace_var_one_rec V F phi)
-  | and_ phi psi => and_ (replace_var_one_rec V F phi) (replace_var_one_rec V F psi)
-  | or_ phi psi => or_ (replace_var_one_rec V F phi) (replace_var_one_rec V F psi)
-  | imp_ phi psi => imp_ (replace_var_one_rec V F phi) (replace_var_one_rec V F psi)
-  | iff_ phi psi => iff_ (replace_var_one_rec V F phi) (replace_var_one_rec V F psi)
+  | var_ X => if V = X then P else var_ X
+  | not_ phi => not_ (replace_var_one_rec V P phi)
+  | and_ phi psi => and_ (replace_var_one_rec V P phi) (replace_var_one_rec V P psi)
+  | or_ phi psi => or_ (replace_var_one_rec V P phi) (replace_var_one_rec V P psi)
+  | imp_ phi psi => imp_ (replace_var_one_rec V P phi) (replace_var_one_rec V P psi)
+  | iff_ phi psi => iff_ (replace_var_one_rec V P phi) (replace_var_one_rec V P psi)
 
 
 theorem theorem_2_3_one
-  (V : ValuationAsTotalFunction)
-  (A : String)
+  (σ : ValuationAsTotalFunction)
+  (V : String)
   (P : Formula_)
   (F : Formula_) :
-  eval V (replace_var_one_rec A P F) = eval (Function.updateITE' V A (eval V P)) F :=
+  eval σ (replace_var_one_rec V P F) = eval (Function.updateITE' σ V (eval σ P)) F :=
   by
   induction F
   case false_ | true_ =>
@@ -74,11 +75,11 @@ theorem theorem_2_3_one
 
 
 theorem corollary_2_4_one
-  (A : String)
+  (V : String)
   (P : Formula_)
   (F : Formula_)
   (h1 : F.is_tautology) :
-  ((replace_var_one_rec A P F)).is_tautology :=
+  ((replace_var_one_rec V P F)).is_tautology :=
   by
   unfold is_tautology at h1
   unfold satisfies at h1
@@ -91,12 +92,12 @@ theorem corollary_2_4_one
 
 
 theorem theorem_2_5_one
-  (V : ValuationAsTotalFunction)
-  (A : String)
+  (σ : ValuationAsTotalFunction)
+  (V : String)
   (P Q : Formula_)
-  (R : Formula_)
-  (h1 : eval V P = eval V Q) :
-  eval V (replace_var_one_rec A P R) = eval V (replace_var_one_rec A Q R) :=
+  (F : Formula_)
+  (h1 : eval σ P = eval σ Q) :
+  eval σ (replace_var_one_rec V P F) = eval σ (replace_var_one_rec V Q F) :=
   by
   simp only [theorem_2_3_one]
   rewrite [h1]
@@ -104,12 +105,12 @@ theorem theorem_2_5_one
 
 
 theorem corollary_2_6_one
-  (V : ValuationAsTotalFunction)
-  (A : String)
+  (σ : ValuationAsTotalFunction)
+  (V : String)
   (P Q : Formula_)
-  (R : Formula_)
+  (F : Formula_)
   (h1 : are_logically_equivalent P Q) :
-  eval V (replace_var_one_rec A P R) = eval V (replace_var_one_rec A Q R) :=
+  eval σ (replace_var_one_rec V P F) = eval σ (replace_var_one_rec V Q F) :=
   by
   simp only [are_logically_equivalent_iff_eval_eq] at h1
 
@@ -121,11 +122,11 @@ theorem corollary_2_6_one
 
 
 theorem not_var_occurs_in_replace_var_one_rec_self
-  (A : String)
+  (V : String)
   (P : Formula_)
   (F : Formula_)
-  (h1 : ¬ var_occurs_in_formula A F) :
-  replace_var_one_rec A P F = F :=
+  (h1 : ¬ var_occurs_in_formula V F) :
+  replace_var_one_rec V P F = F :=
   by
   induction F
   case false_ | true_ =>
@@ -169,11 +170,11 @@ theorem not_var_occurs_in_replace_var_one_rec_self
 
 
 lemma var_occurs_in_formula_replace_var_one_rec
-  (A : String)
+  (V : String)
   (P : Formula_)
   (F : Formula_)
-  (h1 : var_occurs_in_formula A (replace_var_one_rec A P F)) :
-  var_occurs_in_formula A P :=
+  (h1 : var_occurs_in_formula V (replace_var_one_rec V P F)) :
+  var_occurs_in_formula V P :=
   by
   induction F
   case false_ | true_ =>
@@ -183,10 +184,10 @@ lemma var_occurs_in_formula_replace_var_one_rec
   case var_ X =>
     unfold replace_var_one_rec at h1
 
-    split_ifs at h1
-    case pos c1 =>
+    split at h1
+    case isTrue c1 =>
       exact h1
-    case neg c1 =>
+    case isFalse c1 =>
       unfold var_occurs_in_formula at h1
       contradiction
   case not_ phi ih =>
@@ -213,26 +214,26 @@ lemma var_occurs_in_formula_replace_var_one_rec
 
 
 example
-  (A : String)
+  (V : String)
   (P : Formula_)
   (F : Formula_) :
-  F.var_set \ {A} ⊆ (replace_var_one_rec A P F).var_set :=
+  F.var_set \ {V} ⊆ (replace_var_one_rec V P F).var_set :=
   by
   induction F
   case false_ | true_ =>
     unfold replace_var_one_rec
     unfold Formula_.var_set
     simp only [Finset.empty_sdiff]
-    rfl
+    apply Set.Subset.refl
   case var_ X =>
     unfold replace_var_one_rec
-    split_ifs
-    case pos c1 =>
+    split
+    case isTrue c1 =>
       rewrite [c1]
       simp only [Formula_.var_set]
       simp only [Finset.sdiff_self]
       apply Finset.empty_subset
-    case neg c1 =>
+    case isFalse c1 =>
       unfold Formula_.var_set
       exact Finset.sdiff_subset
   case not_ phi ih =>
@@ -253,11 +254,11 @@ example
 
 
 example
-  (A : String)
+  (V : String)
   (P : Formula_)
   (F : Formula_)
-  (h1 : var_occurs_in_formula A F) :
-  P.var_set ⊆ (replace_var_one_rec A P F).var_set :=
+  (h1 : var_occurs_in_formula V F) :
+  P.var_set ⊆ (replace_var_one_rec V P F).var_set :=
   by
   induction F
   case false_ | true_ =>
@@ -267,8 +268,11 @@ example
     unfold var_occurs_in_formula at h1
 
     unfold replace_var_one_rec
-    split_ifs
-    rfl
+    split
+    case isTrue c1 =>
+      apply Set.Subset.refl
+    case isFalse c1 =>
+      contradiction
   case not_ phi ih =>
     unfold var_occurs_in_formula at h1
 
@@ -287,22 +291,22 @@ example
     simp only [Formula_.var_set]
     cases h1
     case inl h1 =>
-      trans (replace_var_one_rec A P phi).var_set
+      trans (replace_var_one_rec V P phi).var_set
       · apply phi_ih
         exact h1
       · exact Finset.subset_union_left
     case inr h1 =>
-      trans (replace_var_one_rec A P psi).var_set
+      trans (replace_var_one_rec V P psi).var_set
       · apply psi_ih
         exact h1
       · exact Finset.subset_union_right
 
 
 lemma replace_var_one_rec_var_set_subset
-  (A : String)
+  (V : String)
   (P : Formula_)
   (F : Formula_) :
-  (replace_var_one_rec A P F).var_set ⊆ P.var_set ∪ F.var_set :=
+  (replace_var_one_rec V P F).var_set ⊆ P.var_set ∪ F.var_set :=
   by
   induction F
   case false_ | true_ =>
@@ -311,11 +315,11 @@ lemma replace_var_one_rec_var_set_subset
     apply Finset.empty_subset
   case var_ X =>
     unfold replace_var_one_rec
-    split_ifs
-    case pos c1 =>
+    split
+    case isTrue c1 =>
       simp only [Formula_.var_set]
       exact Finset.subset_union_left
-    case neg c1 =>
+    case isFalse c1 =>
       simp only [Formula_.var_set]
       exact Finset.subset_union_right
   case not_ phi ih =>

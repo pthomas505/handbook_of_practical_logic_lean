@@ -23,34 +23,34 @@ def ValuationAsTotalFunction : Type := String → Bool
 
 
 /--
-  `eval V F` := The evaluation of a formula `F` given the valuation `V`.
+  `eval σ F` := The evaluation of a formula `F` given the valuation `σ`.
 -/
 def eval
-  (V : ValuationAsTotalFunction) :
+  (σ : ValuationAsTotalFunction) :
   Formula_ → Bool
   | false_ => false
   | true_ => true
-  | var_ X => V X
-  | not_ phi => b_not (eval V phi)
-  | and_ phi psi => b_and (eval V phi) (eval V psi)
-  | or_ phi psi => b_or (eval V phi) (eval V psi)
-  | imp_ phi psi => b_imp (eval V phi) (eval V psi)
-  | iff_ phi psi => b_iff (eval V phi) (eval V psi)
+  | var_ X => σ X
+  | not_ phi => b_not (eval σ phi)
+  | and_ phi psi => b_and (eval σ phi) (eval σ psi)
+  | or_ phi psi => b_or (eval σ phi) (eval σ psi)
+  | imp_ phi psi => b_imp (eval σ phi) (eval σ psi)
+  | iff_ phi psi => b_iff (eval σ phi) (eval σ psi)
 
 
 /--
-  `satisfies V F` := True if and only if the valuation `V` satisfies the formula `F`.
+  `satisfies σ F` := True if and only if the valuation `σ` satisfies the formula `F`.
 -/
 def satisfies
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (F : Formula_) :
   Prop :=
-  eval V F = true
+  eval σ F = true
 
 instance
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (F : Formula_) :
-  Decidable (satisfies V F) :=
+  Decidable (satisfies σ F) :=
   by
   unfold satisfies
   infer_instance
@@ -63,7 +63,7 @@ instance
 def Formula_.is_tautology
   (F : Formula_) :
   Prop :=
-  ∀ (V : ValuationAsTotalFunction), satisfies V F
+  ∀ (σ : ValuationAsTotalFunction), satisfies σ F
 
 
 /--
@@ -73,7 +73,7 @@ def Formula_.is_tautology
 def Formula_.is_satisfiable
   (F : Formula_) :
   Prop :=
-  ∃ (V : ValuationAsTotalFunction), satisfies V F
+  ∃ (σ : ValuationAsTotalFunction), satisfies σ F
 
 
 /--
@@ -83,18 +83,18 @@ def Formula_.is_satisfiable
 def Formula_.is_unsatisfiable
   (F : Formula_) :
   Prop :=
-  ¬ ∃ (V : ValuationAsTotalFunction), satisfies V F
+  ¬ ∃ (σ : ValuationAsTotalFunction), satisfies σ F
 
 
 /--
-  `satisfies_set V F` := True if and only if the valuation `V` satisfies every formula in the set of formulas `Γ`.
+  `satisfies_set σ F` := True if and only if the valuation `σ` satisfies every formula in the set of formulas `Γ`.
 -/
 @[nolint defsWithUnderscore]
 def satisfies_set
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (Γ : Set Formula_) :
   Prop :=
-  ∀ (F : Formula_), F ∈ Γ → satisfies V F
+  ∀ (F : Formula_), F ∈ Γ → satisfies σ F
 
 
 /--
@@ -104,7 +104,7 @@ def satisfies_set
 def set_is_satisfiable
   (Γ : Set Formula_) :
   Prop :=
-  ∃ (V : ValuationAsTotalFunction), satisfies_set V Γ
+  ∃ (σ : ValuationAsTotalFunction), satisfies_set σ Γ
 
 
 /--
@@ -114,7 +114,7 @@ def set_is_satisfiable
 def set_is_unsatisfiable
   (Γ : Set Formula_) :
   Prop :=
-  ¬ ∃ (V : ValuationAsTotalFunction), satisfies_set V Γ
+  ¬ ∃ (σ : ValuationAsTotalFunction), satisfies_set σ Γ
 
 
 /--
@@ -124,7 +124,7 @@ def entails
   (Γ : Set Formula_)
   (F : Formula_) :
   Prop :=
-  ∀ (V : ValuationAsTotalFunction), satisfies_set V Γ → satisfies V F
+  ∀ (σ : ValuationAsTotalFunction), satisfies_set σ Γ → satisfies σ F
 
 
 /--
@@ -229,7 +229,7 @@ example
 
 theorem are_logically_equivalent_iff_eval_eq
   (P Q : Formula_) :
-  are_logically_equivalent P Q ↔ ∀ (V : ValuationAsTotalFunction), eval V P = eval V Q :=
+  are_logically_equivalent P Q ↔ ∀ (σ : ValuationAsTotalFunction), eval σ P = eval σ Q :=
   by
   unfold are_logically_equivalent
   unfold is_tautology
@@ -303,12 +303,12 @@ example
   simp only [bool_iff_prop_imp]
   simp only [Set.mem_singleton_iff]
   constructor
-  · intro a1 V a2
+  · intro a1 σ a2
     apply a1
     intro F a3
     rewrite [a3]
     exact a2
-  · intro a1 V a2
+  · intro a1 σ a2
     apply a1
     apply a2
     apply Eq.refl
@@ -328,13 +328,13 @@ example
   constructor
   · intro a1
     constructor
-    · intro V a2
+    · intro σ a2
       rewrite [← a1]
       exact a2
-    · intro V a2
+    · intro σ a2
       rewrite [a1]
       exact a2
-  · intro a1 V
+  · intro a1 σ
     obtain ⟨a1_left, a1_right⟩ := a1
     constructor
     · intro a2
@@ -349,10 +349,10 @@ example
 
 
 theorem theorem_2_2
-  (V V' : ValuationAsTotalFunction)
+  (σ σ' : ValuationAsTotalFunction)
   (F : Formula_)
-  (h1 : ∀ (A : String), var_occurs_in_formula A F → (V A = V' A)) :
-  eval V F = eval V' F :=
+  (h1 : ∀ (V : String), var_occurs_in_formula V F → (σ V = σ' V)) :
+  eval σ F = eval σ' F :=
   by
   induction F
   all_goals
@@ -368,7 +368,7 @@ theorem theorem_2_2
 
     congr 1
     apply ih
-    intro X a1
+    intro V a1
     apply h1
     exact a1
   case
@@ -406,48 +406,48 @@ def ValuationAsPartialFunction : Type := String → Option Bool
 
 
 /--
-  `eval V F` := The evaluation of a formula `F` given the valuation `V`.
+  `eval σ F` := The evaluation of a formula `F` given the valuation `σ`.
 -/
 def eval
-  (V : ValuationAsPartialFunction) :
+  (σ : ValuationAsPartialFunction) :
   Formula_ → Option Bool
   | false_ => some false
   | true_ => some true
-  | var_ X => V X
+  | var_ X => σ X
   | not_ phi => do
-    let val_phi ← eval V phi
+    let val_phi ← eval σ phi
     b_not val_phi
   | and_ phi psi => do
-    let val_phi ← eval V phi
-    let val_psi ← eval V psi
+    let val_phi ← eval σ phi
+    let val_psi ← eval σ psi
     b_and val_phi val_psi
   | or_ phi psi => do
-    let val_phi ← eval V phi
-    let val_psi ← eval V psi
+    let val_phi ← eval σ phi
+    let val_psi ← eval σ psi
     b_or val_phi val_psi
   | imp_ phi psi => do
-    let val_phi ← eval V phi
-    let val_psi ← eval V psi
+    let val_phi ← eval σ phi
+    let val_psi ← eval σ psi
     b_imp val_phi val_psi
   | iff_ phi psi => do
-    let val_phi ← eval V phi
-    let val_psi ← eval V psi
+    let val_phi ← eval σ phi
+    let val_psi ← eval σ psi
     b_iff val_phi val_psi
 
 
 /--
-  `satisfies V F` := True if and only if the valuation `V` satisfies the formula `F`.
+  `satisfies σ F` := True if and only if the valuation `σ` satisfies the formula `F`.
 -/
 def satisfies
-  (V : ValuationAsPartialFunction)
+  (σ : ValuationAsPartialFunction)
   (F : Formula_) :
   Prop :=
-  eval V F = some true
+  eval σ F = some true
 
 instance
-  (V : ValuationAsPartialFunction)
+  (σ : ValuationAsPartialFunction)
   (F : Formula_) :
-  Decidable (satisfies V F) :=
+  Decidable (satisfies σ F) :=
   by
   unfold satisfies
   infer_instance
@@ -460,7 +460,7 @@ instance
 def Formula_.is_tautology
   (F : Formula_) :
   Prop :=
-  ∀ (V : ValuationAsPartialFunction), ((∀ (A : String), var_occurs_in_formula A F → ¬ V A = none) → satisfies V F)
+  ∀ (σ : ValuationAsPartialFunction), ((∀ (V : String), var_occurs_in_formula V F → ¬ σ V = none) → satisfies σ F)
 
 
 /--
@@ -488,11 +488,11 @@ end Option_
 
 
 example
-  (V_opt : Option_.ValuationAsPartialFunction)
-  (V : ValuationAsTotalFunction)
+  (σ_opt : Option_.ValuationAsPartialFunction)
+  (σ : ValuationAsTotalFunction)
   (F : Formula_)
-  (h1 : ∀ (A : String), var_occurs_in_formula A F → V_opt A = some (V A)) :
-  Option_.eval V_opt F = some (eval V F) :=
+  (h1 : ∀ (V : String), var_occurs_in_formula V F → σ_opt V = some (σ V)) :
+  Option_.eval σ_opt F = some (eval σ F) :=
   by
   induction F
   case false_ | true_ =>
@@ -520,16 +520,16 @@ example
     | iff_ phi psi phi_ih psi_ih =>
     unfold var_occurs_in_formula at h1
 
-    have s1 : ∀ (A : String), var_occurs_in_formula A phi → V_opt A = some (V A) :=
+    have s1 : ∀ (V : String), var_occurs_in_formula V phi → σ_opt V = some (σ V) :=
     by
-      intro A a1
+      intro V a1
       apply h1
       left
       exact a1
 
-    have s2 : ∀ (A : String), var_occurs_in_formula A psi → V_opt A = some (V A) :=
+    have s2 : ∀ (V : String), var_occurs_in_formula V psi → σ_opt V = some (σ V) :=
     by
-      intro A a1
+      intro V a1
       apply h1
       right
       exact a1
@@ -542,44 +542,44 @@ example
 
 
 /--
-  `val_to_opt_val V` := The conversion of the valuation function `V` to an option valued valuation function.
+  `val_to_opt_val σ` := The conversion of the valuation function `σ` to an option valued valuation function.
 -/
 @[nolint defsWithUnderscore]
 def val_to_opt_val
-  (V : ValuationAsTotalFunction) :
+  (σ : ValuationAsTotalFunction) :
   Option_.ValuationAsPartialFunction :=
-  fun (A : String) => some (V A)
+  fun (V : String) => some (σ V)
 
 
 /--
-  `opt_val_to_val V_opt` := The conversion of the option valued valuation function `V_opt` to a valuation function.
+  `opt_val_to_val σ_opt` := The conversion of the option valued valuation function `σ_opt` to a valuation function.
 -/
 @[nolint defsWithUnderscore]
 def opt_val_to_val
-  (V_opt : Option_.ValuationAsPartialFunction) :
+  (σ_opt : Option_.ValuationAsPartialFunction) :
   ValuationAsTotalFunction :=
-  fun (A : String) =>
-    match V_opt A with
+  fun (V : String) =>
+    match σ_opt V with
     | some b => b
     | none => default
 
 
 theorem val_to_opt_val_eq_some_val
-  (V : ValuationAsTotalFunction)
-  (A : String) :
-  (val_to_opt_val V) A = some (V A) :=
+  (σ : ValuationAsTotalFunction)
+  (V : String) :
+  (val_to_opt_val σ) V = some (σ V) :=
   by
   unfold val_to_opt_val
   apply Eq.refl
 
 
 theorem opt_val_eq_some_opt_val_to_val
-  (V_opt : Option_.ValuationAsPartialFunction)
-  (A : String)
-  (h1 : ¬ V_opt A = none) :
-  V_opt A = some ((opt_val_to_val V_opt) A) :=
+  (σ_opt : Option_.ValuationAsPartialFunction)
+  (V : String)
+  (h1 : ¬ σ_opt V = none) :
+  σ_opt V = some ((opt_val_to_val σ_opt) V) :=
   by
-  cases c1 : V_opt A
+  cases c1 : σ_opt V
   case none =>
     contradiction
   case some b =>
@@ -589,10 +589,10 @@ theorem opt_val_eq_some_opt_val_to_val
 
 
 theorem eval_opt_val_to_val
-  (V_opt : Option_.ValuationAsPartialFunction)
+  (σ_opt : Option_.ValuationAsPartialFunction)
   (F : Formula_)
-  (h1 : ∀ (A : String), var_occurs_in_formula A F → ¬ V_opt A = none) :
-  Option_.eval V_opt F = some (eval (opt_val_to_val V_opt) F) :=
+  (h1 : ∀ (V : String), var_occurs_in_formula V F → ¬ σ_opt V = none) :
+  Option_.eval σ_opt F = some (eval (opt_val_to_val σ_opt) F) :=
   by
   induction F
   case false_ | true_ =>
@@ -621,16 +621,16 @@ theorem eval_opt_val_to_val
     | iff_ phi psi phi_ih psi_ih =>
     unfold var_occurs_in_formula at h1
 
-    have s1 : ∀ (A : String), var_occurs_in_formula A phi → ¬ V_opt A = none :=
+    have s1 : ∀ (V : String), var_occurs_in_formula V phi → ¬ σ_opt V = none :=
     by
-      intro A a1
+      intro V a1
       apply h1
       left
       exact a1
 
-    have s2 : ∀ (A : String), var_occurs_in_formula A psi → ¬ V_opt A = none :=
+    have s2 : ∀ (V : String), var_occurs_in_formula V psi → ¬ σ_opt V = none :=
     by
-      intro A a1
+      intro V a1
       apply h1
       right
       exact a1
@@ -643,9 +643,9 @@ theorem eval_opt_val_to_val
 
 
 theorem eval_val_to_opt_val
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (F : Formula_) :
-  Option_.eval (val_to_opt_val V) F = some (eval V F) :=
+  Option_.eval (val_to_opt_val σ) F = some (eval σ F) :=
   by
   induction F
   case false_ | true_ =>
@@ -684,8 +684,8 @@ example
 
   unfold Option_.Formula_.is_tautology
   unfold Option_.satisfies
-  intro V_opt a1
-  rewrite [← h1 (opt_val_to_val V_opt)]
+  intro σ_opt a1
+  rewrite [← h1 (opt_val_to_val σ_opt)]
   apply eval_opt_val_to_val
   exact a1
 
@@ -700,11 +700,11 @@ example
 
   unfold is_tautology
   unfold satisfies
-  intro V
+  intro σ
   rewrite [← Option.some.injEq]
-  rewrite [← eval_val_to_opt_val V F]
+  rewrite [← eval_val_to_opt_val σ F]
   apply h1
-  intro A a1
+  intro V a1
   unfold val_to_opt_val
   intro contra
   contradiction
