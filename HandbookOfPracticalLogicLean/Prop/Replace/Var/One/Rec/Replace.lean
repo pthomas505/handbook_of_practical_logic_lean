@@ -121,7 +121,7 @@ theorem corollary_2_6_one
 -------------------------------------------------------------------------------
 
 
-theorem not_var_occurs_in_replace_var_one_rec_self
+theorem not_var_occurs_in_formula_replace_var_one_rec
   (V : String)
   (P : Formula_)
   (F : Formula_)
@@ -169,7 +169,10 @@ theorem not_var_occurs_in_replace_var_one_rec_self
       exact contra
 
 
-lemma var_occurs_in_formula_replace_var_one_rec
+-------------------------------------------------------------------------------
+
+
+theorem var_occurs_in_formula_replace_var_one_rec_eq_1
   (V : String)
   (P : Formula_)
   (F : Formula_)
@@ -211,6 +214,265 @@ lemma var_occurs_in_formula_replace_var_one_rec
     case inr h1 =>
       apply psi_ih
       exact h1
+
+
+theorem var_occurs_in_formula_replace_var_one_rec_eq_2
+  (V : String)
+  (P : Formula_)
+  (F : Formula_)
+  (h1 : var_occurs_in_formula V (replace_var_one_rec V P F)) :
+  var_occurs_in_formula V F :=
+  by
+  induction F
+  case false_ | true_ =>
+    unfold replace_var_one_rec at h1
+    unfold var_occurs_in_formula at h1
+    contradiction
+  case var_ X =>
+    unfold replace_var_one_rec at h1
+
+    split at h1
+    case isTrue c1 =>
+      unfold var_occurs_in_formula
+      exact c1
+    case isFalse c1 =>
+      unfold var_occurs_in_formula at h1
+      contradiction
+  case not_ phi ih =>
+    unfold replace_var_one_rec at h1
+    unfold var_occurs_in_formula at h1
+
+    unfold var_occurs_in_formula
+    apply ih
+    exact h1
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    unfold replace_var_one_rec at h1
+    unfold var_occurs_in_formula at h1
+
+    unfold var_occurs_in_formula
+    cases h1
+    case inl h1 =>
+      left
+      apply phi_ih
+      exact h1
+    case inr h1 =>
+      right
+      apply psi_ih
+      exact h1
+
+
+theorem var_occurs_in_formula_replace_var_one_rec_eq_3
+  (V : String)
+  (P : Formula_)
+  (F : Formula_)
+  (h1 : var_occurs_in_formula V P)
+  (h2 : var_occurs_in_formula V F) :
+  var_occurs_in_formula V (replace_var_one_rec V P F) :=
+  by
+  induction F
+  case false_ | true_ =>
+    unfold var_occurs_in_formula at h2
+    contradiction
+  case var_ X =>
+    unfold var_occurs_in_formula at h2
+
+    unfold replace_var_one_rec
+    split
+    case isTrue c1 =>
+      exact h1
+    case isFalse c1 =>
+      contradiction
+  case not_ phi ih =>
+    unfold var_occurs_in_formula at h2
+
+    unfold replace_var_one_rec
+    unfold var_occurs_in_formula
+    apply ih
+    exact h2
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    unfold var_occurs_in_formula at h2
+
+    unfold replace_var_one_rec
+    unfold var_occurs_in_formula
+    cases h2
+    case inl h2 =>
+      left
+      apply phi_ih
+      exact h2
+    case inr h2 =>
+      right
+      apply psi_ih
+      exact h2
+
+
+-------------------------------------------------------------------------------
+
+
+theorem var_occurs_in_formula_replace_var_one_rec_ne_1
+  (V : String)
+  (P : Formula_)
+  (F : Formula_)
+  (Z : String)
+  (h1 : ¬ Z = V)
+  (h2 : var_occurs_in_formula Z F) :
+  var_occurs_in_formula Z (replace_var_one_rec V P F) :=
+  by
+  induction F
+  case false_ | true_ =>
+    unfold var_occurs_in_formula at h2
+    contradiction
+  case var_ X =>
+    unfold var_occurs_in_formula at h2
+
+    unfold replace_var_one_rec
+    split
+    case isTrue c1 =>
+      rewrite [h2] at h1
+      rewrite [c1] at h1
+      contradiction
+    case isFalse c1 =>
+      unfold var_occurs_in_formula
+      exact h2
+  case not_ phi ih =>
+    unfold var_occurs_in_formula at h2
+
+    unfold replace_var_one_rec
+    unfold var_occurs_in_formula
+    apply ih
+    exact h2
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    unfold var_occurs_in_formula at h2
+
+    unfold replace_var_one_rec
+    unfold var_occurs_in_formula
+    cases h2
+    case inl h2 =>
+      left
+      apply phi_ih
+      exact h2
+    case inr h2 =>
+      right
+      apply psi_ih
+      exact h2
+
+
+theorem var_occurs_in_formula_replace_var_one_rec_ne_2
+  (V : String)
+  (P : Formula_)
+  (F : Formula_)
+  (Z : String)
+  (h1 : var_occurs_in_formula Z (replace_var_one_rec V P F))
+  (h2 : ¬ var_occurs_in_formula Z F) :
+  var_occurs_in_formula Z P :=
+  by
+  induction F
+  case false_ | true_ =>
+    unfold var_occurs_in_formula at h2
+    contradiction
+  case var_ X =>
+    unfold replace_var_one_rec at h1
+
+    unfold var_occurs_in_formula at h2
+
+    split at h1
+    case isTrue c1 =>
+      exact h1
+    case isFalse c1 =>
+      unfold var_occurs_in_formula at h1
+      contradiction
+  case not_ phi ih =>
+    unfold replace_var_one_rec at h1
+    unfold var_occurs_in_formula at h1
+
+    unfold var_occurs_in_formula at h2
+
+    exact ih h1 h2
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    unfold replace_var_one_rec at h1
+    unfold var_occurs_in_formula at h1
+
+    unfold var_occurs_in_formula at h2
+    rewrite [not_or] at h2
+    obtain ⟨h2_left, h2_right⟩ := h2
+
+    cases h1
+    case inl h1 =>
+      exact phi_ih h1 h2_left
+    case inr h1 =>
+      exact psi_ih h1 h2_right
+
+
+theorem var_occurs_in_formula_replace_var_one_rec_ne_3
+  (V : String)
+  (P : Formula_)
+  (F : Formula_)
+  (Z : String)
+  (h1 : var_occurs_in_formula Z (replace_var_one_rec V P F))
+  (h2 : ¬ var_occurs_in_formula Z F) :
+  var_occurs_in_formula V F :=
+  by
+  induction F
+  case false_ | true_ =>
+    unfold replace_var_one_rec at h1
+    contradiction
+  case var_ X =>
+    unfold replace_var_one_rec at h1
+
+    split at h1
+    case isTrue c1 =>
+      unfold var_occurs_in_formula
+      exact c1
+    case isFalse c1 =>
+      unfold var_occurs_in_formula at h1
+      unfold var_occurs_in_formula at h2
+      contradiction
+  case not_ phi ih =>
+    unfold replace_var_one_rec at h1
+    unfold var_occurs_in_formula at h1
+
+    unfold var_occurs_in_formula at h2
+
+    unfold var_occurs_in_formula
+    exact ih h1 h2
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    unfold replace_var_one_rec at h1
+    unfold var_occurs_in_formula at h1
+
+    unfold var_occurs_in_formula at h2
+    rewrite [not_or] at h2
+    obtain ⟨h2_left, h2_right⟩ := h2
+
+    unfold var_occurs_in_formula
+    cases h1
+    case inl h1 =>
+      left
+      exact phi_ih h1 h2_left
+    case inr h1 =>
+      right
+      exact psi_ih h1 h2_right
+
+
+-------------------------------------------------------------------------------
 
 
 example
@@ -302,7 +564,7 @@ example
       · exact Finset.subset_union_right
 
 
-lemma replace_var_one_rec_var_set_subset
+theorem replace_var_one_rec_var_set_subset
   (V : String)
   (P : Formula_)
   (F : Formula_) :
