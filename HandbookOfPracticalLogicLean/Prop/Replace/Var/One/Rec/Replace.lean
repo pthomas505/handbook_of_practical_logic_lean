@@ -475,6 +475,43 @@ theorem var_occurs_in_formula_replace_var_one_rec_ne_3
 -------------------------------------------------------------------------------
 
 
+theorem replace_var_one_rec_eq
+  (V : String)
+  (F : Formula_) :
+  replace_var_one_rec V (Formula_.var_ V) F = F :=
+  by
+  induction F
+  case false_ | true_ =>
+    unfold replace_var_one_rec
+    apply Eq.refl
+  case var_ X =>
+    unfold replace_var_one_rec
+
+    split
+    case isTrue c1 =>
+      rewrite [c1]
+      apply Eq.refl
+    case isFalse c1 =>
+      apply Eq.refl
+  case not_ phi ih =>
+    unfold replace_var_one_rec
+
+    rewrite [ih]
+    apply Eq.refl
+  case
+      and_ phi psi phi_ih psi_ih
+    | or_ phi psi phi_ih psi_ih
+    | imp_ phi psi phi_ih psi_ih
+    | iff_ phi psi phi_ih psi_ih =>
+    unfold replace_var_one_rec
+    rewrite [phi_ih]
+    rewrite [psi_ih]
+    apply Eq.refl
+
+
+-------------------------------------------------------------------------------
+
+
 example
   (V : String)
   (P : Formula_)
