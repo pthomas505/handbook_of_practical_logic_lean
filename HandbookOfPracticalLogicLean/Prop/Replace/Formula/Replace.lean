@@ -3,7 +3,9 @@ import HandbookOfPracticalLogicLean.Prop.Semantics
 import Mathlib.Tactic
 
 
-set_option autoImplicit false
+set_option linter.style.docString false
+set_option linter.style.emptyLine false
+set_option linter.style.longLine false
 
 
 open Formula_
@@ -12,6 +14,7 @@ open Formula_
 /--
   `is_repl_of_formula_in_formula_rec U V P_u P_v` := True if and only if `P_v` is the result of replacing one or more specified occurrences (but not necessarily all occurrences) of `U` in `P_u` by occurrences of `V`.
 -/
+@[nolint defsWithUnderscore]
 def is_repl_of_formula_in_formula_rec
   (U V : Formula_) :
   Formula_ → Formula_ → Prop
@@ -37,6 +40,7 @@ def is_repl_of_formula_in_formula_rec
 
   | P_u, P_v => P_u = P_v ∨ (P_u = U ∧ P_v = V)
 
+@[nolint defsWithUnderscore]
 instance (U V F F' : Formula_) : Decidable (is_repl_of_formula_in_formula_rec U V F F') :=
   by
   induction F generalizing F'
@@ -101,7 +105,7 @@ inductive is_repl_of_formula_in_formula_ind
     is_repl_of_formula_in_formula_ind U V (P_u.iff_ Q_u) (P_v.iff_ Q_v)
 
 
-lemma is_repl_of_formula_in_formula_rec_imp_is_repl_of_formula_in_formula_ind
+theorem is_repl_of_formula_in_formula_rec_imp_is_repl_of_formula_in_formula_ind
   (U V : Formula_)
   (F F' : Formula_)
   (h1 : is_repl_of_formula_in_formula_rec U V F F') :
@@ -114,7 +118,7 @@ lemma is_repl_of_formula_in_formula_rec_imp_is_repl_of_formula_in_formula_ind
       true_.true_
     | false_.false_ =>
     apply is_repl_of_formula_in_formula_ind.same_
-    rfl
+    apply Eq.refl
   case var_.var_ X X' =>
     unfold is_repl_of_formula_in_formula_rec at h1
 
@@ -193,7 +197,7 @@ lemma is_repl_of_formula_in_formula_rec_imp_is_repl_of_formula_in_formula_ind
       · exact h1_right
 
 
-lemma is_repl_of_formula_in_formula_ind_imp_is_repl_of_formula_in_formula_rec
+theorem is_repl_of_formula_in_formula_ind_imp_is_repl_of_formula_in_formula_rec
   (U V : Formula_)
   (F F' : Formula_)
   (h1 : is_repl_of_formula_in_formula_ind U V F F') :
@@ -206,7 +210,7 @@ lemma is_repl_of_formula_in_formula_ind_imp_is_repl_of_formula_in_formula_rec
     all_goals
       unfold is_repl_of_formula_in_formula_rec
       left
-      rfl
+      apply Eq.refl
   case diff_ P_u P_v h1_ih_1 h1_ih_2 =>
     rewrite [h1_ih_1]
     rewrite [h1_ih_2]
@@ -237,7 +241,7 @@ lemma is_repl_of_formula_in_formula_ind_imp_is_repl_of_formula_in_formula_rec
     exact ⟨h1_ih_3, h1_ih_4⟩
 
 
-lemma is_repl_of_formula_in_formula_rec_iff_is_repl_of_formula_in_formula_ind
+theorem is_repl_of_formula_in_formula_rec_iff_is_repl_of_formula_in_formula_ind
   (U V : Formula_)
   (F F' : Formula_) :
   is_repl_of_formula_in_formula_rec U V F F' ↔ is_repl_of_formula_in_formula_ind U V F F' :=
@@ -248,17 +252,17 @@ lemma is_repl_of_formula_in_formula_rec_iff_is_repl_of_formula_in_formula_ind
 
 
 example
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (R S : Formula_)
   (P_R P_S : Formula_)
   (h1 : is_repl_of_formula_in_formula_ind R S P_R P_S)
-  (h2 : eval V R = eval V S) :
-  eval V P_R = eval V P_S :=
+  (h2 : eval σ R = eval σ S) :
+  eval σ P_R = eval σ P_S :=
   by
   induction h1
   case same_ P_u P_v ih =>
     rewrite [ih]
-    rfl
+    apply Eq.refl
   case diff_ P_u P_v ih_1 ih_2 =>
     rewrite [ih_1]
     rewrite [ih_2]
@@ -266,7 +270,7 @@ example
   case not_ P_u P_v ih_1 ih_2 =>
     unfold eval
     rewrite [ih_2]
-    rfl
+    apply Eq.refl
   case
       and_ P_u Q_u P_v Q_v ih_1 ih_2 ih_3 ih_4
     | or_ P_u Q_u P_v Q_v ih_1 ih_2 ih_3 ih_4
@@ -275,7 +279,7 @@ example
     unfold eval
     rewrite [ih_3]
     rewrite [ih_4]
-    rfl
+    apply Eq.refl
 
 
 #lint
