@@ -3,7 +3,9 @@ import HandbookOfPracticalLogicLean.Prop.Formula
 import Mathlib.Tactic
 
 
-set_option autoImplicit false
+set_option linter.style.docString false
+set_option linter.style.emptyLine false
+set_option linter.style.longLine false
 
 
 open Formula_
@@ -12,12 +14,14 @@ open Formula_
 /--
   `Formula_.is_constant_rec F` := True if and only if the formula `F` is `false_` or `true_`.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.is_constant_rec :
   Formula_ → Prop
   | false_ => True
   | true_ => True
   | _ => False
 
+@[nolint defsWithUnderscore]
 instance
   (F : Formula_) :
   Decidable (Formula_.is_constant_rec F) :=
@@ -34,12 +38,14 @@ instance
 /--
   `Formula_.is_literal_rec F` := True if and only if the formula `F` is a variable or the negation of a variable.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.is_literal_rec :
   Formula_ → Prop
   | var_ _ => True
   | not_ (var_ _) => True
   | _ => False
 
+@[nolint defsWithUnderscore]
 instance
   (F : Formula_) :
   Decidable (Formula_.is_literal_rec F) :=
@@ -58,11 +64,13 @@ instance
 /--
   `Formula_.is_pos_literal_rec F` := True if and only if the formula `F` is a positive literal.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.is_pos_literal_rec :
   Formula_ → Prop
   | var_ _ => True
   | _ => False
 
+@[nolint defsWithUnderscore]
 instance
   (F : Formula_) :
   Decidable (Formula_.is_pos_literal_rec F) :=
@@ -76,11 +84,13 @@ instance
 /--
   `Formula_.is_neg_literal_rec F` := True if and only if the formula `F` is a negative literal.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.is_neg_literal_rec :
   Formula_ → Prop
   | not_ (var_ _) => True
   | _ => False
 
+@[nolint defsWithUnderscore]
 instance
   (F : Formula_) :
   Decidable (Formula_.is_neg_literal_rec F) :=
@@ -100,25 +110,27 @@ instance
 
 
 /--
-  `is_pos_literal_in_rec A F` := True if and only if there is an occurrence of the variable `A` as a positive literal in the formula `F`.
+  `is_pos_literal_in_rec V F` := True if and only if there is an occurrence of the variable `V` as a positive literal in the formula `F`.
 -/
+@[nolint defsWithUnderscore]
 def is_pos_literal_in_rec
-  (A : String) :
+  (V : String) :
   Formula_ → Prop
   | false_ => False
   | true_ => False
-  | var_ X => A = X
+  | var_ X => V = X
   | not_ (var_ _) => False
-  | not_ phi => is_pos_literal_in_rec A phi
-  | and_ phi psi => is_pos_literal_in_rec A phi ∨ is_pos_literal_in_rec A psi
-  | or_ phi psi => is_pos_literal_in_rec A phi ∨ is_pos_literal_in_rec A psi
-  | imp_ phi psi => is_pos_literal_in_rec A phi ∨ is_pos_literal_in_rec A psi
-  | iff_ phi psi => is_pos_literal_in_rec A phi ∨ is_pos_literal_in_rec A psi
+  | not_ phi => is_pos_literal_in_rec V phi
+  | and_ phi psi => is_pos_literal_in_rec V phi ∨ is_pos_literal_in_rec V psi
+  | or_ phi psi => is_pos_literal_in_rec V phi ∨ is_pos_literal_in_rec V psi
+  | imp_ phi psi => is_pos_literal_in_rec V phi ∨ is_pos_literal_in_rec V psi
+  | iff_ phi psi => is_pos_literal_in_rec V phi ∨ is_pos_literal_in_rec V psi
 
+@[nolint defsWithUnderscore]
 instance
-  (A : String)
+  (V : String)
   (F : Formula_) :
-  Decidable (is_pos_literal_in_rec A F) :=
+  Decidable (is_pos_literal_in_rec V F) :=
   by
   induction F
   case not_ phi ih =>
@@ -140,25 +152,27 @@ instance
 
 
 /--
-  `is_neg_literal_in_rec A F` := True if and only if there is an occurrence of the variable `A` as a negative literal in the formula `F`.
+  `is_neg_literal_in_rec V F` := True if and only if there is an occurrence of the variable `V` as a negative literal in the formula `F`.
 -/
+@[nolint defsWithUnderscore]
 def is_neg_literal_in_rec
-  (A : String) :
+  (V : String) :
   Formula_ → Prop
   | false_ => False
   | true_ => False
   | var_ _ => False
-  | not_ (var_ X) => A = X
-  | not_ phi => is_neg_literal_in_rec A phi
-  | and_ phi psi => is_neg_literal_in_rec A phi ∨ is_neg_literal_in_rec A psi
-  | or_ phi psi => is_neg_literal_in_rec A phi ∨ is_neg_literal_in_rec A psi
-  | imp_ phi psi => is_neg_literal_in_rec A phi ∨ is_neg_literal_in_rec A psi
-  | iff_ phi psi => is_neg_literal_in_rec A phi ∨ is_neg_literal_in_rec A psi
+  | not_ (var_ X) => V = X
+  | not_ phi => is_neg_literal_in_rec V phi
+  | and_ phi psi => is_neg_literal_in_rec V phi ∨ is_neg_literal_in_rec V psi
+  | or_ phi psi => is_neg_literal_in_rec V phi ∨ is_neg_literal_in_rec V psi
+  | imp_ phi psi => is_neg_literal_in_rec V phi ∨ is_neg_literal_in_rec V psi
+  | iff_ phi psi => is_neg_literal_in_rec V phi ∨ is_neg_literal_in_rec V psi
 
+@[nolint defsWithUnderscore]
 instance
-  (A : String)
+  (V : String)
   (F : Formula_) :
-  Decidable (is_neg_literal_in_rec A F) :=
+  Decidable (is_neg_literal_in_rec V F) :=
   by
   induction F
   case not_ phi ih =>
@@ -185,6 +199,7 @@ instance
 /--
   `Formula_.is_nnf_rec_v1 F` := True if and only if the formula `F` is in negation normal form.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.is_nnf_rec_v1 :
   Formula_ → Prop
   | false_ => True
@@ -195,6 +210,7 @@ def Formula_.is_nnf_rec_v1 :
   | or_ phi psi => phi.is_nnf_rec_v1 ∧ psi.is_nnf_rec_v1
   | _ => False
 
+@[nolint defsWithUnderscore]
 instance
   (F : Formula_) :
   Decidable (Formula_.is_nnf_rec_v1 F) :=
@@ -213,6 +229,7 @@ instance
 /--
   `Formula_.is_nnf_rec_v2 F` := True if and only if the formula `F` is in negation normal form.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.is_nnf_rec_v2 :
   Formula_ → Prop
   | false_ => True
@@ -225,6 +242,7 @@ def Formula_.is_nnf_rec_v2 :
   | or_ phi psi => phi.is_nnf_rec_v2 ∧ psi.is_nnf_rec_v2
   | _ => False
 
+@[nolint defsWithUnderscore]
 instance
   (F : Formula_) :
   Decidable (Formula_.is_nnf_rec_v2 F) :=
@@ -246,6 +264,7 @@ instance
 /--
   `Formula_.is_pos_nnf_rec_v1 F` := True if and only if the formula `F` is in negation normal form and every variable in `F` is positive.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.is_pos_nnf_rec_v1 :
   Formula_ → Prop
   | false_ => True
@@ -256,6 +275,7 @@ def Formula_.is_pos_nnf_rec_v1 :
   | or_ phi psi => phi.is_pos_nnf_rec_v1 ∧ psi.is_pos_nnf_rec_v1
   | _ => False
 
+@[nolint defsWithUnderscore]
 instance
   (F : Formula_) :
   Decidable (Formula_.is_pos_nnf_rec_v1 F) :=
@@ -277,6 +297,7 @@ instance
 /--
   `Formula_.is_neg_nnf_rec_v1 F` := True if and only if the formula `F` is in negation normal form and every variable in `F` is negative.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.is_neg_nnf_rec_v1 :
   Formula_ → Prop
   | false_ => True
@@ -287,6 +308,7 @@ def Formula_.is_neg_nnf_rec_v1 :
   | or_ phi psi => phi.is_neg_nnf_rec_v1 ∧ psi.is_neg_nnf_rec_v1
   | _ => False
 
+@[nolint defsWithUnderscore]
 instance
   (F : Formula_) :
   Decidable (Formula_.is_neg_nnf_rec_v1 F) :=
@@ -308,6 +330,7 @@ instance
 /--
   `Formula_.is_disj_rec_v1 F` := True if and only if the formula `F` is a disjunction of an arbitrary number of constants and literals and every left disjunct is a constant or a literal.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.is_disj_rec_v1 :
   Formula_ → Prop
   | false_ => True
@@ -320,6 +343,7 @@ def Formula_.is_disj_rec_v1 :
   | or_ (not_ (var_ _)) psi => psi.is_disj_rec_v1
   | _ => False
 
+@[nolint defsWithUnderscore]
 instance
   (F : Formula_) :
   Decidable (Formula_.is_disj_rec_v1 F) :=
@@ -348,6 +372,7 @@ instance
 /--
   `Formula_.is_disj_rec_v2 F` := True if and only if the formula `F` is a disjunction of an arbitrary number of constants and literals.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.is_disj_rec_v2 :
   Formula_ → Prop
   | false_ => True
@@ -357,6 +382,7 @@ def Formula_.is_disj_rec_v2 :
   | or_ phi psi => phi.is_disj_rec_v2 ∧ psi.is_disj_rec_v2
   | _ => False
 
+@[nolint defsWithUnderscore]
 instance
   (F : Formula_) :
   Decidable (Formula_.is_disj_rec_v2 F) :=
@@ -378,6 +404,7 @@ instance
 /--
   `Formula_.is_conj_rec_v1 F` := True if and only if the formula `F` is a conjunction of an arbitrary number of constants and literals and every left conjunct is a constant or a literal.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.is_conj_rec_v1 :
   Formula_ → Prop
   | false_ => True
@@ -390,6 +417,7 @@ def Formula_.is_conj_rec_v1 :
   | and_ (not_ (var_ _)) psi => psi.is_conj_rec_v1
   | _ => False
 
+@[nolint defsWithUnderscore]
 instance
   (F : Formula_) :
   Decidable (Formula_.is_conj_rec_v1 F) :=
@@ -418,6 +446,7 @@ instance
 /--
   `Formula_.is_conj_rec_v2 F` := True if and only if the formula `F` is a conjunction of an arbitrary number of constants and literals.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.is_conj_rec_v2 :
   Formula_ → Prop
   | false_ => True
@@ -427,6 +456,7 @@ def Formula_.is_conj_rec_v2 :
   | and_ phi psi => phi.is_conj_rec_v2 ∧ psi.is_conj_rec_v2
   | _ => False
 
+@[nolint defsWithUnderscore]
 instance
   (F : Formula_) :
   Decidable (Formula_.is_conj_rec_v2 F) :=
@@ -448,11 +478,13 @@ instance
 /--
   `Formula_.is_dnf_rec_v1 F` := True if and only if the formula `F` is in disjunctive normal form, every left disjunct is a conjunction, and every left conjunct is a constant or a literal.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.is_dnf_rec_v1 :
   Formula_ → Prop
   | or_ phi psi => phi.is_conj_rec_v1 ∧ psi.is_dnf_rec_v1
   | F => is_conj_rec_v1 F
 
+@[nolint defsWithUnderscore]
 instance
   (F : Formula_) :
   Decidable (Formula_.is_dnf_rec_v1 F) :=
@@ -466,11 +498,13 @@ instance
 /--
   `Formula_.is_dnf_rec_v2 F` := True if and only if the formula `F` is in disjunctive normal form.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.is_dnf_rec_v2 :
   Formula_ → Prop
   | or_ phi psi => phi.is_dnf_rec_v2 ∧ psi.is_dnf_rec_v2
   | F => is_conj_rec_v2 F
 
+@[nolint defsWithUnderscore]
 instance
   (F : Formula_) :
   Decidable (Formula_.is_dnf_rec_v2 F) :=
@@ -487,11 +521,13 @@ instance
 /--
   `Formula_.is_cnf_rec_v1 F` := True if and only if the formula `F` is in conjunctive normal form, every left conjunct is a disjunction, and every left disjunct is a constant or a literal.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.is_cnf_rec_v1 :
   Formula_ → Prop
   | and_ phi psi => phi.is_disj_rec_v1 ∧ psi.is_cnf_rec_v1
   | F => is_disj_rec_v1 F
 
+@[nolint defsWithUnderscore]
 instance
   (F : Formula_) :
   Decidable (Formula_.is_cnf_rec_v1 F) :=
@@ -505,11 +541,13 @@ instance
 /--
   `Formula_.is_cnf_rec_v2 F` := True if and only if the formula `F` is in conjunctive normal form.
 -/
+@[nolint defsWithUnderscore]
 def Formula_.is_cnf_rec_v2 :
   Formula_ → Prop
   | and_ phi psi => phi.is_cnf_rec_v2 ∧ psi.is_cnf_rec_v2
   | F => is_disj_rec_v2 F
 
+@[nolint defsWithUnderscore]
 instance
   (F : Formula_) :
   Decidable (Formula_.is_cnf_rec_v2 F) :=
