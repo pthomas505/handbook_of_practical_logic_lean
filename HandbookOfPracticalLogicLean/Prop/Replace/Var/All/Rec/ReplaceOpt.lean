@@ -3,7 +3,9 @@ import HandbookOfPracticalLogicLean.Prop.Semantics
 import Mathlib.Tactic
 
 
-set_option autoImplicit false
+set_option linter.style.docString false
+set_option linter.style.emptyLine false
+set_option linter.style.longLine false
 
 
 open Formula_
@@ -12,6 +14,7 @@ open Formula_
 /--
   `replace_var_all_rec_opt τ F` := The simultaneous replacement of each variable in the formula `F` using the hashmap from strings to formulas `τ`.
 -/
+@[nolint defsWithUnderscore]
 def replace_var_all_rec_opt
   (τ : Std.HashMap String Formula_) :
   Formula_ → Formula_
