@@ -269,9 +269,10 @@ theorem var_occurs_in_formula_replace_var_one_rec_eq_3
   (V : String)
   (P : Formula_)
   (F : Formula_)
-  (h1 : var_occurs_in_formula V P)
+  (Z : String)
+  (h1 : var_occurs_in_formula Z P)
   (h2 : var_occurs_in_formula V F) :
-  var_occurs_in_formula V (replace_var_one_rec V P F) :=
+  var_occurs_in_formula Z (replace_var_one_rec V P F) :=
   by
   induction F
   case false_ | true_ =>
@@ -581,38 +582,15 @@ example
   (F : Formula_) :
   F.var_set \ {V} ⊆ (replace_var_one_rec V P F).var_set :=
   by
-  induction F
-  case false_ | true_ =>
-    unfold replace_var_one_rec
-    unfold Formula_.var_set
-    simp only [Finset.empty_sdiff]
-    apply Set.Subset.refl
-  case var_ X =>
-    unfold replace_var_one_rec
-    split
-    case isTrue c1 =>
-      rewrite [c1]
-      simp only [Formula_.var_set]
-      simp only [Finset.sdiff_self]
-      apply Finset.empty_subset
-    case isFalse c1 =>
-      unfold Formula_.var_set
-      exact Finset.sdiff_subset
-  case not_ phi ih =>
-    unfold replace_var_one_rec
-    unfold Formula_.var_set
-    exact ih
-  case
-      and_ phi psi phi_ih psi_ih
-    | or_ phi psi phi_ih psi_ih
-    | imp_ phi psi phi_ih psi_ih
-    | iff_ phi psi phi_ih psi_ih =>
-    unfold replace_var_one_rec
-    unfold Formula_.var_set
-    simp only [Finset.union_sdiff_distrib]
-    apply Finset.union_subset_union
-    · apply phi_ih
-    · apply psi_ih
+  simp only [Finset.subset_iff]
+  simp only [Finset.mem_sdiff, Finset.mem_singleton]
+  intro Z a1
+  obtain ⟨a1_left, a1_right⟩ := a1
+  rewrite [← var_occurs_in_formula_iff_mem_formula_var_set] at a1_left
+  rewrite [← var_occurs_in_formula_iff_mem_formula_var_set]
+  apply var_occurs_in_formula_replace_var_one_rec_ne_1
+  · exact a1_right
+  · exact a1_left
 
 
 example
@@ -622,46 +600,13 @@ example
   (h1 : var_occurs_in_formula V F) :
   P.var_set ⊆ (replace_var_one_rec V P F).var_set :=
   by
-  induction F
-  case false_ | true_ =>
-    unfold var_occurs_in_formula at h1
-    contradiction
-  case var_ X =>
-    unfold var_occurs_in_formula at h1
-
-    unfold replace_var_one_rec
-    split
-    case isTrue c1 =>
-      apply Set.Subset.refl
-    case isFalse c1 =>
-      contradiction
-  case not_ phi ih =>
-    unfold var_occurs_in_formula at h1
-
-    unfold replace_var_one_rec
-    simp only [Formula_.var_set]
-    apply ih
-    exact h1
-  case
-      and_ phi psi phi_ih psi_ih
-    | or_ phi psi phi_ih psi_ih
-    | imp_ phi psi phi_ih psi_ih
-    | iff_ phi psi phi_ih psi_ih =>
-    unfold var_occurs_in_formula at h1
-
-    unfold replace_var_one_rec
-    simp only [Formula_.var_set]
-    cases h1
-    case inl h1 =>
-      trans (replace_var_one_rec V P phi).var_set
-      · apply phi_ih
-        exact h1
-      · exact Finset.subset_union_left
-    case inr h1 =>
-      trans (replace_var_one_rec V P psi).var_set
-      · apply psi_ih
-        exact h1
-      · exact Finset.subset_union_right
+  simp only [Finset.subset_iff]
+  intro Z a1
+  rewrite [← var_occurs_in_formula_iff_mem_formula_var_set] at a1
+  rewrite [← var_occurs_in_formula_iff_mem_formula_var_set]
+  apply var_occurs_in_formula_replace_var_one_rec_eq_3
+  · exact a1
+  · exact h1
 
 
 theorem replace_var_one_rec_var_set_subset
@@ -670,35 +615,17 @@ theorem replace_var_one_rec_var_set_subset
   (F : Formula_) :
   (replace_var_one_rec V P F).var_set ⊆ P.var_set ∪ F.var_set :=
   by
-  induction F
-  case false_ | true_ =>
-    unfold replace_var_one_rec
-    simp only [Formula_.var_set]
-    apply Finset.empty_subset
-  case var_ X =>
-    unfold replace_var_one_rec
-    split
-    case isTrue c1 =>
-      simp only [Formula_.var_set]
-      exact Finset.subset_union_left
-    case isFalse c1 =>
-      simp only [Formula_.var_set]
-      exact Finset.subset_union_right
-  case not_ phi ih =>
-    unfold replace_var_one_rec
-    simp only [Formula_.var_set]
-    exact ih
-  case
-      and_ phi psi phi_ih psi_ih
-    | or_ phi psi phi_ih psi_ih
-    | imp_ phi psi phi_ih psi_ih
-    | iff_ phi psi phi_ih psi_ih =>
-    unfold replace_var_one_rec
-    simp only [Formula_.var_set]
-    rewrite [Finset.union_union_distrib_left]
-    apply Finset.union_subset_union
-    · exact phi_ih
-    · exact psi_ih
+  simp only [Finset.subset_iff]
+  intro Z a1
+  rewrite [← var_occurs_in_formula_iff_mem_formula_var_set] at a1
+  simp only [Finset.mem_union]
+  simp only [← var_occurs_in_formula_iff_mem_formula_var_set]
+  obtain s1 := var_occurs_in_formula_replace_var_one_rec_ne_2 V P F Z a1
+  by_cases c1 : var_occurs_in_formula Z F
+  · right
+    exact c1
+  · left
+    exact var_occurs_in_formula_replace_var_one_rec_ne_2 V P F Z a1 c1
 
 
 #lint
