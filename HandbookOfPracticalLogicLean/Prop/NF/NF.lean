@@ -793,7 +793,7 @@ inductive is_cnf_ind_v2 : Formula_ → Prop
 -------------------------------------------------------------------------------
 
 
-lemma is_constant_rec_imp_is_constant_ind
+theorem is_constant_rec_imp_is_constant_ind
   (F : Formula_)
   (h1 : is_constant_rec F) :
   is_constant_ind F :=
@@ -807,7 +807,7 @@ lemma is_constant_rec_imp_is_constant_ind
     simp only [is_constant_rec] at h1
 
 
-lemma is_constant_ind_imp_is_constant_rec
+theorem is_constant_ind_imp_is_constant_rec
   (F : Formula_)
   (h1 : is_constant_ind F) :
   is_constant_rec F :=
@@ -817,7 +817,7 @@ lemma is_constant_ind_imp_is_constant_rec
     simp only [is_constant_rec]
 
 
-lemma is_constant_rec_iff_is_constant_ind
+theorem is_constant_rec_iff_is_constant_ind
   (F : Formula_) :
   is_constant_rec F ↔ is_constant_ind F :=
   by
@@ -829,7 +829,7 @@ lemma is_constant_rec_iff_is_constant_ind
 -------------------------------------------------------------------------------
 
 
-lemma is_literal_rec_imp_is_literal_ind
+theorem is_literal_rec_imp_is_literal_ind
   (F : Formula_)
   (h1 : is_literal_rec F) :
   is_literal_ind F :=
@@ -847,7 +847,7 @@ lemma is_literal_rec_imp_is_literal_ind
     simp only [is_literal_rec] at h1
 
 
-lemma is_literal_ind_imp_is_literal_rec
+theorem is_literal_ind_imp_is_literal_rec
   (F : Formula_)
   (h1 : is_literal_ind F) :
   is_literal_rec F :=
@@ -857,7 +857,7 @@ lemma is_literal_ind_imp_is_literal_rec
     simp only [is_literal_rec]
 
 
-lemma is_literal_rec_iff_is_literal_ind
+theorem is_literal_rec_iff_is_literal_ind
   (F : Formula_) :
   is_literal_rec F ↔ is_literal_ind F :=
   by
@@ -869,7 +869,7 @@ lemma is_literal_rec_iff_is_literal_ind
 -------------------------------------------------------------------------------
 
 
-lemma is_nnf_rec_v1_imp_is_nnf_ind_v1
+theorem is_nnf_rec_v1_imp_is_nnf_ind_v1
   (F : Formula_)
   (h1 : is_nnf_rec_v1 F) :
   is_nnf_ind_v1 F :=
@@ -915,7 +915,7 @@ lemma is_nnf_rec_v1_imp_is_nnf_ind_v1
     contradiction
 
 
-lemma is_nnf_ind_v1_imp_is_nnf_rec_v1
+theorem is_nnf_ind_v1_imp_is_nnf_rec_v1
   (F : Formula_)
   (h1 : is_nnf_ind_v1 F) :
   is_nnf_rec_v1 F :=
@@ -933,7 +933,7 @@ lemma is_nnf_ind_v1_imp_is_nnf_rec_v1
     exact ⟨ih_3, ih_4⟩
 
 
-lemma is_nnf_rec_v1_iff_is_nnf_ind_v1
+theorem is_nnf_rec_v1_iff_is_nnf_ind_v1
   (F : Formula_) :
   is_nnf_rec_v1 F ↔ is_nnf_ind_v1 F :=
   by
@@ -945,7 +945,7 @@ lemma is_nnf_rec_v1_iff_is_nnf_ind_v1
 -------------------------------------------------------------------------------
 
 
-lemma is_nnf_rec_v1_imp_is_nnf_rec_v2
+theorem is_nnf_rec_v1_imp_is_nnf_rec_v2
   (F : Formula_)
   (h1 : is_nnf_rec_v1 F) :
   is_nnf_rec_v2 F :=
@@ -982,7 +982,7 @@ lemma is_nnf_rec_v1_imp_is_nnf_rec_v2
 -------------------------------------------------------------------------------
 
 
-lemma is_pos_nnf_rec_v1_imp_is_nnf_rec_v1
+theorem is_pos_nnf_rec_v1_imp_is_nnf_rec_v1
   (F : Formula_)
   (h1 : is_pos_nnf_rec_v1 F) :
   is_nnf_rec_v1 F :=
@@ -1013,7 +1013,7 @@ lemma is_pos_nnf_rec_v1_imp_is_nnf_rec_v1
     contradiction
 
 
-lemma is_neg_nnf_rec_v1_imp_is_nnf_rec_v1
+theorem is_neg_nnf_rec_v1_imp_is_nnf_rec_v1
   (F : Formula_)
   (h1 : is_neg_nnf_rec_v1 F) :
   is_nnf_rec_v1 F :=
@@ -1050,7 +1050,7 @@ lemma is_neg_nnf_rec_v1_imp_is_nnf_rec_v1
 -------------------------------------------------------------------------------
 
 
-lemma is_disj_rec_v1_imp_is_nnf_rec_v1
+theorem is_disj_rec_v1_imp_is_nnf_rec_v1
   (F : Formula_)
   (h1 : is_disj_rec_v1 F) :
   is_nnf_rec_v1 F :=
@@ -1102,7 +1102,7 @@ lemma is_disj_rec_v1_imp_is_nnf_rec_v1
 -------------------------------------------------------------------------------
 
 
-lemma is_disj_rec_v1_imp_is_disj_ind_v1
+theorem is_disj_rec_v1_imp_is_disj_ind_v1
   (F : Formula_)
   (h1 : is_disj_rec_v1 F) :
   is_disj_ind_v1 F :=
@@ -1166,7 +1166,7 @@ lemma is_disj_rec_v1_imp_is_disj_ind_v1
     simp only [is_disj_rec_v1] at h1
 
 
-lemma is_disj_ind_v1_imp_is_disj_rec_v1
+theorem is_disj_ind_v1_imp_is_disj_rec_v1
   (F : Formula_)
   (h1 : is_disj_ind_v1 F) :
   is_disj_rec_v1 F :=
@@ -1188,7 +1188,7 @@ lemma is_disj_ind_v1_imp_is_disj_rec_v1
       exact ih_3
 
 
-lemma is_disj_rec_v1_iff_is_disj_ind_v1
+theorem is_disj_rec_v1_iff_is_disj_ind_v1
   (F : Formula_) :
   is_disj_rec_v1 F ↔ is_disj_ind_v1 F :=
   by
@@ -1200,7 +1200,7 @@ lemma is_disj_rec_v1_iff_is_disj_ind_v1
 -------------------------------------------------------------------------------
 
 
-lemma is_disj_rec_v2_imp_is_disj_ind_v2
+theorem is_disj_rec_v2_imp_is_disj_ind_v2
   (F : Formula_)
   (h1 : is_disj_rec_v2 F) :
   is_disj_ind_v2 F :=
@@ -1235,7 +1235,7 @@ lemma is_disj_rec_v2_imp_is_disj_ind_v2
     simp only [is_disj_rec_v2] at h1
 
 
-lemma is_disj_ind_v2_imp_is_disj_rec_v2
+theorem is_disj_ind_v2_imp_is_disj_rec_v2
   (F : Formula_)
   (h1 : is_disj_ind_v2 F) :
   is_disj_rec_v2 F :=
@@ -1252,7 +1252,7 @@ lemma is_disj_ind_v2_imp_is_disj_rec_v2
     exact ⟨ih_3, ih_4⟩
 
 
-lemma is_disj_rec_v2_iff_is_disj_ind_v2
+theorem is_disj_rec_v2_iff_is_disj_ind_v2
   (F : Formula_) :
   is_disj_rec_v2 F ↔ is_disj_ind_v2 F :=
   by
@@ -1264,7 +1264,7 @@ lemma is_disj_rec_v2_iff_is_disj_ind_v2
 -------------------------------------------------------------------------------
 
 
-lemma is_disj_ind_v1_imp_is_disj_ind_v2
+theorem is_disj_ind_v1_imp_is_disj_ind_v2
   (F : Formula_)
   (h1 : is_disj_ind_v1 F) :
   is_disj_ind_v2 F :=
@@ -1291,7 +1291,7 @@ lemma is_disj_ind_v1_imp_is_disj_ind_v2
 -------------------------------------------------------------------------------
 
 
-lemma is_disj_ind_v2_imp_is_nnf_ind_v1
+theorem is_disj_ind_v2_imp_is_nnf_ind_v1
   (F : Formula_)
   (h1 : is_disj_ind_v2 F) :
   is_nnf_ind_v1 F :=
@@ -1312,7 +1312,7 @@ lemma is_disj_ind_v2_imp_is_nnf_ind_v1
 -------------------------------------------------------------------------------
 
 
-lemma is_conj_rec_v1_imp_is_nnf_rec_v1
+theorem is_conj_rec_v1_imp_is_nnf_rec_v1
   (F : Formula_)
   (h1 : is_conj_rec_v1 F) :
   is_nnf_rec_v1 F :=
@@ -1364,7 +1364,7 @@ lemma is_conj_rec_v1_imp_is_nnf_rec_v1
 -------------------------------------------------------------------------------
 
 
-lemma is_conj_rec_v1_imp_is_conj_ind_v1
+theorem is_conj_rec_v1_imp_is_conj_ind_v1
   (F : Formula_)
   (h1 : is_conj_rec_v1 F) :
   is_conj_ind_v1 F :=
@@ -1428,7 +1428,7 @@ lemma is_conj_rec_v1_imp_is_conj_ind_v1
     simp only [is_conj_rec_v1] at h1
 
 
-lemma is_conj_ind_v1_imp_is_conj_rec_v1
+theorem is_conj_ind_v1_imp_is_conj_rec_v1
   (F : Formula_)
   (h1 : is_conj_ind_v1 F) :
   is_conj_rec_v1 F :=
@@ -1450,7 +1450,7 @@ lemma is_conj_ind_v1_imp_is_conj_rec_v1
       exact ih_3
 
 
-lemma is_conj_rec_v1_iff_is_conj_ind_v1
+theorem is_conj_rec_v1_iff_is_conj_ind_v1
   (F : Formula_) :
   is_conj_rec_v1 F ↔ is_conj_ind_v1 F :=
   by
@@ -1462,7 +1462,7 @@ lemma is_conj_rec_v1_iff_is_conj_ind_v1
 -------------------------------------------------------------------------------
 
 
-lemma is_conj_rec_v2_imp_is_conj_ind_v2
+theorem is_conj_rec_v2_imp_is_conj_ind_v2
   (F : Formula_)
   (h1 : is_conj_rec_v2 F) :
   is_conj_ind_v2 F :=
@@ -1497,7 +1497,7 @@ lemma is_conj_rec_v2_imp_is_conj_ind_v2
     simp only [is_conj_rec_v2] at h1
 
 
-lemma is_conj_ind_v2_imp_is_conj_rec_v2
+theorem is_conj_ind_v2_imp_is_conj_rec_v2
   (F : Formula_)
   (h1 : is_conj_ind_v2 F) :
   is_conj_rec_v2 F :=
@@ -1514,7 +1514,7 @@ lemma is_conj_ind_v2_imp_is_conj_rec_v2
     exact ⟨ih_3, ih_4⟩
 
 
-lemma is_conj_rec_v2_iff_is_conj_ind_v2
+theorem is_conj_rec_v2_iff_is_conj_ind_v2
   (F : Formula_) :
   is_conj_rec_v2 F ↔ is_conj_ind_v2 F :=
   by
@@ -1526,7 +1526,7 @@ lemma is_conj_rec_v2_iff_is_conj_ind_v2
 -------------------------------------------------------------------------------
 
 
-lemma is_conj_ind_v1_imp_is_conj_ind_v2
+theorem is_conj_ind_v1_imp_is_conj_ind_v2
   (F : Formula_)
   (h1 : is_conj_ind_v1 F) :
   is_conj_ind_v2 F :=
@@ -1553,7 +1553,7 @@ lemma is_conj_ind_v1_imp_is_conj_ind_v2
 -------------------------------------------------------------------------------
 
 
-lemma is_conj_ind_v2_imp_is_nnf_ind_v1
+theorem is_conj_ind_v2_imp_is_nnf_ind_v1
   (F : Formula_)
   (h1 : is_conj_ind_v2 F) :
   is_nnf_ind_v1 F :=
@@ -1574,7 +1574,7 @@ lemma is_conj_ind_v2_imp_is_nnf_ind_v1
 -------------------------------------------------------------------------------
 
 
-lemma is_dnf_rec_v1_imp_is_dnf_ind_v1
+theorem is_dnf_rec_v1_imp_is_dnf_ind_v1
   (F : Formula_)
   (h1 : is_dnf_rec_v1 F) :
   is_dnf_ind_v1 F :=
@@ -1621,7 +1621,7 @@ lemma is_dnf_rec_v1_imp_is_dnf_ind_v1
     simp only [is_conj_rec_v1] at h1
 
 
-lemma is_dnf_ind_v1_imp_is_dnf_rec_v1
+theorem is_dnf_ind_v1_imp_is_dnf_rec_v1
   (F : Formula_)
   (h1 : is_dnf_ind_v1 F) :
   is_dnf_rec_v1 F :=
@@ -1655,7 +1655,7 @@ lemma is_dnf_ind_v1_imp_is_dnf_rec_v1
     · exact ih_3
 
 
-lemma is_dnf_rec_v1_iff_is_dnf_ind_v1
+theorem is_dnf_rec_v1_iff_is_dnf_ind_v1
   (F : Formula_) :
   is_dnf_rec_v1 F ↔ is_dnf_ind_v1 F :=
   by
@@ -1667,7 +1667,7 @@ lemma is_dnf_rec_v1_iff_is_dnf_ind_v1
 -------------------------------------------------------------------------------
 
 
-lemma is_dnf_rec_v2_imp_is_dnf_ind_v2
+theorem is_dnf_rec_v2_imp_is_dnf_ind_v2
   (F : Formula_)
   (h1 : is_dnf_rec_v2 F) :
   is_dnf_ind_v2 F :=
@@ -1714,7 +1714,7 @@ lemma is_dnf_rec_v2_imp_is_dnf_ind_v2
     simp only [is_conj_rec_v2] at h1
 
 
-lemma is_dnf_ind_v2_imp_is_dnf_rec_v2
+theorem is_dnf_ind_v2_imp_is_dnf_rec_v2
   (F : Formula_)
   (h1 : is_dnf_ind_v2 F) :
   is_dnf_rec_v2 F :=
@@ -1739,7 +1739,7 @@ lemma is_dnf_ind_v2_imp_is_dnf_rec_v2
     exact ⟨ih_3, ih_4⟩
 
 
-lemma is_dnf_rec_v2_iff_is_dnf_ind_v2
+theorem is_dnf_rec_v2_iff_is_dnf_ind_v2
   (F : Formula_) :
   is_dnf_rec_v2 F ↔ is_dnf_ind_v2 F :=
   by
@@ -1751,7 +1751,7 @@ lemma is_dnf_rec_v2_iff_is_dnf_ind_v2
 -------------------------------------------------------------------------------
 
 
-lemma is_dnf_ind_v1_imp_is_dnf_ind_v2
+theorem is_dnf_ind_v1_imp_is_dnf_ind_v2
   (F : Formula_)
   (h1 : is_dnf_ind_v1 F) :
   is_dnf_ind_v2 F :=
@@ -1772,7 +1772,7 @@ lemma is_dnf_ind_v1_imp_is_dnf_ind_v2
 -------------------------------------------------------------------------------
 
 
-lemma is_dnf_ind_v2_imp_is_nnf_ind_v1
+theorem is_dnf_ind_v2_imp_is_nnf_ind_v1
   (F : Formula_)
   (h1 : is_dnf_ind_v2 F) :
   is_nnf_ind_v1 F :=
@@ -1790,7 +1790,7 @@ lemma is_dnf_ind_v2_imp_is_nnf_ind_v1
 -------------------------------------------------------------------------------
 
 
-lemma is_cnf_rec_v1_imp_is_cnf_ind_v1
+theorem is_cnf_rec_v1_imp_is_cnf_ind_v1
   (F : Formula_)
   (h1 : is_cnf_rec_v1 F) :
   is_cnf_ind_v1 F :=
@@ -1837,7 +1837,7 @@ lemma is_cnf_rec_v1_imp_is_cnf_ind_v1
     simp only [is_disj_rec_v1] at h1
 
 
-lemma is_cnf_ind_v1_imp_is_cnf_rec_v1
+theorem is_cnf_ind_v1_imp_is_cnf_rec_v1
   (F : Formula_)
   (h1 : is_cnf_ind_v1 F) :
   is_cnf_rec_v1 F :=
@@ -1871,7 +1871,7 @@ lemma is_cnf_ind_v1_imp_is_cnf_rec_v1
     · exact ih_3
 
 
-lemma is_cnf_rec_v1_iff_is_cnf_ind_v1
+theorem is_cnf_rec_v1_iff_is_cnf_ind_v1
   (F : Formula_) :
   is_cnf_rec_v1 F ↔ is_cnf_ind_v1 F :=
   by
@@ -1883,7 +1883,7 @@ lemma is_cnf_rec_v1_iff_is_cnf_ind_v1
 -------------------------------------------------------------------------------
 
 
-lemma is_cnf_rec_v2_imp_is_cnf_ind_v2
+theorem is_cnf_rec_v2_imp_is_cnf_ind_v2
   (F : Formula_)
   (h1 : is_cnf_rec_v2 F) :
   is_cnf_ind_v2 F :=
@@ -1930,7 +1930,7 @@ lemma is_cnf_rec_v2_imp_is_cnf_ind_v2
     simp only [is_disj_rec_v2] at h1
 
 
-lemma is_cnf_ind_v2_imp_is_cnf_rec_v2
+theorem is_cnf_ind_v2_imp_is_cnf_rec_v2
   (F : Formula_)
   (h1 : is_cnf_ind_v2 F) :
   is_cnf_rec_v2 F :=
@@ -1955,7 +1955,7 @@ lemma is_cnf_ind_v2_imp_is_cnf_rec_v2
     exact ⟨ih_3, ih_4⟩
 
 
-lemma is_cnf_rec_v2_iff_is_cnf_ind_v2
+theorem is_cnf_rec_v2_iff_is_cnf_ind_v2
   (F : Formula_) :
   is_cnf_rec_v2 F ↔ is_cnf_ind_v2 F :=
   by
@@ -1967,7 +1967,7 @@ lemma is_cnf_rec_v2_iff_is_cnf_ind_v2
 -------------------------------------------------------------------------------
 
 
-lemma is_cnf_ind_v1_imp_is_cnf_ind_v2
+theorem is_cnf_ind_v1_imp_is_cnf_ind_v2
   (F : Formula_)
   (h1 : is_cnf_ind_v1 F) :
   is_cnf_ind_v2 F :=
@@ -1988,7 +1988,7 @@ lemma is_cnf_ind_v1_imp_is_cnf_ind_v2
 -------------------------------------------------------------------------------
 
 
-lemma is_cnf_ind_v2_imp_is_nnf_ind_v1
+theorem is_cnf_ind_v2_imp_is_nnf_ind_v1
   (F : Formula_)
   (h1 : is_cnf_ind_v2 F) :
   is_nnf_ind_v1 F :=
@@ -2006,7 +2006,7 @@ lemma is_cnf_ind_v2_imp_is_nnf_ind_v1
 -------------------------------------------------------------------------------
 
 
-lemma is_conj_ind_v1_and_imp
+theorem is_conj_ind_v1_and_imp
   (P Q : Formula_)
   (h1 : is_conj_ind_v1 (and_ P Q)) :
   is_conj_ind_v1 P ∧ is_conj_ind_v1 Q :=
@@ -2026,7 +2026,7 @@ lemma is_conj_ind_v1_and_imp
     · exact ih_2
 
 
-lemma is_disj_ind_v1_or_imp
+theorem is_disj_ind_v1_or_imp
   (P Q : Formula_)
   (h1 : is_disj_ind_v1 (or_ P Q)) :
   is_disj_ind_v1 P ∧ is_disj_ind_v1 Q :=
