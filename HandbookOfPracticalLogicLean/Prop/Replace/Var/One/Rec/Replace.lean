@@ -535,6 +535,9 @@ theorem var_occurs_in_formula_replace_var_one_rec_eq_var_2
   exact var_occurs_in_formula_replace_var_one_rec_eq_2 V (Formula_.var_ Z) F h1
 
 
+-------------------------------------------------------------------------------
+
+
 theorem var_occurs_in_formula_replace_var_one_rec_ne_var_1
   (V : String)
   (Y : String)
