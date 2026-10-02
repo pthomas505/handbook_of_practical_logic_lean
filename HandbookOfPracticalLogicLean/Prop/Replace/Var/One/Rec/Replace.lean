@@ -512,6 +512,69 @@ theorem replace_var_one_rec_eq
 -------------------------------------------------------------------------------
 
 
+theorem var_occurs_in_formula_replace_var_one_rec_eq_var_1
+  (V : String)
+  (Z : String)
+  (F : Formula_)
+  (h1 : var_occurs_in_formula V (replace_var_one_rec V (Formula_.var_ Z) F)) :
+  V = Z :=
+  by
+  obtain s1 := var_occurs_in_formula_replace_var_one_rec_eq_1 V (Formula_.var_ Z) F h1
+  unfold var_occurs_in_formula at s1
+  exact s1
+
+
+theorem var_occurs_in_formula_replace_var_one_rec_eq_var_2
+  (V : String)
+  (Z : String)
+  (F : Formula_)
+  (h1 : var_occurs_in_formula V (replace_var_one_rec V (Formula_.var_ Z) F)) :
+  var_occurs_in_formula V F :=
+  by
+  exact var_occurs_in_formula_replace_var_one_rec_eq_2 V (Formula_.var_ Z) F h1
+
+
+theorem var_occurs_in_formula_replace_var_one_rec_ne_var_1
+  (V : String)
+  (Y : String)
+  (F : Formula_)
+  (Z : String)
+  (h1 : ¬ Z = V)
+  (h2 : var_occurs_in_formula Z F) :
+  var_occurs_in_formula Z (replace_var_one_rec V (Formula_.var_ Y) F) :=
+  by
+  exact var_occurs_in_formula_replace_var_one_rec_ne_1 V (Formula_.var_ Y) F Z h1 h2
+
+
+theorem var_occurs_in_formula_replace_var_one_rec_ne_var_2
+  (V : String)
+  (Y : String)
+  (F : Formula_)
+  (Z : String)
+  (h1 : var_occurs_in_formula Z (replace_var_one_rec V (Formula_.var_ Y) F))
+  (h2 : ¬ var_occurs_in_formula Z F) :
+  Z = Y :=
+  by
+  obtain s1 := var_occurs_in_formula_replace_var_one_rec_ne_2 V (Formula_.var_ Y) F Z h1 h2
+  unfold var_occurs_in_formula at s1
+  exact s1
+
+
+theorem var_occurs_in_formula_replace_var_one_rec_ne_var_3
+  (V : String)
+  (Y : String)
+  (F : Formula_)
+  (Z : String)
+  (h1 : var_occurs_in_formula Z (replace_var_one_rec V (Formula_.var_ Y) F))
+  (h2 : ¬ var_occurs_in_formula Z F) :
+  var_occurs_in_formula V F :=
+  by
+  exact var_occurs_in_formula_replace_var_one_rec_ne_3 V (Formula_.var_ Y) F Z h1 h2
+
+
+-------------------------------------------------------------------------------
+
+
 example
   (V : String)
   (P : Formula_)
