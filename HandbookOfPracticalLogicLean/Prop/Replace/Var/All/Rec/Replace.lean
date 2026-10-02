@@ -4,15 +4,18 @@ import HandbookOfPracticalLogicLean.Prop.SubFormula
 import Mathlib.Tactic
 
 
-set_option autoImplicit false
+set_option linter.style.docString false
+set_option linter.style.emptyLine false
+set_option linter.style.longLine false
 
 
 open Formula_
 
 
 /--
-  `replace_var_all_rec τ F` := The simultaneous replacement of each occurrence of any variable `A` in the formula `F` by `τ A`.
+  `replace_var_all_rec τ F` := The simultaneous replacement of each occurrence of any variable `V` in the formula `F` by `τ V`.
 -/
+@[nolint defsWithUnderscore]
 def replace_var_all_rec
   (τ : String → Formula_) :
   Formula_ → Formula_
@@ -26,18 +29,18 @@ def replace_var_all_rec
   | iff_ phi psi => iff_ (replace_var_all_rec τ phi) (replace_var_all_rec τ psi)
 
 
-lemma replace_var_all_rec_id
+theorem replace_var_all_rec_id
   (F : Formula_) :
   replace_var_all_rec var_ F = F :=
   by
   induction F
   case false_ | true_ | var_ X =>
     unfold replace_var_all_rec
-    rfl
+    apply Eq.refl
   case not_ phi ih =>
     unfold replace_var_all_rec
     rewrite [ih]
-    rfl
+    apply Eq.refl
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih
@@ -46,10 +49,10 @@ lemma replace_var_all_rec_id
     unfold replace_var_all_rec
     rewrite [phi_ih]
     rewrite [psi_ih]
-    rfl
+    apply Eq.refl
 
 
-lemma replace_var_all_rec_compose
+theorem replace_var_all_rec_compose
   (σ τ : String → Formula_)
   (F : Formula_) :
   replace_var_all_rec ((replace_var_all_rec τ) ∘ σ) F =
@@ -64,7 +67,7 @@ lemma replace_var_all_rec_compose
   case not_ phi ih =>
     simp only [replace_var_all_rec]
     rewrite [ih]
-    rfl
+    apply Eq.refl
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih
@@ -73,10 +76,10 @@ lemma replace_var_all_rec_compose
     simp only [replace_var_all_rec]
     rewrite [phi_ih]
     rewrite [psi_ih]
-    rfl
+    apply Eq.refl
 
 
-lemma replace_var_all_rec_function_update_ite_not_occurs_in
+theorem replace_var_all_rec_function_update_ite_not_occurs_in
   (σ : String → Formula_)
   (V : String)
   (F : Formula_)
@@ -90,10 +93,14 @@ lemma replace_var_all_rec_function_update_ite_not_occurs_in
     simp only [replace_var_all_rec]
   case var_ X =>
     simp only [var_occurs_in_formula] at h1
+
     simp only [replace_var_all_rec]
     unfold Function.updateITE'
-    split_ifs
-    rfl
+    split
+    case isTrue c1 =>
+      contradiction
+    case isFalse c1 =>
+      apply Eq.refl
   case not_ phi ih =>
     unfold var_occurs_in_formula at h1
 
@@ -107,22 +114,16 @@ lemma replace_var_all_rec_function_update_ite_not_occurs_in
     | imp_ phi psi phi_ih psi_ih
     | iff_ phi psi phi_ih psi_ih =>
     unfold var_occurs_in_formula at h1
+    rewrite [not_or] at h1
+    obtain ⟨h1_left, h1_right⟩ := h1
 
     unfold replace_var_all_rec
     congr 1
-    · apply phi_ih
-      intro contra
-      apply h1
-      left
-      exact contra
-    · apply psi_ih
-      intro contra
-      apply h1
-      right
-      exact contra
+    · exact phi_ih h1_left
+    · exact psi_ih h1_right
 
 
-lemma replace_var_all_rec_eq_replace_var_all_rec_of_replace_var_one_rec
+theorem replace_var_all_rec_eq_replace_var_all_rec_of_replace_var_one_rec
   (σ : String → Formula_)
   (X' : String)
   (F' : Formula_)
@@ -133,61 +134,67 @@ lemma replace_var_all_rec_eq_replace_var_all_rec_of_replace_var_one_rec
   by
   induction F
   case false_ | true_ =>
-    simp only [replace_var_all_rec]
-  case var_ X =>
-    simp only [replace_var_all_rec]
     unfold replace_var_one_rec
-    split_ifs
-    case pos c1 =>
+    apply Eq.refl
+  case var_ X =>
+    unfold replace_var_one_rec
+    split
+    case isTrue c1 =>
+      simp only [replace_var_all_rec]
       rewrite [← c1]
       exact h1
-    case neg c1 =>
-      unfold replace_var_all_rec
-      rfl
+    case isFalse c1 =>
+      apply Eq.refl
   case not_ phi ih =>
+    unfold replace_var_one_rec
     simp only [replace_var_all_rec]
     rewrite [ih]
-    rfl
+    apply Eq.refl
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih
     | imp_ phi psi phi_ih psi_ih
     | iff_ phi psi phi_ih psi_ih =>
+    unfold replace_var_one_rec
     simp only [replace_var_all_rec]
     rewrite [phi_ih]
     rewrite [psi_ih]
-    rfl
+    apply Eq.refl
 
 
 -------------------------------------------------------------------------------
 
 
 theorem theorem_2_3_all
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (τ : String → Formula_)
   (F : Formula_) :
-  eval V (replace_var_all_rec τ F) = eval ((eval V) ∘ τ) F :=
+  eval σ (replace_var_all_rec τ F) = eval ((eval σ) ∘ τ) F :=
   by
   induction F
   case false_ | true_ =>
-    simp only [eval]
+    unfold replace_var_all_rec
+    unfold eval
+    apply Eq.refl
   case var_ X =>
     unfold replace_var_all_rec
     simp only [eval]
-    rfl
+    simp only [Function.comp_apply]
   case not_ phi ih =>
+    unfold replace_var_all_rec
     simp only [eval]
     rewrite [ih]
-    rfl
+    apply Eq.refl
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih
     | imp_ phi psi phi_ih psi_ih
     | iff_ phi psi phi_ih psi_ih =>
+    unfold replace_var_all_rec
     simp only [eval]
     rewrite [phi_ih]
     rewrite [psi_ih]
-    rfl
+    apply Eq.refl
 
 
 theorem corollary_2_4_all
@@ -201,17 +208,17 @@ theorem corollary_2_4_all
 
   unfold is_tautology
   unfold satisfies
-  intro V
+  intro σ
   rewrite [theorem_2_3_all]
   apply h1
 
 
 theorem theorem_2_5_all
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (τ1 τ2 : String → Formula_)
   (F : Formula_)
-  (h1 : ∀ (A : String), var_occurs_in_formula A F → eval V (τ1 A) = eval V (τ2 A)) :
-  eval V (replace_var_all_rec τ1 F) = eval V (replace_var_all_rec τ2 F) :=
+  (h1 : ∀ (V : String), var_occurs_in_formula V F → eval σ (τ1 V) = eval σ (τ2 V)) :
+  eval σ (replace_var_all_rec τ1 F) = eval σ (replace_var_all_rec τ2 F) :=
   by
   simp only [theorem_2_3_all]
   apply theorem_2_2
@@ -220,48 +227,48 @@ theorem theorem_2_5_all
 
 
 example
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (τ1 τ2 : String → Formula_)
   (F : Formula_)
-  (h1 : ∀ (A : String), eval V (τ1 A) = eval V (τ2 A)) :
-  eval V (replace_var_all_rec τ1 F) = eval V (replace_var_all_rec τ2 F) :=
+  (h1 : ∀ (V : String), eval σ (τ1 V) = eval σ (τ2 V)) :
+  eval σ (replace_var_all_rec τ1 F) = eval σ (replace_var_all_rec τ2 F) :=
   by
   apply theorem_2_5_all
-  intro A a1
+  intro V a1
   apply h1
 
 
 theorem corollary_2_6_all
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (τ1 τ2 : String → Formula_)
   (F : Formula_)
-  (h1 : ∀ (A : String), var_occurs_in_formula A F → are_logically_equivalent (τ1 A) (τ2 A)) :
-  eval V (replace_var_all_rec τ1 F) = eval V (replace_var_all_rec τ2 F) :=
+  (h1 : ∀ (V : String), var_occurs_in_formula V F → are_logically_equivalent (τ1 V) (τ2 V)) :
+  eval σ (replace_var_all_rec τ1 F) = eval σ (replace_var_all_rec τ2 F) :=
   by
   simp only [are_logically_equivalent_iff_eval_eq] at h1
 
   apply theorem_2_5_all
-  intro A a1
+  intro V a1
   apply h1
   exact a1
 
 
 example
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (τ1 τ2 : String → Formula_)
   (F : Formula_)
-  (h1 : ∀ (A : String), are_logically_equivalent (τ1 A) (τ2 A)) :
-  eval V (replace_var_all_rec τ1 F) = eval V (replace_var_all_rec τ2 F) :=
+  (h1 : ∀ (V : String), are_logically_equivalent (τ1 V) (τ2 V)) :
+  eval σ (replace_var_all_rec τ1 F) = eval σ (replace_var_all_rec τ2 F) :=
   by
   apply corollary_2_6_all
-  intro A a1
+  intro V a1
   apply h1
 
 
 -------------------------------------------------------------------------------
 
 
-lemma is_subformula_imp_is_subformula_replace_var_all_rec
+theorem is_subformula_imp_is_subformula_replace_var_all_rec
   (σ : String → Formula_)
   (F F' : Formula_)
   (h1 : is_subformula F F') :
@@ -312,7 +319,7 @@ lemma is_subformula_imp_is_subformula_replace_var_all_rec
         exact h1
 
 
-lemma is_proper_subformula_v2_imp_replace_var_all_rec_not_eq
+theorem is_proper_subformula_v2_imp_replace_var_all_rec_not_eq
   (σ : String → Formula_)
   (F F' : Formula_)
   (h1 : is_proper_subformula_v2 F F') :
@@ -355,9 +362,11 @@ lemma is_proper_subformula_v2_imp_replace_var_all_rec_not_eq
       cases h1_left
       case inl h1_left =>
         obtain s1 := is_subformula_imp_is_subformula_replace_var_all_rec σ F phi h1_left
+
         intro contra
         rewrite [contra] at s1
         simp only [replace_var_all_rec] at s1
+
         first
         | exact not_is_subformula_and_left (replace_var_all_rec σ phi) (replace_var_all_rec σ psi) s1
         | exact not_is_subformula_or_left (replace_var_all_rec σ phi) (replace_var_all_rec σ psi) s1
@@ -365,9 +374,11 @@ lemma is_proper_subformula_v2_imp_replace_var_all_rec_not_eq
         | exact not_is_subformula_iff_left (replace_var_all_rec σ phi) (replace_var_all_rec σ psi) s1
       case inr h1_left =>
         obtain s1 := is_subformula_imp_is_subformula_replace_var_all_rec σ F psi h1_left
+
         intro contra
         rewrite [contra] at s1
         simp only [replace_var_all_rec] at s1
+
         first
         | exact not_is_subformula_and_right (replace_var_all_rec σ phi) (replace_var_all_rec σ psi) s1
         | exact not_is_subformula_or_right (replace_var_all_rec σ phi) (replace_var_all_rec σ psi) s1
@@ -375,7 +386,7 @@ lemma is_proper_subformula_v2_imp_replace_var_all_rec_not_eq
         | exact not_is_subformula_iff_right (replace_var_all_rec σ phi) (replace_var_all_rec σ psi) s1
 
 
-lemma is_proper_subformula_v2_imp_is_proper_subformula_v2_replace_var_all_rec
+theorem is_proper_subformula_v2_imp_is_proper_subformula_v2_replace_var_all_rec
   (σ : String → Formula_)
   (F F' : Formula_)
   (h1 : is_proper_subformula_v2 F F') :
