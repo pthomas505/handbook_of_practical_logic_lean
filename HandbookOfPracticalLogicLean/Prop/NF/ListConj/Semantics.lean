@@ -3,17 +3,19 @@ import HandbookOfPracticalLogicLean.Prop.Semantics
 import HandbookOfPracticalLogicLean.Prop.NF.ListConj.ListConj
 
 
-set_option autoImplicit false
+set_option linter.style.docString false
+set_option linter.style.emptyLine false
+set_option linter.style.longLine false
 
 
 open Formula_
 
 
-lemma eval_list_conj_eq_true_imp_forall_eval_eq_true
-  (V : ValuationAsTotalFunction)
+theorem eval_list_conj_eq_true_imp_forall_eval_eq_true
+  (σ : ValuationAsTotalFunction)
   (FS : List Formula_)
-  (h1 : eval V (list_conj FS) = true) :
-  ∀ (F : Formula_), F ∈ FS → eval V F = true :=
+  (h1 : eval σ (list_conj FS) = true) :
+  ∀ (F : Formula_), F ∈ FS → eval σ F = true :=
   by
   intro F a1
   induction FS
@@ -45,17 +47,17 @@ lemma eval_list_conj_eq_true_imp_forall_eval_eq_true
           exact a1
 
 
-lemma forall_eval_eq_true_imp_eval_list_conj_eq_true
-  (V : ValuationAsTotalFunction)
+theorem forall_eval_eq_true_imp_eval_list_conj_eq_true
+  (σ : ValuationAsTotalFunction)
   (FS : List Formula_)
-  (h1 : ∀ (F : Formula_), F ∈ FS → eval V F = true) :
-  eval V (list_conj FS) = true :=
+  (h1 : ∀ (F : Formula_), F ∈ FS → eval σ F = true) :
+  eval σ (list_conj FS) = true :=
   by
   induction FS
   case nil =>
     unfold list_conj
     unfold eval
-    rfl
+    apply Eq.refl
   case cons hd tl ih =>
     cases tl
     case nil =>
@@ -70,7 +72,7 @@ lemma forall_eval_eq_true_imp_eval_list_conj_eq_true
       · apply h1
         simp only [List.mem_cons]
         left
-        exact trivial
+        exact True.intro
       · apply ih
         intro F a1
         apply h1
@@ -80,10 +82,10 @@ lemma forall_eval_eq_true_imp_eval_list_conj_eq_true
         exact a1
 
 
-lemma eval_list_conj_eq_true_iff_forall_eval_eq_true
-  (V : ValuationAsTotalFunction)
+theorem eval_list_conj_eq_true_iff_forall_eval_eq_true
+  (σ : ValuationAsTotalFunction)
   (FS : List Formula_) :
-  eval V (list_conj FS) = true ↔ (∀ (F : Formula_), F ∈ FS → eval V F = true) :=
+  eval σ (list_conj FS) = true ↔ (∀ (F : Formula_), F ∈ FS → eval σ F = true) :=
   by
   constructor
   · apply eval_list_conj_eq_true_imp_forall_eval_eq_true
@@ -93,10 +95,11 @@ lemma eval_list_conj_eq_true_iff_forall_eval_eq_true
 -------------------------------------------------------------------------------
 
 
-lemma eval_list_conj_union
-  (V : ValuationAsTotalFunction)
+theorem eval_list_conj_union
+  (σ : ValuationAsTotalFunction)
   (PS QS : List Formula_) :
-  eval V (list_conj (PS ∪ QS)) = true ↔ (eval V (list_conj PS) = true ∧ eval V (list_conj QS) = true) :=
+  eval σ (list_conj (PS ∪ QS)) = true ↔
+    (eval σ (list_conj PS) = true ∧ eval σ (list_conj QS) = true) :=
   by
   simp only [eval_list_conj_eq_true_iff_forall_eval_eq_true]
   simp only [List.mem_union_iff]
@@ -122,12 +125,12 @@ lemma eval_list_conj_union
       exact a2
 
 
-lemma eval_list_conj_subset
-  (V : ValuationAsTotalFunction)
+theorem eval_list_conj_subset
+  (σ : ValuationAsTotalFunction)
   (PS QS : List Formula_)
   (h1 : PS ⊆ QS)
-  (h2 : eval V (list_conj QS) = true) :
-  eval V (list_conj PS) = true :=
+  (h2 : eval σ (list_conj QS) = true) :
+  eval σ (list_conj PS) = true :=
   by
   simp only [eval_list_conj_eq_true_iff_forall_eval_eq_true] at h2
 
