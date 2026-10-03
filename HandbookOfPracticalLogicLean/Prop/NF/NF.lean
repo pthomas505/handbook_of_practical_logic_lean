@@ -925,7 +925,7 @@ theorem is_nnf_ind_v1_imp_is_nnf_rec_v1
     cases ih_1
     all_goals
       unfold is_nnf_rec_v1
-      exact trivial
+      exact True.intro
   case
       rule_3 phi psi ih_1 ih_2 ih_3 ih_4
     | rule_4 phi psi ih_1 ih_2 ih_3 ih_4 =>
@@ -953,12 +953,12 @@ theorem is_nnf_rec_v1_imp_is_nnf_rec_v2
   induction F
   case false_ | true_ | var_ X =>
     unfold is_nnf_rec_v2
-    exact trivial
+    exact True.intro
   case not_ phi ih =>
     cases phi
     case var_ X =>
       unfold is_nnf_rec_v2
-      exact trivial
+      exact True.intro
     all_goals
       unfold is_nnf_rec_v1 at h1
       contradiction
@@ -990,7 +990,7 @@ theorem is_pos_nnf_rec_v1_imp_is_nnf_rec_v1
   induction F
   case false_ | true_ | var_ X =>
     unfold is_nnf_rec_v1
-    exact trivial
+    exact True.intro
   case not_ phi ih =>
     cases phi
     all_goals
@@ -1021,12 +1021,12 @@ theorem is_neg_nnf_rec_v1_imp_is_nnf_rec_v1
   induction F
   case false_ | true_ | var_ X =>
     unfold is_nnf_rec_v1
-    exact trivial
+    exact True.intro
   case not_ phi ih =>
     cases phi
     case var_ X =>
       unfold is_nnf_rec_v1
-      exact trivial
+      exact True.intro
     all_goals
       unfold is_neg_nnf_rec_v1 at h1
       contradiction
@@ -1058,12 +1058,12 @@ theorem is_disj_rec_v1_imp_is_nnf_rec_v1
   induction F
   case false_ | true_ | var_ X =>
     unfold is_nnf_rec_v1
-    exact trivial
+    exact True.intro
   case not_ phi ih =>
     cases phi
     case var_ X =>
       unfold is_nnf_rec_v1
-      exact trivial
+      exact True.intro
     all_goals
       unfold is_disj_rec_v1 at h1
       contradiction
@@ -1075,7 +1075,7 @@ theorem is_disj_rec_v1_imp_is_nnf_rec_v1
 
       constructor
       · unfold is_nnf_rec_v1
-        exact trivial
+        exact True.intro
       · apply psi_ih
         exact h1
     case not_ phi =>
@@ -1085,7 +1085,7 @@ theorem is_disj_rec_v1_imp_is_nnf_rec_v1
 
         constructor
         · unfold is_nnf_rec_v1
-          exact trivial
+          exact True.intro
         · apply psi_ih
           exact h1
       all_goals
@@ -1320,12 +1320,12 @@ theorem is_conj_rec_v1_imp_is_nnf_rec_v1
   induction F
   case false_ | true_ | var_ X =>
     unfold is_nnf_rec_v1
-    exact trivial
+    exact True.intro
   case not_ phi ih =>
     cases phi
     case var_ X =>
       unfold is_nnf_rec_v1
-      exact trivial
+      exact True.intro
     all_goals
       unfold is_conj_rec_v1 at h1
       contradiction
@@ -1337,7 +1337,7 @@ theorem is_conj_rec_v1_imp_is_nnf_rec_v1
 
       constructor
       · unfold is_nnf_rec_v1
-        exact trivial
+        exact True.intro
       · apply psi_ih
         exact h1
     case not_ phi =>
@@ -1347,7 +1347,7 @@ theorem is_conj_rec_v1_imp_is_nnf_rec_v1
 
         constructor
         · unfold is_nnf_rec_v1
-          exact trivial
+          exact True.intro
         · apply psi_ih
           exact h1
       all_goals
@@ -1634,7 +1634,7 @@ theorem is_dnf_ind_v1_imp_is_dnf_rec_v1
       all_goals
         unfold is_dnf_rec_v1
         unfold is_conj_rec_v1
-        exact trivial
+        exact True.intro
     case rule_3 phi psi phi_ih psi_ih =>
       unfold is_dnf_rec_v1
       apply is_conj_ind_v1_imp_is_conj_rec_v1
@@ -1727,7 +1727,7 @@ theorem is_dnf_ind_v2_imp_is_dnf_rec_v2
       all_goals
         unfold is_dnf_rec_v2
         unfold is_conj_rec_v2
-        exact trivial
+        exact True.intro
     case rule_3 phi psi phi_ih psi_ih =>
       unfold is_dnf_rec_v2
       apply is_conj_ind_v2_imp_is_conj_rec_v2
@@ -1850,7 +1850,7 @@ theorem is_cnf_ind_v1_imp_is_cnf_rec_v1
       all_goals
         unfold is_cnf_rec_v1
         unfold is_disj_rec_v1
-        exact trivial
+        exact True.intro
     case rule_3 phi psi phi_ih psi_ih =>
       unfold is_cnf_rec_v1
       apply is_disj_ind_v1_imp_is_disj_rec_v1
@@ -1943,7 +1943,7 @@ theorem is_cnf_ind_v2_imp_is_cnf_rec_v2
       all_goals
         unfold is_cnf_rec_v2
         unfold is_disj_rec_v2
-        exact trivial
+        exact True.intro
     case rule_3 phi psi phi_ih psi_ih =>
       unfold is_cnf_rec_v2
       apply is_disj_ind_v2_imp_is_disj_rec_v2
