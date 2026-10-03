@@ -51,9 +51,9 @@ end
 
 
 theorem eval_to_nnf_neg_v2_eq_not_eval_to_nnf_v2
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V (to_nnf_neg_v2 F) = b_not (eval V (to_nnf_v2 F)) :=
+  eval σ (to_nnf_neg_v2 F) = b_not (eval σ (to_nnf_v2 F)) :=
   by
   induction F
   case false_ | true_ =>
@@ -87,38 +87,38 @@ theorem eval_to_nnf_neg_v2_eq_not_eval_to_nnf_v2
 
 
 theorem eval_eq_eval_to_nnf_v2
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V F = eval V (to_nnf_v2 F) :=
+  eval σ F = eval σ (to_nnf_v2 F) :=
   by
   induction F
   case false_ | true_ | var_ X =>
     unfold to_nnf_v2
-    rfl
+    apply Eq.refl
   case not_ phi ih =>
     unfold to_nnf_v2
     simp only [eval]
     rewrite [ih]
-    rewrite [eval_to_nnf_neg_v2_eq_not_eval_to_nnf_v2 V phi]
-    rfl
+    rewrite [eval_to_nnf_neg_v2_eq_not_eval_to_nnf_v2 σ phi]
+    apply Eq.refl
   case and_ phi psi phi_ih psi_ih =>
     unfold to_nnf_v2
     simp only [eval]
     rewrite [phi_ih]
     rewrite [psi_ih]
-    rfl
+    apply Eq.refl
   case or_ phi psi phi_ih psi_ih =>
     unfold to_nnf_v2
     simp only [eval]
     rewrite [phi_ih]
     rewrite [psi_ih]
-    rfl
+    apply Eq.refl
   case imp_ phi psi phi_ih psi_ih =>
     unfold to_nnf_v2
     simp only [eval]
     rewrite [phi_ih]
     rewrite [psi_ih]
-    rewrite [eval_to_nnf_neg_v2_eq_not_eval_to_nnf_v2 V phi]
+    rewrite [eval_to_nnf_neg_v2_eq_not_eval_to_nnf_v2 σ phi]
     rewrite [Bool.eq_iff_iff]
     simp only [bool_iff_prop_not, bool_iff_prop_or, bool_iff_prop_imp]
     tauto
@@ -127,8 +127,8 @@ theorem eval_eq_eval_to_nnf_v2
     simp only [eval]
     rewrite [phi_ih]
     rewrite [psi_ih]
-    rewrite [eval_to_nnf_neg_v2_eq_not_eval_to_nnf_v2 V phi]
-    rewrite [eval_to_nnf_neg_v2_eq_not_eval_to_nnf_v2 V psi]
+    rewrite [eval_to_nnf_neg_v2_eq_not_eval_to_nnf_v2 σ phi]
+    rewrite [eval_to_nnf_neg_v2_eq_not_eval_to_nnf_v2 σ psi]
     rewrite [Bool.eq_iff_iff]
     simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_iff]
     tauto
@@ -146,12 +146,12 @@ theorem to_nnf_neg_v2_is_nnf_rec_v2_iff_to_nnf_v2_is_nnf_rec_v2
     unfold to_nnf_v2
     unfold to_nnf_neg_v2
     unfold is_nnf_rec_v2
-    rfl
+    apply Iff.refl
   case not_ phi ih =>
     unfold to_nnf_v2
     simp only [to_nnf_neg_v2]
     rewrite [ih]
-    rfl
+    apply Iff.refl
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih
@@ -162,7 +162,7 @@ theorem to_nnf_neg_v2_is_nnf_rec_v2_iff_to_nnf_v2_is_nnf_rec_v2
     simp only [is_nnf_rec_v2]
     rewrite [phi_ih]
     rewrite [psi_ih]
-    rfl
+    apply Iff.refl
 
 
 theorem to_nnf_v2_is_nnf_rec_v2
@@ -228,7 +228,7 @@ theorem to_nnf_neg_v2_is_nnf_rec_v1_iff_to_nnf_v2_is_nnf_rec_v1
     unfold to_nnf_v2
     simp only [to_nnf_neg_v2]
     rewrite [ih h1_right h2_right]
-    rfl
+    apply Iff.refl
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih
@@ -247,7 +247,7 @@ theorem to_nnf_neg_v2_is_nnf_rec_v1_iff_to_nnf_v2_is_nnf_rec_v1
     simp only [is_nnf_rec_v1]
     rewrite [phi_ih h1_right_left h2_right_left]
     rewrite [psi_ih h1_right_right h2_right_right]
-    rfl
+    apply Iff.refl
 
 
 theorem to_nnf_v2_is_nnf_rec_v1
@@ -271,11 +271,11 @@ theorem to_nnf_v2_is_nnf_rec_v1
     unfold to_nnf_v2
   case not_ phi ih =>
     rewrite [to_nnf_neg_v2_is_nnf_rec_v1_iff_to_nnf_v2_is_nnf_rec_v1]
-    apply ih
-    · unfold is_proper_subformula_v2
-      tauto
-    · unfold is_proper_subformula_v2
-      tauto
+    · apply ih
+      · unfold is_proper_subformula_v2
+        tauto
+      · unfold is_proper_subformula_v2
+        tauto
     · tauto
     · tauto
   case
@@ -300,9 +300,11 @@ theorem to_nnf_v2_is_nnf_rec_v1
 
     simp only [is_nnf_rec_v1]
     rewrite [to_nnf_neg_v2_is_nnf_rec_v1_iff_to_nnf_v2_is_nnf_rec_v1]
-    rewrite [to_nnf_neg_v2_is_nnf_rec_v1_iff_to_nnf_v2_is_nnf_rec_v1]
-    all_goals
-      tauto
+    · rewrite [to_nnf_neg_v2_is_nnf_rec_v1_iff_to_nnf_v2_is_nnf_rec_v1]
+      all_goals
+        tauto
+    · tauto
+    · tauto
 
 
 #lint
