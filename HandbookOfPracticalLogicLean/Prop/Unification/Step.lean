@@ -1,12 +1,15 @@
 import HandbookOfPracticalLogicLean.Prop.Var
 
 
-set_option autoImplicit false
+set_option linter.style.docString false
+set_option linter.style.emptyLine false
+set_option linter.style.longLine false
 
 
 open Formula_
 
 
+@[nolint defsWithUnderscore]
 def is_small_step_v1
   (E : List (String × Formula_))
   (X Y : String) :
@@ -14,6 +17,7 @@ def is_small_step_v1
   ∃ (F : Formula_), (X, F) ∈ E ∧ var_occurs_in_formula Y F
 
 
+@[nolint defsWithUnderscore]
 def is_small_step_v2
   (E : List (String × Formula_))
   (X Y : String) :
@@ -23,6 +27,7 @@ def is_small_step_v2
   | hd :: tl => (hd.fst = X ∧ var_occurs_in_formula Y hd.snd) ∨
     is_small_step_v2 tl X Y
 
+@[nolint defsWithUnderscore]
 instance
   (E : List (String × Formula_))
   (X Y : String) :
@@ -34,7 +39,7 @@ instance
     infer_instance
 
 
-lemma is_small_step_v1_imp_is_small_step_v2
+theorem is_small_step_v1_imp_is_small_step_v2
   (E : List (String × Formula_))
   (X Y : String)
   (h1 : is_small_step_v1 E X Y) :
@@ -67,7 +72,7 @@ lemma is_small_step_v1_imp_is_small_step_v2
       exact ⟨h1_left, h1_right⟩
 
 
-lemma is_small_step_v2_imp_is_small_step_v1
+theorem is_small_step_v2_imp_is_small_step_v1
   (E : List (String × Formula_))
   (X Y : String)
   (h1 : is_small_step_v2 E X Y) :
@@ -106,7 +111,7 @@ lemma is_small_step_v2_imp_is_small_step_v1
       · exact ih_right
 
 
-lemma is_small_step_v1_iff_is_small_step_v2
+theorem is_small_step_v1_iff_is_small_step_v2
   (E : List (String × Formula_))
   (X Y : String) :
   is_small_step_v1 E X Y ↔ is_small_step_v2 E X Y :=
@@ -128,6 +133,7 @@ instance
 -------------------------------------------------------------------------------
 
 
+@[nolint defsWithUnderscore]
 def is_big_step_v1
   (E : List (String × Formula_))
   (X Y : String)
@@ -135,6 +141,7 @@ def is_big_step_v1
   Prop :=
   List.Chain (is_small_step_v1 E) X (l ++ [Y])
 
+@[nolint defsWithUnderscore]
 instance
   (E : List (String × Formula_))
   (X Y : String)
@@ -145,6 +152,7 @@ instance
   infer_instance
 
 
+@[nolint defsWithUnderscore]
 def has_cycle_v1
   (E : List (String × Formula_)) :
   Prop :=
@@ -154,6 +162,7 @@ def has_cycle_v1
 -------------------------------------------------------------------------------
 
 
+@[nolint defsWithUnderscore]
 def env_to_step_list_aux
   (X : String)
   (F : Formula_) :
@@ -161,13 +170,14 @@ def env_to_step_list_aux
   List.map (fun (Y : String) => (X, Y)) (var_list F)
 
 
+@[nolint defsWithUnderscore]
 def env_to_step_list :
   List (String × Formula_) → List (String × String)
   | [] => []
   | (X, F) :: tl => (env_to_step_list_aux X F) ++ (env_to_step_list tl)
 
 
-lemma is_small_step_v1_imp_mem_env_to_step_list
+theorem is_small_step_v1_imp_mem_env_to_step_list
   (E : List (String × Formula_))
   (X Y : String)
   (h1 : is_small_step_v1 E X Y) :
@@ -202,7 +212,7 @@ lemma is_small_step_v1_imp_mem_env_to_step_list
       exact ⟨h1_left, h1_right⟩
 
 
-lemma mem_env_to_step_list_imp_is_small_step_v1
+theorem mem_env_to_step_list_imp_is_small_step_v1
   (E : List (String × Formula_))
   (X Y : String)
   (h1 : (X, Y) ∈ env_to_step_list E) :
@@ -243,7 +253,7 @@ lemma mem_env_to_step_list_imp_is_small_step_v1
       · exact ih_right
 
 
-lemma is_small_step_v1_iff_mem_env_to_step_list
+theorem is_small_step_v1_iff_mem_env_to_step_list
   (E : List (String × Formula_))
   (X Y : String) :
   is_small_step_v1 E X Y ↔ (X, Y) ∈ env_to_step_list E :=
@@ -293,6 +303,7 @@ instance
 #eval List.prodChain (· = ·) [(0, 1), (1, 2), (3, 4)]
 
 
+@[nolint defsWithUnderscore]
 def is_big_step_v3
   (E : List (String × Formula_))
   (l : List (String × String)) :
@@ -339,6 +350,7 @@ instance
 -------------------------------------------------------------------------------
 
 
+@[nolint defsWithUnderscore]
 def has_cycle_v3
   (E : List (String × Formula_)) :
   Prop :=
@@ -348,7 +360,7 @@ def has_cycle_v3
 -------------------------------------------------------------------------------
 
 
-lemma not_is_small_step_nil
+theorem not_is_small_step_nil
   (X Y : String) :
   ¬ is_small_step_v1 [] X Y :=
   by
@@ -362,7 +374,7 @@ lemma not_is_small_step_nil
 -------------------------------------------------------------------------------
 
 
-lemma is_small_step_v1_singleton_left
+theorem is_small_step_v1_singleton_left
   (X Y : String)
   (F : Formula_)
   (Z : String)
@@ -380,7 +392,7 @@ lemma is_small_step_v1_singleton_left
     exact h1_right
 
 
-lemma is_small_step_v1_singleton_right
+theorem is_small_step_v1_singleton_right
   (X Y : String)
   (F : Formula_)
   (Z : String)
@@ -398,7 +410,7 @@ lemma is_small_step_v1_singleton_right
   · exact h2
 
 
-lemma is_small_step_v1_singleton
+theorem is_small_step_v1_singleton
   (X Y : String)
   (F : Formula_)
   (Z : String) :
@@ -416,7 +428,7 @@ lemma is_small_step_v1_singleton
 -------------------------------------------------------------------------------
 
 
-lemma is_small_step_v1_singleton_refl
+theorem is_small_step_v1_singleton_refl
   (X Y : String)
   (F : Formula_)
   (h1 : is_small_step_v1 [(X, F)] Y Y) :
@@ -428,7 +440,7 @@ lemma is_small_step_v1_singleton_refl
   exact h1_right
 
 
-lemma is_small_step_v1_singleton_trans
+theorem is_small_step_v1_singleton_trans
   (X A B C : String)
   (F : Formula_)
   (h1 : is_small_step_v1 [(X, F)] A B)
@@ -448,7 +460,7 @@ lemma is_small_step_v1_singleton_trans
 -------------------------------------------------------------------------------
 
 
-lemma is_small_step_v1_append_left
+theorem is_small_step_v1_append_left
   (E_1 E_2 : List (String × Formula_))
   (X Y : String)
   (h1 : is_small_step_v1 (E_1 ++ E_2) X Y) :
@@ -470,7 +482,7 @@ lemma is_small_step_v1_append_left
     exact ⟨h1_left, h1_right⟩
 
 
-lemma is_small_step_v1_append_right
+theorem is_small_step_v1_append_right
   (E_1 E_2 : List (String × Formula_))
   (X Y : String)
   (h1 : is_small_step_v1 E_1 X Y ∨ is_small_step_v1 E_2 X Y) :
@@ -501,7 +513,7 @@ lemma is_small_step_v1_append_right
     · exact h1_right
 
 
-lemma is_small_step_v1_append
+theorem is_small_step_v1_append
   (E_1 E_2 : List (String × Formula_))
   (X Y : String) :
   (is_small_step_v1 (E_1 ++ E_2) X Y) ↔ (is_small_step_v1 E_1 X Y ∨ is_small_step_v1 E_2 X Y) :=
@@ -514,7 +526,7 @@ lemma is_small_step_v1_append
 -------------------------------------------------------------------------------
 
 
-lemma not_is_one_or_more_small_steps_nil
+theorem not_is_one_or_more_small_steps_nil
   (X Y : String)
   (l : List String) :
   ¬ is_big_step_v1 [] X Y l :=
@@ -533,7 +545,7 @@ lemma not_is_one_or_more_small_steps_nil
     simp only [not_is_small_step_nil] at contra_left
 
 
-lemma is_one_or_more_small_steps_trans
+theorem is_one_or_more_small_steps_trans
   (E : List (String × Formula_))
   (X Y Z : String)
   (l : List String)
@@ -559,7 +571,7 @@ lemma is_one_or_more_small_steps_trans
     exact ⟨h2_left, h3_right⟩
 
 
-lemma is_small_step_v1_is_one_or_more_small_steps_trans
+theorem is_small_step_v1_is_one_or_more_small_steps_trans
   (X A B C : String)
   (F : Formula_)
   (l : List String)
@@ -585,7 +597,7 @@ lemma is_small_step_v1_is_one_or_more_small_steps_trans
     · exact h2_right
 
 
-lemma is_one_or_more_small_steps_singleton_contract
+theorem is_one_or_more_small_steps_singleton_contract
   (X Y Z : String)
   (F : Formula_)
   (l : List String)
@@ -610,7 +622,7 @@ lemma is_one_or_more_small_steps_singleton_contract
 -------------------------------------------------------------------------------
 
 
-lemma not_has_cycle_nil :
+theorem not_has_cycle_nil :
   ¬ has_cycle_v1 [] :=
   by
   unfold has_cycle_v1
@@ -631,7 +643,7 @@ lemma not_has_cycle_nil :
 -------------------------------------------------------------------------------
 
 
-lemma has_cycle_singleton_left
+theorem has_cycle_singleton_left
   (X : String)
   (F : Formula_)
   (h1 : has_cycle_v1 [(X, F)]) :
@@ -656,7 +668,7 @@ lemma has_cycle_singleton_left
       exact h1_right
 
 
-lemma has_cycle_singleton_right
+theorem has_cycle_singleton_right
   (X : String)
   (F : Formula_)
   (h1 : var_occurs_in_formula X F) :
@@ -671,7 +683,7 @@ lemma has_cycle_singleton_right
   exact ⟨⟨trivial, h1⟩, trivial⟩
 
 
-lemma has_cycle_singleton
+theorem has_cycle_singleton
   (X : String)
   (F : Formula_) :
   has_cycle_v1 [(X, F)] ↔ var_occurs_in_formula X F :=
@@ -684,7 +696,7 @@ lemma has_cycle_singleton
 -------------------------------------------------------------------------------
 
 
-lemma is_small_step_v1_refl_imp_has_cycle
+theorem is_small_step_v1_refl_imp_has_cycle
   (E : List (String × Formula_))
   (X : String)
   (h1 : is_small_step_v1 E X X) :

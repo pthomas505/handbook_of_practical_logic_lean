@@ -99,7 +99,7 @@ def to_dnf_v3_simp_1
   list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_aux_simp_1 F)
 
 
-lemma not_has_complementary_singleton
+theorem not_has_complementary_singleton
   (F : Formula_) :
   ¬ has_complementary [F] :=
   by
@@ -117,7 +117,7 @@ lemma not_has_complementary_singleton
   · exact eq
 
 
-lemma filter_not_has_complementary_singleton
+theorem filter_not_has_complementary_singleton
   (F : Formula_) :
   filter_not_has_complementary [[F]] = [[F]] :=
   by
@@ -129,7 +129,7 @@ lemma filter_not_has_complementary_singleton
   apply not_has_complementary_singleton
 
 
-lemma not_has_complementary_union
+theorem not_has_complementary_union
   (PS QS : List Formula_)
   (h1 : ¬ has_complementary (PS ∪ QS)) :
   ¬ has_complementary PS ∧ ¬ has_complementary QS :=
@@ -167,7 +167,7 @@ lemma not_has_complementary_union
       · exact ⟨P_lit, ⟨Q_lit, eq⟩⟩
 
 
-lemma has_complementary_imp_eval_list_conj_false
+theorem has_complementary_imp_eval_list_conj_false
   (V : ValuationAsTotalFunction)
   (FS : List Formula_)
   (h1 : has_complementary FS) :
@@ -189,7 +189,7 @@ lemma has_complementary_imp_eval_list_conj_false
   contradiction
 
 
-lemma eval_list_of_lists_to_disjunction_of_conjunctions_eq_eval_list_of_lists_to_disjunction_of_conjunctions_filter_not_has_complementary
+theorem eval_list_of_lists_to_disjunction_of_conjunctions_eq_eval_list_of_lists_to_disjunction_of_conjunctions_filter_not_has_complementary
   (V : ValuationAsTotalFunction)
   (FSS : List (List Formula_)) :
   eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true ↔
@@ -221,7 +221,7 @@ lemma eval_list_of_lists_to_disjunction_of_conjunctions_eq_eval_list_of_lists_to
     exact ⟨F, ⟨FS, s3, s2⟩, s1⟩
 
 
-lemma eval_eq_eval_to_dnf_v3_simp_1_aux
+theorem eval_eq_eval_to_dnf_v3_simp_1_aux
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V F = true ↔ eval V (list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_aux_simp_1 F)) = true :=
@@ -232,7 +232,7 @@ lemma eval_eq_eval_to_dnf_v3_simp_1_aux
   apply eval_list_of_lists_to_disjunction_of_conjunctions_eq_eval_list_of_lists_to_disjunction_of_conjunctions_filter_not_has_complementary
 
 
-lemma eval_eq_eval_to_dnf_v3_simp_1
+theorem eval_eq_eval_to_dnf_v3_simp_1
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V F = true ↔ eval V (to_dnf_v3_simp_1 F) = true :=
@@ -282,7 +282,7 @@ example
     exact ih_2
 
 
-lemma is_dnf_ind_v1_list_of_lists_to_disjunction_of_conjunctions_cons_left
+theorem is_dnf_ind_v1_list_of_lists_to_disjunction_of_conjunctions_cons_left
   (hd : List Formula_)
   (tl : List (List Formula_))
   (h1 : is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions (hd :: tl))) :
@@ -296,7 +296,7 @@ lemma is_dnf_ind_v1_list_of_lists_to_disjunction_of_conjunctions_cons_left
   exact h1
 
 
-lemma is_dnf_ind_v1_list_of_lists_to_disjunction_of_conjunctions_cons_right
+theorem is_dnf_ind_v1_list_of_lists_to_disjunction_of_conjunctions_cons_right
   (hd : List Formula_)
   (tl : List (List Formula_))
   (h1 : is_conj_ind_v1 (list_conj hd))
@@ -311,7 +311,7 @@ lemma is_dnf_ind_v1_list_of_lists_to_disjunction_of_conjunctions_cons_right
   · exact h2
 
 
-lemma is_dnf_ind_v1_list_of_lists_to_disjunction_of_conjunctions_filter
+theorem is_dnf_ind_v1_list_of_lists_to_disjunction_of_conjunctions_filter
   (FSS : List (List Formula_))
   (pred : List Formula_ → Bool)
   (h1 : is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions FSS)) :
@@ -353,7 +353,7 @@ lemma is_dnf_ind_v1_list_of_lists_to_disjunction_of_conjunctions_filter
       exact is_dnf_ind_v1_list_of_lists_to_disjunction_of_conjunctions_cons_left hd tl h1
 
 
-lemma is_dnf_ind_v1_to_dnf_v3_simp_1_aux
+theorem is_dnf_ind_v1_to_dnf_v3_simp_1_aux
   (F : Formula_)
   (h1 : is_nnf_rec_v1 F) :
   is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_aux_simp_1 F)) :=
@@ -364,7 +364,7 @@ lemma is_dnf_ind_v1_to_dnf_v3_simp_1_aux
   exact is_nnf_rec_v1_imp_to_dnf_v3_is_dnf_ind_v1 F h1
 
 
-lemma is_dnf_ind_v1_to_dnf_v3_simp_1
+theorem is_dnf_ind_v1_to_dnf_v3_simp_1
   (F : Formula_)
   (h1 : is_nnf_rec_v1 F) :
   is_dnf_ind_v1 (to_dnf_v3_simp_1 F) :=

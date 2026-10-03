@@ -94,7 +94,7 @@ example
 -------------------------------------------------------------------------------
 
 
-lemma mk_lits_is_conj_ind_v1
+theorem mk_lits_is_conj_ind_v1
   (var_list : List String)
   (V : ValuationAsTotalFunction) :
   is_conj_ind_v1 (mk_lits var_list V) :=
@@ -117,7 +117,7 @@ lemma mk_lits_is_conj_ind_v1
 -------------------------------------------------------------------------------
 
 
-lemma eval_mk_lits_eq_true_imp_valuations_eq_on_var_list
+theorem eval_mk_lits_eq_true_imp_valuations_eq_on_var_list
   (var_list : List String)
   (V_1 V_2 : ValuationAsTotalFunction)
   (h1 : eval V_1 (mk_lits var_list V_2) = true) :
@@ -159,7 +159,7 @@ lemma eval_mk_lits_eq_true_imp_valuations_eq_on_var_list
     rfl
 
 
-lemma valuations_eq_on_var_list_imp_eval_mk_lits_eq_true
+theorem valuations_eq_on_var_list_imp_eval_mk_lits_eq_true
   (var_list : List String)
   (V_1 V_2 : ValuationAsTotalFunction)
   (h1 : ∀ (A : String), A ∈ var_list → V_1 A = V_2 A) :
@@ -184,7 +184,7 @@ lemma valuations_eq_on_var_list_imp_eval_mk_lits_eq_true
     exact c1
 
 
-lemma eval_mk_lits_eq_true_iff_valuations_eq_on_var_list
+theorem eval_mk_lits_eq_true_iff_valuations_eq_on_var_list
   (var_list : List String)
   (V_1 V_2 : ValuationAsTotalFunction) :
   eval V_1 (mk_lits var_list V_2) = true ↔
@@ -211,7 +211,7 @@ theorem eval_of_mk_lits_same_valuation_eq_true
 -------------------------------------------------------------------------------
 
 
-lemma eq_on_mem_imp_mk_lits_eq
+theorem eq_on_mem_imp_mk_lits_eq
   (var_list : List String)
   (V_1 V_2 : ValuationAsTotalFunction)
   (h1 : ∀ (A : String), A ∈ var_list → V_1 A = V_2 A) :
@@ -226,7 +226,7 @@ lemma eq_on_mem_imp_mk_lits_eq
   rfl
 
 
-lemma mk_lits_eq_imp_eq_on_mem
+theorem mk_lits_eq_imp_eq_on_mem
   (var_list : List String)
   (V_1 V_2 : ValuationAsTotalFunction)
   (h1 : mk_lits var_list V_1 = mk_lits var_list V_2) :
@@ -237,7 +237,7 @@ lemma mk_lits_eq_imp_eq_on_mem
   apply eval_of_mk_lits_same_valuation_eq_true
 
 
-lemma eq_on_mem_iff_mk_lits_eq
+theorem eq_on_mem_iff_mk_lits_eq
   (var_list : List String)
   (V_1 V_2 : ValuationAsTotalFunction) :
   (∀ (A : String), A ∈ var_list → V_1 A = V_2 A) ↔

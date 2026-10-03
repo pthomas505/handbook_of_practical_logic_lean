@@ -10,7 +10,7 @@ set_option linter.style.longLine false
 open Formula_
 
 
-lemma list_conj_of_list_of_is_constant_ind_or_is_literal_ind_is_conj_ind_v1
+theorem list_conj_of_list_of_is_constant_ind_or_is_literal_ind_is_conj_ind_v1
   (FS : List Formula_)
   (h1 : ∀ (F : Formula_), F ∈ FS → (is_constant_ind F ∨ is_literal_ind F)) :
   is_conj_ind_v1 (list_conj FS) :=

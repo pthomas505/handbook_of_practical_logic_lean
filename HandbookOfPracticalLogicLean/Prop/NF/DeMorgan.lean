@@ -24,7 +24,7 @@ def map_map_not
 #eval map_map_not ([[var_ "P", var_ "Q"], [var_ "R", var_ "S"]])
 
 
-lemma de_morgan_1
+theorem de_morgan_1
   (V : ValuationAsTotalFunction)
   (P Q : Formula_) :
   eval V (not_ (and_ P Q)) = true ↔
@@ -57,7 +57,7 @@ lemma de_morgan_1
       exact contra_right
 
 
-lemma de_morgan_2
+theorem de_morgan_2
   (V : ValuationAsTotalFunction)
   (P Q : Formula_) :
   eval V (not_ (or_ P Q)) = true ↔
@@ -89,7 +89,7 @@ lemma de_morgan_2
       exact contra
 
 
-lemma de_morgan_list_1
+theorem de_morgan_list_1
   (V : ValuationAsTotalFunction)
   (FS : List Formula_) :
   eval V (not_ (list_conj FS)) = true ↔
@@ -122,7 +122,7 @@ lemma de_morgan_list_1
       rfl
 
 
-lemma de_morgan_list_2
+theorem de_morgan_list_2
   (V : ValuationAsTotalFunction)
   (FS : List Formula_) :
   eval V (not_ (list_disj FS)) = true ↔
@@ -155,7 +155,7 @@ lemma de_morgan_list_2
       rfl
 
 
-lemma de_morgan_list_alt_1
+theorem de_morgan_list_alt_1
   (V : ValuationAsTotalFunction)
   (FS : List Formula_) :
   eval V (list_conj FS) = true ↔
@@ -169,7 +169,7 @@ lemma de_morgan_list_alt_1
   simp only [Bool.not_eq_true, Bool.not_eq_false]
 
 
-lemma de_morgan_list_alt_2
+theorem de_morgan_list_alt_2
   (V : ValuationAsTotalFunction)
   (FS : List Formula_) :
   eval V (list_disj FS) = true ↔
@@ -183,7 +183,7 @@ lemma de_morgan_list_alt_2
   simp only [Bool.not_eq_true, Bool.not_eq_false]
 
 
-lemma de_morgan_list_of_lists_1
+theorem de_morgan_list_of_lists_1
   (V : ValuationAsTotalFunction)
   (FSS : List (List Formula_)) :
   eval V (not_ (list_of_lists_to_disjunction_of_conjunctions FSS)) = true ↔
@@ -216,7 +216,7 @@ lemma de_morgan_list_of_lists_1
     · rfl
 
 
-lemma de_morgan_list_of_lists_2
+theorem de_morgan_list_of_lists_2
   (V : ValuationAsTotalFunction)
   (FSS : List (List Formula_)) :
   eval V (not_ (list_of_lists_to_conjunction_of_disjunctions FSS)) = true ↔

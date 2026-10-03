@@ -52,7 +52,7 @@ end
 #eval to_nnf_v1 (not_ (not_ (not_ (not_ false_))))
 
 
-lemma eval_to_nnf_neg_v1_eq_not_eval_to_nnf_v1
+theorem eval_to_nnf_neg_v1_eq_not_eval_to_nnf_v1
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V (to_nnf_neg_v1 F) = b_not (eval V (to_nnf_v1 F)) :=
@@ -89,7 +89,7 @@ lemma eval_to_nnf_neg_v1_eq_not_eval_to_nnf_v1
     tauto
 
 
-lemma eval_eq_eval_to_nnf_v1
+theorem eval_eq_eval_to_nnf_v1
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V F = eval V (to_nnf_v1 F) :=
@@ -140,7 +140,7 @@ lemma eval_eq_eval_to_nnf_v1
 -------------------------------------------------------------------------------
 
 
-lemma to_nnf_neg_v1_is_nnf_rec_v1_iff_to_nnf_v1_is_nnf_rec_v1
+theorem to_nnf_neg_v1_is_nnf_rec_v1_iff_to_nnf_v1_is_nnf_rec_v1
   (F : Formula_) :
   (to_nnf_neg_v1 F).is_nnf_rec_v1 ↔ (to_nnf_v1 F).is_nnf_rec_v1 :=
   by
@@ -168,7 +168,7 @@ lemma to_nnf_neg_v1_is_nnf_rec_v1_iff_to_nnf_v1_is_nnf_rec_v1
     rfl
 
 
-lemma to_nnf_v1_is_nnf_rec_v1
+theorem to_nnf_v1_is_nnf_rec_v1
   (F : Formula_) :
   (to_nnf_v1 F).is_nnf_rec_v1 :=
   by

@@ -416,7 +416,7 @@ example
 -------------------------------------------------------------------------------
 
 
-lemma eval_filter_not_has_proper_subset_in_v2_left
+theorem eval_filter_not_has_proper_subset_in_v2_left
   (V : ValuationAsTotalFunction)
   (FSS : List (List Formula_))
   (h1 : eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true) :
@@ -458,7 +458,7 @@ lemma eval_filter_not_has_proper_subset_in_v2_left
   · exact eval_list_conj_subset V PS RS s1_right_left h1_right
 
 
-lemma eval_list_of_lists_to_disjunction_of_conjunctions_subset
+theorem eval_list_of_lists_to_disjunction_of_conjunctions_subset
   (V : ValuationAsTotalFunction)
   (PSS QSS : List (List Formula_))
   (h1 : PSS ⊆ QSS)
@@ -482,7 +482,7 @@ lemma eval_list_of_lists_to_disjunction_of_conjunctions_subset
   · exact h2_right
 
 
-lemma eval_filter_not_has_proper_subset_in_v2_right
+theorem eval_filter_not_has_proper_subset_in_v2_right
   (V : ValuationAsTotalFunction)
   (FSS : List (List Formula_))
   (h1 : eval V (list_of_lists_to_disjunction_of_conjunctions (filter_not_has_proper_subset_in_v2 FSS)) = true) :
@@ -494,7 +494,7 @@ lemma eval_filter_not_has_proper_subset_in_v2_right
   · exact h1
 
 
-lemma eval_filter_not_has_proper_subset_in_v2
+theorem eval_filter_not_has_proper_subset_in_v2
   (V : ValuationAsTotalFunction)
   (FSS : List (List Formula_)) :
   eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true ↔
@@ -508,7 +508,7 @@ lemma eval_filter_not_has_proper_subset_in_v2
 -------------------------------------------------------------------------------
 
 
-lemma filter_not_has_proper_subset_in_v2_is_dnf_ind_v1
+theorem filter_not_has_proper_subset_in_v2_is_dnf_ind_v1
   (FSS : List (List Formula_))
   (h1 : is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions FSS)) :
   is_dnf_ind_v1 (list_of_lists_to_disjunction_of_conjunctions (filter_not_has_proper_subset_in_v2 FSS)) :=

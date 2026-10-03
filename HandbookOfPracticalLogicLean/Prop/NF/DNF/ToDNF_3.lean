@@ -41,7 +41,7 @@ def to_dnf_v3
 #eval (list_of_lists_to_disjunction_of_conjunctions [[var_ "P", var_ "Q"], [not_ (var_ "P"), var_ "R"]]).toString
 
 
-lemma eval_eq_eval_to_dnf_v3_aux
+theorem eval_eq_eval_to_dnf_v3_aux
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V F = true ↔ eval V (list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_aux F)) = true :=
@@ -150,7 +150,7 @@ lemma eval_eq_eval_to_dnf_v3_aux
     rfl
 
 
-lemma eval_eq_eval_to_dnf_v3
+theorem eval_eq_eval_to_dnf_v3
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V F = true ↔ eval V (to_dnf_v3 F) = true :=
@@ -162,7 +162,7 @@ lemma eval_eq_eval_to_dnf_v3
 -------------------------------------------------------------------------------
 
 
-lemma list_of_lists_to_disjunction_of_conjunctions_singleton
+theorem list_of_lists_to_disjunction_of_conjunctions_singleton
   (F : Formula_) :
   list_of_lists_to_disjunction_of_conjunctions [[F]] = F :=
   by
@@ -173,7 +173,7 @@ lemma list_of_lists_to_disjunction_of_conjunctions_singleton
   rfl
 
 
-lemma mem_list_mem_to_dnf_v3_aux_of_nnf_rec_v1_imp_is_constant_or_literal
+theorem mem_list_mem_to_dnf_v3_aux_of_nnf_rec_v1_imp_is_constant_or_literal
   (F : Formula_)
   (FS : List Formula_)
   (F_mem : Formula_)
@@ -274,7 +274,7 @@ lemma mem_list_mem_to_dnf_v3_aux_of_nnf_rec_v1_imp_is_constant_or_literal
     contradiction
 
 
-lemma is_nnf_rec_v1_imp_to_dnf_v3_is_dnf_ind_v1
+theorem is_nnf_rec_v1_imp_to_dnf_v3_is_dnf_ind_v1
   (F : Formula_)
   (h1 : is_nnf_rec_v1 F) :
   is_dnf_ind_v1 (to_dnf_v3 F) :=

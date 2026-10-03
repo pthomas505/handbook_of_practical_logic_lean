@@ -37,7 +37,7 @@ def all_satisfying_valuations_as_set_of_total_functions
   { V : ValuationAsTotalFunction | eval V F = true ∧ ∀ (X : String), X ∉ F.var_list.dedup → V X = init X }
 
 
-lemma mem_gen_all_satisfying_valuations_as_list_of_total_functions_imp_mem_all_satisfying_valuations_as_set_of_total_functions
+theorem mem_gen_all_satisfying_valuations_as_list_of_total_functions_imp_mem_all_satisfying_valuations_as_set_of_total_functions
   (init : String → Bool)
   (F : Formula_)
   (V : ValuationAsTotalFunction)
@@ -57,7 +57,7 @@ lemma mem_gen_all_satisfying_valuations_as_list_of_total_functions_imp_mem_all_s
     · exact a1
 
 
-lemma mem_all_satisfying_valuations_as_set_of_total_functions_imp_mem_gen_all_satisfying_valuations_as_list_of_total_functions
+theorem mem_all_satisfying_valuations_as_set_of_total_functions_imp_mem_gen_all_satisfying_valuations_as_list_of_total_functions
   (init : String → Bool)
   (F : Formula_)
   (V : ValuationAsTotalFunction)
@@ -74,7 +74,7 @@ lemma mem_all_satisfying_valuations_as_set_of_total_functions_imp_mem_gen_all_sa
     exact h1
 
 
-lemma mem_gen_all_satisfying_valuations_as_list_of_total_functions_iff_mem_all_satisfying_valuations_as_set_of_total_functions
+theorem mem_gen_all_satisfying_valuations_as_list_of_total_functions_iff_mem_all_satisfying_valuations_as_set_of_total_functions
   (init : String → Bool)
   (F : Formula_)
   (V : ValuationAsTotalFunction) :
@@ -148,7 +148,7 @@ example
     · exact a2
 
 
-lemma to_dnf_diff_init_eq_aux
+theorem to_dnf_diff_init_eq_aux
   (init_1 init_2 : ValuationAsTotalFunction)
   (F : Formula_) :
   List.map (mk_lits F.var_list.dedup)
@@ -179,7 +179,7 @@ lemma to_dnf_diff_init_eq_aux
     · exact a2
 
 
-lemma to_dnf_diff_init_eq
+theorem to_dnf_diff_init_eq
   (init_1 init_2 : ValuationAsTotalFunction)
   (F : Formula_) :
   to_dnf init_1 F = to_dnf init_2 F :=
@@ -194,7 +194,7 @@ lemma to_dnf_diff_init_eq
 -------------------------------------------------------------------------------
 
 
-lemma eval_eq_true_imp_eval_to_dnf_eq_true_aux
+theorem eval_eq_true_imp_eval_to_dnf_eq_true_aux
   (init : ValuationAsTotalFunction)
   (V : ValuationAsTotalFunction)
   (F : Formula_)
@@ -220,7 +220,7 @@ lemma eval_eq_true_imp_eval_to_dnf_eq_true_aux
   · apply eval_of_mk_lits_same_valuation_eq_true
 
 
-lemma eval_eq_true_imp_eval_to_dnf_eq_true
+theorem eval_eq_true_imp_eval_to_dnf_eq_true
   (init : ValuationAsTotalFunction)
   (V : ValuationAsTotalFunction)
   (F : Formula_)
@@ -234,7 +234,7 @@ lemma eval_eq_true_imp_eval_to_dnf_eq_true
   · exact h1
 
 
-lemma eval_to_dnf_eq_true_imp_eval_eq_true
+theorem eval_to_dnf_eq_true_imp_eval_eq_true
   (init : ValuationAsTotalFunction)
   (V : ValuationAsTotalFunction)
   (F : Formula_)
@@ -260,7 +260,7 @@ lemma eval_to_dnf_eq_true_imp_eval_eq_true
   exact a1
 
 
-lemma eval_eq_eval_to_dnf
+theorem eval_eq_eval_to_dnf
   (init : ValuationAsTotalFunction)
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
@@ -274,7 +274,7 @@ lemma eval_eq_eval_to_dnf
 -------------------------------------------------------------------------------
 
 
-lemma to_dnf_is_dnf_ind_v1
+theorem to_dnf_is_dnf_ind_v1
   (init : ValuationAsTotalFunction)
   (F : Formula_) :
   is_dnf_ind_v1 (to_dnf init F) :=

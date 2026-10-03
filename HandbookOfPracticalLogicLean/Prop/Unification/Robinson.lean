@@ -4,7 +4,9 @@ import MathlibExtraLean.FunctionUpdateFromListOfPairsITE
 import HandbookOfPracticalLogicLean.Prop.Replace.Var.All.Rec.Replace
 
 
-set_option autoImplicit false
+set_option linter.style.docString false
+set_option linter.style.emptyLine false
+set_option linter.style.longLine false
 
 
 open Formula_
@@ -16,6 +18,7 @@ structure Equation : Type where
   deriving Inhabited, DecidableEq, Repr
 
 
+@[nolint defsWithUnderscore]
 def Equation.var_list
   (E : Equation) :
   List String :=
@@ -25,6 +28,7 @@ def Equation.var_list
 /--
   `List.dup_count_aux acc L` := Helper function for `List.dup_count`.
 -/
+@[nolint defsWithUnderscore]
 def List.dup_count_aux
   {α : Type}
   [DecidableEq α]
@@ -39,6 +43,7 @@ def List.dup_count_aux
 /--
   `List.dup_count L` := The number of elements that occur more than once in the list `L`.
 -/
+@[nolint defsWithUnderscore]
 def List.dup_count
   {α : Type}
   [DecidableEq α]
@@ -81,6 +86,7 @@ def unify
   | _ => Option.none
 
 
+@[nolint defsWithUnderscore]
 def print_unify
   (E : Equation) :
   Option (String → Formula_) → Option (List (Formula_ × Formula_))
@@ -98,6 +104,7 @@ def print_unify
 
 
 partial
+@[nolint defsWithUnderscore]
 def unify_list
   (E : Equation) :
   Option (List (String × Formula_)) :=

@@ -4,7 +4,9 @@ import HandbookOfPracticalLogicLean.Prop.Unification.Equation
 import HandbookOfPracticalLogicLean.Prop.Replace.Var.All.Rec.Replace
 
 
-set_option autoImplicit false
+set_option linter.style.docString false
+set_option linter.style.emptyLine false
+set_option linter.style.longLine false
 
 
 open Formula_
@@ -16,6 +18,7 @@ def Substitution : Type := String → Formula_
 /--
   `is_equation_unifier σ E` := True if and only if the substitution `σ` is a unifier of the equation `E`.
 -/
+@[nolint defsWithUnderscore]
 def is_equation_unifier
   (σ : Substitution)
   (E : Equation) :
@@ -26,6 +29,7 @@ def is_equation_unifier
 /--
   `is_equation_list_unifier σ ES` := True if and only if the substitution `σ` is a unifier of the list of equations `ES`.
 -/
+@[nolint defsWithUnderscore]
 def is_equation_list_unifier
   (σ : Substitution)
   (ES : List Equation) :
@@ -33,7 +37,7 @@ def is_equation_list_unifier
   ∀ (E : Equation), E ∈ ES → is_equation_unifier σ E
 
 
-lemma is_equation_unifier_replace_var_all_rec_compose
+theorem is_equation_unifier_replace_var_all_rec_compose
   (σ τ : Substitution)
   (E : Equation)
   (h1 : is_equation_unifier σ E) :
@@ -65,6 +69,7 @@ example
   `is_more_general_substitution σ τ` := True if and only if the substitution `σ` is more general than the substitution `τ`.
   `σ ≤ τ`
 -/
+@[nolint defsWithUnderscore]
 def is_more_general_substitution
   (σ τ : Substitution) :
   Prop :=
@@ -85,6 +90,7 @@ example
 /--
   `is_most_general_equation_list_unifier σ ES` := True if and only if the substitution `σ` is a most general unifier (MGU) of the list of equations `ES`.
 -/
+@[nolint defsWithUnderscore]
 def is_most_general_equation_list_unifier
   (σ : Substitution)
   (ES : List Equation) :
@@ -93,12 +99,14 @@ def is_most_general_equation_list_unifier
     ∀ (τ : Substitution), is_equation_list_unifier τ ES → is_more_general_substitution σ τ
 
 
+@[nolint defsWithUnderscore]
 def are_equivalent_equation_lists
   (ES ES' : List Equation) :
   Prop :=
   ∀ (σ : Substitution), is_equation_list_unifier σ ES ↔ is_equation_list_unifier σ ES'
 
 
+@[nolint defsWithUnderscore]
 def is_reducible :
   Equation → Prop
   | ⟨not_ _, not_ _⟩
@@ -108,6 +116,7 @@ def is_reducible :
   | ⟨iff_ _ _, iff_ _ _⟩ => True
   | _ => False
 
+@[nolint defsWithUnderscore]
 instance :
   DecidablePred is_reducible :=
   by
@@ -218,7 +227,7 @@ example
 -------------------------------------------------------------------------------
 
 
-lemma is_equation_list_unifier_singleton
+theorem is_equation_list_unifier_singleton
   (σ : Substitution)
   (E : Equation) :
   is_equation_list_unifier σ [E] ↔ is_equation_unifier σ E :=
@@ -234,7 +243,7 @@ lemma is_equation_list_unifier_singleton
     exact a1
 
 
-lemma is_equation_list_unifier_append
+theorem is_equation_list_unifier_append
   (σ : Substitution)
   (ES ES' : List Equation) :
   is_equation_list_unifier σ (ES ++ ES') ↔ (is_equation_list_unifier σ ES ∧ is_equation_list_unifier σ ES') :=
@@ -305,7 +314,7 @@ example
   rfl
 
 
-lemma is_equation_unifier_iff_is_equation_unifier_equation_replace_var_one_rec
+theorem is_equation_unifier_iff_is_equation_unifier_equation_replace_var_one_rec
   (σ : Substitution)
   (X : String)
   (F : Formula_)
@@ -324,7 +333,7 @@ lemma is_equation_unifier_iff_is_equation_unifier_equation_replace_var_one_rec
   rfl
 
 
-lemma is_equation_list_unifier_iff_is_equation_list_unifier_equation_list_replace_var_one_rec
+theorem is_equation_list_unifier_iff_is_equation_list_unifier_equation_list_replace_var_one_rec
   (σ : Substitution)
   (X : String)
   (F : Formula_)
@@ -385,12 +394,14 @@ structure Multiequation : Type where
   (rhs_not_var : ∀ (F : Formula_), F ∈ rhs → (¬ F = false_ ∧ ¬ F = true_ ∧ ¬ F.is_var))
 
 
+@[nolint defsWithUnderscore]
 def multiequation_formula_list
   (M : Multiequation) :
   List Formula_ :=
   M.lhs ++ M.rhs
 
 
+@[nolint defsWithUnderscore]
 def is_multiequation_unifier
   (σ : Substitution)
   (M : Multiequation) :
@@ -400,12 +411,14 @@ def is_multiequation_unifier
       is_equation_unifier σ ⟨F_1, F_2⟩
 
 
+@[nolint defsWithUnderscore]
 def mem_equation_list_eqv_relation
   (ES : List Equation) :
   Formula_ → Formula_ → Prop :=
   Relation.EqvGen (fun (lhs rhs : Formula_) => ⟨lhs, rhs⟩ ∈ ES)
 
 
+@[nolint defsWithUnderscore]
 def equation_list_corresponds_to_multiequation
   (ES : List Equation)
   (M : Multiequation) :
@@ -414,7 +427,7 @@ def equation_list_corresponds_to_multiequation
   (∀ (F_1 F_2 : Formula_), (F_1 ∈ multiequation_formula_list M ∧ F_2 ∈ multiequation_formula_list M) → mem_equation_list_eqv_relation ES F_1 F_2)
 
 
-lemma mem_equation_list_eqv_relation_is_equation_unifier
+theorem mem_equation_list_eqv_relation_is_equation_unifier
   (σ : Substitution)
   (ES : List Equation)
   (F_1 F_2 : Formula_)
@@ -498,6 +511,7 @@ example
       exact a1
 
 
+@[nolint defsWithUnderscore]
 def mem_multiequation_list_eqv_relation
   (MS : List Multiequation) :
   Formula_ → Formula_ → Prop :=
@@ -666,6 +680,7 @@ example
       sorry
 
 
+@[nolint defsWithUnderscore]
 def print_unify_list
   (L : List Equation) :
   Option (String → Formula_) → Option (Finset (Formula_ × Formula_))

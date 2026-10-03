@@ -66,7 +66,7 @@ example
   exact or_and_right
 
 
-lemma eval_distrib_and
+theorem eval_distrib_and
   (V : ValuationAsTotalFunction)
   (P Q : Formula_) :
   eval V (and_ P Q) = true ↔
@@ -141,7 +141,7 @@ example
 -------------------------------------------------------------------------------
 
 
-lemma is_dnf_ind_v2_distrib_and
+theorem is_dnf_ind_v2_distrib_and
   (P Q : Formula_)
   (h1 : is_dnf_ind_v2 P)
   (h2 : is_dnf_ind_v2 Q) :
@@ -186,7 +186,7 @@ lemma is_dnf_ind_v2_distrib_and
       assumption
 
 
-lemma is_nnf_rec_v1_distrib_and
+theorem is_nnf_rec_v1_distrib_and
   (P Q : Formula_)
   (h1 : is_nnf_rec_v1 P)
   (h2 : is_nnf_rec_v1 Q) :
@@ -225,7 +225,7 @@ lemma is_nnf_rec_v1_distrib_and
       exact ⟨h1, h2⟩
 
 
-lemma is_nnf_rec_v1_raw_dnf
+theorem is_nnf_rec_v1_raw_dnf
   (F : Formula_)
   (h1 : is_nnf_rec_v1 F) :
   is_nnf_rec_v1 (raw_dnf F) :=

@@ -5,7 +5,9 @@ import HandbookOfPracticalLogicLean.Prop.Var
 import MathlibExtraLean.List
 
 
-set_option autoImplicit false
+set_option linter.style.docString false
+set_option linter.style.emptyLine false
+set_option linter.style.longLine false
 
 
 open Formula_
@@ -29,6 +31,7 @@ structure Equation : Type where
 /--
   `equation_list_formula_set ES` := The set of all of the formulas that have an occurrence in the list of equations `ES`.
 -/
+@[nolint defsWithUnderscore]
 def equation_list_formula_set
   (ES : List Equation) :
   Finset Formula_ :=
@@ -38,6 +41,7 @@ def equation_list_formula_set
 /--
   `equation_list_formula_list ES` := The list of all of the formulas that have an occurrence in the list of equations `ES`.
 -/
+@[nolint defsWithUnderscore]
 def equation_list_formula_list
   (ES : List Equation) :
   List Formula_ :=
@@ -52,12 +56,14 @@ def equation_list_formula_list
 /--
   `formula_occurs_in_equation_list F ES` := True if and only if there is an occurrence of the formula `F` in the list of equations `ES`.
 -/
+@[nolint defsWithUnderscore]
 def formula_occurs_in_equation_list
   (F : Formula_)
   (ES : List Equation) :
   Prop :=
   ∃ (E : Equation), E ∈ ES ∧ (F = E.lhs ∨ F = E.rhs)
 
+@[nolint defsWithUnderscore]
 instance
   (F : Formula_)
   (ES : List Equation) :
@@ -70,7 +76,7 @@ instance
 -------------------------------------------------------------------------------
 
 
-lemma mem_equation_list_imp_mem_equation_list_formula_list_left
+theorem mem_equation_list_imp_mem_equation_list_formula_list_left
   (E : Equation)
   (ES : List Equation)
   (h1 : E ∈ ES) :
@@ -97,7 +103,7 @@ lemma mem_equation_list_imp_mem_equation_list_formula_list_left
       exact h1
 
 
-lemma mem_equation_list_imp_mem_equation_list_formula_list_right
+theorem mem_equation_list_imp_mem_equation_list_formula_list_right
   (E : Equation)
   (ES : List Equation)
   (h1 : E ∈ ES) :
@@ -125,7 +131,7 @@ lemma mem_equation_list_imp_mem_equation_list_formula_list_right
       exact h1
 
 
-lemma mem_equation_list_formula_list_imp_formula_occurs_in_equation_list
+theorem mem_equation_list_formula_list_imp_formula_occurs_in_equation_list
   (F : Formula_)
   (ES : List Equation)
   (h1 : F ∈ equation_list_formula_list ES) :
@@ -168,7 +174,7 @@ lemma mem_equation_list_formula_list_imp_formula_occurs_in_equation_list
         · exact ih_right
 
 
-lemma formula_occurs_in_equation_list_iff_mem_equation_list_formula_list
+theorem formula_occurs_in_equation_list_iff_mem_equation_list_formula_list
   (F : Formula_)
   (ES : List Equation) :
   formula_occurs_in_equation_list F ES ↔ F ∈ equation_list_formula_list ES :=
@@ -191,7 +197,7 @@ lemma formula_occurs_in_equation_list_iff_mem_equation_list_formula_list
 -------------------------------------------------------------------------------
 
 
-lemma formula_occurs_in_equation_list_iff_mem_equation_list_formula_set
+theorem formula_occurs_in_equation_list_iff_mem_equation_list_formula_set
   (F : Formula_)
   (ES : List Equation) :
   formula_occurs_in_equation_list F ES ↔ F ∈ equation_list_formula_set ES :=
@@ -205,6 +211,7 @@ lemma formula_occurs_in_equation_list_iff_mem_equation_list_formula_set
 /--
   `Equation.var_set E` := The set of all of the variables that have an occurrence in the equation `E`.
 -/
+@[nolint defsWithUnderscore]
 def Equation.var_set
   (E : Equation) :
   Finset String :=
@@ -214,6 +221,7 @@ def Equation.var_set
 /--
   `Equation.var_list E` := The list of all of the variables that have an occurrence in the equation `E`.
 -/
+@[nolint defsWithUnderscore]
 def Equation.var_list
   (E : Equation) :
   List String :=
@@ -223,12 +231,14 @@ def Equation.var_list
 /--
   `var_occurs_in_equation V E` := True if and only if there is an occurrence of the variable `V` in the equation `E`.
 -/
+@[nolint defsWithUnderscore]
 def var_occurs_in_equation
   (V : String)
   (E : Equation) :
   Prop :=
   var_occurs_in_formula V E.lhs ∨ var_occurs_in_formula V E.rhs
 
+@[nolint defsWithUnderscore]
 instance
   (V : String)
   (E : Equation) :
@@ -238,7 +248,7 @@ instance
   infer_instance
 
 
-lemma var_occurs_in_equation_iff_mem_equation_var_set
+theorem var_occurs_in_equation_iff_mem_equation_var_set
   (V : String)
   (E : Equation) :
   var_occurs_in_equation V E ↔ V ∈ E.var_set :=
@@ -249,7 +259,7 @@ lemma var_occurs_in_equation_iff_mem_equation_var_set
   simp only [var_occurs_in_formula_iff_mem_formula_var_set]
 
 
-lemma var_occurs_in_equation_iff_mem_equation_var_list
+theorem var_occurs_in_equation_iff_mem_equation_var_list
   (V : String)
   (E : Equation) :
   var_occurs_in_equation V E ↔ V ∈ E.var_list :=
@@ -265,6 +275,7 @@ lemma var_occurs_in_equation_iff_mem_equation_var_list
 /--
   `equation_list_var_set ES` := The set of all of the variables that have an occurrence in the list of equations `ES`.
 -/
+@[nolint defsWithUnderscore]
 def equation_list_var_set
   (ES : List Equation) :
   Finset String :=
@@ -280,6 +291,7 @@ def equation_list_var_set
 /--
   `equation_list_var_list ES` := The list of all of the variables that have an occurrence in the list of equations `ES`.
 -/
+@[nolint defsWithUnderscore]
 def equation_list_var_list
   (ES : List Equation) :
   List String :=
@@ -290,6 +302,7 @@ def equation_list_var_list
 /--
   `var_occurs_in_equation_list X ES` := True if and only if there is an occurrence of the variable `X` in the list of equations `ES`.
 -/
+@[nolint defsWithUnderscore]
 def var_occurs_in_equation_list
   (X : String)
   (ES : List Equation) :
@@ -300,7 +313,7 @@ def var_occurs_in_equation_list
 -------------------------------------------------------------------------------
 
 
-lemma var_occurs_in_equation_list_imp_mem_equation_list_var_set
+theorem var_occurs_in_equation_list_imp_mem_equation_list_var_set
   (X : String)
   (ES : List Equation)
   (E : Equation)
@@ -330,7 +343,7 @@ lemma var_occurs_in_equation_list_imp_mem_equation_list_var_set
       exact h1
 
 
-lemma mem_equation_list_var_set_imp_var_occurs_in_equation_list
+theorem mem_equation_list_var_set_imp_var_occurs_in_equation_list
   (X : String)
   (ES : List Equation)
   (h1 : X ∈ equation_list_var_set ES) :
@@ -368,7 +381,7 @@ lemma mem_equation_list_var_set_imp_var_occurs_in_equation_list
       · exact ih_right
 
 
-lemma var_occurs_in_equation_list_iff_mem_equation_list_var_set
+theorem var_occurs_in_equation_list_iff_mem_equation_list_var_set
   (X : String)
   (ES : List Equation) :
   var_occurs_in_equation_list X ES ↔
@@ -399,6 +412,7 @@ def Equation.size
 /--
   `equation_list_size ES` := The number of subformulas in the list of equations `ES`.
 -/
+@[nolint defsWithUnderscore]
 def equation_list_size
   (ES : List Equation) :
   Nat :=
@@ -415,6 +429,7 @@ def equation_list_size
 
   The result of simultaneously replacing each occurrence of the variable `X` in the equation `E` by an occurrence of the formula `F`.
 -/
+@[nolint defsWithUnderscore]
 def equation_replace_var_one_rec
   (X : String)
   (F : Formula_)
@@ -430,6 +445,7 @@ def equation_replace_var_one_rec
 
   The result of simultaneously replacing each occurrence of the variable `X` in the list of equations `ES` by an occurrence of the formula `F`.
 -/
+@[nolint defsWithUnderscore]
 def equation_list_replace_var_one_rec
   (X : String)
   (F : Formula_)
@@ -474,7 +490,7 @@ example
       exact contra
 
 
-lemma var_occurs_in_equation_equation_replace_var_one_rec
+theorem var_occurs_in_equation_equation_replace_var_one_rec
   (X : String)
   (F : Formula_)
   (E : Equation)
@@ -493,7 +509,7 @@ lemma var_occurs_in_equation_equation_replace_var_one_rec
     exact h1
 
 
-lemma var_occurs_in_equation_list_equation_list_replace_var_one_rec
+theorem var_occurs_in_equation_list_equation_list_replace_var_one_rec
   (X : String)
   (F : Formula_)
   (ES : List Equation)
@@ -510,7 +526,7 @@ lemma var_occurs_in_equation_list_equation_list_replace_var_one_rec
   exact h1_right
 
 
-lemma equation_replace_var_one_rec_var_set_subset
+theorem equation_replace_var_one_rec_var_set_subset
   (X : String)
   (F : Formula_)
   (E : Equation) :
@@ -526,7 +542,7 @@ lemma equation_replace_var_one_rec_var_set_subset
   · apply replace_var_one_rec_var_set_subset
 
 
-lemma equation_list_replace_var_one_rec_equation_list_var_set_subset
+theorem equation_list_replace_var_one_rec_equation_list_var_set_subset
   (X : String)
   (F : Formula_)
   (ES : List Equation) :

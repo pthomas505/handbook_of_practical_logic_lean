@@ -10,7 +10,7 @@ set_option linter.style.longLine false
 open Formula_
 
 
-lemma list_conj_of_is_disj_ind_v1_is_cnf_ind_v1
+theorem list_conj_of_is_disj_ind_v1_is_cnf_ind_v1
   (FS : List Formula_)
   (h1 : ∀ (F : Formula_), F ∈ FS → is_disj_ind_v1 F) :
   is_cnf_ind_v1 (list_conj FS) :=
@@ -88,7 +88,7 @@ example
 -------------------------------------------------------------------------------
 
 
-lemma list_conj_cons_is_cnf_ind_v1_imp_list_conj_tail_is_cnf_ind_v1
+theorem list_conj_cons_is_cnf_ind_v1_imp_list_conj_tail_is_cnf_ind_v1
   (F : Formula_)
   (FS : List Formula_)
   (h1 : is_cnf_ind_v1 (list_conj (F :: FS))) :
@@ -110,7 +110,7 @@ lemma list_conj_cons_is_cnf_ind_v1_imp_list_conj_tail_is_cnf_ind_v1
       exact ih_2
 
 
-lemma hd_is_disj_ind_v1_and_list_conj_tail_is_cnf_ind_v1_imp_list_conj_cons_is_cnf_ind_v1
+theorem hd_is_disj_ind_v1_and_list_conj_tail_is_cnf_ind_v1_imp_list_conj_cons_is_cnf_ind_v1
   (F : Formula_)
   (FS : List Formula_)
   (h1 : is_disj_ind_v1 F)
@@ -129,7 +129,7 @@ lemma hd_is_disj_ind_v1_and_list_conj_tail_is_cnf_ind_v1_imp_list_conj_cons_is_c
     · exact h2
 
 
-lemma list_conj_is_cnf_ind_v1_imp_list_conj_of_filter_is_cnf_ind_v1
+theorem list_conj_is_cnf_ind_v1_imp_list_conj_of_filter_is_cnf_ind_v1
   (FS : List Formula_)
   (pred : Formula_ → Bool)
   (h1 : is_cnf_ind_v1 (list_conj FS)) :

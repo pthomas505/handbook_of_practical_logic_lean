@@ -37,7 +37,7 @@ def to_cnf_v3
 #eval (list_of_lists_to_conjunction_of_disjunctions [[var_ "P", var_ "Q"], [not_ (var_ "P"), var_ "R"]]).toString
 
 
-lemma eval_eq_eval_to_cnf_v3
+theorem eval_eq_eval_to_cnf_v3
   (V : ValuationAsTotalFunction)
   (F : Formula_) :
   eval V F = true ↔ eval V (to_cnf_v3 F) = true :=
@@ -57,7 +57,7 @@ lemma eval_eq_eval_to_cnf_v3
 -------------------------------------------------------------------------------
 
 
-lemma list_of_lists_to_conjunction_of_disjunctions_singleton
+theorem list_of_lists_to_conjunction_of_disjunctions_singleton
   (F : Formula_) :
   list_of_lists_to_conjunction_of_disjunctions [[F]] = F :=
   by

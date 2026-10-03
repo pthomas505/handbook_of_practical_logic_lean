@@ -11,7 +11,7 @@ set_option linter.style.longLine false
 open Formula_
 
 
-lemma eval_list_disj_eq_true_imp_exists_eval_eq_true
+theorem eval_list_disj_eq_true_imp_exists_eval_eq_true
   (V : ValuationAsTotalFunction)
   (FS : List Formula_)
   (h1 : eval V (list_disj FS) = true) :
@@ -59,7 +59,7 @@ lemma eval_list_disj_eq_true_imp_exists_eval_eq_true
         · exact ih_right
 
 
-lemma exists_eval_eq_true_imp_eval_list_disj_eq_true
+theorem exists_eval_eq_true_imp_eval_list_disj_eq_true
   (V : ValuationAsTotalFunction)
   (FS : List Formula_)
   (h1 : ∃ (F : Formula_), F ∈ FS ∧ eval V F = true) :
@@ -100,7 +100,7 @@ lemma exists_eval_eq_true_imp_eval_list_disj_eq_true
         · exact h1_right
 
 
-lemma eval_list_disj_eq_true_iff_exists_eval_eq_true
+theorem eval_list_disj_eq_true_iff_exists_eval_eq_true
   (V : ValuationAsTotalFunction)
   (FS : List Formula_) :
   eval V (list_disj FS) = true ↔ (∃ (F : Formula_), F ∈ FS ∧ eval V F = true) :=
@@ -113,7 +113,7 @@ lemma eval_list_disj_eq_true_iff_exists_eval_eq_true
 -------------------------------------------------------------------------------
 
 
-lemma eval_list_disj_union
+theorem eval_list_disj_union
   (V : ValuationAsTotalFunction)
   (PS QS : List Formula_) :
   eval V (list_disj (PS ∪ QS)) = true ↔ (eval V (list_disj PS) = true ∨ eval V (list_disj QS) = true) :=
@@ -151,7 +151,7 @@ lemma eval_list_disj_union
       · exact a1_right
 
 
-lemma eval_list_disj_subset
+theorem eval_list_disj_subset
   (V : ValuationAsTotalFunction)
   (PS QS : List Formula_)
   (h1 : PS ⊆ QS)
