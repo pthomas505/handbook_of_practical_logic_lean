@@ -25,10 +25,10 @@ def map_map_not
 
 
 theorem de_morgan_1
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (P Q : Formula_) :
-  eval V (not_ (and_ P Q)) = true ↔
-    eval V (or_ (not_ P) (not_ Q)) = true :=
+  eval σ (not_ (and_ P Q)) = true ↔
+    eval σ (or_ (not_ P) (not_ Q)) = true :=
   by
   simp only [eval]
   simp only [bool_iff_prop_or]
@@ -36,17 +36,14 @@ theorem de_morgan_1
   simp only [bool_iff_prop_and]
   constructor
   · intro a1
-    by_cases c1 : eval V P = true
-    case pos =>
-      right
+    by_cases c1 : eval σ P = true
+    · right
       intro contra
       apply a1
       exact ⟨c1, contra⟩
-    case neg =>
-      left
+    · left
       exact c1
-  · intro a1
-    intro contra
+  · intro a1 contra
     obtain ⟨contra_left, contra_right⟩ := contra
     cases a1
     case inl a1 =>
@@ -58,10 +55,10 @@ theorem de_morgan_1
 
 
 theorem de_morgan_2
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (P Q : Formula_) :
-  eval V (not_ (or_ P Q)) = true ↔
-    eval V (and_ (not_ P) (not_ Q)) = true :=
+  eval σ (not_ (or_ P Q)) = true ↔
+    eval σ (and_ (not_ P) (not_ Q)) = true :=
   by
   simp only [eval]
   simp only [bool_iff_prop_and]
@@ -90,10 +87,10 @@ theorem de_morgan_2
 
 
 theorem de_morgan_list_1
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (FS : List Formula_) :
-  eval V (not_ (list_conj FS)) = true ↔
-    eval V (list_disj (List.map not_ FS)) = true :=
+  eval σ (not_ (list_conj FS)) = true ↔
+    eval σ (list_disj (List.map not_ FS)) = true :=
   by
   induction FS
   case nil =>
@@ -108,7 +105,7 @@ theorem de_morgan_list_1
       simp only [List.map_cons, List.map_nil]
       unfold list_conj
       unfold list_disj
-      rfl
+      apply Iff.refl
     case cons tl_hd tl_tl =>
       simp only [List.map_cons] at ih
 
@@ -119,14 +116,14 @@ theorem de_morgan_list_1
       unfold eval
       simp only [bool_iff_prop_or]
       rewrite [ih]
-      rfl
+      apply Iff.refl
 
 
 theorem de_morgan_list_2
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (FS : List Formula_) :
-  eval V (not_ (list_disj FS)) = true ↔
-    eval V (list_conj (List.map not_ FS)) = true :=
+  eval σ (not_ (list_disj FS)) = true ↔
+    eval σ (list_conj (List.map not_ FS)) = true :=
   by
   induction FS
   case nil =>
@@ -141,7 +138,7 @@ theorem de_morgan_list_2
       simp only [List.map_cons, List.map_nil]
       unfold list_disj
       unfold list_conj
-      rfl
+      apply Iff.refl
     case cons tl_hd tl_tl =>
       simp only [List.map_cons] at ih
 
@@ -152,14 +149,14 @@ theorem de_morgan_list_2
       unfold eval
       simp only [bool_iff_prop_and]
       rewrite [ih]
-      rfl
+      apply Iff.refl
 
 
 theorem de_morgan_list_alt_1
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (FS : List Formula_) :
-  eval V (list_conj FS) = true ↔
-    eval V (not_ (list_disj (List.map not_ FS))) = true :=
+  eval σ (list_conj FS) = true ↔
+    eval σ (not_ (list_disj (List.map not_ FS))) = true :=
   by
   simp only [eval]
   simp only [bool_iff_prop_not]
@@ -170,10 +167,10 @@ theorem de_morgan_list_alt_1
 
 
 theorem de_morgan_list_alt_2
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (FS : List Formula_) :
-  eval V (list_disj FS) = true ↔
-    eval V (not_ (list_conj (List.map not_ FS))) = true :=
+  eval σ (list_disj FS) = true ↔
+    eval σ (not_ (list_conj (List.map not_ FS))) = true :=
   by
   simp only [eval]
   simp only [bool_iff_prop_not]
@@ -184,10 +181,10 @@ theorem de_morgan_list_alt_2
 
 
 theorem de_morgan_list_of_lists_1
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (FSS : List (List Formula_)) :
-  eval V (not_ (list_of_lists_to_disjunction_of_conjunctions FSS)) = true ↔
-    eval V (list_of_lists_to_conjunction_of_disjunctions (map_map_not FSS)) :=
+  eval σ (not_ (list_of_lists_to_disjunction_of_conjunctions FSS)) = true ↔
+    eval σ (list_of_lists_to_conjunction_of_disjunctions (map_map_not FSS)) :=
   by
   unfold list_of_lists_to_disjunction_of_conjunctions
   unfold list_of_lists_to_conjunction_of_disjunctions
@@ -204,7 +201,7 @@ theorem de_morgan_list_of_lists_1
     apply Exists.intro FS
     constructor
     · exact a2_left
-    · rfl
+    · apply Eq.refl
   · intro a1 F a2
     obtain ⟨FS, a2_left, a2_right⟩ := a2
     rewrite [← a2_right]
@@ -213,14 +210,14 @@ theorem de_morgan_list_of_lists_1
     apply Exists.intro FS
     constructor
     · exact a2_left
-    · rfl
+    · apply Eq.refl
 
 
 theorem de_morgan_list_of_lists_2
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (FSS : List (List Formula_)) :
-  eval V (not_ (list_of_lists_to_conjunction_of_disjunctions FSS)) = true ↔
-    eval V (list_of_lists_to_disjunction_of_conjunctions (map_map_not FSS)) :=
+  eval σ (not_ (list_of_lists_to_conjunction_of_disjunctions FSS)) = true ↔
+    eval σ (list_of_lists_to_disjunction_of_conjunctions (map_map_not FSS)) :=
   by
   unfold list_of_lists_to_conjunction_of_disjunctions
   unfold list_of_lists_to_disjunction_of_conjunctions
