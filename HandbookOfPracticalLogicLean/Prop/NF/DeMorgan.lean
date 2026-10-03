@@ -15,6 +15,7 @@ open Formula_
 /--
   `map_map_not FSS` := Transforms every formula `F` in the list of lists of formulas `FSS` to `not_ F`.
 -/
+@[nolint defsWithUnderscore]
 def map_map_not
   (FSS : List (List Formula_)) :
   List (List Formula_) :=

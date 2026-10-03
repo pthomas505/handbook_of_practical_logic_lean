@@ -19,6 +19,7 @@ mutual
 /--
   `to_nnf_v1 F` := Translates the formula `F` to a logically equivalent formula in negation normal form.
 -/
+@[nolint defsWithUnderscore]
 def to_nnf_v1 :
   Formula_ → Formula_
   | not_ phi => to_nnf_neg_v1 phi
@@ -31,6 +32,7 @@ def to_nnf_v1 :
 /--
   `to_nnf_neg_v1 F` := Translates the formula `not_ F` to a logically equivalent formula in negation normal form.
 -/
+@[nolint defsWithUnderscore]
 def to_nnf_neg_v1 :
   Formula_ → Formula_
   | false_ => true_

@@ -18,6 +18,7 @@ open Formula_
 /--
   `filter_not_has_proper_subset_in_v1 ll` := The result of removing every list that has a proper subset in the list of lists `ll` from the list of lists `ll`.
 -/
+@[nolint defsWithUnderscore]
 def filter_not_has_proper_subset_in_v1
   {α : Type}
   [DecidableEq α]
@@ -41,12 +42,14 @@ example : filter_not_has_proper_subset_in_v1 [[1], [2, 3], [1, 2]] = [[1], [2, 3
 /--
   `List.is_proper_subset_of l1 l2` := True if and only if `l1` is a proper subset of `l2`.
 -/
+@[nolint defsWithUnderscore]
 def List.is_proper_subset_of
   {α : Type}
   (l1 l2 : List α) :
   Prop :=
   l1 ⊆ l2 ∧ ¬ l2 ⊆ l1
 
+@[nolint defsWithUnderscore]
 instance
   {α : Type}
   [DecidableEq α]
@@ -60,6 +63,7 @@ instance
 /--
   `filter_not_has_proper_subset_in_v2 ll` := The result of removing every list that has a proper subset in the list of lists `ll` from the list of lists `ll`.
 -/
+@[nolint defsWithUnderscore]
 def filter_not_has_proper_subset_in_v2
   {α : Type}
   [DecidableEq α]
@@ -520,6 +524,7 @@ lemma filter_not_has_proper_subset_in_v2_is_dnf_ind_v1
 /--
   Helper function for `to_dnf_v3_simp`.
 -/
+@[nolint defsWithUnderscore]
 def to_dnf_v3_simp_aux
   (F : Formula_) :
   List (List Formula_) :=
@@ -536,6 +541,7 @@ def to_dnf_v3_simp_aux
 /--
   `to_dnf_v3_simp F` := Translates the formula `F` to a simplified logically equivalent formula in disjunctive normal form.
 -/
+@[nolint defsWithUnderscore]
 def to_dnf_v3_simp
   (F : Formula_) :
   Formula_ :=

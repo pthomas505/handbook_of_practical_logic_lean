@@ -14,11 +14,13 @@ open Formula_
 /--
   `are_complementary P Q` := True if and only if the formulas `P` and `Q` are literals and `P` is the negation of `Q`.
 -/
+@[nolint defsWithUnderscore]
 def are_complementary
   (P Q : Formula_) :
   Prop :=
   P.is_literal_rec ∧ Q.is_literal_rec ∧ negate_literal Q = P
 
+@[nolint defsWithUnderscore]
 instance
   (P Q : Formula_) :
   Decidable (are_complementary P Q) :=
@@ -30,11 +32,13 @@ instance
 /--
   `has_complementary FS` := True if and only if the list of formulas `FS` contains complementary formulas.
 -/
+@[nolint defsWithUnderscore]
 def has_complementary
   (FS : List Formula_) :
   Prop :=
   ∃ (P : Formula_), P ∈ FS ∧ ∃ (Q : Formula_), Q ∈ FS ∧ are_complementary P Q
 
+@[nolint defsWithUnderscore]
 instance
   (FS : List Formula_) :
   Decidable (has_complementary FS) :=
@@ -64,6 +68,7 @@ instance
 /--
   `filter_not_has_complementary FSS` := The result of removing every list of formulas that contains complementary formulas from the list of lists of formulas `FSS`.
 -/
+@[nolint defsWithUnderscore]
 def filter_not_has_complementary
   (FSS : List (List Formula_)) :
   List (List Formula_) :=
@@ -73,6 +78,7 @@ def filter_not_has_complementary
 /--
   `to_dnf_v3_aux_simp_1 F` := The result of removing every list of formulas that contains complementary formulas from the list of lists of formulas given by `to_dnf_v3_aux F`.
 -/
+@[nolint defsWithUnderscore]
 def to_dnf_v3_aux_simp_1
   (F : Formula_) :
   List (List Formula_) :=
@@ -86,6 +92,7 @@ def to_dnf_v3_aux_simp_1
 /--
   `to_dnf_v3_simp_1 F` := Translates the formula `F` to a logically equivalent formula. If `F` is in negation normal form then `to_dnf_v3_simp_1 F` is in disjunctive normal form and none of the conjunctive clauses in `to_dnf_v3_simp_1 F` contain complementary formulas.
 -/
+@[nolint defsWithUnderscore]
 def to_dnf_v3_simp_1
   (F : Formula_) :
   Formula_ :=

@@ -15,6 +15,7 @@ open Formula_
 /--
   Helper function for `to_cnf_v3`.
 -/
+@[nolint defsWithUnderscore]
 def to_cnf_v3_aux
   (F : Formula_) :
   List (List Formula_) :=
@@ -26,6 +27,7 @@ def to_cnf_v3_aux
 /--
   `to_cnf_v3 F` := Translates the formula `F` to a logically equivalent formula. If `F` is in negation normal form then `to_cnf_v3 F` is in conjunctive normal form.
 -/
+@[nolint defsWithUnderscore]
 def to_cnf_v3
   (F : Formula_) :
   Formula_ :=

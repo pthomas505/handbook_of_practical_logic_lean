@@ -12,6 +12,7 @@ open Formula_
 /--
   `list_disj FS` := If the list of formulas `FS` is empty then `false_`. If `FS` is not empty then the iterated disjunction of the formulas in `FS`.
 -/
+@[nolint defsWithUnderscore]
 def list_disj :
   List Formula_ → Formula_
   | [] => false_

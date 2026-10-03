@@ -13,6 +13,7 @@ open Formula_
 /--
   `list_of_lists_to_disjunction_of_conjunctions FSS` := Translates the list of lists of formulas `FSS` to a disjunction of conjunctions.
 -/
+@[nolint defsWithUnderscore]
 def list_of_lists_to_disjunction_of_conjunctions
   (FSS : List (List Formula_)) :
   Formula_ :=
@@ -22,6 +23,7 @@ def list_of_lists_to_disjunction_of_conjunctions
 /--
   `list_of_lists_to_conjunction_of_disjunctions FSS` := Translates the list of lists of formulas `FSS` to a conjunction of disjunctions.
 -/
+@[nolint defsWithUnderscore]
 def list_of_lists_to_conjunction_of_disjunctions
   (FSS : List (List Formula_)) :
   Formula_ :=

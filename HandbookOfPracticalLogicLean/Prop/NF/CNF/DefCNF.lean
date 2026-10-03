@@ -58,6 +58,7 @@ theorem theorem_2_10
 
 -- https://avigad.github.io/lamr/decision_procedures_for_propositional_logic.html#the-tseitin-transformation
 
+@[nolint defsWithUnderscore]
 def mk_defs_aux
   (acc : Array Formula_) :
   Formula_ → (Formula_ × Array Formula_)
@@ -92,12 +93,14 @@ def mk_defs_aux
   | F => (F, acc)
 
 
+@[nolint defsWithUnderscore]
 def mk_defs
   (F : Formula_) :
   (Formula_ × Array Formula_) :=
   mk_defs_aux #[] F
 
 
+@[nolint defsWithUnderscore]
 def print_defs
   (F : Formula_) :
   IO Unit := do
@@ -110,12 +113,14 @@ def print_defs
 #eval print_defs (Formula_| ((((p /\ q) /\ ~ r) \/ (r /\ (~ p \/ ~ q))) /\ (~ s \/ (p /\ t))))
 
 
+@[nolint defsWithUnderscore]
 def defs_to_cnf_aux :
   List Formula_ → Nat → List Formula_
   | [], _ => []
   | hd :: tl, n => (or_ hd (not_ (var_ s!"def_{n}"))) :: defs_to_cnf_aux tl (n + 1)
 
 
+@[nolint defsWithUnderscore]
 def to_cnf
   (F : Formula_) :
   Formula_ :=

@@ -18,6 +18,7 @@ open Formula_
 /--
   Helper function for `to_dnf_v3`.
 -/
+@[nolint defsWithUnderscore]
 def to_dnf_v3_aux :
   Formula_ → List (List Formula_)
   | and_ p q => all_pairs_v4 List.union (to_dnf_v3_aux p) (to_dnf_v3_aux q)
@@ -30,6 +31,7 @@ def to_dnf_v3_aux :
 /--
   `to_dnf_v3 F` := Translates the formula `F` to a logically equivalent formula. If `F` is in negation normal form then `to_dnf_v3 F` is in disjunctive normal form.
 -/
+@[nolint defsWithUnderscore]
 def to_dnf_v3
   (F : Formula_) :
   Formula_ :=

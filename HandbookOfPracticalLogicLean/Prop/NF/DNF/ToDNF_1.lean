@@ -18,6 +18,7 @@ open Formula_
   `gen_all_satisfying_valuations_as_list_of_total_functions init F` := Returns a list of all of the functions from strings to booleans that both satisfy the formula `F` and map every string not in the variables of `F` to the same value as the function `init`.
   [ V : String → Bool | eval V F = true ∧ ∀ (X : String), X ∉ F.var_list.dedup → V X = init X ]
 -/
+@[nolint defsWithUnderscore]
 def gen_all_satisfying_valuations_as_list_of_total_functions
   (init : ValuationAsTotalFunction)
   (F : Formula_) :
@@ -28,6 +29,7 @@ def gen_all_satisfying_valuations_as_list_of_total_functions
 /--
   `all_satisfying_valuations_as_set_of_total_functions init F` := The set of all of the functions from strings to booleans that both satisfy the formula `F` and map every string not in the variables of `F` to the same value as the function `init`.
 -/
+@[nolint defsWithUnderscore]
 def all_satisfying_valuations_as_set_of_total_functions
   (init : ValuationAsTotalFunction)
   (F : Formula_) :
@@ -95,6 +97,7 @@ lemma mem_gen_all_satisfying_valuations_as_list_of_total_functions_iff_mem_all_s
 /--
   `to_dnf init F` := Translates the formula `F` to a logically equivalent formula in disjunctive normal form.
 -/
+@[nolint defsWithUnderscore]
 def to_dnf
   (init : ValuationAsTotalFunction)
   (F : Formula_) :
