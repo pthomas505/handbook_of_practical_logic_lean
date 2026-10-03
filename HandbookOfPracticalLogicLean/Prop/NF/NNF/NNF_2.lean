@@ -173,7 +173,7 @@ theorem to_nnf_v2_is_nnf_rec_v2
   case false_ | true_ | var_ X =>
     unfold to_nnf_v2
     unfold is_nnf_rec_v2
-    exact trivial
+    exact True.intro
   case not_ phi ih =>
     unfold to_nnf_v2
     simp only [to_nnf_neg_v2_is_nnf_rec_v2_iff_to_nnf_v2_is_nnf_rec_v2]
@@ -260,7 +260,7 @@ theorem to_nnf_v2_is_nnf_rec_v1
   case false_ | true_ | var_ X =>
     unfold to_nnf_v2
     unfold is_nnf_rec_v1
-    exact trivial
+    exact True.intro
   all_goals
     unfold is_proper_subformula_v2 at h1
     unfold is_subformula at h1

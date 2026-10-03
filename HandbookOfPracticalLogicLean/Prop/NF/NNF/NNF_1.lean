@@ -176,7 +176,7 @@ theorem to_nnf_v1_is_nnf_rec_v1
   case false_ | true_ | var_ X =>
     unfold to_nnf_v1
     unfold is_nnf_rec_v1
-    exact trivial
+    exact True.intro
   case not_ phi ih =>
     unfold to_nnf_v1
     rewrite [to_nnf_neg_v1_is_nnf_rec_v1_iff_to_nnf_v1_is_nnf_rec_v1]

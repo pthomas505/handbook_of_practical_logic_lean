@@ -31,7 +31,7 @@ theorem eval_list_disj_eq_true_imp_exists_eval_eq_true
       apply Exists.intro hd
       simp only [List.mem_singleton]
       constructor
-      · exact trivial
+      · exact True.intro
       · exact h1
     case cons tl_hd tl_tl =>
       unfold list_disj at h1
@@ -44,7 +44,7 @@ theorem eval_list_disj_eq_true_imp_exists_eval_eq_true
         simp only [List.mem_cons]
         constructor
         · left
-          exact trivial
+          exact True.intro
         · exact h1
       case inr h1 =>
         specialize ih h1

@@ -62,7 +62,7 @@ theorem is_small_step_v1_imp_is_small_step_v2
       unfold is_small_step_v2
       simp only
       left
-      exact ⟨trivial, h1_right⟩
+      exact ⟨True.intro, h1_right⟩
     case inr h1_left =>
       unfold is_small_step_v2
       right
@@ -95,7 +95,7 @@ theorem is_small_step_v2_imp_is_small_step_v1
       simp only [List.mem_cons]
       constructor
       · left
-        exact trivial
+        exact True.intro
       · exact h1_right
     case inr h1 =>
       specialize ih h1
@@ -203,7 +203,7 @@ theorem is_small_step_v1_imp_mem_env_to_step_list
       rewrite [← h1_left]
       simp only
       simp only [← var_occurs_in_formula_iff_mem_formula_var_list]
-      exact ⟨h1_right, ⟨trivial, trivial⟩⟩
+      exact ⟨h1_right, ⟨True.intro, True.intro⟩⟩
     case inr h1_left =>
       right
       apply ih
@@ -406,7 +406,7 @@ theorem is_small_step_v1_singleton_right
   · simp only [List.mem_singleton, Prod.mk.injEq]
     constructor
     · exact h1
-    · exact trivial
+    · exact True.intro
   · exact h2
 
 
@@ -680,7 +680,7 @@ theorem has_cycle_singleton_right
   unfold is_big_step_v1
   simp only [List.nil_append, List.chain_cons, List.Chain.nil]
   simp only [is_small_step_v1_singleton]
-  exact ⟨⟨trivial, h1⟩, trivial⟩
+  exact ⟨⟨True.intro, h1⟩, True.intro⟩
 
 
 theorem has_cycle_singleton
@@ -707,7 +707,7 @@ theorem is_small_step_v1_refl_imp_has_cycle
   apply Exists.intro []
   unfold is_big_step_v1
   simp only [List.nil_append, List.chain_cons, List.Chain.nil]
-  exact ⟨h1, trivial⟩
+  exact ⟨h1, True.intro⟩
 
 
 example

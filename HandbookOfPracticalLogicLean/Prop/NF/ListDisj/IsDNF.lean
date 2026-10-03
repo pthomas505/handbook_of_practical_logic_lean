@@ -34,7 +34,7 @@ theorem list_disj_of_is_conj_ind_v1_is_dnf_ind_v1
       · apply h1
         simp only [List.mem_cons]
         left
-        exact trivial
+        exact True.intro
       · apply ih
         intro F a1
         apply h1

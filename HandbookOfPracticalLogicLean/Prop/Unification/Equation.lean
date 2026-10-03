@@ -364,7 +364,7 @@ theorem mem_equation_list_var_set_imp_var_occurs_in_equation_list
       constructor
       · simp only [List.mem_cons]
         left
-        exact trivial
+        exact True.intro
       · simp only [var_occurs_in_equation_iff_mem_equation_var_set]
         exact h1
     case inr h1 =>
