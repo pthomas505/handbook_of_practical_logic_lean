@@ -2,7 +2,9 @@ import HandbookOfPracticalLogicLean.Prop.NF.DNF.ToDNF_3_Simp_1
 import HandbookOfPracticalLogicLean.Prop.NF.NNF.NNF_1
 
 
-set_option autoImplicit false
+set_option linter.style.docString false
+set_option linter.style.emptyLine false
+set_option linter.style.longLine false
 
 
 open Formula_

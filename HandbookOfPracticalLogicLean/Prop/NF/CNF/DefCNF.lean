@@ -9,7 +9,10 @@ import Mathlib.Tactic
 import Init.Data.List.Basic
 import Batteries.Data.HashMap
 
-set_option autoImplicit false
+
+set_option linter.style.docString false
+set_option linter.style.emptyLine false
+set_option linter.style.longLine false
 
 
 open Formula_
