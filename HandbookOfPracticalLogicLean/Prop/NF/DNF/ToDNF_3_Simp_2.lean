@@ -26,17 +26,17 @@ def filter_not_has_proper_subset_in_v1
   List (List α) :=
   ll.filter fun (l1 : List α) => ∀ (l2 : List α), l2 ∈ ll → (l2 ⊆ l1 → l1 ⊆ l2)
 
-example : filter_not_has_proper_subset_in_v1 [[1], [1]] = [[1], [1]] := by rfl
-example : filter_not_has_proper_subset_in_v1 [[1], [2]] = [[1], [2]] := by rfl
-example : filter_not_has_proper_subset_in_v1 [[2], [1]] = [[2], [1]] := by rfl
-example : filter_not_has_proper_subset_in_v1 [[1], [1, 2]] = [[1]] := by rfl
-example : filter_not_has_proper_subset_in_v1 [[1, 2], [1]] = [[1]] := by rfl
-example : filter_not_has_proper_subset_in_v1 [[1], [1, 2, 2]] = [[1]] := by rfl
-example : filter_not_has_proper_subset_in_v1 [[1, 2, 2], [1]] = [[1]] := by rfl
-example : filter_not_has_proper_subset_in_v1 [[1], [1, 1, 2]] = [[1]] := by rfl
-example : filter_not_has_proper_subset_in_v1 [[1, 1, 2], [1]] = [[1]] := by rfl
-example : filter_not_has_proper_subset_in_v1 [[1], [1, 2], [2, 3]] = [[1], [2, 3]] := by rfl
-example : filter_not_has_proper_subset_in_v1 [[1], [2, 3], [1, 2]] = [[1], [2, 3]] := by rfl
+example : filter_not_has_proper_subset_in_v1 [[1], [1]] = [[1], [1]] := by apply Eq.refl
+example : filter_not_has_proper_subset_in_v1 [[1], [2]] = [[1], [2]] := by apply Eq.refl
+example : filter_not_has_proper_subset_in_v1 [[2], [1]] = [[2], [1]] := by apply Eq.refl
+example : filter_not_has_proper_subset_in_v1 [[1], [1, 2]] = [[1]] := by apply Eq.refl
+example : filter_not_has_proper_subset_in_v1 [[1, 2], [1]] = [[1]] := by apply Eq.refl
+example : filter_not_has_proper_subset_in_v1 [[1], [1, 2, 2]] = [[1]] := by apply Eq.refl
+example : filter_not_has_proper_subset_in_v1 [[1, 2, 2], [1]] = [[1]] := by apply Eq.refl
+example : filter_not_has_proper_subset_in_v1 [[1], [1, 1, 2]] = [[1]] := by apply Eq.refl
+example : filter_not_has_proper_subset_in_v1 [[1, 1, 2], [1]] = [[1]] := by apply Eq.refl
+example : filter_not_has_proper_subset_in_v1 [[1], [1, 2], [2, 3]] = [[1], [2, 3]] := by apply Eq.refl
+example : filter_not_has_proper_subset_in_v1 [[1], [2, 3], [1, 2]] = [[1], [2, 3]] := by apply Eq.refl
 
 
 /--
@@ -82,24 +82,24 @@ def List.dedupSet
   List (List α) :=
   ll.pwFilter fun (l1 l2 : List α) => ¬ (l1 ⊆ l2 ∧ l2 ⊆ l1)
 
-example : List.dedupSet [[1]] = [[1]] := by rfl
-example : List.dedupSet [[1], [1]] = [[1]] := by rfl
-example : List.dedupSet [[1], [1], [1]] = [[1]] := by rfl
+example : List.dedupSet [[1]] = [[1]] := by apply Eq.refl
+example : List.dedupSet [[1], [1]] = [[1]] := by apply Eq.refl
+example : List.dedupSet [[1], [1], [1]] = [[1]] := by apply Eq.refl
 
-example : List.dedupSet [[1], [2]] = [[1], [2]] := by rfl
-example : List.dedupSet [[2], [1]] = [[2], [1]] := by rfl
+example : List.dedupSet [[1], [2]] = [[1], [2]] := by apply Eq.refl
+example : List.dedupSet [[2], [1]] = [[2], [1]] := by apply Eq.refl
 
-example : List.dedupSet [[1], [2], [1]] = [[2], [1]] := by rfl
-example : List.dedupSet [[2], [1], [2]] = [[1], [2]] := by rfl
+example : List.dedupSet [[1], [2], [1]] = [[2], [1]] := by apply Eq.refl
+example : List.dedupSet [[2], [1], [2]] = [[1], [2]] := by apply Eq.refl
 
-example : List.dedupSet [[1, 2], [2, 1, 1]] = [[2, 1, 1]] := by rfl
+example : List.dedupSet [[1, 2], [2, 1, 1]] = [[2, 1, 1]] := by apply Eq.refl
 
 
 example
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (P Q : Formula_)
-  (h1 : eval V Q = true → eval V P = true) :
-  eval V (or_ P Q) = true ↔ eval V P = true :=
+  (h1 : eval σ Q = true → eval σ P = true) :
+  eval σ (or_ P Q) = true ↔ eval σ P = true :=
   by
   simp only [eval]
   simp only [bool_iff_prop_or]
@@ -117,11 +117,11 @@ example
 
 
 example
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (PS QS : List Formula_)
   (h1 : PS ⊆ QS) :
-  eval V (or_ (list_conj PS) (list_conj QS)) = true ↔
-    eval V (list_conj PS) = true :=
+  eval σ (or_ (list_conj PS) (list_conj QS)) = true ↔
+    eval σ (list_conj PS) = true :=
   by
   simp only [eval]
   simp only [bool_iff_prop_or]
@@ -131,7 +131,7 @@ example
     case inl a1 =>
       exact a1
     case inr a1 =>
-      apply eval_list_conj_subset V PS QS
+      apply eval_list_conj_subset σ PS QS
       · exact h1
       · exact a1
   · intro a1
@@ -140,12 +140,12 @@ example
 
 
 example
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (P : Formula_)
   (FS : List Formula_)
   (h1 : P ∈ FS) :
-  eval V (list_disj FS) = true ↔
-    eval V (list_disj (List.filter (fun (Q : Formula_) => Q = P ∨ ¬ (eval V Q = true → eval V P = true)) FS)) = true :=
+  eval σ (list_disj FS) = true ↔
+    eval σ (list_disj (List.filter (fun (Q : Formula_) => Q = P ∨ ¬ (eval σ Q = true → eval σ P = true)) FS)) = true :=
   by
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_filter]
@@ -153,18 +153,16 @@ example
   constructor
   · intro a1
     obtain ⟨F, a1_left, a1_right⟩ := a1
-    by_cases c1 : eval V F = true → eval V P = true
-    case pos =>
-      apply Exists.intro P
+    by_cases c1 : eval σ F = true → eval σ P = true
+    · apply Exists.intro P
       constructor
       · constructor
         · exact h1
         · left
-          rfl
+          apply Eq.refl
       · apply c1
         exact a1_right
-    case neg =>
-      apply Exists.intro F
+    · apply Exists.intro F
       constructor
       · constructor
         · exact a1_left
@@ -178,12 +176,12 @@ example
 
 
 example
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (PS : List Formula_)
   (FSS : List (List Formula_))
   (h1 : PS ∈ FSS) :
-  eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true ↔
-    eval V (list_of_lists_to_disjunction_of_conjunctions (List.filter (fun (QS : List Formula_) => ¬ List.is_proper_subset_of PS QS) FSS)) = true :=
+  eval σ (list_of_lists_to_disjunction_of_conjunctions FSS) = true ↔
+    eval σ (list_of_lists_to_disjunction_of_conjunctions (List.filter (fun (QS : List Formula_) => ¬ List.is_proper_subset_of PS QS) FSS)) = true :=
   by
   unfold list_of_lists_to_disjunction_of_conjunctions
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
@@ -193,8 +191,7 @@ example
   · intro a1
     obtain ⟨F, ⟨QS, a1_left_left, a1_left_right⟩, a1_right⟩ := a1
     by_cases c1 : List.is_proper_subset_of PS QS
-    case pos =>
-      apply Exists.intro (list_conj PS)
+    · apply Exists.intro (list_conj PS)
       constructor
       · apply Exists.intro PS
         constructor
@@ -204,28 +201,27 @@ example
             intro contra
             obtain ⟨contra_left, contra_right⟩ := contra
             contradiction
-        · rfl
+        · apply Eq.refl
       · unfold List.is_proper_subset_of at c1
         obtain ⟨c1_left, c1_right⟩ := c1
         rewrite [← a1_left_right] at a1_right
-        apply eval_list_conj_subset V PS QS
+        apply eval_list_conj_subset σ PS QS
         · exact c1_left
         · exact a1_right
-    case neg =>
-      exact ⟨F, ⟨QS, ⟨a1_left_left, c1⟩, a1_left_right⟩, a1_right⟩
+    · exact ⟨F, ⟨QS, ⟨a1_left_left, c1⟩, a1_left_right⟩, a1_right⟩
   · intro a1
     obtain ⟨F, ⟨QS, ⟨a1_left_left_left, a1_left_left_right⟩, a1_left_right⟩, a1_right⟩ := a1
     exact ⟨F, ⟨QS, a1_left_left_left, a1_left_right⟩, a1_right⟩
 
 
 example
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (P Q : Formula_)
   (FS : List Formula_)
   (h1 : P ∈ FS)
   (h2 : Q ∈ FS) :
-  eval V (list_disj FS) = true ↔
-    eval V (list_disj (List.filter (fun (R : Formula_) => R = P ∨ R = Q ∨ (¬ (eval V R = true → eval V P = true) ∧ ¬ (eval V R = true → eval V Q = true))) FS)) = true :=
+  eval σ (list_disj FS) = true ↔
+    eval σ (list_disj (List.filter (fun (R : Formula_) => R = P ∨ R = Q ∨ (¬ (eval σ R = true → eval σ P = true) ∧ ¬ (eval σ R = true → eval σ Q = true))) FS)) = true :=
   by
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_filter]
@@ -233,30 +229,26 @@ example
   constructor
   · intro a1
     obtain ⟨F, a1_left, a1_right⟩ := a1
-    by_cases c1 : eval V F = true → eval V P = true
-    case pos =>
-      apply Exists.intro P
+    by_cases c1 : eval σ F = true → eval σ P = true
+    · apply Exists.intro P
       constructor
       · constructor
         · exact h1
         · left
-          rfl
+          apply Eq.refl
       · apply c1
         exact a1_right
-    case neg =>
-      by_cases c2 : eval V F = true → eval V Q = true
-      case pos =>
-        apply Exists.intro Q
+    · by_cases c2 : eval σ F = true → eval σ Q = true
+      · apply Exists.intro Q
         constructor
         · constructor
           · exact h2
           · right
             left
-            rfl
+            apply Eq.refl
         · apply c2
           exact a1_right
-      case neg =>
-        apply Exists.intro F
+      · apply Exists.intro F
         constructor
         · constructor
           · exact a1_left
@@ -270,11 +262,11 @@ example
 
 
 example
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (PS QS : List Formula_)
   (h1 : PS ⊆ QS) :
-  eval V (list_of_lists_to_disjunction_of_conjunctions [PS, QS]) = true ↔
-    eval V (list_of_lists_to_disjunction_of_conjunctions [PS]) = true :=
+  eval σ (list_of_lists_to_disjunction_of_conjunctions [PS, QS]) = true ↔
+    eval σ (list_of_lists_to_disjunction_of_conjunctions [PS]) = true :=
   by
   unfold list_of_lists_to_disjunction_of_conjunctions
   simp only [List.map_cons, List.map_nil]
@@ -287,7 +279,7 @@ example
     case inl a1 =>
       exact a1
     case inr a1 =>
-      apply eval_list_conj_subset V PS QS
+      apply eval_list_conj_subset σ PS QS
       · exact h1
       · exact a1
   · intro a1
@@ -296,12 +288,12 @@ example
 
 
 example
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (PS QS RS : List Formula_)
   (h1 : PS ⊆ QS)
   (h2 : QS ⊆ RS) :
-  eval V (list_of_lists_to_disjunction_of_conjunctions [PS, QS, RS]) = true ↔
-    eval V (list_of_lists_to_disjunction_of_conjunctions [PS]) = true :=
+  eval σ (list_of_lists_to_disjunction_of_conjunctions [PS, QS, RS]) = true ↔
+    eval σ (list_of_lists_to_disjunction_of_conjunctions [PS]) = true :=
   by
   unfold list_of_lists_to_disjunction_of_conjunctions
   simp only [List.map_cons, List.map_nil]
@@ -316,11 +308,11 @@ example
     case inr a1 =>
       cases a1
       case inl a1 =>
-        apply eval_list_conj_subset V PS QS
+        apply eval_list_conj_subset σ PS QS
         · exact h1
         · exact a1
       case inr a1 =>
-        apply eval_list_conj_subset V PS RS
+        apply eval_list_conj_subset σ PS RS
         · trans QS
           · exact h1
           · exact h2
@@ -331,11 +323,11 @@ example
 
 
 example
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (PS QS RS : List Formula_)
   (h1 : PS ⊆ RS) :
-  eval V (list_of_lists_to_disjunction_of_conjunctions [PS, QS, RS]) = true ↔
-    eval V (list_of_lists_to_disjunction_of_conjunctions [PS, QS]) = true :=
+  eval σ (list_of_lists_to_disjunction_of_conjunctions [PS, QS, RS]) = true ↔
+    eval σ (list_of_lists_to_disjunction_of_conjunctions [PS, QS]) = true :=
   by
   unfold list_of_lists_to_disjunction_of_conjunctions
   simp only [List.map_cons, List.map_nil]
@@ -355,7 +347,7 @@ example
         exact a1
       case inr a1 =>
         left
-        apply eval_list_conj_subset V PS RS
+        apply eval_list_conj_subset σ PS RS
         · exact h1
         · exact a1
   · intro a1
@@ -370,11 +362,11 @@ example
 
 
 example
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (P Q : Formula_)
-  (h1 : eval V Q = true → eval V P = true) :
-  eval V (list_disj [P, Q]) = true ↔
-    eval V (list_disj [P]) = true :=
+  (h1 : eval σ Q = true → eval σ P = true) :
+  eval σ (list_disj [P, Q]) = true ↔
+    eval σ (list_disj [P]) = true :=
   by
   simp only [list_disj]
   simp only [eval]
@@ -393,10 +385,10 @@ example
 
 
 example
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (FS : List Formula_) :
-  eval V (list_disj FS) = true ↔
-    eval V (list_disj (List.dedup FS)) = true :=
+  eval σ (list_disj FS) = true ↔
+    eval σ (list_disj (List.dedup FS)) = true :=
   by
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_dedup]
@@ -417,10 +409,10 @@ example
 
 
 theorem eval_filter_not_has_proper_subset_in_v2_left
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (FSS : List (List Formula_))
-  (h1 : eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true) :
-  eval V (list_of_lists_to_disjunction_of_conjunctions (filter_not_has_proper_subset_in_v2 FSS)) = true :=
+  (h1 : eval σ (list_of_lists_to_disjunction_of_conjunctions FSS) = true) :
+  eval σ (list_of_lists_to_disjunction_of_conjunctions (filter_not_has_proper_subset_in_v2 FSS)) = true :=
   by
   unfold list_of_lists_to_disjunction_of_conjunctions at h1
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true] at h1
@@ -445,8 +437,7 @@ theorem eval_filter_not_has_proper_subset_in_v2_left
     constructor
     · constructor
       · exact s1_left
-      · intro QS a1
-        intro contra
+      · intro QS a1 contra
         unfold List.is_proper_subset_of at contra
         obtain ⟨contra_left, contra_right⟩ := contra
         apply contra_right
@@ -454,16 +445,16 @@ theorem eval_filter_not_has_proper_subset_in_v2_left
         constructor
         · exact a1
         · exact contra_left
-    · rfl
-  · exact eval_list_conj_subset V PS RS s1_right_left h1_right
+    · apply Eq.refl
+  · exact eval_list_conj_subset σ PS RS s1_right_left h1_right
 
 
 theorem eval_list_of_lists_to_disjunction_of_conjunctions_subset
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (PSS QSS : List (List Formula_))
   (h1 : PSS ⊆ QSS)
-  (h2 : eval V (list_of_lists_to_disjunction_of_conjunctions PSS) = true) :
-  eval V (list_of_lists_to_disjunction_of_conjunctions QSS) = true :=
+  (h2 : eval σ (list_of_lists_to_disjunction_of_conjunctions PSS) = true) :
+  eval σ (list_of_lists_to_disjunction_of_conjunctions QSS) = true :=
   by
   unfold list_of_lists_to_disjunction_of_conjunctions at h2
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true] at h2
@@ -483,22 +474,22 @@ theorem eval_list_of_lists_to_disjunction_of_conjunctions_subset
 
 
 theorem eval_filter_not_has_proper_subset_in_v2_right
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (FSS : List (List Formula_))
-  (h1 : eval V (list_of_lists_to_disjunction_of_conjunctions (filter_not_has_proper_subset_in_v2 FSS)) = true) :
-  eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true :=
+  (h1 : eval σ (list_of_lists_to_disjunction_of_conjunctions (filter_not_has_proper_subset_in_v2 FSS)) = true) :
+  eval σ (list_of_lists_to_disjunction_of_conjunctions FSS) = true :=
   by
-  apply eval_list_of_lists_to_disjunction_of_conjunctions_subset V (filter_not_has_proper_subset_in_v2 FSS)
+  apply eval_list_of_lists_to_disjunction_of_conjunctions_subset σ (filter_not_has_proper_subset_in_v2 FSS)
   · unfold filter_not_has_proper_subset_in_v2
-    simp only [List.filter_subset']
+    simp only [List.filter_subset_self]
   · exact h1
 
 
 theorem eval_filter_not_has_proper_subset_in_v2
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (FSS : List (List Formula_)) :
-  eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true ↔
-    eval V (list_of_lists_to_disjunction_of_conjunctions (filter_not_has_proper_subset_in_v2 FSS)) = true :=
+  eval σ (list_of_lists_to_disjunction_of_conjunctions FSS) = true ↔
+    eval σ (list_of_lists_to_disjunction_of_conjunctions (filter_not_has_proper_subset_in_v2 FSS)) = true :=
   by
   constructor
   · apply eval_filter_not_has_proper_subset_in_v2_left
@@ -549,27 +540,29 @@ def to_dnf_v3_simp
 
 
 example
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V F = true ↔ eval V (to_dnf_v3_simp F) = true :=
+  eval σ F = true ↔ eval σ (to_dnf_v3_simp F) = true :=
   by
   unfold to_dnf_v3_simp
   unfold to_dnf_v3_simp_aux
-  split_ifs
-  case pos c1 =>
+  split
+  case isTrue c1 =>
     rewrite [c1]
     unfold list_of_lists_to_disjunction_of_conjunctions
     simp only [List.map_nil]
     unfold list_disj
-    rfl
-  case pos c1 c2 =>
-    rewrite [c2]
-    unfold list_of_lists_to_disjunction_of_conjunctions
-    simp only [List.map_cons, List.map_nil]
-    unfold list_conj
-    unfold list_disj
-    rfl
-  case neg c1 c2 =>
+    apply Iff.refl
+  case isFalse c1 =>
+    split
+    case isTrue c2 =>
+      rewrite [c2]
+      unfold list_of_lists_to_disjunction_of_conjunctions
+      simp only [List.map_cons, List.map_nil]
+      unfold list_conj
+      unfold list_disj
+      apply Iff.refl
+    case isFalse c2 =>
     simp only
     simp only [← eval_filter_not_has_proper_subset_in_v2]
     simp only [← eval_eq_eval_to_dnf_v3_simp_1_aux]
@@ -582,27 +575,29 @@ example
   by
   unfold to_dnf_v3_simp
   unfold to_dnf_v3_simp_aux
-  split_ifs
-  case pos c1 =>
+  split
+  case isTrue c1 =>
     unfold list_of_lists_to_disjunction_of_conjunctions
     simp only [List.map_nil]
     unfold list_disj
     apply is_dnf_ind_v1.rule_1
     apply is_conj_ind_v1.rule_1
     exact is_constant_ind.rule_1
-  case pos c1 c2 =>
-    unfold list_of_lists_to_disjunction_of_conjunctions
-    simp only [List.map_cons, List.map_nil]
-    unfold list_conj
-    unfold list_disj
-    apply is_dnf_ind_v1.rule_1
-    apply is_conj_ind_v1.rule_1
-    exact is_constant_ind.rule_2
-  case neg c1 c2 =>
-    simp only
-    apply filter_not_has_proper_subset_in_v2_is_dnf_ind_v1
-    apply is_dnf_ind_v1_to_dnf_v3_simp_1_aux
-    apply to_nnf_v1_is_nnf_rec_v1
+  case isFalse c1 =>
+    split
+    case isTrue c2 =>
+      unfold list_of_lists_to_disjunction_of_conjunctions
+      simp only [List.map_cons, List.map_nil]
+      unfold list_conj
+      unfold list_disj
+      apply is_dnf_ind_v1.rule_1
+      apply is_conj_ind_v1.rule_1
+      exact is_constant_ind.rule_2
+    case isFalse c2 =>
+      simp only
+      apply filter_not_has_proper_subset_in_v2_is_dnf_ind_v1
+      apply is_dnf_ind_v1_to_dnf_v3_simp_1_aux
+      apply to_nnf_v1_is_nnf_rec_v1
 
 
 #lint
