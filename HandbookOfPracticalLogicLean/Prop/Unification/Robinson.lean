@@ -103,8 +103,8 @@ def print_unify
 #eval! let E : Equation := ⟨or_ (and_ (var_ "X") (var_ "Y")) (var_ "Z"), or_ (and_ (var_ "Y") (var_ "Z")) (var_ "X")⟩; print_unify E (unify E)
 
 
-partial
 @[nolint defsWithUnderscore]
+partial
 def unify_list
   (E : Equation) :
   Option (List (String × Formula_)) :=
