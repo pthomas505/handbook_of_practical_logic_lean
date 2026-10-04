@@ -12,10 +12,10 @@ open Formula_
 
 
 theorem eval_list_disj_eq_true_imp_exists_eval_eq_true
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (FS : List Formula_)
-  (h1 : eval V (list_disj FS) = true) :
-  ∃ (F : Formula_), F ∈ FS ∧ eval V F = true :=
+  (h1 : eval σ (list_disj FS) = true) :
+  ∃ (F : Formula_), F ∈ FS ∧ eval σ F = true :=
   by
   induction FS
   case nil =>
@@ -60,10 +60,10 @@ theorem eval_list_disj_eq_true_imp_exists_eval_eq_true
 
 
 theorem exists_eval_eq_true_imp_eval_list_disj_eq_true
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (FS : List Formula_)
-  (h1 : ∃ (F : Formula_), F ∈ FS ∧ eval V F = true) :
-  eval V (list_disj FS) = true :=
+  (h1 : ∃ (F : Formula_), F ∈ FS ∧ eval σ F = true) :
+  eval σ (list_disj FS) = true :=
   by
   induction FS
   case nil =>
@@ -101,9 +101,9 @@ theorem exists_eval_eq_true_imp_eval_list_disj_eq_true
 
 
 theorem eval_list_disj_eq_true_iff_exists_eval_eq_true
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (FS : List Formula_) :
-  eval V (list_disj FS) = true ↔ (∃ (F : Formula_), F ∈ FS ∧ eval V F = true) :=
+  eval σ (list_disj FS) = true ↔ (∃ (F : Formula_), F ∈ FS ∧ eval σ F = true) :=
   by
   constructor
   · apply eval_list_disj_eq_true_imp_exists_eval_eq_true
@@ -114,9 +114,9 @@ theorem eval_list_disj_eq_true_iff_exists_eval_eq_true
 
 
 theorem eval_list_disj_union
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (PS QS : List Formula_) :
-  eval V (list_disj (PS ∪ QS)) = true ↔ (eval V (list_disj PS) = true ∨ eval V (list_disj QS) = true) :=
+  eval σ (list_disj (PS ∪ QS)) = true ↔ (eval σ (list_disj PS) = true ∨ eval σ (list_disj QS) = true) :=
   by
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true]
   simp only [List.mem_union_iff]
@@ -152,11 +152,11 @@ theorem eval_list_disj_union
 
 
 theorem eval_list_disj_subset
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (PS QS : List Formula_)
   (h1 : PS ⊆ QS)
-  (h2 : eval V (list_disj PS) = true) :
-  eval V (list_disj QS) = true :=
+  (h2 : eval σ (list_disj PS) = true) :
+  eval σ (list_disj QS) = true :=
   by
   simp only [eval_list_disj_eq_true_iff_exists_eval_eq_true] at h2
   obtain ⟨F, ⟨h2_left, h2_right⟩⟩ := h2
