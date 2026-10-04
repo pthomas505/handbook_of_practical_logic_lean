@@ -30,7 +30,7 @@ theorem list_conj_of_list_of_is_constant_ind_or_is_literal_ind_is_conj_ind_v1
       have s1 : is_constant_ind hd ∨ is_literal_ind hd :=
       by
         apply h1
-        rfl
+        apply Eq.refl
 
       cases s1
       case inl s1 =>
@@ -46,7 +46,7 @@ theorem list_conj_of_list_of_is_constant_ind_or_is_literal_ind_is_conj_ind_v1
       by
         apply h1
         left
-        rfl
+        apply Eq.refl
 
       unfold list_conj
       cases s1
