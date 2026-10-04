@@ -22,7 +22,7 @@ structure Equation : Type where
 
   /-- The right hand side of the equation. -/
   (rhs : Formula_)
-  deriving Inhabited, DecidableEq, Repr
+  deriving Inhabited, DecidableEq
 
 
 -------------------------------------------------------------------------------
