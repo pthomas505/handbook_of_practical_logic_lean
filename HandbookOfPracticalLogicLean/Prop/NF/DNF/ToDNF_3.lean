@@ -42,9 +42,9 @@ def to_dnf_v3
 
 
 theorem eval_eq_eval_to_dnf_v3_aux
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V F = true ↔ eval V (list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_aux F)) = true :=
+  eval σ F = true ↔ eval σ (list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_aux F)) = true :=
   by
   induction F
   case and_ phi psi phi_ih psi_ih =>
@@ -73,7 +73,7 @@ theorem eval_eq_eval_to_dnf_v3_aux
         · apply Exists.intro PS
           apply Exists.intro QS
           exact ⟨PS_mem, QS_mem, rfl⟩
-        · rfl
+        · apply Eq.refl
       · simp only [eval_list_conj_union]
         exact ⟨a1_left_right, a1_right_right⟩
     · intro a1
@@ -147,13 +147,13 @@ theorem eval_eq_eval_to_dnf_v3_aux
           exact ⟨a1_left_left, a1_left_right⟩
         · exact a1_right
   all_goals
-    rfl
+    apply Iff.refl
 
 
 theorem eval_eq_eval_to_dnf_v3
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V F = true ↔ eval V (to_dnf_v3 F) = true :=
+  eval σ F = true ↔ eval σ (to_dnf_v3 F) = true :=
   by
   unfold to_dnf_v3
   apply eval_eq_eval_to_dnf_v3_aux
@@ -170,7 +170,7 @@ theorem list_of_lists_to_disjunction_of_conjunctions_singleton
   simp only [List.map_cons, List.map_nil]
   unfold list_conj
   unfold list_disj
-  rfl
+  apply Eq.refl
 
 
 theorem mem_list_mem_to_dnf_v3_aux_of_nnf_rec_v1_imp_is_constant_or_literal
