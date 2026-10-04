@@ -141,8 +141,8 @@ theorem list_conj_is_cnf_ind_v1_imp_list_conj_of_filter_is_cnf_ind_v1
     exact h1
   case cons hd tl ih =>
     simp only [List.filter_cons]
-    split_ifs
-    case pos c1 =>
+    split
+    case isTrue c1 =>
       cases tl
       case nil =>
         simp only [List.filter_nil]
@@ -158,7 +158,7 @@ theorem list_conj_is_cnf_ind_v1_imp_list_conj_of_filter_is_cnf_ind_v1
           · exact ih_1
           · apply ih
             exact ih_2
-    case neg c1 =>
+    case isFalse c1 =>
       apply ih
       exact list_conj_cons_is_cnf_ind_v1_imp_list_conj_tail_is_cnf_ind_v1 hd tl h1
 
