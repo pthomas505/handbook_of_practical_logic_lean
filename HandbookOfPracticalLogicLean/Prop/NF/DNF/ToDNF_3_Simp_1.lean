@@ -168,10 +168,10 @@ theorem not_has_complementary_union
 
 
 theorem has_complementary_imp_eval_list_conj_false
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (FS : List Formula_)
   (h1 : has_complementary FS) :
-  eval V (list_conj FS) = false :=
+  eval σ (list_conj FS) = false :=
   by
   unfold has_complementary at h1
   unfold are_complementary at h1
@@ -181,7 +181,7 @@ theorem has_complementary_imp_eval_list_conj_false
   intro contra
   simp only [eval_list_conj_eq_true_iff_forall_eval_eq_true] at contra
 
-  obtain s1 := eval_negate_literal_eq_not_eval_literal V Q Q_lit
+  obtain s1 := eval_negate_literal_eq_not_eval_literal σ Q Q_lit
   rewrite [eq] at s1
   rewrite [contra P P_mem] at s1
   rewrite [contra Q Q_mem] at s1
@@ -190,10 +190,10 @@ theorem has_complementary_imp_eval_list_conj_false
 
 
 theorem eval_list_of_lists_to_disjunction_of_conjunctions_eq_eval_list_of_lists_to_disjunction_of_conjunctions_filter_not_has_complementary
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (FSS : List (List Formula_)) :
-  eval V (list_of_lists_to_disjunction_of_conjunctions FSS) = true ↔
-  eval V (list_of_lists_to_disjunction_of_conjunctions (filter_not_has_complementary FSS)) = true :=
+  eval σ (list_of_lists_to_disjunction_of_conjunctions FSS) = true ↔
+  eval σ (list_of_lists_to_disjunction_of_conjunctions (filter_not_has_complementary FSS)) = true :=
   by
   unfold filter_not_has_complementary
   unfold list_of_lists_to_disjunction_of_conjunctions
@@ -212,9 +212,9 @@ theorem eval_list_of_lists_to_disjunction_of_conjunctions_eq_eval_list_of_lists_
         · exact s3
         · simp only [decide_eq_true_iff]
           intro contra
-          simp only [has_complementary_imp_eval_list_conj_false V FS contra] at s1
+          simp only [has_complementary_imp_eval_list_conj_false σ FS contra] at s1
           contradiction
-      · rfl
+      · apply Eq.refl
     · exact s1
   · intro a1
     obtain ⟨F, ⟨FS, ⟨s3, s4⟩, s2⟩, s1⟩ := a1
@@ -222,20 +222,20 @@ theorem eval_list_of_lists_to_disjunction_of_conjunctions_eq_eval_list_of_lists_
 
 
 theorem eval_eq_eval_to_dnf_v3_simp_1_aux
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V F = true ↔ eval V (list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_aux_simp_1 F)) = true :=
+  eval σ F = true ↔ eval σ (list_of_lists_to_disjunction_of_conjunctions (to_dnf_v3_aux_simp_1 F)) = true :=
   by
   unfold to_dnf_v3_aux_simp_1
   unfold filter_not_has_complementary
-  simp only [eval_eq_eval_to_dnf_v3 V F]
+  simp only [eval_eq_eval_to_dnf_v3 σ F]
   apply eval_list_of_lists_to_disjunction_of_conjunctions_eq_eval_list_of_lists_to_disjunction_of_conjunctions_filter_not_has_complementary
 
 
 theorem eval_eq_eval_to_dnf_v3_simp_1
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V F = true ↔ eval V (to_dnf_v3_simp_1 F) = true :=
+  eval σ F = true ↔ eval σ (to_dnf_v3_simp_1 F) = true :=
   by
   unfold to_dnf_v3_simp_1
   apply eval_eq_eval_to_dnf_v3_simp_1_aux
@@ -326,8 +326,8 @@ theorem is_dnf_ind_v1_list_of_lists_to_disjunction_of_conjunctions_filter
     exact h1
   case cons hd tl ih =>
     simp only [List.filter_cons]
-    split_ifs
-    case pos c1 =>
+    split
+    case isTrue c1 =>
       cases tl
       case nil =>
         simp only [List.map_cons, List.map_nil] at h1
@@ -348,7 +348,7 @@ theorem is_dnf_ind_v1_list_of_lists_to_disjunction_of_conjunctions_filter
           · apply ih
             simp only [List.map_cons]
             exact ih_2
-    case neg c1 =>
+    case isFalse c1 =>
       apply ih
       exact is_dnf_ind_v1_list_of_lists_to_disjunction_of_conjunctions_cons_left hd tl h1
 
