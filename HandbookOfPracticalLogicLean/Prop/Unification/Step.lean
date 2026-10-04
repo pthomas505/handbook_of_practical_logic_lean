@@ -139,7 +139,7 @@ def is_big_step_v1
   (X Y : String)
   (l : List String) :
   Prop :=
-  List.Chain (is_small_step_v1 E) X (l ++ [Y])
+  List.IsChain (is_small_step_v1 E) (X :: (l ++ [Y]))
 
 @[nolint defsWithUnderscore]
 instance
@@ -534,12 +534,12 @@ theorem not_is_one_or_more_small_steps_nil
   unfold is_big_step_v1
   cases l
   case nil =>
-    simp only [List.nil_append, List.chain_cons, List.Chain.nil]
+    simp only [List.nil_append, List.isChain_cons_cons, List.IsChain.singleton]
     intro contra
     obtain ⟨contra_left, contra_right⟩ := contra
     simp only [not_is_small_step_nil] at contra_left
   case cons hd tl =>
-    simp only [List.cons_append, List.chain_cons]
+    simp only [List.cons_append, List.isChain_cons_cons]
     intro contra
     obtain ⟨contra_left, contra_right⟩ := contra
     simp only [not_is_small_step_nil] at contra_left
@@ -559,15 +559,15 @@ theorem is_one_or_more_small_steps_trans
     contradiction
   case cons hd tl =>
     unfold is_big_step_v1 at h2
-    simp only [List.cons_append, List.chain_cons] at h2
+    simp only [List.cons_append, List.isChain_cons_cons] at h2
     obtain ⟨h2_left, h2_right⟩ := h2
 
     unfold is_big_step_v1 at h3
-    simp only [List.cons_append, List.chain_cons] at h3
+    simp only [List.cons_append, List.isChain_cons_cons] at h3
     obtain ⟨h3_left, h3_right⟩ := h3
 
     unfold is_big_step_v1
-    simp only [List.cons_append, List.chain_cons]
+    simp only [List.cons_append, List.isChain_cons_cons]
     exact ⟨h2_left, h3_right⟩
 
 
@@ -582,13 +582,13 @@ theorem is_small_step_v1_is_one_or_more_small_steps_trans
   unfold is_big_step_v1 at h2
   induction l generalizing B
   case nil =>
-    simp only [List.nil_append, List.chain_cons, List.Chain.nil] at h2
+    simp only [List.nil_append, List.isChain_cons_cons, List.IsChain.singleton] at h2
     obtain ⟨h2_left, h2_right⟩ := h2
     apply is_small_step_v1_singleton_trans X A B
     · exact h1
     · exact h2_left
   case cons hd tl ih =>
-    simp only [List.cons_append, List.chain_cons] at h2
+    simp only [List.cons_append, List.isChain_cons_cons] at h2
     obtain ⟨h2_left, h2_right⟩ := h2
     apply ih hd
     · apply is_small_step_v1_singleton_trans X A B
@@ -607,11 +607,11 @@ theorem is_one_or_more_small_steps_singleton_contract
   unfold is_big_step_v1 at h1
   induction l
   case nil =>
-    simp only [List.nil_append, List.chain_cons, List.Chain.nil] at h1
+    simp only [List.nil_append, List.isChain_cons_cons, List.IsChain.singleton] at h1
     obtain ⟨h1_left, h1_right⟩ := h1
     exact h1_left
   case cons hd tl ih =>
-    simp only [List.cons_append, List.chain_cons] at h1
+    simp only [List.cons_append, List.isChain_cons_cons] at h1
     obtain ⟨h1_left, h1_right⟩ := h1
     apply is_small_step_v1_is_one_or_more_small_steps_trans X Y hd Z F tl
     · exact h1_left
@@ -631,11 +631,11 @@ theorem not_has_cycle_nil :
   unfold is_big_step_v1 at contra
   cases l
   case nil =>
-    simp only [List.nil_append, List.chain_cons, List.Chain.nil] at contra
+    simp only [List.nil_append, List.isChain_cons_cons, List.IsChain.singleton] at contra
     obtain ⟨contra_left, contra_right⟩ := contra
     exact not_is_small_step_nil X X contra_left
   case cons hd tl =>
-    simp only [List.cons_append, List.chain_cons] at contra
+    simp only [List.cons_append, List.isChain_cons_cons] at contra
     obtain ⟨contra_left, contra_right⟩ := contra
     exact not_is_small_step_nil X hd contra_left
 
@@ -654,12 +654,12 @@ theorem has_cycle_singleton_left
   obtain ⟨Y, l, h1⟩ := h1
   cases l
   case nil =>
-    simp only [List.nil_append, List.chain_cons, List.Chain.nil] at h1
+    simp only [List.nil_append, List.isChain_cons_cons, List.IsChain.singleton] at h1
     obtain ⟨h1_left, h1_right⟩ := h1
     apply is_small_step_v1_singleton_refl X Y
     exact h1_left
   case cons hd tl =>
-    simp only [List.cons_append, List.chain_cons] at h1
+    simp only [List.cons_append, List.isChain_cons_cons] at h1
     obtain ⟨h1_left, h1_right⟩ := h1
     apply is_small_step_v1_singleton_refl X Y
     apply is_small_step_v1_is_one_or_more_small_steps_trans X Y hd Y F tl
@@ -678,7 +678,7 @@ theorem has_cycle_singleton_right
   apply Exists.intro X
   apply Exists.intro []
   unfold is_big_step_v1
-  simp only [List.nil_append, List.chain_cons, List.Chain.nil]
+  simp only [List.nil_append, List.isChain_cons_cons, List.IsChain.singleton]
   simp only [is_small_step_v1_singleton]
   exact ⟨⟨True.intro, h1⟩, True.intro⟩
 
@@ -706,7 +706,7 @@ theorem is_small_step_v1_refl_imp_has_cycle
   apply Exists.intro X
   apply Exists.intro []
   unfold is_big_step_v1
-  simp only [List.nil_append, List.chain_cons, List.Chain.nil]
+  simp only [List.nil_append, List.isChain_cons_cons, List.IsChain.singleton]
   exact ⟨h1, True.intro⟩
 
 
@@ -723,7 +723,7 @@ example
   induction l
   case nil =>
     unfold is_big_step_v1 at h1
-    simp only [List.nil_append, List.chain_cons, List.Chain.nil] at h1
+    simp only [List.nil_append, List.isChain_cons_cons, List.IsChain.singleton] at h1
     obtain ⟨h1_left, h1_right⟩ := h1
     rewrite [← List.singleton_append] at h1_left
     simp only [is_small_step_v1_append] at h1_left
@@ -737,7 +737,7 @@ example
       contradiction
   case cons hd tl ih =>
     unfold is_big_step_v1 at h1
-    simp only [List.cons_append, List.chain_cons] at h1
+    simp only [List.cons_append, List.isChain_cons_cons] at h1
     obtain ⟨h1_left, h1_right⟩ := h1
     rewrite [← List.singleton_append] at h1_left
     simp only [is_small_step_v1_append] at h1_left
@@ -778,7 +778,7 @@ example
   induction l
   case nil =>
     unfold is_big_step_v1 at h1
-    simp only [List.nil_append, List.chain_cons, List.Chain.nil] at h1
+    simp only [List.nil_append, List.isChain_cons_cons, List.IsChain.singleton] at h1
     obtain ⟨h1_left, h1_right⟩ := h1
     rewrite [← List.singleton_append] at h1_left
     simp only [is_small_step_v1_append] at h1_left
@@ -796,7 +796,7 @@ example
       exact h1_left
   case cons hd tl ih =>
     unfold is_big_step_v1 at h1
-    simp only [List.cons_append, List.chain_cons] at h1
+    simp only [List.cons_append, List.isChain_cons_cons] at h1
     obtain ⟨h1_left, h1_right⟩ := h1
     rewrite [← List.singleton_append] at h1_left
     simp only [is_small_step_v1_append] at h1_left
@@ -839,7 +839,7 @@ example
 
   induction l
   case nil =>
-    simp only [List.nil_append, List.chain_cons] at contra
+    simp only [List.nil_append, List.isChain_cons_cons] at contra
     obtain ⟨contra_left, contra_right⟩ := contra
     clear contra_right
     unfold is_small_step_v1 at contra_left
@@ -853,12 +853,12 @@ example
       contradiction
     case inr contra_left_left =>
       specialize h1 Y []
-      simp only [List.nil_append, List.chain_cons] at h1
+      simp only [List.nil_append, List.isChain_cons_cons] at h1
       apply h1
       constructor
       · unfold is_small_step_v1
         apply Exists.intro F'
         exact ⟨contra_left_left, contra_left_right⟩
-      · simp only [List.Chain.nil]
+      · simp only [List.IsChain.singleton]
   case cons hd tl ih =>
     sorry
