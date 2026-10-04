@@ -41,10 +41,10 @@ def raw_dnf :
 
 
 example
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (P Q R : Formula_) :
-  eval V (and_ P (or_ Q R)) = true ↔
-    eval V (or_ (and_ P Q) (and_ P R)) = true :=
+  eval σ (and_ P (or_ Q R)) = true ↔
+    eval σ (or_ (and_ P Q) (and_ P R)) = true :=
   by
   simp only [eval]
   simp only [bool_iff_prop_and]
@@ -54,10 +54,10 @@ example
 
 
 example
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (P Q R : Formula_) :
-  eval V (and_ (or_ P Q) R) = true ↔
-    eval V (or_ (and_ P R) (and_ Q R)) = true :=
+  eval σ (and_ (or_ P Q) R) = true ↔
+    eval σ (or_ (and_ P R) (and_ Q R)) = true :=
   by
   simp only [eval]
   simp only [bool_iff_prop_and]
@@ -67,10 +67,10 @@ example
 
 
 theorem eval_distrib_and
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (P Q : Formula_) :
-  eval V (and_ P Q) = true ↔
-    eval V (distrib (and_ P Q)) = true :=
+  eval σ (and_ P Q) = true ↔
+    eval σ (distrib (and_ P Q)) = true :=
   by
   induction P generalizing Q
   case or_ R S R_ih S_ih =>
@@ -113,9 +113,9 @@ theorem eval_distrib_and
 
 
 example
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V F = true ↔ eval V (raw_dnf F) = true :=
+  eval σ F = true ↔ eval σ (raw_dnf F) = true :=
   by
   induction F
   case and_ phi psi phi_ih psi_ih =>
@@ -125,17 +125,17 @@ example
     simp only [bool_iff_prop_and]
     rewrite [phi_ih]
     rewrite [psi_ih]
-    rfl
+    apply Iff.refl
   case or_ phi psi phi_ih psi_ih =>
     unfold raw_dnf
     simp only [eval]
     simp only [bool_iff_prop_or]
     rewrite [phi_ih]
     rewrite [psi_ih]
-    rfl
+    apply Iff.refl
   all_goals
     unfold raw_dnf
-    rfl
+    apply Iff.refl
 
 
 -------------------------------------------------------------------------------
