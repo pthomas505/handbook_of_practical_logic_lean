@@ -53,9 +53,9 @@ end
 
 
 theorem eval_to_nnf_neg_v1_eq_not_eval_to_nnf_v1
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V (to_nnf_neg_v1 F) = b_not (eval V (to_nnf_v1 F)) :=
+  eval σ (to_nnf_neg_v1 F) = b_not (eval σ (to_nnf_v1 F)) :=
   by
   induction F
   case false_ | true_ =>
@@ -85,43 +85,43 @@ theorem eval_to_nnf_neg_v1_eq_not_eval_to_nnf_v1
     rewrite [phi_ih]
     rewrite [psi_ih]
     rewrite [Bool.eq_iff_iff]
-    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_imp, bool_iff_prop_iff]
+    simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or]
     tauto
 
 
 theorem eval_eq_eval_to_nnf_v1
-  (V : ValuationAsTotalFunction)
+  (σ : ValuationAsTotalFunction)
   (F : Formula_) :
-  eval V F = eval V (to_nnf_v1 F) :=
+  eval σ F = eval σ (to_nnf_v1 F) :=
   by
   induction F
   case false_ | true_ | var_ X =>
     unfold to_nnf_v1
-    rfl
+    apply Eq.refl
   case not_ phi ih =>
     unfold to_nnf_v1
     simp only [eval]
     rewrite [ih]
-    rewrite [eval_to_nnf_neg_v1_eq_not_eval_to_nnf_v1 V phi]
-    rfl
+    rewrite [eval_to_nnf_neg_v1_eq_not_eval_to_nnf_v1 σ phi]
+    apply Eq.refl
   case and_ phi psi phi_ih psi_ih =>
     unfold to_nnf_v1
     unfold eval
     rewrite [phi_ih]
     rewrite [psi_ih]
-    rfl
+    apply Eq.refl
   case or_ phi psi phi_ih psi_ih =>
     unfold to_nnf_v1
     unfold eval
     rewrite [phi_ih]
     rewrite [psi_ih]
-    rfl
+    apply Eq.refl
   case imp_ phi psi phi_ih psi_ih =>
     unfold to_nnf_v1
     unfold eval
     rewrite [phi_ih]
     rewrite [psi_ih]
-    rewrite [eval_to_nnf_neg_v1_eq_not_eval_to_nnf_v1 V phi]
+    rewrite [eval_to_nnf_neg_v1_eq_not_eval_to_nnf_v1 σ phi]
     rewrite [Bool.eq_iff_iff]
     simp only [bool_iff_prop_not, bool_iff_prop_or, bool_iff_prop_imp]
     tauto
@@ -130,8 +130,8 @@ theorem eval_eq_eval_to_nnf_v1
     simp only [eval]
     rewrite [phi_ih]
     rewrite [psi_ih]
-    rewrite [eval_to_nnf_neg_v1_eq_not_eval_to_nnf_v1 V phi]
-    rewrite [eval_to_nnf_neg_v1_eq_not_eval_to_nnf_v1 V psi]
+    rewrite [eval_to_nnf_neg_v1_eq_not_eval_to_nnf_v1 σ phi]
+    rewrite [eval_to_nnf_neg_v1_eq_not_eval_to_nnf_v1 σ psi]
     rewrite [Bool.eq_iff_iff]
     simp only [bool_iff_prop_not, bool_iff_prop_and, bool_iff_prop_or, bool_iff_prop_iff]
     tauto
@@ -149,12 +149,12 @@ theorem to_nnf_neg_v1_is_nnf_rec_v1_iff_to_nnf_v1_is_nnf_rec_v1
     unfold to_nnf_v1
     unfold to_nnf_neg_v1
     unfold is_nnf_rec_v1
-    rfl
+    apply Iff.refl
   case not_ phi ih =>
     unfold to_nnf_v1
     simp only [to_nnf_neg_v1]
     rewrite [ih]
-    rfl
+    apply Iff.refl
   case
       and_ phi psi phi_ih psi_ih
     | or_ phi psi phi_ih psi_ih
@@ -165,7 +165,7 @@ theorem to_nnf_neg_v1_is_nnf_rec_v1_iff_to_nnf_v1_is_nnf_rec_v1
     simp only [is_nnf_rec_v1]
     rewrite [phi_ih]
     rewrite [psi_ih]
-    rfl
+    apply Iff.refl
 
 
 theorem to_nnf_v1_is_nnf_rec_v1
@@ -203,13 +203,13 @@ theorem to_nnf_v1_is_nnf_rec_v1
 
 
 example
-  (A A' : String)
+  (V V' : String)
   (F : Formula_)
   (h1 : is_nnf_rec_v1 F)
-  (h2 : ¬ is_neg_literal_in_rec A F) :
-  ∀ (V : ValuationAsTotalFunction), eval V (((var_ A).imp_ (var_ A')).imp_ (F.imp_ (replace_var_one_rec A (var_ A') F))) :=
+  (h2 : ¬ is_neg_literal_in_rec V F) :
+  ∀ (σ : ValuationAsTotalFunction), eval σ (((var_ V).imp_ (var_ V')).imp_ (F.imp_ (replace_var_one_rec V (var_ V') F))) :=
   by
-  intro V
+  intro σ
   induction F
   case false_ | true_ =>
     unfold replace_var_one_rec
@@ -220,14 +220,14 @@ example
   case var_ X =>
     unfold replace_var_one_rec
     simp only [eval]
-    split_ifs
-    case pos c1 =>
+    split
+    case isTrue c1 =>
       rewrite [c1]
       unfold eval
       rewrite [Bool.eq_iff_iff]
       simp only [bool_iff_prop_imp]
       tauto
-    case neg c1 =>
+    case isFalse c1 =>
       unfold eval
       rewrite [Bool.eq_iff_iff]
       simp only [bool_iff_prop_imp]
@@ -238,11 +238,14 @@ example
       unfold is_neg_literal_in_rec at h2
 
       simp only [replace_var_one_rec]
-      split_ifs
-      simp only [eval]
-      rewrite [Bool.eq_iff_iff]
-      simp only [bool_iff_prop_not, bool_iff_prop_imp]
-      tauto
+      split
+      case isTrue c1 =>
+        contradiction
+      case isFalse c1 =>
+        simp only [eval]
+        rewrite [Bool.eq_iff_iff]
+        simp only [bool_iff_prop_not, bool_iff_prop_imp]
+        tauto
     all_goals
       unfold is_nnf_rec_v1 at h1
       contradiction
@@ -273,13 +276,13 @@ example
 
 
 example
-  (A A' : String)
+  (V V' : String)
   (F : Formula_)
   (h1 : is_nnf_rec_v1 F)
-  (h2 : ¬ is_pos_literal_in_rec A F) :
-  ∀ (V : ValuationAsTotalFunction), eval V (((var_ A).imp_ (var_ A')).imp_ ((replace_var_one_rec A (var_ A') F).imp_ F)) = true :=
+  (h2 : ¬ is_pos_literal_in_rec V F) :
+  ∀ (σ : ValuationAsTotalFunction), eval σ (((var_ V).imp_ (var_ V')).imp_ ((replace_var_one_rec V (var_ V') F).imp_ F)) = true :=
   by
-  intro V
+  intro σ
   induction F
   case false_ | true_ =>
     unfold replace_var_one_rec
@@ -291,23 +294,26 @@ example
     unfold is_pos_literal_in_rec at h2
 
     unfold replace_var_one_rec
-    split_ifs
-    simp only [eval]
-    rewrite [Bool.eq_iff_iff]
-    simp only [bool_iff_prop_imp]
-    tauto
+    split
+    case isTrue c1 =>
+      contradiction
+    case isFalse c1 =>
+      simp only [eval]
+      rewrite [Bool.eq_iff_iff]
+      simp only [bool_iff_prop_imp]
+      tauto
   case not_ phi ih =>
     cases phi
     case var_ X =>
       simp only [replace_var_one_rec]
-      split_ifs
-      case pos c1 =>
+      split
+      case isTrue c1 =>
         simp only [eval]
         rewrite [c1]
         rewrite [Bool.eq_iff_iff]
         simp only [bool_iff_prop_not, bool_iff_prop_imp]
         tauto
-      case neg c1 =>
+      case isFalse c1 =>
         simp only [eval]
         rewrite [Bool.eq_iff_iff]
         simp only [bool_iff_prop_not, bool_iff_prop_imp]
