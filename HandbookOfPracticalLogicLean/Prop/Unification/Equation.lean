@@ -95,7 +95,7 @@ theorem mem_equation_list_imp_mem_equation_list_formula_list_left
     case inl h1 =>
       left
       rewrite [h1]
-      rfl
+      apply Eq.refl
     case inr h1 =>
       right
       right
@@ -114,6 +114,7 @@ theorem mem_equation_list_imp_mem_equation_list_formula_list_right
     simp only [List.not_mem_nil] at h1
   case cons hd tl ih =>
     unfold equation_list_formula_list at ih
+
     simp only [List.mem_cons] at h1
 
     unfold equation_list_formula_list
@@ -123,7 +124,7 @@ theorem mem_equation_list_imp_mem_equation_list_formula_list_right
       right
       left
       rewrite [h1]
-      rfl
+      apply Eq.refl
     case inr h1 =>
       right
       right
@@ -152,7 +153,7 @@ theorem mem_equation_list_formula_list_imp_formula_occurs_in_equation_list
       apply Exists.intro hd
       constructor
       · left
-        rfl
+        apply Eq.refl
       · left
         exact h1
     case inr h1 =>
@@ -161,7 +162,7 @@ theorem mem_equation_list_formula_list_imp_formula_occurs_in_equation_list
         apply Exists.intro hd
         constructor
         · left
-          rfl
+          apply Eq.refl
         · right
           exact h1
       case inr h1 =>
@@ -352,7 +353,7 @@ theorem mem_equation_list_var_set_imp_var_occurs_in_equation_list
   induction ES
   case nil =>
     unfold equation_list_var_set at h1
-    simp only [List.foldr_nil, Finset.not_mem_empty] at h1
+    simp only [List.foldr_nil, Finset.notMem_empty] at h1
   case cons hd tl ih =>
     unfold equation_list_var_set at h1
     simp only [List.foldr_cons, Finset.mem_union] at h1
@@ -466,7 +467,7 @@ example
   intro E a1
   unfold equation_replace_var_one_rec
   congr
-  · apply not_var_occurs_in_replace_var_one_rec_self
+  · apply not_var_occurs_in_formula_replace_var_one_rec
     intro contra
     apply h1
     simp only [← var_occurs_in_equation_list_iff_mem_equation_list_var_set]
@@ -477,7 +478,7 @@ example
     · unfold var_occurs_in_equation
       left
       exact contra
-  · apply not_var_occurs_in_replace_var_one_rec_self
+  · apply not_var_occurs_in_formula_replace_var_one_rec
     intro contra
     apply h1
     simp only [← var_occurs_in_equation_list_iff_mem_equation_list_var_set]
@@ -502,10 +503,10 @@ theorem var_occurs_in_equation_equation_replace_var_one_rec
   simp only at h1
   cases h1
   case inl h1 =>
-    apply var_occurs_in_formula_replace_var_one_rec X F E.lhs
+    apply var_occurs_in_formula_replace_var_one_rec_eq_1 X F E.lhs
     exact h1
   case inr h1 =>
-    apply var_occurs_in_formula_replace_var_one_rec X F E.rhs
+    apply var_occurs_in_formula_replace_var_one_rec_eq_1 X F E.rhs
     exact h1
 
 
@@ -538,8 +539,26 @@ theorem equation_replace_var_one_rec_var_set_subset
   simp only
   rewrite [Finset.union_union_distrib_left]
   apply Finset.union_subset_union
-  · apply replace_var_one_rec_var_set_subset
-  · apply replace_var_one_rec_var_set_subset
+  · simp only [Finset.subset_iff]
+    intro V a1
+    rewrite [← var_occurs_in_formula_iff_mem_formula_var_set] at a1
+    simp only [Finset.mem_union]
+    simp only [← var_occurs_in_formula_iff_mem_formula_var_set]
+    by_cases c1 : var_occurs_in_formula V E.lhs
+    · right
+      exact c1
+    · left
+      apply var_occurs_in_formula_replace_var_one_rec_ne_2 X F E.lhs V a1 c1
+  · simp only [Finset.subset_iff]
+    intro V a1
+    rewrite [← var_occurs_in_formula_iff_mem_formula_var_set] at a1
+    simp only [Finset.mem_union]
+    simp only [← var_occurs_in_formula_iff_mem_formula_var_set]
+    by_cases c1 : var_occurs_in_formula V E.rhs
+    · right
+      exact c1
+    · left
+      apply var_occurs_in_formula_replace_var_one_rec_ne_2 X F E.rhs V a1 c1
 
 
 theorem equation_list_replace_var_one_rec_equation_list_var_set_subset
@@ -581,7 +600,7 @@ theorem extracted_1
   · simp only [Finset.insert_eq]
     simp only [Finset.union_assoc]
     apply Finset.union_subset_union
-    · rfl
+    · apply Set.Subset.refl
     · apply equation_list_replace_var_one_rec_equation_list_var_set_subset
 
 
