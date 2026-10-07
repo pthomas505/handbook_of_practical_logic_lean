@@ -237,7 +237,7 @@ theorem is_equation_list_unifier_singleton
   constructor
   · intro a1
     apply a1
-    rfl
+    apply Eq.refl
   · intro a1 E' a2
     rewrite [a2]
     exact a1
@@ -311,7 +311,7 @@ example
 
   apply h1
   left
-  rfl
+  apply Eq.refl
 
 
 theorem is_equation_unifier_iff_is_equation_unifier_equation_replace_var_one_rec
@@ -330,7 +330,7 @@ theorem is_equation_unifier_iff_is_equation_unifier_equation_replace_var_one_rec
   unfold is_equation_unifier
   rewrite [← replace_var_all_rec_eq_replace_var_all_rec_of_replace_var_one_rec σ X F E.lhs h1]
   rewrite [← replace_var_all_rec_eq_replace_var_all_rec_of_replace_var_one_rec σ X F E.rhs h1]
-  rfl
+  apply Iff.refl
 
 
 theorem is_equation_list_unifier_iff_is_equation_list_unifier_equation_list_replace_var_one_rec
@@ -353,7 +353,7 @@ theorem is_equation_list_unifier_iff_is_equation_list_unifier_equation_list_repl
     simp only [is_equation_list_unifier_singleton]
     simp only [← is_equation_unifier_iff_is_equation_unifier_equation_replace_var_one_rec σ X F hd h1]
     rewrite [ih]
-    rfl
+    apply Iff.refl
 
 
 example
@@ -452,7 +452,7 @@ theorem mem_equation_list_eqv_relation_is_equation_unifier
     simp only at ih_2
 
     simp only
-    symm
+    apply Eq.symm
     exact ih_2
   case trans P Q R ih_1 ih_2 ih_3 ih_4 =>
     simp only at ih_3
@@ -460,9 +460,7 @@ theorem mem_equation_list_eqv_relation_is_equation_unifier
     simp only at ih_4
 
     simp only
-    trans (replace_var_all_rec σ Q)
-    · exact ih_3
-    · exact ih_4
+    exact Eq.trans ih_3 ih_4
 
 
 example
@@ -610,7 +608,7 @@ def unify :
       simp only [List.foldr_cons]
       simp only [Equation.var_set]
       simp only [Formula_.var_set]
-      rfl
+      apply Set.Subset.refl
     · unfold equation_list_size
       unfold equation_list_formula_list
       unfold formula_list_size
@@ -633,7 +631,7 @@ def unify :
         simp only [Finset.union_assoc]
 
       rewrite [s1]
-      rfl
+      apply Set.Subset.refl
     · unfold equation_list_size
       unfold equation_list_formula_list
       unfold formula_list_size
@@ -654,28 +652,33 @@ example
     induction lhs
     case var_ X =>
       simp only [unify]
-      split_ifs
-      case pos c1 =>
+      split
+      case isTrue c1 =>
         simp only [Option.get_some]
         rewrite [c1]
-        rfl
-      case pos c1 c2 =>
-        simp only [unify] at h1
-        split_ifs at h1
-        simp only [Option.isSome_none] at h1
-        contradiction
-      case neg c1 c2 =>
-        simp only [Option.get_map]
-        unfold equation_list_replace_var_one_rec
-        simp only [List.map_nil]
-        simp only [unify]
-        simp only [Option.get_some]
-        simp only [replace_var_all_rec_id]
-        simp only [replace_var_all_rec]
-        simp only [Function.updateITE']
-        simp only [if_pos]
-        simp only [replace_var_all_rec_function_update_ite_not_occurs_in var_ X rhs rhs c2]
-        simp only [replace_var_all_rec_id]
+        apply Eq.refl
+      case isFalse c1 =>
+        split
+        case isTrue c2 =>
+          simp only [unify] at h1
+          split at h1
+          case isTrue c3 =>
+            contradiction
+          case isFalse c3 =>
+            simp only [Option.isSome_none] at h1
+            contradiction
+        case isFalse c2 =>
+          simp only [Option.get_map]
+          unfold equation_list_replace_var_one_rec
+          simp only [List.map_nil]
+          simp only [unify]
+          simp only [Option.get_some]
+          simp only [replace_var_all_rec_id]
+          simp only [replace_var_all_rec]
+          simp only [Function.updateITE']
+          simp only [if_pos]
+          simp only [replace_var_all_rec_function_update_ite_not_occurs_in var_ X rhs rhs c2]
+          simp only [replace_var_all_rec_id]
     all_goals
       sorry
 
