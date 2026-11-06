@@ -1,5 +1,5 @@
 import HandbookOfPracticalLogicLean.Prop.Replace.Var.One.Rec.Replace
-import HandbookOfPracticalLogicLean.Prop.Semantics.Semantics
+import HandbookOfPracticalLogicLean.Prop.Semantics
 
 import HandbookOfPracticalLogicLean.Prop.NF.NF
 

@@ -1,7 +1,7 @@
 import MathlibExtraLean.FunctionUpdateITE
 
 import HandbookOfPracticalLogicLean.Prop.Syntax.Var
-import HandbookOfPracticalLogicLean.Prop.Semantics.Bool
+import HandbookOfPracticalLogicLean.Prop.Bool
 
 import Mathlib.Tactic
 
