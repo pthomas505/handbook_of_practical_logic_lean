@@ -8,7 +8,7 @@ set_option linter.style.longLine false
 
 
 /--
-  The type of formulas.
+  The syntactical definition of formulas.
 -/
 inductive Formula_ : Type
   | false_ : Formula_
