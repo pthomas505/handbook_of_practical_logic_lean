@@ -1,5 +1,5 @@
 import HandbookOfPracticalLogicLean.Prop.Replace.Var.One.Rec.Replace
-import HandbookOfPracticalLogicLean.Prop.SubFormula
+import HandbookOfPracticalLogicLean.Prop.Syntax.SubFormula
 
 import Mathlib.Tactic
 

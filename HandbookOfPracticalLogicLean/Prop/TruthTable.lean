@@ -1,6 +1,6 @@
 import MathlibExtraLean.FunctionUpdateFromListOfPairsITE
 
-import HandbookOfPracticalLogicLean.Prop.Semantics
+import HandbookOfPracticalLogicLean.Prop.Semantics.Semantics
 
 
 import Mathlib.Tactic

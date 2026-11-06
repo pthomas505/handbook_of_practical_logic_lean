@@ -1,4 +1,4 @@
-import HandbookOfPracticalLogicLean.Prop.Var
+import HandbookOfPracticalLogicLean.Prop.Syntax.Var
 
 
 set_option linter.style.docString false

@@ -1,6 +1,6 @@
 import HandbookOfPracticalLogicLean.Prop.Replace.Var.One.Rec.Replace
-import HandbookOfPracticalLogicLean.Prop.Size
-import HandbookOfPracticalLogicLean.Prop.Var
+import HandbookOfPracticalLogicLean.Prop.Syntax.Size
+import HandbookOfPracticalLogicLean.Prop.Syntax.Var
 
 import MathlibExtraLean.List
 

@@ -1,4 +1,4 @@
-import HandbookOfPracticalLogicLean.Prop.Size
+import HandbookOfPracticalLogicLean.Prop.Syntax.Size
 
 import Mathlib.Tactic
 

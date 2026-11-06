@@ -1,4 +1,4 @@
-import HandbookOfPracticalLogicLean.Prop.Formula
+import HandbookOfPracticalLogicLean.Prop.Syntax.Formula
 
 
 set_option linter.style.docString false

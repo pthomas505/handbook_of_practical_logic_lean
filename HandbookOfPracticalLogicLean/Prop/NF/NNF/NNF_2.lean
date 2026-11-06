@@ -1,5 +1,5 @@
-import HandbookOfPracticalLogicLean.Prop.Semantics
-import HandbookOfPracticalLogicLean.Prop.SubFormula
+import HandbookOfPracticalLogicLean.Prop.Semantics.Semantics
+import HandbookOfPracticalLogicLean.Prop.Syntax.SubFormula
 
 import HandbookOfPracticalLogicLean.Prop.NF.NF
 

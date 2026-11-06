@@ -1,4 +1,4 @@
-import HandbookOfPracticalLogicLean.Prop.Formula
+import HandbookOfPracticalLogicLean.Prop.Syntax.Formula
 
 import Mathlib.Tactic
 
